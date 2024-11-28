@@ -1,0 +1,330 @@
+.ds_container {
+    margin-right: auto;
+    margin-left: auto;
+    padding-left: 10px; 
+    padding-right: 10px;
+}
+.ds_color{
+    color: #4D1F08;
+}
+.ds_tcolor{
+    color: #727272;
+}
+.ds_600{
+    font-weight: 600;
+}
+
+/* ********************* Cart ******************* */
+.ds_cart-box{
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background: #FFFFFF;
+    padding: 20px;
+}
+.ds_cart-cancel{
+    color: #727272;
+    font-size: 30px;
+}
+.ds_cart-less-price{
+    color: #727272;
+    text-decoration: line-through;
+}
+.ds_cart-mul{
+    background: #4D1F08;
+    padding: 7px 14px;
+}
+.ds_cart-address{
+    background: #FFFFFF;
+    padding: 20px;
+    box-shadow: 0px 0px 24px 3px #7272721A;
+}
+.ds_cart-add-btn{
+    border: 1px solid #2A221E;
+    background-color: white;
+    padding: 6px 15px;
+}
+.ds_cart-deta{
+   margin-left: 15px;
+}
+
+.ds_with-cupon{
+    box-shadow: 0px 4px 14px 0px #8F8F8F40;
+    padding: 20px 0px;
+  }
+  .ds_with-border{
+      border: 0.5px solid #c9c7c7
+  }
+  .ds_add-cupan{
+      position: absolute;
+      top: 12px;
+      left: 15px;
+  
+  }
+  .ds_add-input{
+      background: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 0px;
+      border: 1px solid #4D1F08
+  }
+  .ds_add-input:focus{
+      background: white;
+      border: 1px solid #4D1F08;
+      box-shadow: none;
+  }
+  .ds_add-apply{
+      position: absolute;
+      top: 3px;
+      right: 1px;
+      padding: 10px 15px;
+      border: none;
+      border-left: 1px solid #b6b2b2 !important;
+      border-radius: 0;
+      outline: none;
+      box-shadow: none !important;
+      background-color: white;
+      color: #4D1F08;
+  }
+
+  .ds_cart-radio{
+    border: 1.15px solid #727272;
+  }
+  .ds_cart-radio:checked{
+    background-color:#4D1F08;
+  }
+  .ds_cart-radio:focus{
+    box-shadow: none;
+    border: 1px solid #4D1F08
+
+  }
+  .ds_add-apply:hover{
+      border-left: 1px solid #b6b2b2;
+  }
+  .ds_add-offer-txt{
+      color: #727272;
+      font-size: 15px;
+  }
+  .ds_add-save{
+      font-size: 15px;
+  }
+  .ds_add-order{
+    box-shadow: 0px 4px 14px 0px #8F8F8F40;
+    padding: 20px 0px;
+  }
+  .ds_add-detail{
+      color: #6A6A6A;
+  }
+  .ds_add-color{
+      color: #03CF18;
+  }
+  .ds_add-proccess{
+      padding: 10px 0px;
+      background: #4D1F08;
+      color: white;
+      width: 100%;
+      border: none;
+      border-radius: 4px;
+  }
+  .ds_add-proccess:hover{
+      background: #4D1F08;
+      color: white;  
+  }
+  .ds_add-img{
+      width: 115px;
+      height: 145px;
+      object-fit: cover;
+  }
+  .ds_mini-text{
+      font-size: 12px;
+      line-height: 16px;
+      white-space: pre-wrap;
+  }
+  
+  .ds_add-type{
+      color: #6A6A6A;
+      font-size: 13px;
+  }
+  .ds_add-count {
+      box-shadow: 0px 4px 4px 0px #8F8F8F40;
+      padding: 6px;
+      width: 70%;
+      border-radius: 2px;
+  } 
+  .ds_cart-manage{
+    flex-direction: column;
+  }
+
+  
+/* {*************** Add New Address Popup ************   } */
+  .ds_add-modal{
+    max-width: 700px !important;
+  }
+  .ds_new-input{
+    border: 0.75px solid #4D1F08;
+    padding: 7px 10px;
+    width: 100%;
+  }
+ .ds_new-home{
+    padding: 10px 20px;
+    background: #4D1F08;
+    color: white;
+    border: none;
+    outline: none;
+ }
+ .ds_home-icon{
+    font-size: 22px;
+}
+ .ds_new-work{
+    padding: 10px 20px;
+    border: 1px solid #4D1F08 !important; 
+    background: white;
+    color: #4D1F08;
+    border: none;
+    outline: none;
+ }
+.ds_new-other{
+    padding: 10px 30px;
+    border: 1px solid #4D1F08 !important; 
+    background: white;
+    color: #4D1F08;
+    border: none;
+    outline: none; 
+}
+.ds_new-save{
+    padding: 10px 10px;
+    background: #4D1F08;
+    width: 100%;
+    color: white;
+    border: none;
+    outline: none;
+}
+
+
+/* {*************** Change Address Popup ************   } */
+.ds_chan-box{
+    border: 0.75px solid #000000;
+    padding: 10px 0px;
+}
+.ds_chan-line{
+    border: 1px solid #72727266;
+}
+.ds_rem-img{
+    width: 30%;
+    border: 1px solid #72727266;
+}
+
+/* {*************** Remove Product Popup ************   } */
+.ds_rem-btn{
+    border: 1px solid #4D1F08;
+    padding: 10px 50px;
+    color:#4D1F08 ;
+    background-color: white;
+    outline: none;
+}
+.ds_rem-move{
+    border: 1px solid #4D1F08;
+    padding: 10px 30px;
+    color:white ;
+    background-color: #4D1F08;
+    outline: none;  
+}
+
+/* ********* Main Container ******** */
+@media (min-width: 1650px) {
+    .ds_container {
+        width: 1550px;
+    }
+}
+@media (min-width: 1200px) and (max-width: 1649px) {
+    .ds_container {
+        width: 1170px;
+        max-width: none;
+    }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+    .ds_container {
+        width: 970px;
+        max-width: none;
+    }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+    .ds_container {
+        width: 750px;
+        max-width: none;
+    }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+    .ds_container {
+        max-width: 750px;
+    }
+}
+
+
+
+
+/* ############### All Section Media Query ############ */
+
+@media (max-width:768px) {
+/* {*************** Add New Address Popup ************   } */
+    .ds_add-modal{
+       max-width: 600px !important;
+    }
+}
+
+@media (max-width:600px) {
+    .ds_cart-manage{
+       margin: auto;
+       flex-direction: row;
+       justify-content:space-between;
+       width: 100%;
+       margin-top: 10px;
+    }
+    .ds_cart-ico{
+        margin: 0px 13px;
+    }
+
+    /* {*************** Add New Address Popup ************   } */
+    .ds_add-modal{
+        max-width: 500px !important;
+        margin: auto;
+     }
+}
+
+@media (max-width:576px) {
+    .ds_rem-btn{
+        margin-right: 10px;
+    }
+}
+
+@media (max-width:450px) {
+  /* {*************** Add New Address Popup ************   } */
+  .ds_add-modal{
+    max-width: 330px !important;
+    margin: auto;
+ }  
+/* {*************** Remove Product Popup ************   } */
+.ds_rem-btn{
+    margin-right: 0px;
+}
+.ds_rem-move{
+    padding: 10px 20px;
+    margin-top: 10px;
+}
+}
+
+@media (max-width:350px) {
+    .ds_cart-flex{
+        flex-wrap: wrap;
+    }
+    .ds_cart-deta{
+        margin-top: 15px;
+    }
+    .ds_cart-manage{
+        margin-top: 15px;
+    }
+ 
+/* {*************** Add New Address Popup ************   } */
+   .ds_add-modal{
+    max-width: 280px !important;
+    margin: auto;
+ }     
+}

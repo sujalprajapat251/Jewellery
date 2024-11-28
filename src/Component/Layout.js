@@ -5,13 +5,13 @@ const Layout = () => {
     <>
       <div className="layout-container">
         {/* <Header /> */}
-        <h1> hellllo</h1>
+        {/* <h1> hellllo</h1> */}
         <div className="content-wrapper">
             <div className="outlet-container">
             <Outlet />
           </div>
         </div>
-        <h1> hellllo</h1>
+        {/* <h1> hellllo</h1> */}
 
       </div>
     </>
