@@ -1,0 +1,207 @@
+
+@import url('https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap');
+
+
+
+.ds_offer-bg{
+    background: #40413C;
+}
+.ds_offer-heading{
+    color: #B79869;
+    font-size: 45px;
+    /* font-family: Roboto Serif; */
+}
+.ds_offer-off{
+  color: white;
+}
+.ds_offer-btn{
+    border: 0.75px solid #FFFFFF;
+    background-color: transparent;
+    color: white;
+    padding: 10px 43px;
+}
+.ds_offer-padding{
+   padding: 0px 28px;
+}
+
+.ds_bg-img{
+    background-image: linear-gradient(93.83deg, #000000 -41.29%, rgba(255, 255, 255, 0) 105.75%), url(../../Img/dhruvin/nacklace.png);
+    /* background-position: center ; */
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 500px;
+    position: relative;
+}
+.ds_off-shop{
+    border: 0.75px solid #FFFFFF;
+    padding: 8px 33px;
+    color: white;
+    background-color: transparent;
+}
+.ds_img-manage{
+    padding: 0px 120px;
+}
+.ds_off-flat{
+    background-image: url(../../Img/dhruvin/flat.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 250px;
+}
+
+.ds_card-manage{
+    padding: 0px 54px;
+}
+
+.ds_ring-bg{
+    background-image: url(../../Img/dhruvin/ring-bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 250px;
+}
+
+.ds_card-manage2{
+    padding: 0px 40px;
+}
+.ds_sale-bg{
+    background-image: url(../../Img/dhruvin/sale.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 550px;
+    /* background-position: ; */
+}
+.ds_offer-fes{
+    color: #D59E64;
+    font-size: 50px;
+    font-weight: bold;
+}
+.ds_offer-text{
+    position: absolute;
+    top: 43px;
+    left: 142px;
+    font-family: MonteCarlo;
+    font-weight: 400;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    font-size: 80px;   
+}
+.ds_offer-shop{
+    padding: 8px 40px;
+    color: black;
+    background-color: white;
+    border: none;
+}
+
+
+/* {************** Always be on trend with unique pieces  ***************} */
+.ds_al-img{
+    width: 100%;
+}
+.ds_hand-ring{
+    height: 380px;
+    object-fit: cover;
+}
+.ds_nack-star{
+    height: 200px;
+    object-fit: cover;
+}
+.ds_al-desing{
+    background-image: url(../../Img/dhruvin/design.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 350px;
+}
+@media (max-width:1441px) {
+    .ds_card-manage {
+        padding: 0px 15px;
+    }
+    .ds_card-manage2 {
+        padding: 0px 0px;
+    }
+    .ds_offer-text {
+        left: 80px;
+    }
+}
+
+@media (max-width:1200px) {
+    .ds_offer-heading{
+       font-size: 40px;
+    }
+    .ds_offer-btn{
+        padding: 10px 35px;
+    }
+    .ds_offer-padding {
+        padding: 0px 25px;
+    }
+    .ds_offer-text {
+        left: 52px;
+    }
+    .ds_card-manage2 {
+        padding: 0px 20px;
+    }
+}
+
+@media (max-width:992px) {
+    .ds_offer-bg{
+        height: 100px;
+    }
+    .ds_offer-text {
+        left: 100px;
+    }
+}
+
+@media (max-width:700px) {
+    .ds_offer-padding{
+        padding: 0px 37px;
+    }
+}
+
+@media (max-width:576px) {
+    .ds_offer-img{
+        height: 300px;
+    }
+    .ds_img-manage{
+        padding: 0px 80px;
+    }
+    .ds_bg-img{
+        height: 300px;
+    }
+    .ds_offer-text {
+        left: 185px;
+    }
+    .ds_off-flat{
+        height: 170px;
+    }
+    .ds_ring-bg{
+        height: 170px;
+    }
+    .ds_sale-bg{
+        height: 340px;
+    }
+}
+
+@media (max-width:426px) {
+    .ds_img-manage{
+        padding: 0px 50px;
+    }
+    .ds_offer-text {
+        left: 127px;
+    }
+}
+
+@media (max-width:376px) {
+    .ds_img-manage{
+        padding: 0px 30px;
+    }  
+}
+
+@media (max-width:376px) {
+    .ds_offer-text {
+        left: 100px;
+    }
+}
+
+@media (max-width:321px) {
+    .ds_offer-text {
+        left: 73px;
+    }
+}

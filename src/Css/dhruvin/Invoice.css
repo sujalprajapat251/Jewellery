@@ -1,0 +1,113 @@
+.ds_in-bg{
+    background: #F5F4F1;
+    padding: 20px;
+}
+.ds_in-text{
+    color: #727272;
+}   
+.ds_in-border{
+    border-right: 0.5px solid #6A6A6A;
+    padding-right: 10px;
+
+} 
+.ds_in-sold{
+    color: #727272;
+}
+.ds_in-line{
+    background-color: #6A6A6A;
+    height: 1px;
+    margin: 0px 5px;
+}
+.ds_in-basic{
+    border-bottom: 0.1px solid #6A6A6A
+}
+.ds_in-title{
+    font-weight: 500;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 8px 12px;
+    text-align: left;
+  }
+  th {
+    font-weight: bold;
+    color: #555;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .ds_table-desc {
+    font-size: 14px;
+    color: #777;
+  }
+  .ds_table-price {
+    font-weight: bold;
+    color: #333;
+  }
+  .payment-method {
+    margin-top: 20px;
+  }
+  .payment-method h4 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .payment-method p {
+    margin: 0;
+    color: #555;
+  }
+  .summary {
+    margin-top: 20px;
+    width: 100%;
+  }
+  .summary td {
+    padding: 8px 12px;
+    text-align: right;
+  }
+  .summary td:first-child {
+    text-align: left;
+  }
+  .summary tr td:last-child {
+    font-weight: bold;
+  }
+  .ds_in-method{
+    color: #6A6A6A;
+  }
+  .ds_in-sub{
+    font-size: 14px;
+    color: #727272;
+  }
+  .d_invoicefooter{
+    background: #4D1F08;
+    padding: 20px 0;
+    text-align: center;
+  }
+  .d_invoicefooter p{
+    font-size: 14px;
+    color: #fff;
+    font-weight: 400;
+    max-width: 550px;
+    margin: auto;
+  }
+
+
+  @media (max-width:768px) {
+ .ds_in-border{
+    border: none;
+ }
+ .ds_table-main{
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Enables smooth scrolling on iOS */
+  }
+  table {
+    min-width: 600px; /* Set a minimum width if necessary to force scrolling */
+  }
+  }
+
+  @media (max-width:376px) {
+    .ds_in-flex-manage{
+       width: 100%;
+    }    
+   }
