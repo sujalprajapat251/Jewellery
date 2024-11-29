@@ -1,38 +1,44 @@
-.App {
-  text-align: center;
+
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+body{
+  font-family: "EB Garamond", serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.ds_container {
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 10px; 
+  padding-right: 10px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+
+
+@media (min-width: 1650px) {
+  .ds_container {
+      width: 1550px;
   }
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+@media (min-width: 1200px) and (max-width: 1649px) {
+  .ds_container {
+      width: 1170px;
+      max-width: none;
   }
-  to {
-    transform: rotate(360deg);
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  .ds_container {
+      width: 970px;
+      max-width: none;
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .ds_container {
+      width: 750px;
+      max-width: none;
+  }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  .ds_container {
+      max-width: 750px;
   }
 }
