@@ -6,7 +6,6 @@ import { IoSearch } from 'react-icons/io5';
 const Payment = () => {
 
     const [activeButton, setActiveButton] = useState('Pay on Delivery');
-    const [upipayId, setUpipayId] = useState('');
 
 
 

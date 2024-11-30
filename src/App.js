@@ -9,6 +9,7 @@ import Payment from './Pages/Payment';
 import OrderDetails from './Pages/OrderDetails';
 import Invoice from './Pages/Invoice';
 import Offers from './Pages/Offers';
+import About from './Pages/About';
 const App = () => {
   return (
     <>
@@ -21,6 +22,7 @@ const App = () => {
             <Route path="/orderdetails" element={<OrderDetails/>}></Route>
             <Route path="/invoice" element={<Invoice/>}></Route>
             <Route path="/offers" element={<Offers/>}></Route>
+            <Route path="/about" element={<About />}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

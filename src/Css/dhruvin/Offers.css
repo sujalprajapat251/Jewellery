@@ -110,6 +110,12 @@
     background-repeat: no-repeat;
     height: 350px;
 }
+.ds_hide{
+    display: none;
+}
+
+
+
 @media (max-width:1441px) {
     .ds_card-manage {
         padding: 0px 15px;
@@ -138,6 +144,9 @@
     .ds_card-manage2 {
         padding: 0px 20px;
     }
+    .ds_al-desing{
+        height: 280px;
+    }
 }
 
 @media (max-width:992px) {
@@ -147,6 +156,21 @@
     .ds_offer-text {
         left: 100px;
     }
+    .ds_al-desing{
+        height: 250px;
+    }
+}
+
+@media (max-width:767px) {
+    .ds_hide-show{
+        display: none;
+    }
+   .ds_al-desing{
+      display: none;
+   }
+   .ds_hide{
+      display: block;
+   }
 }
 
 @media (max-width:700px) {
@@ -157,7 +181,16 @@
 
 @media (max-width:576px) {
     .ds_offer-img{
-        height: 300px;
+        height: 250px;
+        object-fit: cover;
+    }
+    .ds_hand-white{
+        height: 250px;
+        object-fit: cover;
+    }
+    .ds_nack-star{
+        height: 250px;
+        object-fit: cover; 
     }
     .ds_img-manage{
         padding: 0px 80px;
@@ -185,6 +218,30 @@
     }
     .ds_offer-text {
         left: 127px;
+    }
+    .ds_al-img{
+        height: 300px;
+        object-fit: cover;
+    }
+    .ds_al-nack{
+        height: 300px;
+        object-fit: cover; 
+    }
+    .ds_hand-ring{
+        height: 300px;
+        object-fit: cover;  
+    }
+    .ds_al-box{
+        height: 300px;
+        object-fit: cover; 
+    }
+    .ds_al-paper-ring{
+        height: 300px;
+        object-fit: cover; 
+    }
+    .ds_al-chain{
+        height: 300px;
+        object-fit: cover; 
     }
 }
 
