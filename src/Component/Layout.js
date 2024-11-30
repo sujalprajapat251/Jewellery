@@ -14,7 +14,7 @@ const Layout = () => {
           </div>
         </div>
         {/* <h1> hellllo</h1> */}
-
+      <Footer />
       </div>
     </>
   )
