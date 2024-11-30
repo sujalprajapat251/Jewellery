@@ -81,6 +81,7 @@
     }
     .s_footer_main .s_logo_des {
         width: 100%;
+        text-align: center;
     }
     .s_footer_main .s_footer_icon{
         justify-content: center;
@@ -90,6 +91,11 @@
 @media (max-width: 576px) {
     .s_footer_main .s_footer_right ul{
         width: 50%;
+        padding: 10px;
     }
+    .s_footer_main .s_logo_des {
+        padding: 10px;
+        text-align: center;
+    } 
 
 }
