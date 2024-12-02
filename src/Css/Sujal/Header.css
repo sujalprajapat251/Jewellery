@@ -28,6 +28,7 @@
     border: none;
     background-color: transparent;
     width: 100%;
+    outline: none;
 }
 .s_header_input svg {
     fill: var(--brown);
