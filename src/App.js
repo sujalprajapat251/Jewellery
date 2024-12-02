@@ -10,6 +10,10 @@ import OrderDetails from './Pages/OrderDetails';
 import Invoice from './Pages/Invoice';
 import Offers from './Pages/Offers';
 import About from './Pages/About';
+import Contact from './Pages/Contact';
+import Faq from './Pages/Faq';
+import TermsCondition from './Pages/TermsCondition';
+import Privacy from './Pages/Privacy';
 const App = () => {
   return (
     <>
@@ -23,6 +27,10 @@ const App = () => {
             <Route path="/invoice" element={<Invoice/>}></Route>
             <Route path="/offers" element={<Offers/>}></Route>
             <Route path="/about" element={<About />}></Route>
+            <Route path="/contact" element={<Contact />}></Route>
+            <Route path="/faq" element={<Faq/>}></Route>
+            <Route path="/terms" element={<TermsCondition/>}></Route>
+            <Route path="/privacy" element={<Privacy/>}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

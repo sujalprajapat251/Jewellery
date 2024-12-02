@@ -2,15 +2,12 @@ import React from 'react'
 import '../Css/dhruvin/Cart.css'
 import { IoIosCloseCircle } from 'react-icons/io'
 import { FaMinus, FaPlus } from 'react-icons/fa'
-import { GoHome } from 'react-icons/go'
-import { IoBagHandleOutline } from 'react-icons/io5'
-import { BsThreeDotsVertical } from 'react-icons/bs'
 
 const Cart = () => {
   return (
     <>
     {/* *************** Cart ************    */}
-      <section>
+      <section className='mb-5'>
         <div className='ds_container'>
             <div>
                 <h2>Cart</h2>

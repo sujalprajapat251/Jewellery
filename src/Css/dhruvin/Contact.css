@@ -1,0 +1,96 @@
+.ds_contact-bg{
+    background-image: url(../../Img/dhruvin/about-line.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position:left;
+}
+.ds_contact-inner{
+    padding-bottom: 180px;
+}
+.ds_contact-box{
+    position: absolute;
+    top: 50px;
+    right: -200px;
+    width: 70%;
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background: #FFFFFF;
+    padding: 30px;
+}
+.ds_contact-input{
+    border: 0.75px solid #000000;
+    width: 100%;
+    padding: 8px 15px;
+}
+.ds_contact-area{
+    width: 100%;
+    padding:10px 15px ;
+}
+.ds_contact-btn{
+    background: #4D1F08;
+    color: white;
+    outline: none;
+    border: 1px solid #4D1F08;
+    padding: 8px 50px;
+}
+.ds_contact-card {
+    background: 
+        url(../../Img/dhruvin/contact-card-bg.png); /* Image layer */
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.ds_contact-body{
+    padding: 30px 115px;
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background-color: white;
+}
+.ds_contact-rot{
+    height: 50px;
+    width: 50px;
+    background: #E9D5CB;
+    padding: 5px;
+}
+
+
+
+
+
+
+@media (max-width:1441px) {
+    .ds_contact-inner {
+        padding-bottom: 340px;
+    }
+    .ds_contact-body{
+        padding: 30px 44px;
+    }
+}
+
+@media (max-width:1200px) {
+    .ds_contact-box{
+      width: 72%;
+      right: -137px;
+    }
+    .ds_contact-body {
+        padding: 30px 19px;
+    }
+}
+
+@media (max-width:992px) {
+    .ds_contact-inner {
+        padding-bottom: 50px;
+    }
+    .ds_contact-box{
+        position: relative;
+        width: 100%;
+        left: 0;
+        right: 0;
+        top: 0;
+    }
+}
+
+@media (max-width:575px) {
+    .ds_contact-rot{
+        height: 40px;
+        width: 40px;
+    }
+}

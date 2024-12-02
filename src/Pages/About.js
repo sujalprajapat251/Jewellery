@@ -139,25 +139,25 @@ const About = () => {
 
      <section>
         <div className='mt-5 pt-2'>
-            <div className='ds-about-ring-bg'>
+            <div className='ds-about-ring-bg pb-5'>
                 <div className="ds_container">
                     <div className='ds_about-chain-b'>
-                       <div className="row pt-5">
-                         <div className="col-xl-7 pt-4">
+                       <div className="row pt-5 pb-3">
+                         <div className="col-xl-7 col-lg-7 col-md-12 col-sm-12 col-12 pt-4">
                             <div>
                                 <div className="row">
-                                    <div className="col-xl-5">
+                                    <div className="col-xl-5 col-lg-5 col-md-5 col-sm-12 ">
                                         <div>
                                             <div>
-                                                <img src={require("../Img/dhruvin/about-hand-ring.png")} alt="" width="100%" />
+                                                <img className='ds_about-hand-ring' src={require("../Img/dhruvin/about-hand-ring.png")} alt="" width="100%" />
                                             </div>
                                             <div className="row">
-                                                <div className="col-xl-7">
+                                                <div className="col-xl-7 col-lg-7 col-md-7 col-sm-7  mt-md-0 mt-4">
                                                     <div>
-                                                        <img src={require("../Img/dhruvin/about-best-ring.png")} alt="" width="100%" />
+                                                        <img className='ds_about-best-ring' src={require("../Img/dhruvin/about-best-ring.png")} alt="" width="100%" />
                                                     </div>
                                                 </div>
-                                                <div className="col-xl-5">
+                                                <div className="col-xl-5 col-lg-5 col-md-5 col-sm-5  mt-md-0 mt-4">
                                                     <div>
                                                        <img className='ds_about-pandle' src={require("../Img/dhruvin/pandle.png")} alt="" width="100%" />
                                                     </div>
@@ -166,7 +166,7 @@ const About = () => {
                                         </div>
                                     </div>
 
-                                    <div className="col-xl-7">
+                                    <div className="col-xl-7 col-lg-7 col-md-7 col-sm-12  mt-md-0 mt-4">
                                         <div>
                                             <img className='ds_about-girl' src={require("../Img/dhruvin/about-girl.png")} alt="" width="100%" />
                                         </div>
@@ -175,9 +175,13 @@ const About = () => {
                             </div>
                          </div>
 
-                         <div className="col-xl-5">
+                         <div className="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12 pt-4">
                             <div className='ds_about-chain-bg'>
-
+                               <div className='ds_about-box3'>
+                                  <p>What we do</p>
+                                  <h2 className='ds_color fw-bold'>We Develop Create Custom Jewels.</h2>
+                                  <p className='ds_lh'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the </p>
+                               </div>
                             </div>
                          </div>
                        </div>

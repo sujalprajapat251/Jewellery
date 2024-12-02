@@ -1,0 +1,146 @@
+.ds_faq-bg{
+    background-image: url(../../Img/dhruvin/about-line.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position:left;
+}     
+.ds_faq-box{
+    position: absolute;
+    top: 85px;
+    right: -33%;
+    width: 50%;
+    padding: 20px;
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background: #FFFFFF;
+}
+
+
+
+
+
+
+/* *********** Accordian ************ */
+.ds_faq-drop{
+    background: #F4EFEB;
+}
+.ds_drop-btn{
+    width: 100%;
+    padding:14px 20px;
+    border: none;
+    outline: none;
+    background-color: white;
+    text-align: left;
+
+}
+.ds_faq-drop-box{
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background: #FFFFFF;
+    padding: 0px 20px;
+}
+.ds_faq-btn-color{
+    background: #4D1F08;
+    color: white;
+}
+.ds_help-body{
+    margin-right: 30px;
+  }
+  .accordion {
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .accordion-header {
+    cursor: pointer;
+    padding: 20px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: none; /* Remove the border between header and body */
+    position: relative;
+    border-bottom: 0.5px solid #cccaca;
+  }
+  .ds_accor-title{
+    font-size: 18px;
+  }
+  .accordion-body {
+    max-height: 0;
+    padding: 0px 0px !important;
+    background: #fff;
+    position: relative;
+    transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+    border-bottom: 0.5px solid #cccaca;
+
+  } 
+  
+  
+    
+  .accordion.open .accordion-body {
+    max-height: 500px !important; 
+    padding: 10px 0px !important;
+  }
+  
+  
+  .ds_accor-question {
+    font-size: 18px;
+    color: black;
+    font-weight: 500;
+    padding: 20px 15px;
+  
+  }
+  
+  .accordion-header {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .ds_accor-shadow{
+    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ds_accor-border{
+    border: 0.75px solid #72727240
+  } 
+  
+
+  
+  .accordion-header .fa-plus {
+    display: inline;
+  }
+  
+  .accordion-header .fa-minus {
+    display: none;
+  }
+  
+  .accordion.open .fa-plus {
+    display: none;
+  }
+  
+  .accordion.open .fa-minus {
+    display: inline;
+    cursor: pointer;
+  }
+  
+  
+
+@media (max-width:1441px) {
+    .ds_faq-box {
+        top: 37px;
+        width: 67%;
+        right: -45%;
+    }
+}
+
+@media (max-width:1200px) {
+    .ds_faq-box{
+        right: -21%;
+    }
+}
+
+@media (max-width:992px) {
+    .ds_faq-box{
+        position: relative;
+        width: 100%;
+        top: 0;
+        left: 0;
+    }
+}
