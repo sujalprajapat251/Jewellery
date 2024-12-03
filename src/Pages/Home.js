@@ -28,6 +28,10 @@ import seller12 from '../Img/Sujal/seller12.png';
 import { Col, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { GoHeart } from 'react-icons/go';
+import es_card1 from '../Img/Sujal/platinum.png';
+import es_card2 from '../Img/Sujal/design.png';
+import es_card3 from '../Img/Sujal/jewel.png';
+
 function Home() {
     const cat_sliderres = {
 
@@ -37,6 +41,15 @@ function Home() {
         1024: { items: 4 },
         1200: { items: 5 },
         1440: { items: 7 },
+    }
+    const feature_sliderres = {
+
+        0: { items: 1 },
+        376: { items: 2 },
+        600: { items: 3 },
+        1024: { items: 3 },
+        1200: { items: 3 },
+        1440: { items: 4 },
     }
     const card_detail = [
         { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: seller1 },
@@ -51,7 +64,6 @@ function Home() {
         { title: 'Dimond Set', price: '1200', old_price: '1500', rating: 5, img: seller10 },
         { title: 'Dimond Earring', price: '1200', old_price: '1500', rating: 2, img: seller11 },
         { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 1, img: seller12 },
-
     ]
     return (
         <>
@@ -150,8 +162,8 @@ function Home() {
                 </section>
                 <section className='s_seller_sec ds_container'>
                     <div className='s_cat_head'>
-                        <p className='mb-2'>DISCOVER ALL TRENDS</p>
-                        <h2>Shop by category</h2>
+                        <p className='mb-2'>Explore our most loved products</p>
+                        <h2>The Best Sellers</h2>
                     </div>
                     <Row xxl={6} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-0 gx-sm-3'>
                         {
@@ -172,7 +184,7 @@ function Home() {
                                             <div className='s_card_text'>
                                                 <h5>{ele.title}</h5>
                                                 <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike class="mx-2">₹{ele.old_price}</strike></p>
-                                                <div className='sp_rating'>
+                                                <div className='s_rating'>
                                                     {
                                                         [...Array(5)].map((_, index) => {
                                                             if (index < ele.rating) {
@@ -223,6 +235,226 @@ function Home() {
                         </Col> */}
                     </Row>
                 </section>
+            </section>
+            <section className='s_elegance_sec'>
+                <div className='ds_container row'>
+                    <div className='s_elegance_con col-xl-10 col-12 mx-auto'>
+                        <h2 className='s_elegance_head'>Style & Elegance</h2>
+                        <Row className='align-items-center pt-5' >
+                            <Col lg={6} md={6}>
+                                <img src={require('../Img/Sujal/elegance_img.png')} className='w-100' alt='elegance'></img>
+                            </Col>
+                            <Col xxl={4} lg={6} md={6}>
+                                <div className='s_elegance_text'>
+                                    <h4>Charmed By The Style</h4>
+                                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the</p>
+                                    <div className='s_elegance_btn'>
+                                        <Link>Shop Now</Link>
+                                    </div>
+                                </div>
+                            </Col>
+                        </Row>
+                    </div>
+                </div>
+            </section>
+            <section className='s_essential_sec'>
+                <div className='ds_container s_seller_sec'>
+                    <div className='s_cat_head'>
+                        <p className='mb-2'>Celebrate your day with our collection</p>
+                        <h2>Essentials For You</h2>
+                    </div>
+                    <Row className='row-cols-1 gx-0 gx-sm-4' lg={4} sm={2}>
+                        <Col className='position-relative py-5' >
+                            <div className='s_es_card'>
+                                <img src={require('../Img/Sujal/weddingwear.png')} alt='wedding wear' className='w-100 '></img>
+                                <div className='s_card_detail'>
+                                    <div>
+                                        <h4>Wedding Wear</h4>
+                                        <p>Traditional attire</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col className='position-relative py-5'>
+                            <div className='s_es_card'>
+                                <img src={require('../Img/Sujal/partywear.png')} alt='party wear' className='w-100 '></img>
+                                <div className='s_card_detail'>
+                                    <div>
+                                        <h4>Party Wear</h4>
+                                        <p>Glamorous Look</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col className='position-relative py-5'>
+                            <div className='s_es_card'>
+                                <img src={require('../Img/Sujal/officewear.png')} alt='office wear' className='w-100 '></img>
+                                <div className='s_card_detail'>
+                                    <div>
+                                        <h4>Office Wear</h4>
+                                        <p>Professional Look</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col className='position-relative py-5'>
+                            <div className='s_es_card'>
+                                <img src={require('../Img/Sujal/everydaywear.png')} alt='everyday wear' className='w-100 '></img>
+                                <div className='s_card_detail'>
+                                    <div>
+                                        <h4>Everyday Wear</h4>
+                                        <p>Casual Comfort</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row className='py-5 gx-0 gx-sm-3' >
+                        <Col lg={4} sm={12}>
+                            <div className='s_card d-flex align-items-center' >
+                                <img src={es_card1} className='w-100' alt='card1'></img>
+                                <div>
+                                    <div>
+                                        <h3>Alluring</h3>
+                                        <h1>Platinum</h1>
+                                    </div>
+                                    <p className='text-white'>SIMPLEM& ELEGANT</p>
+                                    <small className='text-white'>Design starts from $120</small>
+                                    <div className='s_card_btn'>
+                                        <Link to={'#'}>Shop Now</Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col lg={4} sm={12}>
+                            <div className='s_card d-flex align-items-center' >
+                                <img src={es_card2} className='w-100' alt='card2'></img>
+                                <div>
+                                    <div>
+                                        <h3 className='text-white'>Luminous</h3>
+                                        <h1>Design</h1>
+                                    </div>
+                                    <p className='text-white'>GIRLS DIAMOND CHAINS</p>
+                                    <small className='text-white'>Design starts from $120</small>
+                                    <div className='s_card_btn'>
+                                        <Link to={'#'}>Shop Now</Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col lg={4} sm={12} className=''>
+                            <div className='s_card d-flex align-items-center s_card1' >
+                                <img src={es_card3} className='w-100' alt='card3'></img>
+                                <div>
+                                    <div>
+                                        <h3>Enchanting</h3>
+                                        <h1>Jewels</h1>
+                                    </div>
+                                    <p className='text-white'>GORGEOUS ROSE GOLD</p>
+                                    <small className='text-white'>Design starts from $120</small>
+                                    <div className='s_card_btn'>
+                                        <Link to={'#'}>Shop Now</Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
+                </div>
+            </section>
+            <section className='s_feature_sec'>
+                <div className='row d-flex justify-content-between gx-0'>
+                    <div className='col-lg-8 s_feature_slider '>
+                        <div class="s_feature_bgtxt ">FEATURED PRODUCTS</div>
+                        <div className='s_cat_slider w-100 pt-0' >
+                            <OwlCarousel className='owl-theme ' loop margin={20} items={4} nav={true} dots={false}
+                                responsive={
+                                    feature_sliderres
+                                }
+                            >
+                                <Link class='item'>
+                                    <img src={require('../Img/Sujal/s_necklace.png')} className='w-100' alt='Necklace'></img>
+                                    <div className='s_slider_text'>
+                                        <h5>Necklace</h5>
+                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike class="mx-2">₹1500</strike></p>
+                                        <div className='s_rating'>
+                                            {
+                                                [...Array(5)].map((_, index) => {
+                                                    if (index < 3) {
+                                                        return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                    } else {
+                                                        return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                        ;
+                                                    }
+                                                })
+                                            }
+                                        </div>
+                                    </div>
+                                </Link>
+                                <Link class='item'>
+                                    <img src={require('../Img/Sujal/s_bracelet.png')} className='w-100' alt='Bracelet'></img>
+                                    <div className='s_slider_text'>
+                                        <h5>Bracelet</h5>
+                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike class="mx-2">₹1500</strike></p>
+                                        <div className='s_rating'>
+                                            {
+                                                [...Array(5)].map((_, index) => {
+                                                    if (index < 1) {
+                                                        return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                    } else {
+                                                        return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                        ;
+                                                    }
+                                                })
+                                            }
+                                        </div>
+                                    </div>
+                                </Link>
+                                <Link class='item'>
+                                    <img src={require('../Img/Sujal/s_diamond_ring.png')} className='w-100' alt='Dimond Ring'></img>
+                                    <div className='s_slider_text'>
+                                        <h5>Dimond Ring</h5>
+                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike class="mx-2">₹1500</strike></p>
+                                        <div className='s_rating'>
+                                            {
+                                                [...Array(5)].map((_, index) => {
+                                                    if (index < 0) {
+                                                        return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                    } else {
+                                                        return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                        ;
+                                                    }
+                                                })
+                                            }
+                                        </div>
+                                    </div>
+                                </Link>
+                                <Link class='item'>
+                                    <img src={require('../Img/Sujal/s_diamond_earing.png')} className='w-100' alt='Dimond Earring'></img>
+                                    <div className='s_slider_text'>
+                                        <h5>Dimond Earring</h5>
+                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike class="mx-2">₹1500</strike></p>
+                                        <div className='s_rating'>
+                                            {
+                                                [...Array(5)].map((_, index) => {
+                                                    if (index < 5) {
+                                                        return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                    } else {
+                                                        return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                        ;
+                                                    }
+                                                })
+                                            }
+                                        </div>
+                                    </div>
+                                </Link>
+
+                            </OwlCarousel>
+                        </div>
+                    </div>
+                    <div className='col-lg-4 s_feature_img'>
+                        <img src={require('../Img/Sujal/featureimg.png')} alt='feature Img' className=''></img>
+                    </div>
+                </div>
             </section>
         </>
     )
