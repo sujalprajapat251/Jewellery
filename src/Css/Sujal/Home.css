@@ -324,7 +324,7 @@
     background-size: cover;
     padding: 70px 0px;
     position: relative;
-    z-index: -1;
+    z-index: 0;
 }
 
 .s_essential_sec .s_card_detail {
@@ -386,8 +386,8 @@
     justify-content: center;
     align-items: center;
     margin-top: 10px;
-    position: relative;
-    z-index: 1;
+    border: 1px solid white;
+
 }
 .s_essential_sec .s_card_btn a {
     color: var(--brown);
@@ -396,7 +396,9 @@
 .s_essential_sec .s_card_btn:hover {
     background-color: transparent !important;
 }
-
+.s_essential_sec .s_card_btn:hover a{
+    color: white;
+}
 
 
 
@@ -511,11 +513,113 @@
   }
 
 
+  .s_right_diamond {
+    margin-left:auto ;
+        width: 400px;
+        object-fit: cover;
+        position: relative;
+        z-index: 5;
+}
+.s_right_diamond img {
+    position: absolute;
+    top: 100%;
+    right: 0px;
+}
 
 
 
+.s_service_sec{
+    padding: 70px 0px;
+    text-transform: capitalize;
+    position: relative;
+}
+.s_service_sec::before{
+    content:' ';
+    position: absolute;
+    top: 0%;
+    transform: translateY(-60%);
+    right: 0px;
+    /* z-index: 2; */
+    width: 400px;
+    height: 100%;
+    background-image:url('../../Img/Sujal/diamond.png');
+    background-size: cover;
+}
+.s_service_sec::after{
+    content:' ';
+    position: absolute;
+    top: 100%;
+    transform: translateY(-50%);
+    left: 0px;
+    /* z-index: 2; */
+    width: 400px;
+    height: 100%;
+    background-image:url('../../Img/Sujal/diamond2.png');
+    background-size: cover;
+}
+.s_service_sec .s_service_box {
+    padding: 30px 0px;
+}
+.s_service_sec .s_service_box img {
+    margin-right:20px;
+}
+.s_service_sec .s_service_box h4{
+    color: var(--brown);
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 0px;
+}
+.s_service_sec .s_service_box p{
+    color: #727272;
+}
 
 
+
+.s_news_sec {
+    background-image: url('../../Img/Sujal/newletter_bg.png');
+    height: 320px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-color: black;
+    padding: 70px 0px;
+    text-align: center;
+    color: white;
+}
+
+
+.s_news_detail {
+    width: 550px;
+    margin: auto;
+}
+.s_news_detail h2 {
+    font-size: 36px;
+    font-weight: 500;
+    margin: auto;
+}
+.s_news_search input {
+    width: 100%;
+    background-color: #EEEEEE;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    height: 40px;
+    padding: 5px 10px;
+}
+.s_news_detail .s_news_btn {
+    color: white ; 
+    background-color: var(--brown);
+}
+.s_news_detail .s_news_btn a{
+    padding: 0px 20px;
+    font-size: 18px;
+    text-decoration: none;
+    color: white;
+    text-transform: uppercase;
+    /* border-radius: 5px; */
+    line-height: 40px;
+    font-size: 16px;
+}
 
 
 
@@ -525,6 +629,8 @@
     .s_slider .owl-carousel .item {
         background-position: center;
     }
+
+
 }
 
 
@@ -539,6 +645,9 @@
         position: relative;
         top:50px
       }
+      .s_service_sec .s_service_box {
+        padding: 30px 20px;
+    }
 }
 @media (min-width: 1441px) {
     .s_elegance_con .s_elegance_text {
@@ -563,6 +672,10 @@
       }
     .s_feature_slider  .s_cat_slider{
         padding: 0px !important;
+    }
+
+    .s_service_box img {
+        margin-right: 5px !important;
     }
 }
 @media (max-width:1299px){
@@ -604,6 +717,13 @@
     .s_feature_img img {
         height: 300px;
         object-position: center center;
+    }
+
+
+    .s_service_sec::after , .s_service_sec::before {
+        background-size: cover;
+        height: 350px;
+        transform: translateY(-70%);
     }
 }
 
@@ -689,6 +809,20 @@
         width: 100%;
         margin-top: 30px;
     }
+    .s_news_sec {
+        height: auto;
+        padding: 30px 10px;
+    }
+    .s_news_detail {
+        width: 100%;
+        padding: 0px 10px;
+    }
+    .s_news_detail h2 {
+        font-size: 24px;
+    }
+    .s_news_search {
+        width: 100%;
+    }
 }
 
 @media (max-width: 424px) {
@@ -744,6 +878,13 @@
     .s_card .s_card_btn {
         /* width: 100%; */
         margin-top: 20px;
+    }
+
+    .s_service_sec::after , .s_service_sec::before {
+        background-size: cover;
+        height: 300px;
+        width: 300px;
+        transform: translateY(-70%);
     }
 }
 

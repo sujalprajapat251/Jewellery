@@ -451,8 +451,82 @@ function Home() {
                             </OwlCarousel>
                         </div>
                     </div>
-                    <div className='col-lg-4 s_feature_img'>
+                    <div className='col-lg-4 s_feature_img d-none d-lg-block'>
                         <img src={require('../Img/Sujal/featureimg.png')} alt='feature Img' className=''></img>
+                    </div>
+                </div>
+            </section>
+            {/* <div className='s_right_diamond'>
+                <img className='w-100' src={require('../Img/Sujal/diamond.png')} alt='diamonds'></img>
+            </div> */}
+            <section className='s_service_sec'>
+                <div className='ds_container'>
+                <div className='s_cat_head'>
+                    <p className='mb-2'>Your satisfaction is our mission</p>
+                    <h2>Our Services</h2>
+                </div>
+                <Row lg={3} md={2}  className='justify-content-center row-cols-1 gx-0 gx-md-4'>
+                    <Col>
+                        <div className='s_service_box d-flex justify-content-between align-items-center'>
+                                <img src={require('../Img/Sujal/shipping.png')} alt='Shipping'></img>
+                                <div>
+                                    <h4>Shipping</h4>
+                                    <p className='mb-0'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the </p>
+                                </div>
+                        </div>
+                    </Col>
+                    <Col>
+                        <div className='s_service_box d-flex justify-content-between align-items-center'>
+                                <img src={require('../Img/Sujal/money-back.png')} alt='Money-Back'></img>
+                                <div>
+                                    <h4>15 Day Money-Back</h4>
+                                    <p className='mb-0'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the </p>
+                                </div>
+                        </div>
+                    </Col>
+                    <Col>
+                        <div className='s_service_box d-flex justify-content-between align-items-center'>
+                                <img src={require('../Img/Sujal/hallmarks.png')} alt='BIS Hallmarked'></img>
+                                <div>
+                                    <h4>BIS Hallmarked</h4>
+                                    <p className='mb-0'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the </p>
+                                </div>
+                        </div>
+                    </Col>
+                    <Col>
+                        <div className='s_service_box d-flex justify-content-between align-items-center'>
+                                <img src={require('../Img/Sujal/warranty.png')} alt='Warranty'></img>
+                                <div>
+                                    <h4>One Year Warranty</h4>
+                                    <p className='mb-0'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the </p>
+                                </div>
+                        </div>
+                    </Col>
+                    <Col>
+                        <div className='s_service_box d-flex justify-content-between align-items-center'>
+                                <img src={require('../Img/Sujal/certified.png')} alt='Certified'></img>
+                                <div>
+                                    <h4>100% Certified</h4>
+                                    <p className='mb-0'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the </p>
+                                </div>
+                        </div>
+                    </Col>
+
+                </Row>
+                </div>
+
+            </section>
+            <section className='s_news_sec'>
+                <div className='s_news_detail'>
+                    <p>NEWSLETTER</p>
+                    <h2>Subscribe And Get</h2>
+                    <h2>10% Off On Your First Order</h2>
+                    <p>Keep up with our latest news and Sales.</p>
+                    <div className='s_news_search d-flex justify-content-between'>
+                        <input type='text' placeholder='Enter Email Address'></input>
+                        <div className='s_news_btn'>
+                            <Link>Subscribe</Link>
+                        </div>
                     </div>
                 </div>
             </section>

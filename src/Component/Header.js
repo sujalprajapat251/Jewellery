@@ -1,21 +1,81 @@
-import { Nav, Offcanvas, Accordion } from 'react-bootstrap';
+import { Nav, Offcanvas, Accordion, Modal } from 'react-bootstrap';
 import '../Css/Sujal/Header.css';
-import { IoCartOutline, IoPersonOutline, IoSearch } from 'react-icons/io5';
+import { IoCartOutline, IoCloseOutline, IoPersonOutline, IoSearch } from 'react-icons/io5';
 import { IoMdHeartEmpty } from 'react-icons/io';
-import { FaBars } from 'react-icons/fa';
+import { FaArrowRight, FaBars } from 'react-icons/fa';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import ring1 from '../Img/Sujal/s_diamond_earing.png';
+import ring2 from '../Img/Sujal/s_diamond_earing.png';
+import ring3 from '../Img/Sujal/engage-ring.png';
+
 function Header() {
+
+
+    // offcanvas 
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+
+
+    // Login Model
+    const [showLogin, setShowLogin] = useState(false);
+
+    const handleLoginClose = () => setShowLogin(false);
+    const handleLoginShow = () => setShowLogin(true);
+
+    // forgot password Model
+    const [showForPass, setShowForPass] = useState(false);
+
+    const handleForPassClose = () => setShowForPass(false);
+    const handleForPassShow = () => setShowForPass(true);
+    // forgot password Model
+    const [showOTP, setShowOTP] = useState(false);
+
+    const handleOTPClose = () => setShowOTP(false);
+    const handleOTPShow = () => setShowOTP(true);
+
+    // forgot password Model
+    const [showResetPass, setShowResetPass] = useState(false);
+
+    const handleResetPassClose = () => setShowResetPass(false);
+    const handleResetPassShow = () => setShowResetPass(true);
+
+    // Login Model
+    const [showRegister, setShowRegister] = useState(false);
+
+    const handleRegisterClose = () => setShowRegister(false);
+    const handleRegisterShow = () => setShowRegister(true);
+
+
+    // search model 
+    const [Search, setSearch] = useState('');
+
+    const allData = [
+        { name: 'ring', img: ring1, popular: false, price: '1200', oldPrice: '1500' },
+        { name: 'Finger rings', img: ring2, popular: false, price: '1200', oldPrice: '1500' },
+        { name: 'Couple rings', img: ring1, popular: false, price: '1200', oldPrice: '1500' },
+        { name: 'Vanki - rings', img: ring3, popular: false, price: '1200', oldPrice: '1500' },
+        { name: 'Baroque - Rings', img: ring1, popular: false, price: '1200', oldPrice: '1500' },
+        { name: 'ring', img: ring1, popular: false, price: '1200', oldPrice: '1500' },
+        { name: 'Diamond Ring Set', img: ring2, popular: true, price: '1200', oldPrice: '1500' },
+        { name: 'Golden Ring', img: ring3, popular: true, price: '1200', oldPrice: '1500' },
+    ]
+    const [searchData, setSearchData] = useState([]);
+    const searchHandle = () => {
+        const filteredSearchData = allData.filter(item => item.name.toLowerCase().includes(Search.toLowerCase()));
+        console.log(filteredSearchData);
+        setSearchData(filteredSearchData);
+    }
     return (
         <>
             <div className="text-center s_header_top">
                 <p className='ds_container mb-0'>Welcome to our Store</p></div>
             <section className='ds_container s_header_sec d-flex justify-content-between flex-wrap flex-lg-nowrap'>
                 <div className='s_header_input d-flex justify-content-between align-items-center col-lg-4 col-12 order-lg-1 order-3'>
-                    <input type='text' placeholder='Search for Jewellery and more...'></input>
+                    <input type='text' placeholder='Search for Jewellery and more...' onChange={(e) => { setSearch(e.target.value); searchHandle(); }}></input>
                     <IoSearch />
                 </div>
                 <div className='s_logo col-lg-4 col-4 ms-lg-auto order-lg-2 order-1 align-self-center '>
@@ -30,7 +90,7 @@ function Header() {
                         <IoCartOutline />
                         <p className='mb-0'>Cart</p>
                     </div>
-                    <div className='s_header_icon'>
+                    <div className='s_header_icon' onClick={handleLoginShow}>
                         <IoPersonOutline />
                         <p className='mb-0'>Account</p>
                     </div>
@@ -310,11 +370,11 @@ function Header() {
                 </Offcanvas.Header>
                 <Offcanvas.Body className=''>
                     <Accordion flush>
-                        <Accordion.Item eventKey="0">
+                        <Accordion.Item eventKey="0" >
                             <Accordion.Header ><h4 className='s_submenu_head px-0'>All Category</h4></Accordion.Header>
                             <Accordion.Body>
                                 <Accordion flush>
-                                    <Accordion.Item eventKey="0">
+                                    <Accordion.Item eventKey="00">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Category</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -332,7 +392,7 @@ function Header() {
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="1">
+                                    <Accordion.Item eventKey="01">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Gender</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -342,7 +402,7 @@ function Header() {
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="2">
+                                    <Accordion.Item eventKey="02">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price Band</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -359,7 +419,7 @@ function Header() {
                             <Accordion.Header><h4 className='s_submenu_head px-0'>Gold</h4></Accordion.Header>
                             <Accordion.Body>
                                 <Accordion flush>
-                                    <Accordion.Item eventKey="0">
+                                    <Accordion.Item eventKey="10">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Category</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -378,7 +438,7 @@ function Header() {
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="1">
+                                    <Accordion.Item eventKey="11">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Men</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -391,7 +451,7 @@ function Header() {
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="2">
+                                    <Accordion.Item eventKey="12">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Gold Coin</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -416,7 +476,7 @@ function Header() {
                             <Accordion.Header><h4 className='s_submenu_head px-0'>Silver</h4></Accordion.Header>
                             <Accordion.Body>
                                 <Accordion flush>
-                                    <Accordion.Item eventKey="0">
+                                    <Accordion.Item eventKey="20">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Category</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -433,7 +493,7 @@ function Header() {
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="1">
+                                    <Accordion.Item eventKey="21">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Men</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -446,7 +506,7 @@ function Header() {
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="2">
+                                    <Accordion.Item eventKey="22">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -464,7 +524,7 @@ function Header() {
                             <Accordion.Header><h4 className='s_submenu_head px-0'>Diamond</h4></Accordion.Header>
                             <Accordion.Body>
                                 <Accordion flush>
-                                    <Accordion.Item eventKey="0">
+                                    <Accordion.Item eventKey="30">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Category</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -476,7 +536,7 @@ function Header() {
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="1">
+                                    <Accordion.Item eventKey="31">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Earrings</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -487,7 +547,7 @@ function Header() {
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="2">
+                                    <Accordion.Item eventKey="32">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Rings</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -495,7 +555,7 @@ function Header() {
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="3">
+                                    <Accordion.Item eventKey="33">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Pendants</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -506,7 +566,7 @@ function Header() {
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="4">
+                                    <Accordion.Item eventKey="34">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -524,7 +584,7 @@ function Header() {
                             <Accordion.Header><h4 className='s_submenu_head px-0'>Platinum</h4></Accordion.Header>
                             <Accordion.Body>
                                 <Accordion flush>
-                                    <Accordion.Item eventKey="0">
+                                    <Accordion.Item eventKey="40">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Category</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -538,7 +598,7 @@ function Header() {
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="1">
+                                    <Accordion.Item eventKey="41">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -555,7 +615,7 @@ function Header() {
                             <Accordion.Header><h4 className='s_submenu_head px-0'>Gold Coins</h4></Accordion.Header>
                             <Accordion.Body>
                                 <Accordion flush>
-                                    <Accordion.Item eventKey="0">
+                                    <Accordion.Item eventKey="50">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>24 Kt (995)</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -570,7 +630,7 @@ function Header() {
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="1">
+                                    <Accordion.Item eventKey="51">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>22 Kt (916)</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -598,7 +658,7 @@ function Header() {
                             <Accordion.Header><h4 className='s_submenu_head px-0'>Watches</h4></Accordion.Header>
                             <Accordion.Body>
                                 <Accordion flush>
-                                    <Accordion.Item eventKey="0">
+                                    <Accordion.Item eventKey="70">
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Brands</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
@@ -622,16 +682,241 @@ function Header() {
                         <Accordion.Item eventKey="8">
                             <Accordion.Header><h4 className='s_submenu_head px-0'>Gifting</h4></Accordion.Header>
                             <Accordion.Body>
-                            <div className='s_submenu_list'>
-                                <Nav.Link href="#home">Gifting for loved ones</Nav.Link>
-                                <Nav.Link href="#home">Gift Cards</Nav.Link>
-                                <Nav.Link href="#home">Corporate Gifting</Nav.Link>
-                            </div>
+                                <div className='s_submenu_list'>
+                                    <Nav.Link href="#home">Gifting for loved ones</Nav.Link>
+                                    <Nav.Link href="#home">Gift Cards</Nav.Link>
+                                    <Nav.Link href="#home">Corporate Gifting</Nav.Link>
+                                </div>
                             </Accordion.Body>
                         </Accordion.Item>
                     </Accordion>
                 </Offcanvas.Body>
             </Offcanvas>
+
+
+
+            {/* LoginModel */}
+
+            <Modal show={showLogin} onHide={handleLoginClose} animation={false} centered className='s_modal'>
+                <Modal.Header closeButton>
+                    <Modal.Title></Modal.Title>
+                </Modal.Header>
+                <Modal.Body className='s_model_con'>
+                    <div className='s_modal_head text-center' >
+                        <h2>Login</h2>
+                        <p>Login to your existing account to access your account</p>
+                    </div>
+                    <div className='s_modal_field'>
+                        <p>Email</p>
+                        <input type='text' placeholder='Enter email'></input>
+                    </div>
+                    <div className='s_modal_field'>
+                        <p>Password</p>
+                        <input type='text' placeholder='Enter password'></input>
+                        <span className='d-flex justify-content-end' onClick={() => { handleLoginClose(); handleForPassShow(); }}><Link to={'#'} >Forgot Password?</Link></span>
+                    </div>
+                    <div className='s_modal_btn' onClick={handleLoginClose}>
+                        <Link to={'#'}>Login</Link>
+                    </div>
+
+                    <div className='s_modal_or d-flex my-3'>
+                        <div className='s_modal_line'></div>
+                        <small>OR</small>
+                        <div className='s_modal_line'></div>
+                    </div>
+                    <div className='s_modal_btn2'>
+                        <img src={require('../Img/Sujal/google.png')} alt='google'></img>
+                        <p className='mb-0'>Sign in with Google</p>
+                    </div>
+                    <div className='s_modal_btn2'>
+                        <img src={require('../Img/Sujal/facebook.png')} alt='facebook'></img>
+                        <p className='mb-0'>Sign in with Facebook</p>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer className='justify-content-center'>
+                    <span className='d-flex' onClick={() => { handleLoginClose(); handleRegisterShow(); }}><p>Didn’t have any account?</p><Link to={'#'} > Signup</Link></span>
+                </Modal.Footer>
+            </Modal>
+
+
+            {/* forget  password*/}
+            <Modal show={showForPass} onHide={handleForPassClose} animation={false} centered className='s_modal'>
+                <Modal.Header closeButton>
+                    <Modal.Title></Modal.Title>
+                </Modal.Header>
+                <Modal.Body className='s_model_con'>
+                    <div className='s_modal_head text-center' >
+                        <h2>Forgot Password</h2>
+                        <p>Enter your email below to recover your password</p>
+                    </div>
+                    <div className='s_modal_field'>
+                        <p>Email</p>
+                        <input type='text' placeholder='Enter email'></input>
+                    </div>
+
+                    <div className='s_modal_btn' onClick={() => { handleForPassClose(); handleOTPShow(); }}>
+                        <Link to={'#'}>Send Code</Link>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+
+                </Modal.Footer>
+            </Modal>
+
+
+
+            {/* otp modal */}
+            <Modal show={showOTP} onHide={handleOTPClose} animation={false} centered className='s_modal'>
+                <Modal.Header closeButton>
+                    <Modal.Title></Modal.Title>
+                </Modal.Header>
+                <Modal.Body className='s_model_con'>
+                    <div className='s_modal_head text-center' >
+                        <h2>Verify OTP</h2>
+                        <p>Enter verification code which we’ve sent to your registered email</p>
+                    </div>
+                    <div className='s_modal_otp d-flex justify-content-between'>
+                        <input type='text'></input>
+                        <input type='text'></input>
+                        <input type='text'></input>
+                        <input type='text'></input>
+                        <input type='text'></input>
+                        <input type='text'></input>
+                    </div>
+                    <div className='s_modal_btn' onClick={() => { handleOTPClose(); handleResetPassShow(); }}>
+                        <Link to={'#'}>Verify</Link>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+
+                </Modal.Footer>
+            </Modal>
+
+
+            {/* reset password */}
+
+            <Modal show={showResetPass} onHide={handleResetPassClose} animation={false} centered className='s_modal'>
+                <Modal.Header closeButton>
+                    <Modal.Title></Modal.Title>
+                </Modal.Header>
+                <Modal.Body className='s_model_con'>
+                    <div className='s_modal_head text-center' >
+                        <h2>Reset Password</h2>
+                        <p>Reset your password & create new password</p>
+                    </div>
+                    <div className='s_modal_field'>
+                        <p>New Password</p>
+                        <input type='text' placeholder='New Password'></input>
+                    </div>
+                    <div className='s_modal_field'>
+                        <p>Confirm New Password</p>
+                        <input type='text' placeholder='Confirm New Password'></input>
+                    </div>
+                    <div className='s_modal_btn' onClick={() => { handleResetPassClose(); handleLoginShow(); }}>
+                        <Link to={'#'}>Reset Password</Link>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                </Modal.Footer>
+            </Modal>
+
+
+            {/* register modal */}
+            <Modal show={showRegister} onHide={handleRegisterClose} animation={false} centered className='s_modal'>
+                <Modal.Header closeButton>
+                    <Modal.Title></Modal.Title>
+                </Modal.Header>
+                <Modal.Body className='s_model_con'>
+                    <div className='s_modal_head text-center' >
+                        <h2>Create Account</h2>
+                        <p>Create an account & get access to exclusive collection of jewelry</p>
+                    </div>
+                    <div className='s_modal_field'>
+                        <p>Name</p>
+                        <input type='text' placeholder='Enter name'></input>
+                    </div>
+                    <div className='s_modal_field'>
+                        <p>Mobile No.</p>
+                        <input type='text' placeholder='Enter mobile no.'></input>
+                    </div>
+                    <div className='s_modal_field'>
+                        <p>Email</p>
+                        <input type='text' placeholder='Enter email'></input>
+                    </div>
+                    <div className='s_modal_field'>
+                        <p>Password</p>
+                        <input type='text' placeholder='Enter password'></input>
+                    </div>
+                    <div className='s_modal_btn' onClick={() => { handleLoginShow(); handleRegisterClose(); }}>
+                        <Link to={'#'}>Register</Link>
+                    </div>
+
+                    <div className='s_modal_or d-flex my-3'>
+                        <div className='s_modal_line'></div>
+                        <small>OR</small>
+                        <div className='s_modal_line'></div>
+                    </div>
+                    <div className='s_modal_btn2'>
+                        <img src={require('../Img/Sujal/google.png')} alt='google'></img>
+                        <p className='mb-0'>Sign in with Google</p>
+                    </div>
+                    <div className='s_modal_btn2'>
+                        <img src={require('../Img/Sujal/facebook.png')} alt='facebook'></img>
+                        <p className='mb-0'>Sign in with Facebook</p>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer className='justify-content-center' onClick={() => { handleRegisterClose(); handleLoginShow(); }}>
+                    <span className='d-flex'><p>Already have an account?</p><Link to={'#'}> Signin</Link></span>
+                </Modal.Footer>
+            </Modal>
+
+
+            {/* search section */}
+            <section className={`s_search_sec ${Search === '' ? '' : 'show'}`}>
+                {searchData.length === 0 ? 
+                <>
+                    <div className='s_serach_head  border-0'><IoCloseOutline className='ms-auto ' onClick={() => { setSearch(''); }} /></div>
+                    <div className='s_search_not'>
+                        <h2>No result found.</h2></div>
+                </>
+                : <>
+                    <div className='s_serach_head'><h5 className='mb-0'>Suggestions</h5><IoCloseOutline onClick={() => { setSearch(''); }} /></div>
+                    {searchData.map((el, id) => {
+                        return (
+                            <div key={id} className='s_search_item'>
+                                {!el.popular ?
+                                    <p>
+                                        <Link to={`#`}>
+                                            {el.name}
+                                        </Link>
+                                    </p>
+                                    : ''}
+                            </div>
+                        )
+                    })}
+                    <div className='s_serach_head'><h5 className='mb-0'>Popular</h5></div>
+                    {searchData.map((el, id) => {
+                        return (
+                            <div key={id} className='s_search_item'>
+                                {el.popular ?
+                                    <Link to={`#`} className='d-flex align-items-center'>
+                                        <img src={el.img} alt={el.name}></img>
+                                        <div>
+                                            <p className='mb-0'>{el.name}</p>
+                                            <span>
+                                                <small>₹{el.price}</small>
+                                                <strike>₹{el.oldPrice}</strike>
+                                            </span>
+                                        </div>
+                                    </Link>
+                                    : ''}
+                            </div>
+                        )
+                    })}
+                    </>
+                }
+                    <div className='s_serach_head border-top border-0 mt-auto'><h5 className='mb-0'>Search for “{Search}”</h5><FaArrowRight /></div>
+            </section>
         </>
     );
 }
