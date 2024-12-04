@@ -14,6 +14,7 @@ import Contact from './Pages/Contact';
 import Faq from './Pages/Faq';
 import TermsCondition from './Pages/TermsCondition';
 import Privacy from './Pages/Privacy';
+import MyProfile from './Pages/MyProfile';
 const App = () => {
   return (
     <>
@@ -31,6 +32,7 @@ const App = () => {
             <Route path="/faq" element={<Faq/>}></Route>
             <Route path="/terms" element={<TermsCondition/>}></Route>
             <Route path="/privacy" element={<Privacy/>}></Route>
+            <Route path="/myprofile" element={<MyProfile/>}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

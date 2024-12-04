@@ -1,0 +1,300 @@
+.ds_profile-box{
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background: #FFFFFF;
+    width: 100% ;
+    padding: 20px 0px;
+}
+.ds_active-color{
+    background-color: #4D1F08 !important;
+    color: white !important;
+}
+.ds_profile-btn{
+    color: #4D1F08;
+    background-color: white;
+    border: none;
+    padding: 15px 30px;
+    width: 100%;
+    text-align: left;
+}
+.ds_edit-btn{
+    background-color: #4D1F08;
+    color: white ;
+    padding: 8px 50px;
+    outline: none;
+    border: none;
+}
+.ds_profile-inner{
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background: #FFFFFF;
+    width: 100% ;
+    padding: 20px 22px; 
+}
+.ds_off-box{
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background: #FFFFFF; 
+    padding: 10px 22px; 
+}
+.ds_offcanvas-main{
+    display: none;
+}
+
+
+/* {*************  Edit Profile **************} */
+.ds_edit-box{
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background: #FFFFFF; 
+    padding: 10px 35px;    
+}
+.ds_edit-input{
+    padding: 7px 15px;
+    width: 100%;
+    border: 0.75px solid #000000
+}
+.ds_edit-calender{
+    position: absolute;
+    top: 39px;
+    right: 13px;
+    display: inline;
+}
+.ds_edit-cencel{
+    padding: 7px 60px;
+    border: 1px solid #4D1F08;
+    color: #4D1F08;
+    background-color: white;
+}
+.ds_edit-save{
+    padding: 7px 65px;
+    border: 1px solid #4D1F08;
+    color: white;
+    background-color: #4D1F08;
+}
+
+
+/* {*************  My Address **************} */
+.ds_add-btn{
+    background-color: #4D1F08;
+    color: white ;
+    padding: 8px 20px;
+    outline: none;
+    border: none; 
+}
+.ds_add-box{
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background: #FFFFFF;
+    padding: 10px 35px;    
+}
+.ds_add-mini{
+    position: absolute;
+    top: 0;
+    right: 40px;
+    background-color:white;
+    width: 28%;
+    padding: 20px;
+    box-shadow: 0px 0px 24px 3px #7272721A;
+}
+/* {---------------- Delete Item Modal ------------------} */
+.ds_delete-no{
+    border: 1px solid #4D1F08;
+    color: #4D1F08;
+    background-color: white;
+    padding: 5px 45px;
+    margin-right: 20px;
+}
+.ds_delete-yes{
+    border: 1px solid #4D1F08;
+    color: white;
+    background-color: #4D1F08;
+    padding: 5px 47px; 
+}
+
+
+/* {************* Saved Cards **************} */
+.ds_save-box{
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background: #FFFFFF;
+    height: 403px;
+    padding: 0px 20px;
+}
+
+/* {-------------- Save Card ------------} */
+.ds_save-inner{
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background: #FFFFFF;
+    padding: 20px 20px;
+}
+.ds_card-make{
+    background-image: url(../../Img/dhruvin/card-img.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 20px;
+    border-radius: 10px;
+}
+.ds_save-trash{
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    color: white;
+    cursor: pointer;
+}
+.ds_save-limit{
+    color: #B061FF;
+    margin-left: 20px;
+}
+.ds_card-make2{
+    background-image: url(../../Img/dhruvin/card-img2.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 20px;
+    border-radius: 10px; 
+}
+.ds_card-make3{
+    background-image: url(../../Img/dhruvin/card-img3.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 20px;
+    border-radius: 10px; 
+}
+
+
+/* {-------------- Add New Card Popup ------------} */
+.ds_add-new-popup{
+   max-width: 600px !important;
+}
+
+
+
+
+/* {*************** Remove Product Popup ************   } */
+
+.ds_order-all {
+    border: 1px solid #4D1F08;
+    color: #4D1F08;
+    padding: 6px 30px;
+    background-color: white;
+}
+.ds_order-active-btn{
+    background-color: #4D1F08 !important;
+    color: white !important;
+}
+.ds_order-prog{
+    border: 1px solid #4D1F08;
+    color: #4D1F08;
+    padding: 6px 15px;
+    background-color: white; 
+}
+.ds_order-bg{
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background: #FFFFFF;
+    height: 500px;
+}
+.ds_order-browse{
+    background-color: #4D1F08;
+    color: white; 
+    padding: 8px 35px;
+}
+
+
+@media (max-width:1441px) {
+/* {*************  My Address **************} */
+    .ds_add-mini{
+        width: 38%;
+    } 
+}
+
+@media (max-width:1200px) {
+/* {*************  My Address **************} */
+    .ds_add-mini{
+        width: 47%;
+    } 
+}
+
+@media (max-width:992px) {
+    /* {*************  My Address **************} */
+        .ds_add-mini{
+            width: 40%;
+        } 
+}
+
+@media (max-width:767px) {
+    .ds_profile-box{
+        display: none;
+    }
+    .ds_offcanvas-main{
+        display: block;
+    }
+/* {*************  My Address **************} */
+    .ds_add-mini{
+        width: 30%;
+    }     
+}
+
+@media (max-width:576px) {
+/* {*************  Edit Profile **************} */
+  .ds_edit-save{
+    margin-left: 20px;
+  }
+  /* {*************  My Address **************} */
+  .ds_add-mini{
+    width: 43%;
+}   
+/* {---------------- Delete Item Modal ------------------} */
+.ds_delete-modal{
+    max-width: 370px !important;
+    margin: auto;
+}
+/* {-------------- Add New Card Popup ------------} */
+.ds_add-new-popup{
+    max-width: 390px !important;
+    margin: auto;
+ }
+ 
+}
+
+@media (max-width:430px) {
+/* {*************  Edit Profile **************} */
+  .ds_edit-save{
+     margin-top: 20px;
+     margin-left: 0px;
+  }
+  /* {*************  My Address **************} */
+    .ds_add-mini{
+        width: 50%;
+    }  
+    /* {---------------- Delete Item Modal ------------------} */
+   .ds_delete-modal{
+       max-width: 320px !important;
+       margin: auto;
+   }
+ /* {-------------- Add New Card Popup ------------} */
+.ds_add-new-popup{
+    max-width: 330px !important;
+    margin: auto;
+ }
+
+/* {*************** Remove Product Popup ************   } */
+.ds_order-all{
+    margin-top: 10px
+}
+.ds_order-prog {
+    margin-top: 10px
+
+}
+ 
+}
+
+@media (max-width:350px) {
+ /* {*************  My Address **************} */
+ .ds_add-mini{
+    width: 65%;
+}   
+/* {---------------- Delete Item Modal ------------------} */
+.ds_delete-modal{
+    max-width: 290px !important;
+    margin: auto;
+}
+ /* {-------------- Add New Card Popup ------------} */
+ .ds_add-new-popup{
+    max-width: 290px !important;
+    margin: auto;
+ }
+}
