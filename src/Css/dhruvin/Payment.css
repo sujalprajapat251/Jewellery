@@ -33,7 +33,7 @@
     box-shadow: none !important;
 }
 .ds_pay-box{
-    height: 330px;
+    height: 360px;
 }
 .ds_cod-bg{
     box-shadow: 0px 4px 14px 0px #8F8F8F40;
@@ -71,6 +71,12 @@
 }
 .ds_cod-pay:focus{
     box-shadow: none;
+}
+.ds_cod-razo{
+    border: 1px solid #2A221E;
+    width: 100%;
+    padding: 10px 0px;
+    background-color: white;
 }
 
 /* {*************** UPI ID **************} */
@@ -141,15 +147,21 @@
 }
 
 @media (max-width:600px) {
-.ds_pay-box {
-    height: 370px;
-}   
+    .ds_pay-box {
+        height: 370px;
+    }   
 }
 
 @media (max-width:550px) {
 /* ***************** UPI Id **************** */
 .ds_upi-select{
     padding: 4px 10px 10px 11px;
+}
+.ds_cod-cap{
+    width: 50%;
+}
+.ds_pay-box {
+    height: 475px;
 }
 }
 
@@ -159,10 +171,14 @@
     padding: 4px 0px 10px 5px;
     width: 25% !important
 }
+.ds_pay-box {
+    height: 450px;
+}
 }
 
 @media (max-width:350px) {
+
     .ds_pay-box {
-        height: 470px;
+        height: 440px;
     }
 }

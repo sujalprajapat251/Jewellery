@@ -1,45 +1,25 @@
-import React, { useState } from 'react'
+import React from 'react'
 import '../Css/dhruvin/Payment.css'
 import { MdRefresh } from 'react-icons/md';
-import { IoSearch } from 'react-icons/io5';
 
 const Payment = () => {
-
-    const [activeButton, setActiveButton] = useState('Pay on Delivery');
-
-
-
-    const handlePayment = (paymentType) => {
-        setActiveButton(paymentType);
-        console.log(paymentType);
-      };
-
-      const handlePaymentsuccess = () => {
-        // document.getElementById("ds_order_conformation").classList.remove("d-none")
-        // document.getElementById("ds_cartsec").classList.add("d-none")
-      }
 
 
   return (
     <>
-      <section>
+      <section className='mb-5 pb-4'>
         <div className='ds_container'>
           <h2>Cart</h2>
            <div className="row">
              <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 ">
              <div className="ds_cod-main mt-5 ds_cod-bg">
                       <div className="row p-0 m-0" style={{ borderBottom: '1px solid black' }}>
-                        {['Pay on Delivery', 'Credit / Debit Card', 'UPI ID', 'Net Banking'].map((paymentType, index) => (
-                          <div key={index} className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6 text-center p-0">
-                            <button className={` h-100 ${activeButton === paymentType ? 'ds_cod-on-btn' : 'ds_cod-on-btn-txt'}`} style={{ padding: '13px 0px' }} onClick={() => handlePayment(paymentType)}>
-                              {paymentType}
+                          <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 text-center p-0">
+                            <button className={` h-100  ds_cod-on-btn`} >
+                              Pay On Delivery
                             </button>
                           </div>
-                        ))}
                       </div>
-
-                      {/* {********** Pay On Delivery Section **********} */}
-                      {activeButton === 'Pay on Delivery' && (
                         <section className="ds_pay-box mt-4">
                           <div className="row justify-content-center mx-xl-0 mx-2">
                             <div className="col-xl-8">
@@ -49,6 +29,7 @@ const Payment = () => {
                                   <p className="ds_pay-text ds_tcolor mb-0">Enter the captcha to confirm order.</p>
                                 </div>
                               </div>
+
                               <div className="row justify-content-center align-items-center">
                                 <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 mt-3">
                                   <img src={require("../Img/dhruvin/captha.png")} alt="" className="ds_cod-cap" />
@@ -60,122 +41,38 @@ const Payment = () => {
                                   <MdRefresh className="ds_cod-refresh" />
                                 </div>
                               </div>
-                              <div className="row mt-sm-5 mt-3">
+
+                              <div className="row mt-sm-4 pt-2 mt-3">
                                 <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12"></div>
                                 <div className="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
-                                  <button className=" ds_cod-pay" onClick={() => handlePaymentsuccess()}>Pay ₹1240</button>
+                                  <button className=" ds_cod-pay" >Pay ₹1240</button>
                                 </div>
                               </div>
-                            </div>
-                          </div>
-                        </section>
-                      )}
 
-                      {/* {**********Credit / Debit Card Section **********} */}
-                      {activeButton === 'Credit / Debit Card' && (
-                        <section className="ds_pay-box mt-4">
-                          <div className="row justify-content-center mx-xl-0 mx-2">
-                            <div className="col-xl-10">
-                              <div className="row justify-content-center">
-                                <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-4">
-                                  <input type="text" className="ds_cod-input" placeholder="Enter card holder name" />
-                                </div>
-                                <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-4">
-                                  <input type="text" className="ds_cod-input" placeholder="Enter card number" />
-                                </div>
-                                <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-4">
-                                  <input type="text" className="ds_cod-input" placeholder="MM/YYYY" />
-                                </div>
-                                <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-4">
-                                  <input type="text" className="ds_cod-input" placeholder="Enter CVV" />
-                                </div>
-                                <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-sm-5 mt-3">
-                                  <button className=" ds_cod-pay" onClick={() => handlePaymentsuccess()}>Pay ₹1240</button>
+                              <div className="row mt-sm-4 pt-2 mt-3">
+                                <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12"></div>
+                                <div className="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12 text-center">
+                                    <span className='text-muted'>Or</span>
                                 </div>
                               </div>
-                            </div>
-                          </div>
-                        </section>
-                      )}
 
-                      {/* {********** UPI ID Section **********} */}
-                      {activeButton === 'UPI ID' && (
-                        <section className="ds_pay-box mt-4 pt-4">
-                          <div className="">
-                            <div className="row justify-content-center mx-xl-0 mx-2">
-                              <div className="col-xl-10">
-                                <div className="position-relative ds_upi-arrow d-flex">
-                                  <input type="text" className="ds_upi-input" placeholder="Enter UPI ID" />
-                                  <select  className="form-select ds_upi-select">
-                                    <option value="@okicici">@okicici</option>
-                                    <option value="@oksbi">@oksbi</option>
-                                    <option value="@okhdfc">@okhdfc</option>
-                                    <option value="@okaxis">@okaxis</option>
-                                  </select>
-                                </div>
-                              </div>
-                              <div className="col-xl-5 mt-5">
-                                <button className=" ds_cod-pay" onClick={() => handlePaymentsuccess()}>Pay ₹1240</button>
-                              </div>
-                            </div>
-                          </div>
-                        </section>
-                      )}
 
-                      {/* {********** Net Banking Section **********} */}
-                      {activeButton === 'Net Banking' && (
-                        <section className="ds_pay-box mt-4 pt-4">
-                          <div className="mx-xl-0 mx-2">
-                            <div className="row justify-content-center align-items-center">
-                              <div className="col-xl-10">
-                                <div className="position-relative">
-                                  <input type="text" className="ds_net-input" placeholder="Search your bank" />
-                                  <IoSearch className="ds_net-icon" />
-                                </div>
-                                <div className="d-flex flex-wrap justify-content-between align-items-center mt-5">
-                                  <div className="text-center">
-                                    <img src={require("../Img/dhruvin/city.png")} alt="" className="ds_net-img" />
-                                    <p className="ds_net-text">Citi <br /> Bank</p>
-                                  </div>
-                                  <div className="text-center">
-                                    <img src={require("../Img/dhruvin/well copy.png")} alt="" className="ds_net-img" />
-                                    <p className="ds_net-text">Wells Fargo <br /> Bank</p>
-                                  </div>
-                                  <div className="text-center">
-                                    <img src={require("../Img/dhruvin/capital.png")} alt="" className="ds_net-img" />
-                                    <p className="ds_net-text">Capital One <br /> Bank</p>
-                                  </div>
-                                  <div className="text-center">
-                                    <img src={require("../Img/dhruvin/td.png")} alt="" className="ds_net-img" />
-                                    <p className="ds_net-text">TD <br /> Bank</p>
-                                  </div>
-                                  <div className="text-center">
-                                    <img src={require("../Img/dhruvin/city.png")} alt="" className="ds_net-img" />
-                                    <p className="ds_net-text">Citi <br /> Bank</p>
-                                  </div>
-                                  <div className="text-center">
-                                    <img src={require("../Img/dhruvin/capital.png")}  alt="" className="ds_net-img" />
-                                    <p className="ds_net-text">Capital One <br /> Bank</p>
-                                  </div>
-                                  <div className="text-center">
-                                    <img src={require("../Img/dhruvin/td.png")} alt="" className="ds_net-img" />
-                                    <p className="ds_net-text">TD <br /> Bank</p>
-                                  </div>
-                                  <div className="text-center">
-                                    <img src={require("../Img/dhruvin/city.png")}alt="" className="ds_net-img" />
-                                    <p className="ds_net-text">Citi <br /> Bank</p>
-                                  </div>
-                                  <div className="text-center">
-                                    <img src={require("../Img/dhruvin/well copy.png")} alt="" className="ds_net-img" />
-                                    <p className="ds_net-text">Wells Fargo <br /> Bank</p>
+                              <div>
+                                <div className="row mt-sm-4 mt-3">
+                                  <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12"></div>
+                                  <div className="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
+                                     <button className="ds_cod-razo ds_color fw-bold" >Pay with <img src={require("../Img/dhruvin/razor.png")} alt="" width="25%" /> </button>
                                   </div>
                                 </div>
                               </div>
-                             
                             </div>
                           </div>
                         </section>
-                      )}
+                     
+
+                     
+
+
                     </div>
              </div>
              <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mt-5">

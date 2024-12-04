@@ -1,3 +1,15 @@
+/* {*************** Empty Cart ************   } */
+.ds_empty-inner{
+    height: 500px;
+}
+.ds_empty-btn{
+    background: #4D1F08;
+    color: white;
+    padding: 8px 30px;
+    border: 1px solid #4D1F08;
+}
+
+
 .ds_container {
     margin-right: auto;
     margin-left: auto;

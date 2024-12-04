@@ -6,8 +6,24 @@ import { FaMinus, FaPlus } from 'react-icons/fa'
 const Cart = () => {
   return (
     <>
+
+    {/* *************** Empty Cart ************    */}
+     <section>
+      <div className='ds_empty-inner'>
+        <div className='d-flex justify-content-center align-items-center h-100'>
+          <div className='text-center'>
+             <img src={require("../Img/dhruvin/empty-cart.png")} alt=""  width="20%"/>
+              <h3 className='ds_color'>Your cart is empty</h3>
+              <p>You have no items in your cart</p>
+              <button className='ds_empty-btn'>Continue Shopping</button>
+          </div>
+        </div>
+      </div>
+     </section>
+  
+
     {/* *************** Cart ************    */}
-      <section className='mb-5'>
+      <section className='mb-5 d-none'>
         <div className='ds_container'>
             <div>
                 <h2>Cart</h2>

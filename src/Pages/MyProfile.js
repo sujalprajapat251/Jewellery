@@ -4,6 +4,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs'
 import { IoBagHandleOutline } from 'react-icons/io5';
 import { GoHome } from 'react-icons/go';
 import { FaRegTrashAlt } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const MyProfile = () => {
 
@@ -509,8 +510,8 @@ const MyProfile = () => {
 
                          {/* ************* My Order ************** */}
                           <section>
-                            <div>
-                                <div className='d-flex flex-wrap justify-content-between align-items-center'>
+                            <div className='mb-5'>
+                                <div className='d-flex flex-wrap justify-content-sm-between ds_order-manage align-items-center'>
                                     <h3 style={{whiteSpace:'nowrap'}} className='mb-md-2'>My Orders</h3>
                                     <div>
                                         <button className='ds_order-all ds_order-active-btn me-2'>All</button>
@@ -520,7 +521,10 @@ const MyProfile = () => {
                                     </div>
                                 </div>
                                 <div className='ds_order-bg mt-4'>
-                                    <div className='d-flex justify-content-center align-items-center h-100'>
+                                     
+                                    {/* ----------------------- Empty Card ------------------- */}
+                                    <div className='d-none'>
+                                     <div className='d-flex justify-content-center align-items-center h-100'>
                                         <div className='text-center'>
                                             <div>
                                               <img src={require("../Img/dhruvin/no-item.png")} alt="" width="30%" />
@@ -531,6 +535,118 @@ const MyProfile = () => {
                                                 <button className='ds_order-browse'>Browse Products</button>
                                             </div>
                                         </div>
+                                     </div>
+                                    </div>
+
+                                    {/* ----------------------- My Order ------------------- */}
+                                    <div>
+                                      <div className=' px-4 pb-4'>
+                                        <div className="row">
+                                          <div className="col-xl-12 mt-4">
+                                            <div className='ds_order-inner'>
+                                              <div className='d-flex flex-wrap ds_order-flex  align-items-center '>
+                                                <div className='d-flex flex-wrap px-3 pt-2'>
+                                                   <p className='ds_order-progress mb-0'>In progress</p>
+                                                   <p className='ds_order-text ds_600 mb-0'>10 Oct 2023</p>
+                                                   <p className='ds_order-order mb-0'><span className='text-muted'>Order Id : </span><span className='ds_color'>12057598140</span></p>
+                                                </div>
+                                                 <Link to="" className='text-dark ds_600 pe-3 ms-lg-0 ms-3'>Track Order</Link>
+                                              </div>
+                                              <div className='ds_order-line mt-2'></div>
+                                              <div className='px-3 my-4'>
+                                                 <div className='d-flex justify-content-between flex-wrap '>
+                                                     <div>
+                                                         <div className='d-flex ds_cart-flex'>
+                                                           <div className='mx-auto'>
+                                                               <img className='ds_oder-img' src={require("../Img/dhruvin/ring.png")} alt="" />
+                                                           </div>
+                                                           <div className='ds_cart-deta'>
+                                                              <h6>Dual Tone Halo Diamond Finger Ring</h6>
+                                                              <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'>PD00003-14-RS-FGVVSVS</span></p>
+                                                              <p className='ds_tcolor mb-0'>Metal :<span className='ds_color'> 925 Silver</span></p>
+                                                              <p className='ds_tcolor mb-0'>Metal Color :<span className='ds_color'>Silver</span></p>
+                                                              <p className='ds_tcolor mb-0'>Size : <span className='ds_color'> 5</span></p>
+                                                           </div>
+                                                         </div>
+                                                     </div>
+                                                     <div className='mt-lg-0 mt-4'>
+                                                        <h5><span className='ds_color'>₹1200</span> <span className='ms-2 ds_order-line-txt'>₹1500</span></h5>
+                                                     </div>
+                                                 </div>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                          <div className="col-xl-12 mt-4">
+                                            <div className='ds_order-inner'>
+                                              <div className='d-flex flex-wrap ds_order-flex  align-items-center '>
+                                                <div className='d-flex flex-wrap px-3 pt-2'>
+                                                   <p className='ds_order-deliver mb-0'>Delivered</p>
+                                                   <p className='ds_order-text ds_600 mb-0'>05 Oct 2023</p>
+                                                   <p className='ds_order-order mb-0'><span className='text-muted'>Order Id : </span><span className='ds_color'>12057598140</span></p>
+                                                </div>
+                                                 <Link to="" className='text-dark ds_600 pe-3 ms-lg-0 ms-3'>Return Order</Link>
+                                              </div>
+                                              <div className='ds_order-line mt-2'></div>
+                                              <div className='px-3 my-4'>
+                                                 <div className='d-flex justify-content-between flex-wrap '>
+                                                     <div>
+                                                         <div className='d-flex ds_cart-flex'>
+                                                           <div className='mx-auto'>
+                                                               <img className='ds_oder-img' src={require("../Img/dhruvin/gold.png")} alt="" />
+                                                           </div>
+                                                           <div className='ds_cart-deta'>
+                                                              <h6>Pal Gold Earrings</h6>
+                                                              <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'>PD00003-14-RS-FGVVSVS</span></p>
+                                                              <p className='ds_tcolor mb-0'>Metal :<span className='ds_color'> 925 Silver</span></p>
+                                                              <p className='ds_tcolor mb-0'>Metal Color :<span className='ds_color'>Gold</span></p>
+                                                              {/* <p className='ds_tcolor mb-0'>Size : <span className='ds_color'> 5</span></p> */}
+                                                           </div>
+                                                         </div>
+                                                     </div>
+                                                     <div className='d-flex flex-column mt-lg-0 mt-4'>
+                                                        <h5><span className='ds_color'>₹1200</span> <span className='ms-2 ds_order-line-txt'>₹1500</span></h5>
+                                                        <h6 className='mt-auto'> <Link to="" className='text-dark'>Submit review</Link> </h6>
+                                                     </div>
+                                                 </div>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                          <div className="col-xl-12 mt-4">
+                                            <div className='ds_order-inner'>
+                                              <div className='d-flex flex-wrap ds_order-flex  align-items-center '>
+                                                <div className='d-flex flex-wrap px-3 pt-2'>
+                                                   <p className='ds_order-cencel mb-0'>Cancelled</p>
+                                                   <p className='ds_order-text ds_600 mb-0'>10 Oct 2023</p>
+                                                   <p className='ds_order-order mb-0'><span className='text-muted'>Order Id : </span><span className='ds_color'>12057598140</span></p>
+                                                </div>
+                                              </div>
+                                              <div className='ds_order-line mt-2'></div>
+                                              <div className='px-3 my-4'>
+                                                 <div className='d-flex justify-content-between flex-wrap '>
+                                                     <div>
+                                                         <div className='d-flex ds_cart-flex'>
+                                                           <div className='mx-auto'>
+                                                               <img className='ds_oder-img' src={require("../Img/dhruvin/ring.png")} alt="" />
+                                                           </div>
+                                                           <div className='ds_cart-deta'>
+                                                              <h6>Pal Gold Earrings</h6>
+                                                              <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'>PD00003-14-RS-FGVVSVS</span></p>
+                                                              <p className='ds_tcolor mb-0'>Metal :<span className='ds_color'> 925 Silver</span></p>
+                                                              <p className='ds_tcolor mb-0'>Metal Color :<span className='ds_color'>Gold</span></p>
+                                                           </div>
+                                                         </div>
+                                                     </div>
+                                                     <div className='mt-lg-0 mt-4'>
+                                                        <h5><span className='ds_color'>₹1000</span> <span className='ms-2 ds_order-line-txt'>₹1500</span></h5>
+                                                     </div>
+                                                 </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
                                     </div>
                                 </div>
                             </div>

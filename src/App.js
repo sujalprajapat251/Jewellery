@@ -15,6 +15,7 @@ import Faq from './Pages/Faq';
 import TermsCondition from './Pages/TermsCondition';
 import Privacy from './Pages/Privacy';
 import MyProfile from './Pages/MyProfile';
+import TrackOrder from './Pages/TrackOrder';
 const App = () => {
   return (
     <>
@@ -33,6 +34,7 @@ const App = () => {
             <Route path="/terms" element={<TermsCondition/>}></Route>
             <Route path="/privacy" element={<Privacy/>}></Route>
             <Route path="/myprofile" element={<MyProfile/>}></Route>
+            <Route path="/trackorder" element={<TrackOrder/>}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,0 +1,127 @@
+.ds_track-round{
+    width: 50px;
+    height: 50px;
+    background: #727272;
+    border-radius: 50%;
+    padding: 10px;
+}
+.ds_track-active{
+    background: #4D1F08 !important;
+}
+.ds_text-align{
+    text-align: -webkit-center;
+}
+.ds_track-border{
+    position: absolute;
+    top: 26px;
+    right: 30px;
+    z-index: -1;
+    width: 93%;
+    border: 0.65px dashed #727272;
+}
+.ds_track-box{
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    background: #FFFFFF;
+    padding: 10px 0px;
+}
+.ds_track-line{
+    border: 1px solid #72727266
+}
+.ds_track-mini{
+    font-size: 13px;
+}
+.ds_track-cancel{
+    background: #4D1F08;
+    color: white;
+    border: 1px solid #4D1F08;
+    padding: 7px 40px;
+}
+
+
+/* {************* Cancel Order Popup ************} */
+.ds_cancel-check{
+    height: 16px;
+    width: 16px;
+}
+.ds_cancel-check:checked{
+   background-color: #4D1F08 !important;
+   accent-color: #4D1F08 !important;
+}
+.ds_cancel-btn{
+   background-color: #4D1F08 ;
+   color: white;
+   border: 1px solid #4D1F08;
+   padding: 8px 0px;
+   text-align: center;
+   width: 100%;
+}
+
+
+@media (max-width:1441px) {
+   .ds_track-cancel{
+    padding: 7px 38px;
+   } 
+}
+
+@media (max-width:1200px) {
+    .ds_track-manage{
+       flex-wrap: wrap;
+    }
+    .ds_track-center{
+        margin: auto;
+    }
+    .ds_track-overflow{
+        overflow-x: auto;
+    }
+    .ds_track-box {
+        display: flex;
+        white-space: nowrap;
+        width: 1000px;
+    }
+    
+    
+}
+
+@media (max-width:992px) {
+    .ds_track-border {
+        width: 88%;
+    }
+
+
+}
+
+@media (max-width:576px) {
+/* {************* Cancel Order Popup ************} */
+.ds_cancel-dialog{
+    max-width: 350px !important;
+    margin: auto;
+}
+}
+
+@media (max-width:550px) {
+    .ds_track-container {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 10px; /* Optional for better scroll visibility */
+      }
+    .ds_track-hello > div{
+        margin: 0px 30px;
+    }
+    .ds_track-border {
+        width: 72%;
+        right: 50px;
+    }
+}
+
+@media (max-width:350px) {
+/* {************* Cancel Order Popup ************} */
+.ds_cancel-dialog{
+    max-width: 300px !important;
+    margin: auto;
+}
+.ds_cancel-label{
+    font-size: 13px;
+}
+}
+
