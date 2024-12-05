@@ -585,7 +585,7 @@ const MyProfile = () => {
                                                    <p className='ds_order-text ds_600 mb-0'>05 Oct 2023</p>
                                                    <p className='ds_order-order mb-0'><span className='text-muted'>Order Id : </span><span className='ds_color'>12057598140</span></p>
                                                 </div>
-                                                 <Link to="" className='text-dark ds_600 pe-3 ms-lg-0 ms-3'>Return Order</Link>
+                                                 <Link to="" className='text-dark ds_600 pe-3 ms-lg-0 ms-3' data-bs-toggle="modal" data-bs-target="#returnOrder">Return Order</Link>
                                               </div>
                                               <div className='ds_order-line mt-2'></div>
                                               <div className='px-3 my-4'>
@@ -658,6 +658,127 @@ const MyProfile = () => {
             </div>
         </div>
       </section>
+
+
+      {/* ********************  Return Order Popup  ********* */}
+      <section>
+        <div>
+          <div className="modal fade" id="returnOrder"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog  ds_return-popup  modal-dialog-centered">
+              <div className="modal-content" style={{borderRadius:'0'}}>
+                <div className="modal-header border-0 pb-0">
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div className="modal-body pt-0 px-5">
+                   <h4 className="modal-title text-center ds_color fw-bold" >Return Order</h4>
+                   <div className='mt-3'>
+                     <div className="row">
+                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
+                             <div>
+                                 <label htmlFor="" className='ds_600 mb-1'>Order ID*</label>
+                                 <input type="text" className='ds_new-input' placeholder="Enter order ID" />
+                             </div>
+                         </div>
+
+                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
+                             <div>
+                               <label htmlFor="" className='ds_600 mb-1'>Reason for return*</label>
+                               <input type="text" className='ds_new-input' placeholder="Enter reason for return" />
+                             </div>
+                         </div>
+
+                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
+                             <div>
+                               <label htmlFor="" className='ds_600 mb-1'>Mobile No.*</label>
+                               <input type="text" className='ds_new-input' placeholder="Enter mobile no." />
+                             </div>
+                         </div>
+                     </div>
+                     <div>
+                       <div className="row justify-content-center">
+                         <div className="col-xl-12 mt-5 mb-3">
+                           <div>
+                              <button className='ds_new-save w-100' data-bs-toggle="modal" data-bs-target="#returnOrderOtp">Request for OTP</button>
+                           </div>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                </div>
+              </div>
+            </div>
+           </div>
+        </div>
+      </section>
+
+      {/* ********************  Return Order With OTP Popup  ********* */}
+      <section>
+        <div>
+          <div className="modal fade" id="returnOrderOtp"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog  ds_return-popup  modal-dialog-centered">
+              <div className="modal-content" style={{borderRadius:'0'}}>
+                <div className="modal-header border-0 pb-0">
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div className="modal-body pt-0 px-sm-5">
+                   <h4 className="modal-title text-center ds_color fw-bold" >Return Order</h4>
+                   <div className='mt-3'>
+                     <div className="row">
+                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
+                             <div>
+                                 <label htmlFor="" className='ds_600 mb-1'>Order ID*</label>
+                                 <input type="text" className='ds_new-input' placeholder="Enter order ID" />
+                             </div>
+                         </div>
+
+                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
+                             <div>
+                               <label htmlFor="" className='ds_600 mb-1'>Reason for return*</label>
+                               <input type="text" className='ds_new-input' placeholder="Enter reason for return" />
+                             </div>
+                         </div>
+
+                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
+                             <div>
+                               <label htmlFor="" className='ds_600 mb-1'>Mobile No.*</label>
+                               <input type="text" className='ds_new-input' placeholder="Enter mobile no." />
+                             </div>
+                         </div>
+
+                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
+                             <div>
+                               <label htmlFor="" className='ds_600 mb-1'>Enter OTP</label>
+                               <div className='d-flex justify-content-between'>
+                                   <input type="text" className='ds_return-otp-input'/>
+                                   <input type="text" className='ds_return-otp-input'/>
+                                   <input type="text" className='ds_return-otp-input'/>
+                                   <input type="text" className='ds_return-otp-input'/>
+                                   <input type="text" className='ds_return-otp-input'/>
+                                   <input type="text" className='ds_return-otp-input'/>
+                               </div>
+                             </div>
+                         </div>
+
+                        
+                     </div>
+                     <div>
+                       <div className="row justify-content-center">
+                         <div className="col-xl-12 mt-5 mb-3">
+                           <div>
+                              <button className='ds_new-save w-100'>Request for OTP</button>
+                           </div>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                </div>
+              </div>
+            </div>
+           </div>
+        </div>
+      </section>
+      
+
     </>
   )
 }

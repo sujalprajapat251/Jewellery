@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import React from 'react'
+import React  from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from './Pages/Home';
 import Layout from './Component/Layout';
@@ -18,9 +18,17 @@ import MyProfile from './Pages/MyProfile';
 import TrackOrder from './Pages/TrackOrder';
 import Wishlist from './Pages/Wishlist';
 import ProductList from './Pages/ProductList';
+import SubmitReview from './Pages/SubmitReview';
+
+
 const App = () => {
+
+
+
   return (
     <>
+    <div>
+    </div>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Layout />}>
@@ -39,6 +47,7 @@ const App = () => {
             <Route path="/privacy" element={<Privacy/>}></Route>
             <Route path="/myprofile" element={<MyProfile/>}></Route>
             <Route path="/trackorder" element={<TrackOrder/>}></Route>
+            <Route path="/review" element={<SubmitReview/>}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

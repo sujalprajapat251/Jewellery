@@ -4,8 +4,10 @@ import { IoIosCloseCircle } from 'react-icons/io'
 import { FaMinus, FaPlus } from 'react-icons/fa'
 
 const Cart = () => {
+
   return (
     <>
+
 
     {/* *************** Empty Cart ************    */}
      <section>

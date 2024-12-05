@@ -1,5 +1,7 @@
 import React from 'react'
 import '../Css/dhruvin/TrackOrder.css'
+import ReviewFeedback from './ReviewFeedback'
+import { Link } from 'react-router-dom'
 
 const TrackOrder = () => {
 
@@ -64,7 +66,7 @@ const TrackOrder = () => {
                       <h2>Product Details</h2>
                     </div>
                     <div>
-                    <div className='ds_track-overflow mt-3'>
+                    <div className='ds_track-overflow mt-4'>
                         <div className='ds_track-box '>
                           <div> 
                             <div className='px-4'>
@@ -135,9 +137,9 @@ const TrackOrder = () => {
                                 <div className="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 ">
                                     <div className='d-flex flex-column h-100'>
                                         <h6 className='fw-bold'>
-                                            <a href="" className='text-dark'>Download Invoice</a>
+                                            <Link to="" className='text-dark'>Download Invoice</Link>
                                         </h6>
-                                        <div className='mt-auto'>
+                                        <div className='mt-auto mb-3'>
                                             <button className='ds_track-cancel' data-bs-toggle="modal" data-bs-target="#cancelOrder">Cancel Order</button>
                                         </div>
                                     </div>
@@ -196,7 +198,7 @@ const TrackOrder = () => {
                                   <input className=" ds_cancel-check" type="radio" name="exampleRadios" id="exampleRadios7" value="option7" />
                             </div>
                             <div className='text-ceter mx-4 mt-4 pt-3 mb-3'>
-                                <button className='ds_cancel-btn'>Continue</button>
+                                <button className='ds_cancel-btn' data-bs-toggle="modal" data-bs-target="#cancelled">Continue</button>
                             </div>
                          </div>
                        </div>
@@ -207,6 +209,40 @@ const TrackOrder = () => {
             </div>
         </div>
       </section>
+
+      {/* ************* Order cancelled ************ */}
+      <section>
+        <div>
+             <div className="modal fade" id="cancelled" aria-labelledby="exampleModalLabel" aria-hidden="true">
+               <div className="modal-dialog ds_cancel-dialog modal-dialog-centered">
+                 <div className="modal-content">
+                   <div className="modal-header pb-0 border-0">
+                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                   </div>
+                   <div className="modal-body pt-0 px-4">
+                       <div>
+                         <h4 className='text-center ds_color'>Order Cancelled</h4>
+                         <div className='mt-4 pt-3'>
+                            <div className='text-center'>
+                               <img src={require("../Img/dhruvin/order-cancel.png")} alt="" width="40%" />
+                               <h6 className='ds_tcolor mt-4'>Your order has been cancelled successfully.</h6>
+                            </div>
+                            <div className='text-ceter mx-4 mt-4 pt-3 mb-3'>
+                                <button className='ds_cancel-btn'>Back To Home</button>
+                            </div>
+                         </div>
+                       </div>
+                   </div>
+                   
+                 </div>
+               </div>
+            </div>
+        </div>
+      </section>
+
+
+      {/* ##########  Review Feedback  ########### */}
+      <ReviewFeedback/>
     </>
   )
 }
