@@ -1,0 +1,270 @@
+.s_fliter{
+    width:300px;
+    min-width: 300px;
+    background-color: white;
+    box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, .1);
+}
+.s_fliter .s_fliter_head {
+    color: var(--brown);
+    padding: 20px;
+    text-align: center;
+}
+.s_fliter .accordion-item {
+    border: none;
+}
+.s_fliter .accordion-header{
+    border-bottom:none !important;
+    border-top:1px solid rgba(0, 0, 0, .1);
+    background-color: white;
+    box-shadow: none;
+    padding: 0px;
+}
+.s_fliter .accordion-header .accordion-button {
+    background-color: white;
+    box-shadow: none;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: 500;
+    color: #000000;
+}
+.s_fliter .accordion-body {
+    padding: 20px !important;
+    padding-top: 0px !important;
+}
+.s_fliter .show .accordion-body{
+    max-height: 100%;
+}
+
+
+.s_price_slider .multi-range-slider{
+    border: none;
+    box-shadow: none;
+}
+.s_price_slider .multi-range-slider  .bar-left  {
+    background-color: rgba(0, 0, 0, .1);
+    box-shadow: none;
+}
+.s_price_slider .multi-range-slider .bar .bar-right{
+    background-color: rgba(0, 0, 0, .1);
+    box-shadow: none;
+}
+.s_price_slider .multi-range-slider .ruler {
+    display: none;
+}
+.s_price_slider .multi-range-slider .label {
+    display: none;
+}
+.s_price_slider .multi-range-slider .thumb {
+    background-color: var(--brown);
+    border: none !important;
+}
+.s_price_slider .multi-range-slider .thumb::before {
+    border: none;
+    box-shadow: none;
+}
+.s_price_slider .multi-range-slider .bar  .bar-inner{
+    background-color: var(--brown);
+}
+.multi-range-slider .thumb .caption {
+    display: block !important;
+    top: calc(100% );
+    left: -30px !important;
+}
+.multi-range-slider .thumb .caption span::before{
+    content: '₹';
+}
+
+.s_price_slider .multi-range-slider .caption span {
+    background-color: transparent;
+    box-shadow: none;
+    color: black;
+    font-size: 20px;
+    font-weight: 600;
+    /* margin-right: 40px; */
+}
+
+
+/* custum checkbox *--------------------------------------------------------------------- */
+
+.s_fliter .s_checkbox input[type="checkbox"] {
+    -webkit-appearance: none; 
+    appearance: none; 
+}
+
+
+.s_fliter .s_checkbox input[type="checkbox"]:checked {
+    background-color: var(--brown) ;
+}
+
+
+.s_fliter .s_checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px; 
+    background-color: transparent;
+    border: 1px solid var(--brown) !important;
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+}
+
+.s_fliter .s_checkbox input[type="checkbox"]:checked::before {
+    content: ""; 
+    position: absolute; 
+    top: 5%; 
+    left: 36%; 
+    width: 6px; 
+    height: 12px; 
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg); 
+    transform-origin: center; 
+    background: transparent; 
+}
+.s_fliter .s_checkbox {
+    padding-bottom: 10px;
+}
+.s_fliter .s_checkbox label {
+    margin-left: 10px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.s_product_list {
+     padding-left: 20px;
+}
+
+.s_product_list .s_top .s_fliter_option {
+    height: 40px;
+    padding: 0px 20px;
+    text-align: center;
+    border: 1px solid black;
+    margin-left: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.s_product_list .s_top .s_fliter_option p {
+    font-size: 18px;
+    margin-bottom: 0px;
+    font-weight: 500;
+    line-height: 35px;
+}
+.s_product_list .s_top .s_fliter_option:hover {
+    background-color: rgba(0, 0, 0, .1);
+    padding-right: 10px;
+}
+.s_product_list .s_top .s_fliter_option:hover svg{
+    display: flex;
+} 
+.s_product_list .s_top .s_fliter_option svg{
+    display: none;
+    margin-top: 3px;
+    font-size: 18px;
+}
+
+ .s_product_list .s_fliter_select{
+    height: 40px;
+    padding: 0px 20px;
+    text-align: center;
+    border: 1px solid black;
+    margin-left: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    margin-bottom: 0px;
+    font-weight: 500;
+    line-height: 35px;
+    position: relative;
+    cursor: pointer;
+}
+.s_product_list .s_fliter_select svg {
+    margin-top: 3px;
+    margin-left: 5px;
+}
+.s_product_list .s_fliter_select:hover  .s_sortby_menu {
+    display: block;
+}
+.s_fliter_select .s_sortby_menu {
+    position: absolute;
+    top: 100%;
+    right: 0%;
+    /* transform: translateX(-50%); */
+    background-color: white;
+    width: 200px;
+    display: none;
+    padding: 10px;
+    z-index: 2;
+    margin-top: 5px
+}
+.s_fliter_select .s_sortby_menu .s_sortby_option {
+    display: flex;
+    align-items: center;
+}
+.s_fliter_select .s_sortby_menu .s_sortby_option input {
+    accent-color: black;
+    width: 18px;
+    height: 18px;
+    margin-right: 5px;
+}
+
+
+
+
+
+
+
+@media (max-width:991px){
+    .s_fliter{
+        width: 250px;
+        min-width: 250px ;
+    }
+    .s_fliter_select {
+        margin-top:5px ;
+
+    }
+    .s_fliter_select .s_sortby_menu {
+        width: 100%;
+    }
+}
+@media (max-width:767px){
+    .s_fliter{
+        width: 100%;
+        min-width: 150px !important;
+        font-size: 14px !important;
+    }
+    .s_fliter .s_fliter_head{
+        font-size: 16px;
+    }
+    .s_product_list {
+        padding-left: 0px;
+    }
+    .s_product_list .s_fliter_option {
+        margin:5px;
+    }
+    .s_responsive_fliter {
+        width: 100%;
+        margin: 10px 0px;
+        background-color: white;
+        /* box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, .1); */
+        border: 1px solid rgba(0, 0, 0, .1);
+        height: 40px;
+        padding: 5px;
+        font-size: 24px;
+        color: var(--brown);
+        font-weight: 500;
+        
+    }
+
+    .s_fliter {
+        box-shadow: none;
+    }
+    .s_fliter_offcanvas {
+        min-width: 200px;
+        width: 250px !important;
+    }
+    .s_fliter_offcanvas .offcanvas-title {
+        font-size: 24px !important;
+        color: var(--brown) !important;
+    }
+}

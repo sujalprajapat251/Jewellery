@@ -1,14 +1,13 @@
 import { Nav, Offcanvas, Accordion, Modal } from 'react-bootstrap';
 import '../Css/Sujal/Header.css';
 import { IoCartOutline, IoCloseOutline, IoPersonOutline, IoSearch } from 'react-icons/io5';
-import { IoMdHeartEmpty } from 'react-icons/io';
+import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 import { FaArrowRight, FaBars } from 'react-icons/fa';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ring1 from '../Img/Sujal/s_diamond_earing.png';
 import ring2 from '../Img/Sujal/s_diamond_earing.png';
 import ring3 from '../Img/Sujal/engage-ring.png';
-
 function Header() {
 
 
@@ -69,6 +68,10 @@ function Header() {
         console.log(filteredSearchData);
         setSearchData(filteredSearchData);
     }
+
+
+    // heart icon handller
+    const [isFilled, setIsFilled] = useState(false);
     return (
         <>
             <div className="text-center s_header_top">
@@ -78,25 +81,25 @@ function Header() {
                     <input type='text' placeholder='Search for Jewellery and more...' onChange={(e) => { setSearch(e.target.value); searchHandle(); }}></input>
                     <IoSearch />
                 </div>
-                <div className='s_logo col-lg-4 col-4 ms-lg-auto order-lg-2 order-1 align-self-center '>
+                <Link to={'/'} className='s_logo text-decoration-none col-lg-4 col-4 ms-lg-auto order-lg-2 order-1 align-self-center '>
                     <h2 className='text-lg-center mb-0'>LOGO</h2>
-                </div>
+                </Link>
                 <div className='col-lg-4 col-4 d-flex justify-content-end align-items-center order-lg-3 order-2'>
-                    <div className='s_header_icon'>
-                        <IoMdHeartEmpty />
+                    <Link to={'/wishlist'} className={`s_header_icon s_heart_icons ${isFilled ? "filled" : "empty"}`} onClick={() => setIsFilled(!isFilled)} >
+                        {isFilled ? <IoMdHeart /> : <IoMdHeartEmpty />}
                         <p className='mb-0'>Wishlist</p>
-                    </div>
-                    <div className='s_header_icon'>
+                    </Link>
+                    <Link to={'/cart'} className='s_header_icon'>
                         <IoCartOutline />
                         <p className='mb-0'>Cart</p>
-                    </div>
-                    <div className='s_header_icon' onClick={handleLoginShow}>
+                    </Link>
+                    <Link to={'#'} className='s_header_icon' onClick={handleLoginShow}>
                         <IoPersonOutline />
                         <p className='mb-0'>Account</p>
-                    </div>
-                    <div className=' d-lg-none d-flex align-items-center fs-2' onClick={handleShow}>
+                    </Link>
+                    <Link to={'#'} className=' d-lg-none d-flex align-items-center fs-2 s_bar_icon' onClick={handleShow}>
                         <FaBars />
-                    </div>
+                    </Link>
                 </div>
             </section>
             <section className='s_header_menu  d-none d-lg-block'>
@@ -873,49 +876,49 @@ function Header() {
 
             {/* search section */}
             <section className={`s_search_sec ${Search === '' ? '' : 'show'}`}>
-                {searchData.length === 0 ? 
-                <>
-                    <div className='s_serach_head  border-0'><IoCloseOutline className='ms-auto ' onClick={() => { setSearch(''); }} /></div>
-                    <div className='s_search_not'>
-                        <h2>No result found.</h2></div>
-                </>
-                : <>
-                    <div className='s_serach_head'><h5 className='mb-0'>Suggestions</h5><IoCloseOutline onClick={() => { setSearch(''); }} /></div>
-                    {searchData.map((el, id) => {
-                        return (
-                            <div key={id} className='s_search_item'>
-                                {!el.popular ?
-                                    <p>
-                                        <Link to={`#`}>
-                                            {el.name}
+                {searchData.length === 0 ?
+                    <>
+                        <div className='s_serach_head  border-0'><IoCloseOutline className='ms-auto ' onClick={() => { setSearch(''); }} /></div>
+                        <div className='s_search_not'>
+                            <h2>No result found.</h2></div>
+                    </>
+                    : <>
+                        <div className='s_serach_head'><h5 className='mb-0'>Suggestions</h5><IoCloseOutline onClick={() => { setSearch(''); }} /></div>
+                        {searchData.map((el, id) => {
+                            return (
+                                <div key={id} className='s_search_item'>
+                                    {!el.popular ?
+                                        <p>
+                                            <Link to={`#`}>
+                                                {el.name}
+                                            </Link>
+                                        </p>
+                                        : ''}
+                                </div>
+                            )
+                        })}
+                        <div className='s_serach_head'><h5 className='mb-0'>Popular</h5></div>
+                        {searchData.map((el, id) => {
+                            return (
+                                <div key={id} className='s_search_item'>
+                                    {el.popular ?
+                                        <Link to={`#`} className='d-flex align-items-center'>
+                                            <img src={el.img} alt={el.name}></img>
+                                            <div>
+                                                <p className='mb-0'>{el.name}</p>
+                                                <span>
+                                                    <small>₹{el.price}</small>
+                                                    <strike>₹{el.oldPrice}</strike>
+                                                </span>
+                                            </div>
                                         </Link>
-                                    </p>
-                                    : ''}
-                            </div>
-                        )
-                    })}
-                    <div className='s_serach_head'><h5 className='mb-0'>Popular</h5></div>
-                    {searchData.map((el, id) => {
-                        return (
-                            <div key={id} className='s_search_item'>
-                                {el.popular ?
-                                    <Link to={`#`} className='d-flex align-items-center'>
-                                        <img src={el.img} alt={el.name}></img>
-                                        <div>
-                                            <p className='mb-0'>{el.name}</p>
-                                            <span>
-                                                <small>₹{el.price}</small>
-                                                <strike>₹{el.oldPrice}</strike>
-                                            </span>
-                                        </div>
-                                    </Link>
-                                    : ''}
-                            </div>
-                        )
-                    })}
+                                        : ''}
+                                </div>
+                            )
+                        })}
                     </>
                 }
-                    <div className='s_serach_head border-top border-0 mt-auto'><h5 className='mb-0'>Search for “{Search}”</h5><FaArrowRight /></div>
+                <div className='s_serach_head border-top border-0 mt-auto'><h5 className='mb-0'>Search for “{Search}”</h5><FaArrowRight /></div>
             </section>
         </>
     );
