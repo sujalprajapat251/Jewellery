@@ -18,6 +18,7 @@ import MyProfile from './Pages/MyProfile';
 import TrackOrder from './Pages/TrackOrder';
 import Wishlist from './Pages/Wishlist';
 import ProductList from './Pages/ProductList';
+import ProductDetail from './Pages/ProductDetail';
 const App = () => {
   return (
     <>
@@ -27,6 +28,7 @@ const App = () => {
             <Route path="/" element={<Home />}></Route>
             <Route path="/wishlist" element={<Wishlist/>}></Route>
             <Route path="/productlist" element={<ProductList/>}></Route>
+            <Route path='/productdetail' element={<ProductDetail/>}></Route>
             <Route path="/cart" element={<Cart/>}></Route>
             <Route path="/payment" element={<Payment/>}></Route>
             <Route path="/orderdetails" element={<OrderDetails/>}></Route>
@@ -45,5 +47,4 @@ const App = () => {
     </>
   )
 }
-
 export default App

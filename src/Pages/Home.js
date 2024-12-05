@@ -124,39 +124,38 @@ function Home() {
                     </div>
                     <div className='s_cat_slider'>
                         <OwlCarousel className='owl-theme' loop margin={10} items={7} nav={true} responsive={cat_sliderres} dots={false} autoplay autoplayTimeout={3000} autoplayHoverPause>
-                            <div class='item'>
+                            <Link className='item' to={'/productlist'}>
                                 <img src={cat1} alt=''></img>
                                 <h4>Diamond’s</h4>
-                            </div>
-                            <div class='item'>
+                            </Link>
+                            <Link className='item' to={'/productlist'}>
                                 <img src={cat2} alt=''></img>
                                 <h4>Earrings</h4>
-                            </div>
-                            <div class='item'>
+                            </Link>
+                            <Link className='item' to={'/productlist'}>
                                 <img src={cat3} alt=''></img>
                                 <h4>Rings</h4>
 
-                            </div>
-                            <div class='item'>
+                            </Link>
+                            <Link className='item' to={'/productlist'}>
                                 <img src={cat4} alt=''></img>
                                 <h4>Bracelets</h4>
 
-                            </div>
-                            <div class='item'>
+                            </Link>
+                            <Link className='item' to={'/productlist'}>
                                 <img src={cat5} alt=''></img>
                                 <h4>Necklace</h4>
 
-                            </div>
-                            <div class='item'>
+                            </Link>
+                            <Link className='item' to={'/productlist'}>
                                 <img src={cat6} alt=''></img>
                                 <h4>Gold Lava</h4>
 
-                            </div>
-                            <div class='item'>
+                            </Link>
+                            <Link className='item' to={'/productlist'}>
                                 <img src={cat7} alt=''></img>
                                 <h4>Charms</h4>
-
-                            </div>
+                            </Link>
                         </OwlCarousel>
                     </div>
                 </section>
@@ -168,7 +167,6 @@ function Home() {
                     <Row xxl={6} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-0 gx-sm-3'>
                         {
                             card_detail.map((ele, id) => {
-                                console.log(ele.img)
                                 return (
                                     <Col key={id} className='py-4'>
                                         <div className='s_seller_card'>
@@ -179,11 +177,11 @@ function Home() {
                                                 <GoHeart />
                                             </div>
                                             {ele.status ?
-                                                <div class='s_card_status'><p className='mb-0'>{ele.status}</p></div>
+                                                <div className='s_card_status'><p className='mb-0'>{ele.status}</p></div>
                                                 : ''}
                                             <div className='s_card_text'>
                                                 <h5>{ele.title}</h5>
-                                                <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike class="mx-2">₹{ele.old_price}</strike></p>
+                                                <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.old_price}</strike></p>
                                                 <div className='s_rating'>
                                                     {
                                                         [...Array(5)].map((_, index) => {
@@ -208,10 +206,10 @@ function Home() {
                                 <div className='sp_card_img'>
                                     <img src={require('../Img/Sujal/seller1.png')} className='w-100'></img>
                                 </div>
-                                <div class='s_card_status'><p className='mb-0'>treading</p></div>
+                                <div className='s_card_status'><p className='mb-0'>treading</p></div>
                                 <div className='s_card_text'>
                                     <h5>Gold Ear Rings</h5>
-                                    <p className='mb-0'><span className='mx-2'>₹1200</span><strike class="mx-2">₹1500</strike></p>
+                                    <p className='mb-0'><span className='mx-2'>₹1200</span><strike className="mx-2">₹1500</strike></p>
                                     <div className='sp_'></div>
                                     <Link></Link>
                                 </div>
@@ -364,18 +362,18 @@ function Home() {
             <section className='s_feature_sec'>
                 <div className='row d-flex justify-content-between gx-0'>
                     <div className='col-lg-8 s_feature_slider '>
-                        <div class="s_feature_bgtxt ">FEATURED PRODUCTS</div>
+                        <div className="s_feature_bgtxt ">FEATURED PRODUCTS</div>
                         <div className='s_cat_slider w-100 pt-0' >
                             <OwlCarousel className='owl-theme ' loop margin={20} items={4} nav={true} dots={false}
                                 responsive={
                                     feature_sliderres
                                 }
                             >
-                                <Link class='item'>
+                                <Link className='item'>
                                     <img src={require('../Img/Sujal/s_necklace.png')} className='w-100' alt='Necklace'></img>
                                     <div className='s_slider_text'>
                                         <h5>Necklace</h5>
-                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike class="mx-2">₹1500</strike></p>
+                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike className="mx-2">₹1500</strike></p>
                                         <div className='s_rating'>
                                             {
                                                 [...Array(5)].map((_, index) => {
@@ -390,11 +388,11 @@ function Home() {
                                         </div>
                                     </div>
                                 </Link>
-                                <Link class='item'>
+                                <Link className='item'>
                                     <img src={require('../Img/Sujal/s_bracelet.png')} className='w-100' alt='Bracelet'></img>
                                     <div className='s_slider_text'>
                                         <h5>Bracelet</h5>
-                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike class="mx-2">₹1500</strike></p>
+                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike className="mx-2">₹1500</strike></p>
                                         <div className='s_rating'>
                                             {
                                                 [...Array(5)].map((_, index) => {
@@ -409,11 +407,11 @@ function Home() {
                                         </div>
                                     </div>
                                 </Link>
-                                <Link class='item'>
+                                <Link className='item'>
                                     <img src={require('../Img/Sujal/s_diamond_ring.png')} className='w-100' alt='Dimond Ring'></img>
                                     <div className='s_slider_text'>
                                         <h5>Dimond Ring</h5>
-                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike class="mx-2">₹1500</strike></p>
+                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike className="mx-2">₹1500</strike></p>
                                         <div className='s_rating'>
                                             {
                                                 [...Array(5)].map((_, index) => {
@@ -428,11 +426,11 @@ function Home() {
                                         </div>
                                     </div>
                                 </Link>
-                                <Link class='item'>
+                                <Link className='item'>
                                     <img src={require('../Img/Sujal/s_diamond_earing.png')} className='w-100' alt='Dimond Earring'></img>
                                     <div className='s_slider_text'>
                                         <h5>Dimond Earring</h5>
-                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike class="mx-2">₹1500</strike></p>
+                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike className="mx-2">₹1500</strike></p>
                                         <div className='s_rating'>
                                             {
                                                 [...Array(5)].map((_, index) => {
