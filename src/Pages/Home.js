@@ -164,12 +164,12 @@ function Home() {
                         <p className='mb-2'>Explore our most loved products</p>
                         <h2>The Best Sellers</h2>
                     </div>
-                    <Row xxl={6} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-0 gx-sm-3'>
+                    <Row xxl={6} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
                         {
                             card_detail.map((ele, id) => {
                                 return (
                                     <Col key={id} className='py-4'>
-                                        <div className='s_seller_card'>
+                                        <Link to={'/productlist'} className='s_seller_card'>
                                             <div className='s_card_img'>
                                                 <img src={ele.img} className="w-100" alt={ele.title} key={ele.title} />
                                             </div>
@@ -196,7 +196,7 @@ function Home() {
                                                 </div>
                                                 <Link></Link>
                                             </div>
-                                        </div>
+                                        </Link>
                                     </Col>
                                 )
                             })
@@ -369,7 +369,7 @@ function Home() {
                                     feature_sliderres
                                 }
                             >
-                                <Link className='item'>
+                                <Link className='item' to={'/productlist'}>
                                     <img src={require('../Img/Sujal/s_necklace.png')} className='w-100' alt='Necklace'></img>
                                     <div className='s_slider_text'>
                                         <h5>Necklace</h5>
@@ -388,7 +388,7 @@ function Home() {
                                         </div>
                                     </div>
                                 </Link>
-                                <Link className='item'>
+                                <Link className='item' to={'/productlist'}>
                                     <img src={require('../Img/Sujal/s_bracelet.png')} className='w-100' alt='Bracelet'></img>
                                     <div className='s_slider_text'>
                                         <h5>Bracelet</h5>
@@ -407,7 +407,7 @@ function Home() {
                                         </div>
                                     </div>
                                 </Link>
-                                <Link className='item'>
+                                <Link className='item' to={'/productlist'}>
                                     <img src={require('../Img/Sujal/s_diamond_ring.png')} className='w-100' alt='Dimond Ring'></img>
                                     <div className='s_slider_text'>
                                         <h5>Dimond Ring</h5>
@@ -426,7 +426,7 @@ function Home() {
                                         </div>
                                     </div>
                                 </Link>
-                                <Link className='item'>
+                                <Link className='item' to={'/productlist'}>
                                     <img src={require('../Img/Sujal/s_diamond_earing.png')} className='w-100' alt='Dimond Earring'></img>
                                     <div className='s_slider_text'>
                                         <h5>Dimond Earring</h5>

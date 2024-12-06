@@ -28,12 +28,12 @@ function Wishlist() {
                 </section>
                 :
                 <section className='s_wishlist_sec ds_container'>
-                    <Row xxl={6} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-0 gx-sm-3'>
+                    <Row xxl={6} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
                         {
                             wishlist_detail.map((ele, id) => {
                                 return (
                                     <Col key={id} className='py-4'>
-                                        <div className='s_seller_card'>
+                                        <Link  to={'/productlist'} className='s_seller_card'>
                                             <div className='s_card_img'>
                                                 <img src={ele.img} className="w-100" alt={ele.title} key={ele.title} />
                                             </div>
@@ -63,7 +63,7 @@ function Wishlist() {
                                                 </div>
                                                 <Link></Link>
                                             </div>
-                                        </div>
+                                        </Link>
                                     </Col>
                                 )
                             })

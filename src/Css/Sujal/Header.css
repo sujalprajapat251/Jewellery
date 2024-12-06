@@ -1,6 +1,4 @@
-:root{
-    --brown : #4D1F08;
-} 
+
 .s_pos_50 {
     left: 50% !important;
     transform: translateX(-50%);
@@ -357,7 +355,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 20px;
+    /* margin-top: 20px;*/
     padding: 20px;
     border-bottom: 1px solid rgba(0, 0, 0, .1);
 }
@@ -440,6 +438,9 @@
      }
   }
   @media (max-width: 480px){
+    .s_logo h2 {
+        font-size: 32px;
+    }
     .s_header_sec {
         padding: 10px;
     }
