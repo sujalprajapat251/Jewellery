@@ -7,10 +7,10 @@ import { GoHeartFill } from 'react-icons/go';
 import { Link } from 'react-router-dom';
 function Wishlist() {
     const wishlist_detail = [
-        { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
-        { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
-        { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
-        { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
+        { id: 1, title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
+        {id: 2, title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
+        {id: 3, title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
+        {id: 4, title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
     ]
     return (
         <>
@@ -31,7 +31,6 @@ function Wishlist() {
                     <Row xxl={6} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-0 gx-sm-3'>
                         {
                             wishlist_detail.map((ele, id) => {
-                                console.log(ele.img)
                                 return (
                                     <Col key={id} className='py-4'>
                                         <div className='s_seller_card'>
@@ -42,11 +41,14 @@ function Wishlist() {
                                                 <GoHeartFill />
                                             </div>
                                             {ele.status ?
-                                                <div class='s_card_status'><p className='mb-0'>{ele.status}</p></div>
+                                                <div className='s_card_status'><p className='mb-0'>{ele.status}</p></div>
                                                 : ''}
                                             <div className='s_card_text'>
                                                 <h5>{ele.title}</h5>
-                                                <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike class="mx-2">₹{ele.old_price}</strike></p>
+                                                <p className='mb-0' key={'p'+id}>
+                                                    <span className='mx-2' key={'price'+id}>₹{ele.price}</span>
+                                                    <strike className="mx-2" key={id}>₹{ele.old_price}</strike>
+                                                </p>
                                                 <div className='s_rating'>
                                                     {
                                                         [...Array(5)].map((_, index) => {

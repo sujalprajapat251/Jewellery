@@ -21,6 +21,7 @@ import ProductList from './Pages/ProductList';
 import SubmitReview from './Pages/SubmitReview';
 
 
+import ProductDetail from './Pages/ProductDetail';
 const App = () => {
 
 
@@ -35,6 +36,7 @@ const App = () => {
             <Route path="/" element={<Home />}></Route>
             <Route path="/wishlist" element={<Wishlist/>}></Route>
             <Route path="/productlist" element={<ProductList/>}></Route>
+            <Route path='/productdetail' element={<ProductDetail/>}></Route>
             <Route path="/cart" element={<Cart/>}></Route>
             <Route path="/payment" element={<Payment/>}></Route>
             <Route path="/orderdetails" element={<OrderDetails/>}></Route>
@@ -54,5 +56,4 @@ const App = () => {
     </>
   )
 }
-
 export default App

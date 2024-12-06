@@ -125,12 +125,17 @@
     /* / height: 270px;/  */
     object-fit: cover;
 }
-
+.s_cat_slider  a {
+    text-decoration: none;
+    color: inherit;
+}
 .s_cat_slider .owl-item h4 {
     font-size: 24px;
     font-weight: 400;
     text-align: center;
     padding: 20px;
+    color: black;
+    text-decoration: none;
 }
 
 .s_cat_slider .owl-nav {
@@ -173,6 +178,8 @@
 
 .s_seller_cards .s_seller_card {
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: inherit;
 }
 
 .s_seller_cards .s_seller_card .s_card_text {
@@ -777,6 +784,7 @@
     .s_cat_head h2 {
         font-size: 38px;
     }
+
 
     .s_cat_slider .owl-nav {
         width: calc(100% + 15px);
