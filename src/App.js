@@ -19,13 +19,10 @@ import TrackOrder from './Pages/TrackOrder';
 import Wishlist from './Pages/Wishlist';
 import ProductList from './Pages/ProductList';
 import SubmitReview from './Pages/SubmitReview';
-
-
 import ProductDetail from './Pages/ProductDetail';
+import ReturnOrder from './Pages/ReturnOrder';
+
 const App = () => {
-
-
-
   return (
     <>
     <div>
@@ -50,6 +47,7 @@ const App = () => {
             <Route path="/myprofile" element={<MyProfile/>}></Route>
             <Route path="/trackorder" element={<TrackOrder/>}></Route>
             <Route path="/review" element={<SubmitReview/>}></Route>
+            <Route path="/returnOrder" element={<ReturnOrder/>}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

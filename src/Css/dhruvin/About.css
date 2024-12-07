@@ -63,7 +63,7 @@
     object-fit: cover;
 }
 .ds_about-girl{
-    height: 532px;
+    height: 547px;
     object-fit: cover;
 }
 .ds_about-box3{
@@ -83,10 +83,10 @@
         left: -47%;
         width: 70%
     }
-    .ds_about-girl {
+    /* .ds_about-girl {
         height: 532px;
         height: 432px;
-    }
+    } */
     .ds_about-best-ring{
         height: 140px;
         object-fit: cover;
@@ -95,7 +95,8 @@
         height: 432px;
     }
     .ds_about-girl {
-        height: 375px;
+        height: 445px;
+
     }
     .ds_about-chain-bg {
         height: 375px;
@@ -113,6 +114,9 @@
         left: -47%;
         width: 82%;
     }
+    .ds_about-girl {
+        height:390px;
+    }
 }
 
 @media (max-width:992px) {
@@ -127,7 +131,7 @@
         left: 0;
     }
     .ds_about-girl {
-        height: 460px;
+        height: 477px;
     }
 }
 

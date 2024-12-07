@@ -4,7 +4,7 @@ import '../Css/dhruvin/Invoice.css'
 const Invoice = () => {
   return (
     <div>
-       <section className="">
+       <section className=" mb-5">
         <div>
           <div className="ds_container">
             <div className="mt-4">

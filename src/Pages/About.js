@@ -152,12 +152,12 @@ const About = () => {
                                                 <img className='ds_about-hand-ring' src={require("../Img/dhruvin/about-hand-ring.png")} alt="" width="100%" />
                                             </div>
                                             <div className="row">
-                                                <div className="col-xl-7 col-lg-7 col-md-7 col-sm-7  mt-md-0 mt-4">
+                                                <div className="col-xl-7 col-lg-7 col-md-7 col-sm-7  mt-md-3 mt-4">
                                                     <div>
                                                         <img className='ds_about-best-ring' src={require("../Img/dhruvin/about-best-ring.png")} alt="" width="100%" />
                                                     </div>
                                                 </div>
-                                                <div className="col-xl-5 col-lg-5 col-md-5 col-sm-5  mt-md-0 mt-4">
+                                                <div className="col-xl-5 col-lg-5 col-md-5 col-sm-5  mt-md-3 mt-4">
                                                     <div>
                                                        <img className='ds_about-pandle' src={require("../Img/dhruvin/pandle.png")} alt="" width="100%" />
                                                     </div>

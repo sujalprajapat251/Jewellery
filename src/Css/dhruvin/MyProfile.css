@@ -1,3 +1,7 @@
+.ds_cursor{
+    cursor: pointer;
+}
+
 .ds_profile-box{
     box-shadow: 0px 0px 24px 3px #7272721A;
     background: #FFFFFF;
@@ -8,11 +12,14 @@
     background-color: #4D1F08 !important;
     color: white !important;
 }
+.ds_profile_img_color{
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(218deg) brightness(104%) contrast(107%);
+}
 .ds_profile-btn{
     color: #4D1F08;
     background-color: white;
     border: none;
-    padding: 15px 30px;
+    padding: 20px 30px;
     width: 100%;
     text-align: left;
 }
@@ -235,13 +242,7 @@
 }
 
 
-/* {********************  Return Order With OTP Popup  *********} */
-.ds_return-otp-input{
-    height: 50px;
-    width: 50px;
-    text-align: center;
-    font-size: 15px;
-}
+
 
 
 @media (max-width:1441px) {
@@ -312,15 +313,13 @@
     margin: auto;
  }
 
-/* {********************  Return Order With OTP Popup  *********} */
-.ds_return-otp-input{
-    height: 40px;
-    width: 40px;
-}
-
 }
 
 @media (max-width:430px) {
+/* {************* My Profile **************} */
+.ds_offcanvas-inner{
+    --bs-offcanvas-width: 320px !important;
+}
 /* {*************  Edit Profile **************} */
   .ds_edit-save{
      margin-top: 20px;
@@ -353,10 +352,20 @@
 .ds_order-flex{
     justify-content: end;
  }
+
+/* {************* My Profile **************} */
+.ds_offcanvas-inner{
+    --bs-offcanvas-width: 320px !important;
+}
+
  
 }
 
 @media (max-width:350px) {
+/* {************* My Profile **************} */
+.ds_offcanvas-inner{
+    --bs-offcanvas-width: 270px !important;
+}
  /* {*************  My Address **************} */
  .ds_add-mini{
     width: 65%;
@@ -377,9 +386,5 @@
     max-width: 290px !important;
     margin: auto;
  }
- /* {********************  Return Order With OTP Popup  *********} */
-.ds_return-otp-input{
-    height: 35px;
-    width: 35px;
-}
+
 }

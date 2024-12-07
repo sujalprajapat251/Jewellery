@@ -9,6 +9,9 @@ import { Link } from 'react-router-dom';
 const MyProfile = () => {
 
     const [activeCard, setActiveCard] = useState(null);
+    const [activeBtn, setActiveBtn] = useState("All")
+    const [mainActive, setMainActive] = useState("My Profile")
+    const [editToggle, setEditToggle] = useState(false)
 
     const toggleDropdown = (index) => {
       setActiveCard(activeCard === index ? null : index);
@@ -31,11 +34,81 @@ const MyProfile = () => {
       },
     ];
 
+    const orders = [
+      {
+        status: "In progress",
+        date: "10 Oct 2023",
+        orderId: "12057598140",
+        actionLink: { text: "Track Order", href: "/TrackOrder" },
+        product: {
+          name: "Dual Tone Halo Diamond Finger Ring",
+          image: require("../Img/dhruvin/ring.png"),
+          details: {
+            sku: "PD00003-14-RS-FGVVSVS",
+            metal: "925 Silver",
+            metalColor: "Silver",
+            size: "5",
+          },
+        },
+        price: { current: "₹1200", original: "₹1500" },
+      },
+      {
+        status: "Delivered",
+        date: "05 Oct 2023",
+        orderId: "12057598140",
+        actionLink: { text: "Return Order", href: "/ReturnOrder", modalTarget: "" },
+        product: {
+          name: "Pal Gold Earrings",
+          image: require("../Img/dhruvin/gold.png"),
+          details: {
+            sku: "PD00003-14-RS-FGVVSVS",
+            metal: "925 Silver",
+            metalColor: "Gold",
+          },
+        },
+        price: { current: "₹1200", original: "₹1500" },
+        extraLink: { text: "Submit review", href: "" },
+      },
+      {
+        status: "Cancelled",
+        date: "10 Oct 2023",
+        orderId: "12057598140",
+        product: {
+          name: "Pal Gold Earrings",
+          image: require("../Img/dhruvin/ring.png"),
+          details: {
+            sku: "PD00003-14-RS-FGVVSVS",
+            metal: "925 Silver",
+            metalColor: "Gold",
+          },
+        },
+        price: { current: "₹1000", original: "₹1500" },
+      },
+    ];
+    
+    const [filterOrder, setFilterOrder] = useState(orders);
+
+    const handleFilter = (data) => {
+       setActiveBtn(data)
+      if(data === "All"){
+        setFilterOrder(orders)
+      }
+      else{
+          let filterData = orders.filter((element)=> {
+             return element.status === data
+           }) 
+         setFilterOrder(filterData)
+      }
+
+     
+    }
+
+  
 
   return (
     <>
-      {/* ************* My Profile ************** */}
-      <section>
+      {/* ************* My Profile ************** */} 
+      <section className='mb-5 pb-sm-5'>
         <div>
             <div className='ds_container'>
                 <div className="row">
@@ -44,13 +117,13 @@ const MyProfile = () => {
                            <div className='ds_profile-box'>
                               <h5 className='ds_color text-center'>My Account</h5>
                               <div>
-                                <button className='ds_profile-btn ds_active-color ds_600 mt-3'> <img src={require("../Img/dhruvin/profile.png")} alt="" width="7%" /> <span className='ms-2'>My Profile</span></button>
-                                <button className='ds_profile-btn ds_600'> <img src={require("../Img/dhruvin/location.png")} alt="" width="7%" /> <span className='ms-2'>My Address</span></button>
-                                <button className='ds_profile-btn ds_600'> <img src={require("../Img/dhruvin/card.png")} alt="" width="7%" /> <span className='ms-2'>Saved Cards</span></button>
-                                <button className='ds_profile-btn ds_600'> <img src={require("../Img/dhruvin/order.png")} alt="" width="7%" /> <span className='ms-2'>My Wishlist</span></button>
-                                <button className='ds_profile-btn ds_600'> <img src={require("../Img/dhruvin/heart.png")} alt="" width="7%" /> <span className='ms-2'>My Order</span></button>
-                                <button className='ds_profile-btn ds_600'> <img src={require("../Img/dhruvin/lock.png")} alt="" width="7%" /> <span className='ms-2'>Change Password</span></button>
-                                <button className='ds_profile-btn ds_600'> <img src={require("../Img/dhruvin/logout.png")} alt="" width="7%" /> <span className='ms-2'>Logout</span></button>
+                                <button onClick={()=>setMainActive("My Profile")} className={`ds_profile-btn ${mainActive === "My Profile" ? 'ds_active-color ' : ''}  ds_600 mt-3`}> <img className={`${mainActive === "My Profile" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/profile.png")} alt="" width="7%" /> <span className='ms-2'>My Profile</span></button>
+                                <button onClick={()=>setMainActive("My Address")} className={`ds_profile-btn ${mainActive === "My Address" ? 'ds_active-color' : ''} ds_600`}> <img className={`${mainActive === "My Address" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/location.png")} alt="" width="7%" /> <span className='ms-2'>My Address</span></button>
+                                <button onClick={()=>setMainActive("Saved Cards")} className={`ds_profile-btn ${mainActive === "Saved Cards" ? 'ds_active-color' : ''} ds_600`}> <img className={`${mainActive === "Saved Cards" ? 'ds_profile_img_color ' : ''} `}  src={require("../Img/dhruvin/card.png")} alt="" width="7%" /> <span className='ms-2'>Saved Cards</span></button>
+                                <button onClick={()=>setMainActive("My Order")} className={`ds_profile-btn ${mainActive === "My Order" ? 'ds_active-color' : ''} ds_600`}> <img className={`${mainActive === "My Order" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/order.png")} alt="" width="7%" /> <span className='ms-2'>My Order</span></button>
+                                <button onClick={()=>setMainActive("My Wishlist")} className={`ds_profile-btn ${mainActive === "My Wishlist" ? 'ds_active-color' : ''} ds_600`}>  <img className={`${mainActive === "My Wishlist" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/heart.png")} alt="" width="7%" /> <span className='ms-2'>My Wishlist</span></button>
+                                <button onClick={()=>setMainActive("Change Password")} className={`ds_profile-btn ${mainActive === "Change Password" ? 'ds_active-color' : ''} ds_600`} data-bs-toggle="modal" data-bs-target="#changePassword"> <img className={`${mainActive === "Change Password" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/lock.png")} alt="" width="7%" /> <span className='ms-2'>Change Password</span></button>
+                                <button onClick={()=>setMainActive("Logout")} className={`ds_profile-btn ${mainActive === "Logout" ? 'ds_active-color' : ''} ds_600`} data-bs-toggle="modal" data-bs-target="#logOut"> <img className={`${mainActive === "Logout" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/logout.png")} alt="" width="7%" /> <span className='ms-2'>Logout</span></button>
                               </div>
                            </div>
                            <div className='ds_offcanvas-main'>
@@ -62,37 +135,37 @@ const MyProfile = () => {
                                     </button>
                                   </div>
                                </div>
-                             <div className="offcanvas offcanvas-end"  id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                             <div className="offcanvas ds_offcanvas-inner offcanvas-end"  id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
                               <div className="offcanvas-header">
                                 <h4 className="offcanvas-title" id="offcanvasExampleLabel">Account</h4>
                                 <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                               </div>
                               <div className="offcanvas-body">
                                 <div>
-                                   <button className='ds_profile-btn ds_active-color ds_600 mt-3'> <img src={require("../Img/dhruvin/profile.png")} alt="" width="7%" /> <span className='ms-2'>My Profile</span></button>
-                                   <button className='ds_profile-btn ds_600'> <img src={require("../Img/dhruvin/location.png")} alt="" width="7%" /> <span className='ms-2'>My Address</span></button>
-                                   <button className='ds_profile-btn ds_600'> <img src={require("../Img/dhruvin/card.png")} alt="" width="7%" /> <span className='ms-2'>Saved Cards</span></button>
-                                   <button className='ds_profile-btn ds_600'> <img src={require("../Img/dhruvin/order.png")} alt="" width="7%" /> <span className='ms-2'>My Wishlist</span></button>
-                                   <button className='ds_profile-btn ds_600'> <img src={require("../Img/dhruvin/heart.png")} alt="" width="7%" /> <span className='ms-2'>My Order</span></button>
-                                   <button className='ds_profile-btn ds_600'> <img src={require("../Img/dhruvin/lock.png")} alt="" width="7%" /> <span className='ms-2'>Change Password</span></button>
-                                   <button className='ds_profile-btn ds_600'> <img src={require("../Img/dhruvin/logout.png")} alt="" width="7%" /> <span className='ms-2'>Logout</span></button>
+                                <button onClick={()=>setMainActive("My Profile")} className={`ds_profile-btn ${mainActive === "My Profile" ? 'ds_active-color ' : ''}  ds_600 mt-3`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "My Profile" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/profile.png")} alt="" width="7%" /> <span className='ms-2'>My Profile</span></button>
+                                <button onClick={()=>setMainActive("My Address")} className={`ds_profile-btn ${mainActive === "My Address" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "My Address" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/location.png")} alt="" width="7%" /> <span className='ms-2'>My Address</span></button>
+                                <button onClick={()=>setMainActive("Saved Cards")} className={`ds_profile-btn ${mainActive === "Saved Cards" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "Saved Cards" ? 'ds_profile_img_color ' : ''} `}  src={require("../Img/dhruvin/card.png")} alt="" width="7%" /> <span className='ms-2'>Saved Cards</span></button>
+                                <button onClick={()=>setMainActive("My Order")} className={`ds_profile-btn ${mainActive === "My Order" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "My Order" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/order.png")} alt="" width="7%" /> <span className='ms-2'> My Order</span></button>
+                                <button onClick={()=>setMainActive("My Wishlist")} className={`ds_profile-btn ${mainActive === "My Wishlist" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close">  <img className={`${mainActive === "My Wishlist" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/heart.png")} alt="" width="7%" /> <span className='ms-2'>My Wishlist</span></button>
+                                <button onClick={()=>setMainActive("Change Password")} className={`ds_profile-btn ${mainActive === "Change Password" ? 'ds_active-color' : ''} ds_600`} data-bs-toggle="modal" data-bs-target="#changePassword" > <img className={`${mainActive === "Change Password" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/lock.png")} alt="" width="7%" /> <span className='ms-2'>Change Password</span></button>
+                                <button onClick={()=>setMainActive("Logout")} className={`ds_profile-btn ${mainActive === "Logout" ? 'ds_active-color' : ''} ds_600`} data-bs-toggle="modal" data-bs-target="#logOut" > <img className={`${mainActive === "Logout" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/logout.png")} alt="" width="7%" /> <span className='ms-2'>Logout</span></button>
                                 </div>
                               </div>
                              </div>
                            </div>
-
-                           
                         </div>
                     </div>
 
                     <div className="col-xl-9 col-lg-9 col-md-8  mt-md-4 mt-5">
                         <div>
+
                          {/* ************* My Profile ************** */}
-                          <section className='d-none'>  
-                            <div className='d-none'>
+                         {mainActive === "My Profile" ? (
+                          <section className="">  
+                            <div className={`${editToggle ? 'd-none' : 'd-block'}`}>
                                <div className='d-flex justify-content-between align-items-center'>
                                    <h3>My Profile</h3>
-                                   <button className='ds_edit-btn'>Edit Profile</button>
+                                   <button className='ds_edit-btn' onClick={()=> setEditToggle(!editToggle)}>Edit Profile</button>
                                </div>
                                <div className='ds_profile-inner mt-4'>
                                   <div className="row">
@@ -137,7 +210,7 @@ const MyProfile = () => {
                             </div>
 
                             {/* ------------ Edit Profile ------------- */}
-                            <div>
+                            {editToggle ? (<div>
                                 <div>
                                    <h3>Edit Profile</h3>
                                 </div>
@@ -194,11 +267,17 @@ const MyProfile = () => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>) : ("")}
                           </section>
+                         )
+                         :
+                         ("")
+                        }
+                          
 
                          {/* ************* My Address ************** */}
-                         <section className='d-none'>
+                         {mainActive === "My Address" ? (
+                          <section className=''>
                             <div>
                                <div className='d-flex justify-content-between align-items-center'>
                                    <h3>My Address</h3>
@@ -215,8 +294,8 @@ const MyProfile = () => {
                                                <BsThreeDotsVertical onClick={() => toggleDropdown(index)} style={{ cursor: 'pointer' }} />
                                                {activeCard === index && (
                                                  <div className="ds_add-mini">
-                                                   <p className="ds_600">Edit</p>
-                                                   <p className="ds_600" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</p>
+                                                   <p className="ds_600 ds_cursor" data-bs-toggle="modal" data-bs-target="#addressModal">Edit</p>
+                                                   <p className="ds_600 ds_cursor" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</p>
                                                    <p className="ds_600">Make as default</p>
                                                  </div>
                                                )}
@@ -348,9 +427,12 @@ const MyProfile = () => {
                                  </section>
                             </div>
                          </section>
+                         ) : ("")}
+                         
 
                          {/* ************* Saved Cards ************** */}
-                          <section className='d-none'>
+                         {mainActive === "Saved Cards" ? (
+                          <section className=''>
                             <div>
                                 <div>
                                   <div className='d-flex justify-content-between align-items-center'>
@@ -506,151 +588,117 @@ const MyProfile = () => {
                                  </section>
 
                              </div>
-                          </section>
+                          </section>) : ("") }
+                          
 
                          {/* ************* My Order ************** */}
+                         {mainActive === "My Order" ? (
                           <section>
-                            <div className='mb-5'>
-                                <div className='d-flex flex-wrap justify-content-sm-between ds_order-manage align-items-center'>
-                                    <h3 style={{whiteSpace:'nowrap'}} className='mb-md-2'>My Orders</h3>
-                                    <div>
-                                        <button className='ds_order-all ds_order-active-btn me-2'>All</button>
-                                        <button className='ds_order-prog me-2'>In Progress</button>
-                                        <button className='ds_order-prog me-2'>Delivered</button>
-                                        <button className='ds_order-prog '>Cancelled</button>
-                                    </div>
-                                </div>
-                                <div className='ds_order-bg mt-4'>
-                                     
-                                    {/* ----------------------- Empty Card ------------------- */}
-                                    <div className='d-none'>
-                                     <div className='d-flex justify-content-center align-items-center h-100'>
-                                        <div className='text-center'>
-                                            <div>
-                                              <img src={require("../Img/dhruvin/no-item.png")} alt="" width="30%" />
-                                            </div>
-                                            <div>
-                                                <h5>No orders yet</h5>
-                                                <p className='text-muted'>You have no order yet with us keep shopping </p>
-                                                <button className='ds_order-browse'>Browse Products</button>
-                                            </div>
-                                        </div>
-                                     </div>
-                                    </div>
-
-                                    {/* ----------------------- My Order ------------------- */}
-                                    <div>
-                                      <div className=' px-4 pb-4'>
-                                        <div className="row">
-                                          <div className="col-xl-12 mt-4">
-                                            <div className='ds_order-inner'>
-                                              <div className='d-flex flex-wrap ds_order-flex  align-items-center '>
-                                                <div className='d-flex flex-wrap px-3 pt-2'>
-                                                   <p className='ds_order-progress mb-0'>In progress</p>
-                                                   <p className='ds_order-text ds_600 mb-0'>10 Oct 2023</p>
-                                                   <p className='ds_order-order mb-0'><span className='text-muted'>Order Id : </span><span className='ds_color'>12057598140</span></p>
-                                                </div>
-                                                 <Link to="" className='text-dark ds_600 pe-3 ms-lg-0 ms-3'>Track Order</Link>
-                                              </div>
-                                              <div className='ds_order-line mt-2'></div>
-                                              <div className='px-3 my-4'>
-                                                 <div className='d-flex justify-content-between flex-wrap '>
-                                                     <div>
-                                                         <div className='d-flex ds_cart-flex'>
-                                                           <div className='mx-auto'>
-                                                               <img className='ds_oder-img' src={require("../Img/dhruvin/ring.png")} alt="" />
-                                                           </div>
-                                                           <div className='ds_cart-deta'>
-                                                              <h6>Dual Tone Halo Diamond Finger Ring</h6>
-                                                              <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'>PD00003-14-RS-FGVVSVS</span></p>
-                                                              <p className='ds_tcolor mb-0'>Metal :<span className='ds_color'> 925 Silver</span></p>
-                                                              <p className='ds_tcolor mb-0'>Metal Color :<span className='ds_color'>Silver</span></p>
-                                                              <p className='ds_tcolor mb-0'>Size : <span className='ds_color'> 5</span></p>
-                                                           </div>
-                                                         </div>
-                                                     </div>
-                                                     <div className='mt-lg-0 mt-4'>
-                                                        <h5><span className='ds_color'>₹1200</span> <span className='ms-2 ds_order-line-txt'>₹1500</span></h5>
-                                                     </div>
-                                                 </div>
-                                              </div>
-                                            </div>
+                          <div className='mb-5'>
+                              <div className='d-flex flex-wrap justify-content-sm-between ds_order-manage align-items-center'>
+                                  <h3 style={{whiteSpace:'nowrap'}} className='mb-md-2'>My Orders</h3>
+                                  <div>
+                                      <button onClick={()=>handleFilter("All")} className={`ds_order-all ${activeBtn === "All" ? 'ds_order-active-btn' :''} me-2`}>All</button>
+                                      <button onClick={()=>handleFilter("In progress")} className={`ds_order-prog ${activeBtn === "In progress" ? 'ds_order-active-btn' :''} me-2`}>In Progress</button>
+                                      <button onClick={()=>handleFilter("Delivered")} className={`ds_order-prog ${activeBtn === "Delivered" ? 'ds_order-active-btn' :''} me-2`}>Delivered</button>
+                                      <button onClick={()=>handleFilter("Cancelled")} className={`ds_order-prog ${activeBtn === "Cancelled" ? 'ds_order-active-btn' :''} me-2`}>Cancelled</button>
+                                  </div>
+                              </div>
+                              <div className='ds_order-bg mt-4'>
+                                   
+                                  {/* ----------------------- Empty Card ------------------- */}
+                                  <div className='d-none'>
+                                   <div className='d-flex justify-content-center align-items-center h-100'>
+                                      <div className='text-center'>
+                                          <div>
+                                            <img src={require("../Img/dhruvin/no-item.png")} alt="" width="30%" />
                                           </div>
-
-                                          <div className="col-xl-12 mt-4">
-                                            <div className='ds_order-inner'>
-                                              <div className='d-flex flex-wrap ds_order-flex  align-items-center '>
-                                                <div className='d-flex flex-wrap px-3 pt-2'>
-                                                   <p className='ds_order-deliver mb-0'>Delivered</p>
-                                                   <p className='ds_order-text ds_600 mb-0'>05 Oct 2023</p>
-                                                   <p className='ds_order-order mb-0'><span className='text-muted'>Order Id : </span><span className='ds_color'>12057598140</span></p>
-                                                </div>
-                                                 <Link to="" className='text-dark ds_600 pe-3 ms-lg-0 ms-3' data-bs-toggle="modal" data-bs-target="#returnOrder">Return Order</Link>
-                                              </div>
-                                              <div className='ds_order-line mt-2'></div>
-                                              <div className='px-3 my-4'>
-                                                 <div className='d-flex justify-content-between flex-wrap '>
-                                                     <div>
-                                                         <div className='d-flex ds_cart-flex'>
-                                                           <div className='mx-auto'>
-                                                               <img className='ds_oder-img' src={require("../Img/dhruvin/gold.png")} alt="" />
-                                                           </div>
-                                                           <div className='ds_cart-deta'>
-                                                              <h6>Pal Gold Earrings</h6>
-                                                              <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'>PD00003-14-RS-FGVVSVS</span></p>
-                                                              <p className='ds_tcolor mb-0'>Metal :<span className='ds_color'> 925 Silver</span></p>
-                                                              <p className='ds_tcolor mb-0'>Metal Color :<span className='ds_color'>Gold</span></p>
-                                                              {/* <p className='ds_tcolor mb-0'>Size : <span className='ds_color'> 5</span></p> */}
-                                                           </div>
-                                                         </div>
-                                                     </div>
-                                                     <div className='d-flex flex-column mt-lg-0 mt-4'>
-                                                        <h5><span className='ds_color'>₹1200</span> <span className='ms-2 ds_order-line-txt'>₹1500</span></h5>
-                                                        <h6 className='mt-auto'> <Link to="" className='text-dark'>Submit review</Link> </h6>
-                                                     </div>
-                                                 </div>
-                                              </div>
-                                            </div>
+                                          <div>
+                                              <h5>No orders yet</h5>
+                                              <p className='text-muted'>You have no order yet with us keep shopping </p>
+                                              <button className='ds_order-browse'>Browse Products</button>
                                           </div>
+                                      </div>
+                                   </div>
+                                  </div>
 
-                                          <div className="col-xl-12 mt-4">
-                                            <div className='ds_order-inner'>
-                                              <div className='d-flex flex-wrap ds_order-flex  align-items-center '>
-                                                <div className='d-flex flex-wrap px-3 pt-2'>
-                                                   <p className='ds_order-cencel mb-0'>Cancelled</p>
-                                                   <p className='ds_order-text ds_600 mb-0'>10 Oct 2023</p>
-                                                   <p className='ds_order-order mb-0'><span className='text-muted'>Order Id : </span><span className='ds_color'>12057598140</span></p>
+                                  {/* ----------------------- My Order ------------------- */}
+                                  <div>
+                                    <div className=' px-4 pb-4'>
+                                      <div className="row">
+                                          {filterOrder?.map((order, index) => (
+                                            <div className="col-xl-12 mt-4" key={index}>
+                                              <div className="ds_order-inner">
+                                                <div className="d-flex flex-wrap ds_order-flex align-items-center">
+                                                  <div className="d-flex flex-wrap px-3 pt-2">
+                                                    <p className={`${order.status === "In progress" ? 'ds_order-progress' : ''} ${order.status === "Delivered" ? 'ds_order-deliver' : ''} ${order.status === "Cancelled" ? 'ds_order-cencel' : ''} mb-0`}>{order.status}</p>
+                                                    <p className="ds_order-text ds_600 mb-0">{order.date}</p>
+                                                    <p className="ds_order-order mb-0">
+                                                      <span className="text-muted">Order Id : </span>
+                                                      <span className="ds_color">{order.orderId}</span>
+                                                    </p>
+                                                  </div>
+                                                  {order.actionLink && (
+                                                    <Link to={order.actionLink.href} className="text-dark ds_600 pe-3 ms-lg-0 ms-3" >
+                                                      {order.actionLink.text}
+                                                    </Link>
+                                                  )}
                                                 </div>
+                                                <div className="ds_order-line mt-2"></div>
+                                                <div className="px-3 my-4">
+                                                  <div className="d-flex justify-content-between flex-wrap">
+                                                    <div>
+                                                      <div className="d-flex ds_cart-flex">
+                                                        <div className="mx-auto">
+                                                          <img className="ds_oder-img" src={order.product.image} alt={order.product.name} />
+                                                        </div>
+                                                        <div className="ds_cart-deta">
+                                                          <h6>{order.product.name}</h6>
+                                                          <p className="ds_tcolor mb-0">
+                                                            SKU : <span className="ds_color">{order.product.details.sku}</span>
+                                                          </p>
+                                                          <p className="ds_tcolor mb-0">
+                                                            Metal :<span className="ds_color">{order.product.details.metal}</span>
+                                                          </p>
+                                                          <p className="ds_tcolor mb-0">
+                                                            Metal Color :<span className="ds_color">{order.product.details.metalColor}</span>
+                                                          </p>
+                                                          {order.product.details.size && (
+                                                            <p className="ds_tcolor mb-0">
+                                                              Size : <span className="ds_color">{order.product.details.size}</span>
+                                                            </p>
+                                                          )}
+                                             </div>
+                                           </div>
+                                         </div>
+                                         <div className="d-flex flex-column mt-lg-0 mt-4">
+                                           <h5>
+                                             <span className="ds_color">{order.price.current}</span>
+                                             <span className="ms-2 ds_order-line-txt">{order.price.original}</span>
+                                           </h5>
+                                           {order.extraLink && (
+                                             <h6 className="mt-auto">
+                                               <Link to={order.extraLink.href} className="text-dark">
+                                                 {order.extraLink.text}
+                                               </Link>
+                                             </h6>
+                                           )}
+                                      </div>
+                                                  </div>
+                                                </div>
+                                               </div>
                                               </div>
-                                              <div className='ds_order-line mt-2'></div>
-                                              <div className='px-3 my-4'>
-                                                 <div className='d-flex justify-content-between flex-wrap '>
-                                                     <div>
-                                                         <div className='d-flex ds_cart-flex'>
-                                                           <div className='mx-auto'>
-                                                               <img className='ds_oder-img' src={require("../Img/dhruvin/ring.png")} alt="" />
-                                                           </div>
-                                                           <div className='ds_cart-deta'>
-                                                              <h6>Pal Gold Earrings</h6>
-                                                              <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'>PD00003-14-RS-FGVVSVS</span></p>
-                                                              <p className='ds_tcolor mb-0'>Metal :<span className='ds_color'> 925 Silver</span></p>
-                                                              <p className='ds_tcolor mb-0'>Metal Color :<span className='ds_color'>Gold</span></p>
-                                                           </div>
-                                                         </div>
-                                                     </div>
-                                                     <div className='mt-lg-0 mt-4'>
-                                                        <h5><span className='ds_color'>₹1000</span> <span className='ms-2 ds_order-line-txt'>₹1500</span></h5>
-                                                     </div>
-                                                 </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
+                                           ))}
                                       </div>
                                     </div>
-                                </div>
-                            </div>
-                          </section>
+                                  </div>
+                              </div>
+                          </div>
+                        </section>
+                         ) : ("") }
+                          
+
+
 
                         </div>
                     </div>
@@ -660,37 +708,39 @@ const MyProfile = () => {
       </section>
 
 
-      {/* ********************  Return Order Popup  ********* */}
+      
+
+      {/* ********************  Change Password Popup  ********* */}
       <section>
         <div>
-          <div className="modal fade" id="returnOrder"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div className="modal fade" id="changePassword"  aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog  ds_return-popup  modal-dialog-centered">
               <div className="modal-content" style={{borderRadius:'0'}}>
                 <div className="modal-header border-0 pb-0">
                   <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body pt-0 px-5">
-                   <h4 className="modal-title text-center ds_color fw-bold" >Return Order</h4>
+                   <h4 className="modal-title text-center ds_color fw-bold" >Change Password</h4>
                    <div className='mt-3'>
                      <div className="row">
                          <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                              <div>
-                                 <label htmlFor="" className='ds_600 mb-1'>Order ID*</label>
-                                 <input type="text" className='ds_new-input' placeholder="Enter order ID" />
+                                 <label htmlFor="" className='ds_600 mb-1'>Old Password</label>
+                                 <input type="text" className='ds_new-input' placeholder="Enter old password" />
                              </div>
                          </div>
 
                          <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                              <div>
-                               <label htmlFor="" className='ds_600 mb-1'>Reason for return*</label>
-                               <input type="text" className='ds_new-input' placeholder="Enter reason for return" />
+                               <label htmlFor="" className='ds_600 mb-1'>New Password</label>
+                               <input type="text" className='ds_new-input' placeholder="New password" />
                              </div>
                          </div>
 
                          <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                              <div>
-                               <label htmlFor="" className='ds_600 mb-1'>Mobile No.*</label>
-                               <input type="text" className='ds_new-input' placeholder="Enter mobile no." />
+                               <label htmlFor="" className='ds_600 mb-1'>Confirm New Password</label>
+                               <input type="text" className='ds_new-input' placeholder="Enter new password" />
                              </div>
                          </div>
                      </div>
@@ -698,7 +748,7 @@ const MyProfile = () => {
                        <div className="row justify-content-center">
                          <div className="col-xl-12 mt-5 mb-3">
                            <div>
-                              <button className='ds_new-save w-100' data-bs-toggle="modal" data-bs-target="#returnOrderOtp">Request for OTP</button>
+                              <button className='ds_new-save w-100' >Change Password</button>
                            </div>
                          </div>
                        </div>
@@ -711,72 +761,29 @@ const MyProfile = () => {
         </div>
       </section>
 
-      {/* ********************  Return Order With OTP Popup  ********* */}
-      <section>
-        <div>
-          <div className="modal fade" id="returnOrderOtp"  aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog  ds_return-popup  modal-dialog-centered">
-              <div className="modal-content" style={{borderRadius:'0'}}>
-                <div className="modal-header border-0 pb-0">
+       {/* ---------------- Delete Popup ------------------ */}
+       <section>
+         <div>
+           <div className="modal fade" id="logOut"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog modal-dialog-centered ds_delete-modal">
+              <div className="modal-content">
+                <div className="modal-header border-0">
                   <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div className="modal-body pt-0 px-sm-5">
-                   <h4 className="modal-title text-center ds_color fw-bold" >Return Order</h4>
-                   <div className='mt-3'>
-                     <div className="row">
-                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
-                             <div>
-                                 <label htmlFor="" className='ds_600 mb-1'>Order ID*</label>
-                                 <input type="text" className='ds_new-input' placeholder="Enter order ID" />
-                             </div>
-                         </div>
-
-                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
-                             <div>
-                               <label htmlFor="" className='ds_600 mb-1'>Reason for return*</label>
-                               <input type="text" className='ds_new-input' placeholder="Enter reason for return" />
-                             </div>
-                         </div>
-
-                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
-                             <div>
-                               <label htmlFor="" className='ds_600 mb-1'>Mobile No.*</label>
-                               <input type="text" className='ds_new-input' placeholder="Enter mobile no." />
-                             </div>
-                         </div>
-
-                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
-                             <div>
-                               <label htmlFor="" className='ds_600 mb-1'>Enter OTP</label>
-                               <div className='d-flex justify-content-between'>
-                                   <input type="text" className='ds_return-otp-input'/>
-                                   <input type="text" className='ds_return-otp-input'/>
-                                   <input type="text" className='ds_return-otp-input'/>
-                                   <input type="text" className='ds_return-otp-input'/>
-                                   <input type="text" className='ds_return-otp-input'/>
-                                   <input type="text" className='ds_return-otp-input'/>
-                               </div>
-                             </div>
-                         </div>
-
-                        
-                     </div>
-                     <div>
-                       <div className="row justify-content-center">
-                         <div className="col-xl-12 mt-5 mb-3">
-                           <div>
-                              <button className='ds_new-save w-100'>Request for OTP</button>
-                           </div>
-                         </div>
-                       </div>
-                     </div>
-                   </div>
+                <div className="modal-body text-center pt-0">
+                  <h4 className="modal-title ds_color" id="exampleModalLabel">Logout</h4>
+                  <h6>Are you sure you want to Logout?</h6>
+                  <div className='mt-4 pt-3 mb-4'>
+                     <button className='ds_delete-no'>No</button>
+                     <button className='ds_delete-yes'>Yes</button>
+                  </div>
                 </div>
               </div>
             </div>
            </div>
-        </div>
+         </div>
       </section>
+
       
 
     </>

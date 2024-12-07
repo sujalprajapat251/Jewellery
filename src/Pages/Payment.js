@@ -12,7 +12,7 @@ const Payment = () => {
           <h2>Cart</h2>
            <div className="row">
              <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 ">
-             <div className="ds_cod-main mt-5 ds_cod-bg">
+             <div className="ds_cod-main mt-sm-5 mt-4 ds_cod-bg">
                       <div className="row p-0 m-0" style={{ borderBottom: '1px solid black' }}>
                           <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 text-center p-0">
                             <button className={` h-100  ds_cod-on-btn`} >
@@ -20,7 +20,7 @@ const Payment = () => {
                             </button>
                           </div>
                       </div>
-                        <section className="ds_pay-box mt-4">
+                        <section className="ds_pay-box mt-sm-4">
                           <div className="row justify-content-center mx-xl-0 mx-2">
                             <div className="col-xl-8">
                               <div className="row">

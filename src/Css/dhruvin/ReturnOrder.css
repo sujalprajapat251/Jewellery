@@ -1,0 +1,38 @@
+/* {********************  Return Order With OTP Popup  *********} */
+.ds_return-otp-input{
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    font-size: 15px;
+}
+
+
+
+@media (max-width:550px) {
+    /* {********************  Return Order Popup  *********} */
+     .ds_return-popup{
+        max-width: 350px !important;
+        margin: auto;
+     }
+
+     /* {********************  Return Order With OTP Popup  *********} */
+    .ds_return-otp-input{
+        height: 40px;
+        width: 40px;
+    }
+}
+
+
+@media (max-width:350px) {
+
+   /* {********************  Return Order Popup  *********} */
+   .ds_return-popup{
+      max-width: 290px !important;
+      margin: auto;
+   }
+   /* {********************  Return Order With OTP Popup  *********} */
+  .ds_return-otp-input{
+      height: 35px;
+      width: 35px;
+  }
+}

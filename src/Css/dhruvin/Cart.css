@@ -30,7 +30,7 @@
 .ds_cart-box{
     box-shadow: 0px 0px 24px 3px #7272721A;
     background: #FFFFFF;
-    padding: 20px;
+    padding: 10px 20px 20px 20px;
 }
 .ds_cart-cancel{
     color: #727272;
@@ -274,6 +274,13 @@
 
 
 /* ############### All Section Media Query ############ */
+
+@media (max-width:1200px) {
+/* ********************* Cart ******************* */
+.ds_cart-add-btn{
+    padding: 6px 5px;
+}
+}
 
 @media (max-width:768px) {
 /* {*************** Add New Address Popup ************   } */

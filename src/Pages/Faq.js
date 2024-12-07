@@ -288,7 +288,7 @@ const Faq = () => {
                                                           <div key={index} className={`accordion border-0 position-relative ${openIndex === index ? 'open' : ''}`}>
                                                               <div className={`accordion-header ${filteredData.length - 1 === index ? 'border-0' : ''} ${openIndex === index ? 'ds_accor-shadow ds_accor-question' : ''}`} onClick={() => toggleAccordion(index)}>
                                                                   <h5 className="ds_accor-title mb-0 me-1">{item.title}</h5>
-                                                                  <i className={`fas fa-plus me-sm-3 ${openIndex === index ? 'd-none' : ''}`}/>
+                                                                  <i className={`fas fa-plus ${openIndex === index ? 'd-none' : ''}`}/>
                                                                   <i className={`fa-solid fa-minus ms-2 text-dark ${openIndex === index ? '' : 'd-none'}`}/>
                                                               </div>
                               

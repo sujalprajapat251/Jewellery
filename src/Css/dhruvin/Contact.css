@@ -93,4 +93,7 @@
         height: 40px;
         width: 40px;
     }
+    .ds_contact-box{
+        padding: 10px 15px 30px 15px;
+    }
 }

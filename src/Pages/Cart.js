@@ -2,6 +2,9 @@ import React from 'react'
 import '../Css/dhruvin/Cart.css'
 import { IoIosCloseCircle } from 'react-icons/io'
 import { FaMinus, FaPlus } from 'react-icons/fa'
+import { IoBagHandleOutline } from 'react-icons/io5'
+import { GoHome } from 'react-icons/go'
+import { BsThreeDotsVertical } from 'react-icons/bs'
 
 const Cart = () => {
 
@@ -10,7 +13,7 @@ const Cart = () => {
 
 
     {/* *************** Empty Cart ************    */}
-     <section>
+     <section className='d-none'>
       <div className='ds_empty-inner'>
         <div className='d-flex justify-content-center align-items-center h-100'>
           <div className='text-center'>
@@ -25,7 +28,7 @@ const Cart = () => {
   
 
     {/* *************** Cart ************    */}
-      <section className='mb-5 d-none'>
+      <section className='mb-5 pb-sm-5 '>
         <div className='ds_container'>
             <div>
                 <h2>Cart</h2>
@@ -253,7 +256,7 @@ const Cart = () => {
       </section>
 
     {/* *************** Add New Address Popup ************    */}
-      {/* <section>
+      <section>
         <div>
          <div className="modal fade" id="exampleModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
            <div className="modal-dialog ds_add-modal modal-dialog-centered">
@@ -328,7 +331,7 @@ const Cart = () => {
                       <div className="row justify-content-center">
                         <div className="col-xl-6 mt-5 mb-3">
                           <div>
-                             <button className='ds_new-save'>Save Address</button>
+                             <button className='ds_new-save' data-bs-toggle="modal" data-bs-target="#changeAddress">Save Address</button>
                           </div>
                         </div>
                       </div>
@@ -339,14 +342,14 @@ const Cart = () => {
            </div>
           </div>
         </div>
-      </section> */}
+      </section>
 
     {/* *************** Change Address Popup ************    */}
-    {/* <section>
+    <section>
       <div>
-      <div className="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div className="modal fade" id="changeAddress" aria-labelledby="exampleModalLabel" aria-hidden="true">
          <div className="modal-dialog ds_add-modal modal-dialog-centered">
-           <div className="modal-content">
+           <div className="modal-content rounded-0">
              <div className="modal-header border-0 px-4">
                <h4 className="modal-title ds_color" id="exampleModalLabel">Address</h4>
                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -384,7 +387,7 @@ const Cart = () => {
                   </div>
                   <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-4 mb-2">
                     <div>
-                      <button className='ds_new-save'>+ Add new address</button>
+                      <button className='ds_new-save' data-bs-toggle="modal" data-bs-target="#removeProduct">+ Add new address</button>
                     </div>
                   </div>
                  </div>
@@ -394,14 +397,14 @@ const Cart = () => {
            </div>
          </div>
       </div>
-    </section> */}
+    </section>
  
     {/* *************** Remove Product Popup ************    */}
     <section>
       <div>
-        <div className="modal fade" id="exampleModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal fade" id="removeProduct"  aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div className="modal-dialog ds_add-modal modal-dialog-centered">
-            <div className="modal-content ">
+            <div className="modal-content rounded-0">
               <div className="modal-header border-0">
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
@@ -416,7 +419,6 @@ const Cart = () => {
                    </div>
                 </div>
               </div>
-            
             </div>
           </div>
         </div>
