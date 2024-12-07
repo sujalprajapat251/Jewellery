@@ -325,6 +325,8 @@
     min-width: 50px;
     border: 1px solid black;
     outline: none;
+    font-size: 20px;
+    text-align: center;
 }
 
 
@@ -487,6 +489,9 @@
         padding: 10px 0px;
         font-size: 16px;
      }
+     .sp_header_offcanvas{
+        --bs-offcanvas-width: 311px !important;
+     }
   }
   @media (max-width: 374px){
     .s_modal .modal-body{
@@ -506,5 +511,8 @@
     .s_modal .s_modal_btn2 {
         height: 40px;        
     }
+    .sp_header_offcanvas{
+        --bs-offcanvas-width: 290px !important;
+     }
   }
 

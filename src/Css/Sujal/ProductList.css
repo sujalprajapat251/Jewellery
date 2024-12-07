@@ -196,7 +196,7 @@
     display: none;
     padding: 10px;
     z-index: 2;
-    margin-top: 5px
+    margin-top: 1px
 }
 .s_fliter_select .s_sortby_menu .s_sortby_option {
     display: flex;
