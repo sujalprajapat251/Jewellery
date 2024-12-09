@@ -1,18 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import noteContext from './noteContext'
 
 const UseContext = (props) => {
 
- let a = 10;
- let Arr = [1,2,3,4,5]
 
- const hello  = (data) => {
-    console.log("I Am Context");
-        
- }
+  const Api = 'https://shreekrishnaastrology.com/api'
+
+  
 
   return (
-      <noteContext.Provider value={{a , Arr , hello}}>   
+      <noteContext.Provider value={{Api}}>   
         {props.children}
       </noteContext.Provider>
   )

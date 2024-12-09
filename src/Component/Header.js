@@ -3,13 +3,19 @@ import '../Css/Sujal/Header.css';
 import { IoCartOutline, IoCloseOutline, IoPersonOutline, IoSearch } from 'react-icons/io5';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 import { FaArrowRight, FaBars } from 'react-icons/fa';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ring1 from '../Img/Sujal/s_diamond_earing.png';
 import ring2 from '../Img/Sujal/s_diamond_earing.png';
 import ring3 from '../Img/Sujal/engage-ring.png';
+import axios from 'axios';
+import noteContext from '../Context/noteContext';
+
+
+
 function Header() {
 
+    const {Api} =  useContext(noteContext)
 
     // offcanvas 
     const [show, setShow] = useState(false);
@@ -25,28 +31,139 @@ function Header() {
     const handleLoginClose = () => setShowLogin(false);
     const handleLoginShow = () => setShowLogin(true);
 
+    const [loginVal, setLoginVal] = useState({
+        email:'',
+        password:'',
+    })
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+
+        axios.post(`${Api}/auth/login`, {
+            email:loginVal.email,
+            password:loginVal.password,
+        })
+        .then((value)=>{
+            console.log("LoginRes" , value.data); 
+            localStorage.setItem("Login", JSON.stringify(value.data.result))
+        }).catch((error)=>{
+            alert(error)
+        }) 
+    }
+
+    // const [loginVal, setLoginVal] = useState("")
+
     // forgot password Model
     const [showForPass, setShowForPass] = useState(false);
 
     const handleForPassClose = () => setShowForPass(false);
     const handleForPassShow = () => setShowForPass(true);
-    // forgot password Model
+
+    const [forgetEmail, setForgetEmail] = useState("")
+
+    const handleForgetPassword = (e) => {
+        e.preventDefault();
+
+        axios.post(`${Api}/password/email`, {
+            email:forgetEmail,
+        })
+        .then((value)=>{
+            console.log("ForgetRes" , value.data); 
+            handleForPassClose()
+            handleOTPShow()
+        }).catch((error)=>{
+            alert(error)
+        }) 
+    }
+
+    // Verify Otp Model
     const [showOTP, setShowOTP] = useState(false);
 
     const handleOTPClose = () => setShowOTP(false);
     const handleOTPShow = () => setShowOTP(true);
 
-    // forgot password Model
+    const [otpVal, setOtpVal] = useState({
+         otp1:'',
+         otp2:'',
+         otp3:'',
+         otp4:''
+    })
+    const [storeOtp, setStoreOtp] = useState("")
+
+    const handleOtpSubmit = (e) => {
+         e.preventDefault();
+
+         axios.post(`${Api}/password/otp`, {
+            otp:parseInt(otpVal.otp1 + otpVal.otp2 + otpVal.otp3 + otpVal.otp4),
+           
+        }).then((value)=>{
+            console.log("OtpRes" , value.data); 
+            handleOTPClose()
+            handleResetPassShow()
+            setStoreOtp(parseInt(otpVal.otp1 + otpVal.otp2 + otpVal.otp3 + otpVal.otp4))
+
+        }).catch((error)=>{
+            alert(error)
+        }) 
+
+    }
+
+    // Reset Password Model
     const [showResetPass, setShowResetPass] = useState(false);
 
     const handleResetPassClose = () => setShowResetPass(false);
     const handleResetPassShow = () => setShowResetPass(true);
 
-    // Login Model
+    const [resetPassVal, setResetPassVal] = useState({
+        newPass:'',
+        conPass:'',
+    })
+
+    const handleResetPassword = (e) => {
+        e.preventDefault();
+
+        axios.post(`${Api}/password/reset/${storeOtp}`, {
+            new_password:resetPassVal.newPass,
+            confirm_password:resetPassVal.conPass
+            
+        }).then((value)=>{
+            console.log("ResetPassRes" , value.data); 
+            handleResetPassClose()
+            handleLoginShow();
+        }).catch((error)=>{
+            alert(error)
+        }) 
+    }
+
+    // SignUp Model
     const [showRegister, setShowRegister] = useState(false);
 
     const handleRegisterClose = () => setShowRegister(false);
     const handleRegisterShow = () => setShowRegister(true);
+
+    const [signUpVal, setSignUpVal] = useState({
+        name:'',
+        phone:'',
+        email:'',
+        password:'',
+    })
+
+    const handleSignUp = (e) => {
+        e.preventDefault();
+        axios.post(`${Api}/user/create`, {
+            name:signUpVal.name,
+            phone:signUpVal.phone,
+            email:signUpVal.email,
+            password:signUpVal.password,
+            role_id:2,
+            dob: "2001-01-01",
+        })
+        .then((value)=>{
+            console.log("Res" , value); 
+        }).catch((error)=>{
+            alert(error)
+        }) 
+    }
 
 
     // search model 
@@ -688,22 +805,24 @@ function Header() {
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='s_model_con'>
-                    <div className='s_modal_head text-center' >
-                        <h2>Login</h2>
-                        <p>Login to your existing account to access your account</p>
-                    </div>
-                    <div className='s_modal_field'>
-                        <p>Email</p>
-                        <input type='text' placeholder='Enter email'></input>
-                    </div>
-                    <div className='s_modal_field'>
-                        <p>Password</p>
-                        <input type='text' placeholder='Enter password'></input>
-                        <span className='d-flex justify-content-end' onClick={() => { handleLoginClose(); handleForPassShow(); }}><Link to={'#'} >Forgot Password?</Link></span>
-                    </div>
-                    <div className='s_modal_btn' onClick={handleLoginClose}>
-                        <Link to={'#'}>Login</Link>
-                    </div>
+                   <form onSubmit={handleLogin}>
+                       <div className='s_modal_head text-center' >
+                            <h2>Login</h2>
+                            <p>Login to your existing account to access your account</p>
+                        </div>
+                        <div className='s_modal_field'>
+                            <p>Email</p>
+                            <input type='text' value={loginVal.email} onChange={(e)=> setLoginVal({...loginVal , email:e.target.value})} placeholder='Enter email'></input>
+                        </div>
+                        <div className='s_modal_field'>
+                            <p>Password</p>
+                            <input type='text' value={loginVal.password} onChange={(e)=>setLoginVal({...loginVal , password:e.target.value})} placeholder='Enter password'></input>
+                            <span className='d-flex justify-content-end' onClick={() => { handleLoginClose(); handleForPassShow(); }}><Link to={'#'} >Forgot Password?</Link></span>
+                        </div>
+                        <div className='s_modal_btn'>
+                            <button type='submit'>Login</button>
+                        </div>
+                   </form>
 
                     <div className='s_modal_or d-flex my-3'>
                         <div className='s_modal_line'></div>
@@ -731,18 +850,19 @@ function Header() {
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='s_model_con'>
-                    <div className='s_modal_head text-center' >
-                        <h2>Forgot Password</h2>
-                        <p>Enter your email below to recover your password</p>
-                    </div>
-                    <div className='s_modal_field'>
-                        <p>Email</p>
-                        <input type='text' placeholder='Enter email'></input>
-                    </div>
-
-                    <div className='s_modal_btn' onClick={() => { handleForPassClose(); handleOTPShow(); }}>
-                        <Link to={'#'}>Send Code</Link>
-                    </div>
+                    <form onSubmit={handleForgetPassword}>
+                         <div className='s_modal_head text-center' >
+                             <h2>Forgot Password</h2>
+                             <p>Enter your email below to recover your password</p>
+                         </div>
+                         <div className='s_modal_field'>
+                             <p>Email</p>
+                             <input type='text' value={forgetEmail} onChange={(e)=>setForgetEmail(e.target.value)} placeholder='Enter email'></input>
+                         </div>
+                         <div className='s_modal_btn'>
+                             <button type='submit'>Send Code</button>
+                         </div>
+                    </form>
                 </Modal.Body>
                 <Modal.Footer>
 
@@ -757,21 +877,21 @@ function Header() {
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='s_model_con'>
-                    <div className='s_modal_head text-center' >
-                        <h2>Verify OTP</h2>
-                        <p>Enter verification code which we’ve sent to your registered email</p>
-                    </div>
-                    <div className='s_modal_otp d-flex justify-content-between'>
-                        <input type='text'></input>
-                        <input type='text'></input>
-                        <input type='text'></input>
-                        <input type='text'></input>
-                        <input type='text'></input>
-                        <input type='text'></input>
-                    </div>
-                    <div className='s_modal_btn' onClick={() => { handleOTPClose(); handleResetPassShow(); }}>
-                        <Link to={'#'}>Verify</Link>
-                    </div>
+                    <form onSubmit={handleOtpSubmit}>
+                        <div className='s_modal_head text-center' >
+                            <h2>Verify OTP</h2>
+                            <p>Enter verification code which we’ve sent to your registered email</p>
+                        </div>
+                        <div className='s_modal_otp d-flex justify-content-between mx-4'>
+                            <input type='text' value={otpVal.otp1} onChange={(e)=> setOtpVal({...otpVal , otp1:e.target.value})}></input>
+                            <input type='text' value={otpVal.otp2} onChange={(e)=> setOtpVal({...otpVal , otp2:e.target.value})}></input>
+                            <input type='text' value={otpVal.otp3} onChange={(e)=> setOtpVal({...otpVal , otp3:e.target.value})}></input>
+                            <input type='text' value={otpVal.otp4} onChange={(e)=> setOtpVal({...otpVal , otp4:e.target.value})}></input>
+                        </div>
+                        <div className='s_modal_btn'>
+                            <button type='submit'>Verify</button>
+                        </div>
+                    </form>
                 </Modal.Body>
                 <Modal.Footer>
 
@@ -786,21 +906,23 @@ function Header() {
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='s_model_con'>
-                    <div className='s_modal_head text-center' >
-                        <h2>Reset Password</h2>
-                        <p>Reset your password & create new password</p>
-                    </div>
-                    <div className='s_modal_field'>
-                        <p>New Password</p>
-                        <input type='text' placeholder='New Password'></input>
-                    </div>
-                    <div className='s_modal_field'>
-                        <p>Confirm New Password</p>
-                        <input type='text' placeholder='Confirm New Password'></input>
-                    </div>
-                    <div className='s_modal_btn' onClick={() => { handleResetPassClose(); handleLoginShow(); }}>
-                        <Link to={'#'}>Reset Password</Link>
-                    </div>
+                    <form onSubmit={handleResetPassword}>
+                        <div className='s_modal_head text-center' >
+                            <h2>Reset Password</h2>
+                            <p>Reset your password & create new password</p>
+                        </div>
+                        <div className='s_modal_field'>
+                            <p>New Password</p>
+                            <input type='text' value={resetPassVal.newPass} onChange={(e)=> setResetPassVal({...resetPassVal , newPass:e.target.value})} placeholder='New Password'></input>
+                        </div>
+                        <div className='s_modal_field'>
+                            <p>Confirm New Password</p>
+                            <input type='text' value={resetPassVal.conPass} onChange={(e)=> setResetPassVal({...resetPassVal , conPass:e.target.value})} placeholder='Confirm New Password'></input>
+                        </div>
+                        <div className='s_modal_btn' >
+                            <button type='submit'>Reset Password</button>
+                        </div>
+                    </form>
                 </Modal.Body>
                 <Modal.Footer>
                 </Modal.Footer>
@@ -813,29 +935,31 @@ function Header() {
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='s_model_con'>
-                    <div className='s_modal_head text-center' >
-                        <h2>Create Account</h2>
-                        <p>Create an account & get access to exclusive collection of jewelry</p>
-                    </div>
-                    <div className='s_modal_field'>
-                        <p>Name</p>
-                        <input type='text' placeholder='Enter name'></input>
-                    </div>
-                    <div className='s_modal_field'>
-                        <p>Mobile No.</p>
-                        <input type='text' placeholder='Enter mobile no.'></input>
-                    </div>
-                    <div className='s_modal_field'>
-                        <p>Email</p>
-                        <input type='text' placeholder='Enter email'></input>
-                    </div>
-                    <div className='s_modal_field'>
-                        <p>Password</p>
-                        <input type='text' placeholder='Enter password'></input>
-                    </div>
-                    <div className='s_modal_btn' onClick={() => { handleLoginShow(); handleRegisterClose(); }}>
-                        <Link to={'#'}>Register</Link>
-                    </div>
+                    <form onSubmit={handleSignUp}>
+                       <div className='s_modal_head text-center' >
+                           <h2>Create Account</h2>
+                           <p>Create an account & get access to exclusive collection of jewelry</p>
+                       </div>
+                       <div className='s_modal_field'>
+                           <p>Name</p>
+                           <input type='text' placeholder='Enter name' value={signUpVal.name} onChange={(e) => setSignUpVal({ ...signUpVal, name: e.target.value })} ></input>
+                       </div>
+                       <div className='s_modal_field'>
+                           <p>Mobile No.</p>
+                           <input type='text' placeholder='Enter mobile no.' value={signUpVal.phone} onChange={(e) => setSignUpVal({ ...signUpVal, phone: e.target.value })}></input>
+                       </div>
+                       <div className='s_modal_field'>
+                           <p>Email</p>
+                           <input type='text' placeholder='Enter email' value={signUpVal.email} onChange={(e) => setSignUpVal({ ...signUpVal, email: e.target.value })}></input>
+                       </div>
+                       <div className='s_modal_field'>
+                           <p>Password</p>
+                           <input type='text' placeholder='Enter password' value={signUpVal.password} onChange={(e) => setSignUpVal({ ...signUpVal, password: e.target.value })}></input>
+                       </div>
+                       <div className='s_modal_btn' onClick={(e)=> handleSignUp(e)}>
+                           <button type='submit' >Register</button>
+                       </div>
+                    </form>
 
                     <div className='s_modal_or d-flex my-3'>
                         <div className='s_modal_line'></div>

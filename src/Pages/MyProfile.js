@@ -1,17 +1,35 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import '../Css/dhruvin/MyProfile.css'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { IoBagHandleOutline } from 'react-icons/io5';
 import { GoHome } from 'react-icons/go';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import noteContext from '../Context/noteContext';
+import { Modal } from 'react-bootstrap';
 
 const MyProfile = () => {
+
+    const {Api} = useContext(noteContext)
 
     const [activeCard, setActiveCard] = useState(null);
     const [activeBtn, setActiveBtn] = useState("All")
     const [mainActive, setMainActive] = useState("My Profile")
     const [editToggle, setEditToggle] = useState(false)
+    const [profileData, setProfileData] = useState([])
+    const [newAddModal, setNewAddModal] = useState(false)
+
+    // ******* Edit User State *******
+    const [edit, setEdit] = useState({
+       name:'',
+       email:'',
+       role_id:2,
+       phone:'',
+       gender:'',
+       dob:'',
+       pin:''
+    })
 
     const toggleDropdown = (index) => {
       setActiveCard(activeCard === index ? null : index);
@@ -101,6 +119,53 @@ const MyProfile = () => {
       }
 
      
+    }
+
+
+    let store = JSON.parse(localStorage.getItem("Login"))
+
+    useEffect(()=>{
+      axios.get(`${Api}/user/get/${store?.id}` ,{
+        headers: {
+          Authorization: `Bearer ${store?.access_token}`
+        }
+      })
+      .then((value)=>{
+          console.log(value?.data);
+          setProfileData(value?.data?.user)
+      }).catch((error)=>{
+        alert(error)
+      })
+      
+    },[])
+
+    const handleEditSubmit = (e) => {
+        e.preventDefault();
+        axios.post(`${Api}/user/updateprofile/${store?.id}`,{
+           name:edit.name,
+           email:edit.email,
+           role_id:2,
+           phone:edit.phone,
+           gender:edit.gender,
+           dob:edit.dob,
+           pin:edit.pin,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${store?.access_token}`,
+         },
+        }
+      ).then((value)=>{
+          console.log(value);
+          setEditToggle(false)
+
+        }).catch((error)=>{
+          alert(error)
+        })
+    }
+
+    const handleCancel = () => {
+      setEditToggle(false)
     }
 
   
@@ -197,11 +262,11 @@ const MyProfile = () => {
                                     </div>
                                     <div className="col-xl-9 col-lg-9 col-md-9 col-sm-8 col-7">
                                         <div className='ms-3'>
-                                            <p className='ds_600'>Jhon Wick</p>
-                                            <p className='ds_600'>22-03-1990</p>
-                                            <p className='ds_600'>85555 55555</p>
-                                            <p className='ds_600'>example@gmail.com</p>
-                                            <p className='ds_600'>Male</p>
+                                            <p className='ds_600'>{profileData.name}</p>
+                                            <p className='ds_600'>{profileData.dob ?  profileData.dob : '1/1/2002'}</p>
+                                            <p className='ds_600'>{profileData.phone}</p>
+                                            <p className='ds_600'>{profileData.email}</p>
+                                            <p className='ds_600'>{profileData.gender}</p>
                                             <p className='ds_600'>596921</p>
                                         </div>
                                     </div>
@@ -215,57 +280,59 @@ const MyProfile = () => {
                                    <h3>Edit Profile</h3>
                                 </div>
                                 <div className='ds_edit-box mt-4'>
-                                    <div className="row">
-                                        <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
-                                            <div>
-                                                <label htmlFor="" className='ds_600 d-block mb-1'>Name</label>
-                                                <input type="text" className='ds_edit-input' placeholder='Jhon Wick' />
-                                            </div>
-                                        </div>
-                                        <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
-                                            <div className='position-relative'>
-                                                <label htmlFor="" className='ds_600 d-block mb-1'>Date of Birth</label>
-                                                <input type="text" className='ds_edit-input' placeholder='Jhon Wick' />
-                                                <div className=''>
-                                                    {/* <img className='ds_edit-calender' src={require("../Img/dhruvin/calender.png")} alt="" width="4%" /> */}
-                                                    <i className="fa-solid fa-calendar-days ds_edit-calender ds_color"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
-                                            <div>
-                                                <label htmlFor="" className='ds_600 d-block mb-1'>Phone No.</label>
-                                                <input type="text" className='ds_edit-input' placeholder='85555 55555' />
-                                            </div>
-                                        </div>
-                                        <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
-                                            <div>
-                                                <label htmlFor="" className='ds_600 d-block mb-1'>Email</label>
-                                                <input type="email" className='ds_edit-input' placeholder='example@gmail.com' />
-                                            </div>
-                                        </div>
-                                        <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
-                                            <div>
-                                                <label htmlFor="" className='ds_600 d-block mb-1'>Gender</label>
-                                                <select className='ds_edit-input'>
-                                                    <option>Male</option>
-                                                    <option>Female</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
-                                            <div>
-                                                <label htmlFor="" className='ds_600 d-block mb-1'>Pin code</label>
-                                                <input type="email" className='ds_edit-input' placeholder='596921'/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className='text-center mt-5 mb-3'>
-                                            <button className='ds_edit-cencel ds_600 me-sm-4'>Cancel</button>
-                                            <button className='ds_edit-save ds_600'>Save</button>
-                                        </div>
-                                    </div>
+                                    <form onSubmit={handleEditSubmit}>
+                                         <div className="row">
+                                             <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
+                                                 <div>
+                                                     <label htmlFor="" className='ds_600 d-block mb-1'>Name</label>
+                                                     <input type="text" value={edit.name} onChange={(e)=>setEdit({...edit , name:e.target.value})} className='ds_edit-input' placeholder='Jhon Wick' />
+                                                 </div>
+                                             </div>
+                                             <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
+                                                 <div className='position-relative'>
+                                                     <label htmlFor="" className='ds_600 d-block mb-1'>Date of Birth</label>
+                                                     <input type="date" id="dob" value={edit.dob} onChange={(e) => setEdit({ ...edit, dob: e.target.value })} className='ds_edit-input' placeholder='Jhon Wick' />
+                                                     <div className=''>
+                                                         {/* <img className='ds_edit-calender' src={require("../Img/dhruvin/calender.png")} alt="" width="4%" /> */}
+                                                         <i className="fa-solid fa-calendar-days ds_edit-calender ds_color"  onClick={() => { const dateInput = document.getElementById('dob');if (dateInput) {dateInput.showPicker ? dateInput.showPicker() : dateInput.focus(); }}} ></i>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                             <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
+                                                 <div>
+                                                     <label htmlFor="" className='ds_600 d-block mb-1'>Phone No.</label>
+                                                     <input type="number" value={edit.phone} onChange={(e)=>setEdit({...edit , phone:e.target.value})} className='ds_edit-input' placeholder='85555 55555' />
+                                                 </div>
+                                             </div>
+                                             <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
+                                                 <div>
+                                                     <label htmlFor="" className='ds_600 d-block mb-1'>Email</label>
+                                                     <input type="email" value={edit.email} onChange={(e)=>setEdit({...edit , email:e.target.value})} className='ds_edit-input' placeholder='example@gmail.com' />
+                                                 </div>
+                                             </div>
+                                             <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
+                                                 <div>
+                                                     <label htmlFor="" className='ds_600 d-block mb-1'>Gender</label>
+                                                     <select value={edit.gender} onChange={(e) => setEdit({ ...edit, gender: e.target.value })} className='ds_edit-input'>
+                                                         <option value="male">Male</option>
+                                                         <option value="female">Female</option>
+                                                     </select>
+                                                 </div>
+                                             </div>
+                                             <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
+                                                 <div>
+                                                     <label htmlFor="" className='ds_600 d-block mb-1'>Pin code</label>
+                                                     <input type="number"  value={edit.pin} onChange={(e) => setEdit({ ...edit, pin: e.target.value })} className='ds_edit-input' placeholder='596921'/>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                         <div>
+                                             <div className='text-center mt-5 mb-3'>
+                                                 <a className='ds_edit-cencel ds_cursor ds_600 me-sm-4'onClick={handleCancel}>Cancel</a>
+                                                 <button type='submit' className='ds_edit-save ds_600'>Save</button>
+                                             </div>
+                                         </div>
+                                    </form>
                                 </div>
                             </div>) : ("")}
                           </section>
@@ -281,7 +348,7 @@ const MyProfile = () => {
                             <div>
                                <div className='d-flex justify-content-between align-items-center'>
                                    <h3>My Address</h3>
-                                   <button className='ds_add-btn' data-bs-toggle="modal" data-bs-target="#addressModal"><i className="fa-solid fa-plus me-2"></i> Add New Address</button>
+                                   <button className='ds_add-btn' onClick={()=> setNewAddModal(true)}><i className="fa-solid fa-plus me-2"></i> Add New Address</button>
                                </div>
                                <div className='ds_add-box mt-4'>
                                   <div className='mb-4'>
@@ -316,11 +383,11 @@ const MyProfile = () => {
                                {/* ---------------- Add New Address Popup ------------------ */}
                                    <section>
                                           <div>
-                                           <div className="modal fade" id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                             <div className="modal-dialog ds_add-modal modal-dialog-centered">
-                                               <div className="modal-content" style={{borderRadius:'0'}}>
+                                           <Modal className="modal fade" show={newAddModal} onHide={()=> setNewAddModal(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                             <div className="modal-dialog ds_add-modal modal-dialog-centered m-0">
+                                               <div className="modal-content border-0" style={{borderRadius:'0'}}>
                                                  <div className="modal-header border-0 pb-0">
-                                                   <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                   <button type="button" className="btn-close" onClick={()=> setNewAddModal(false)}></button>
                                                  </div>
                                                  <div className="modal-body pt-0 px-4">
                                                     <h4 className="modal-title text-center ds_color" >Add New Address</h4>
@@ -398,7 +465,7 @@ const MyProfile = () => {
                                                  </div>
                                                </div>
                                              </div>
-                                            </div>
+                                            </Modal>
                                           </div>
                                   </section>
 
