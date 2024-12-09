@@ -210,6 +210,14 @@
     border-bottom: none;
     padding: 10px !important;
 }
+.sp_header_offcanvas .accordion-body .s_submenu_head {
+    color: grey;
+    font-weight: 500;
+    font-size: 20px;
+}
+.sp_header_offcanvas .accordion-body  .accordion-button::after{
+    display: none;
+}
 
 
 /* modal csss */
@@ -369,7 +377,7 @@
     color: #727272;
 }
 .s_search_sec a {
-    color: black;
+    color: grey;
     text-decoration: none;
     font-size: 20px;
     padding: 20px;

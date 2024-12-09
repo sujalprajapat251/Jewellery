@@ -3,12 +3,113 @@ import '../Css/Sujal/Header.css';
 import { IoCartOutline, IoCloseOutline, IoPersonOutline, IoSearch } from 'react-icons/io5';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 import { FaArrowRight, FaBars } from 'react-icons/fa';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import noteContext from '../Context/noteContext';
 import { Link } from 'react-router-dom';
-import ring1 from '../Img/Sujal/s_diamond_earing.png';
-import ring2 from '../Img/Sujal/s_diamond_earing.png';
-import ring3 from '../Img/Sujal/engage-ring.png';
+import Highlighter from 'react-highlight-words';
+
 function Header() {
+
+    const { allProduct, allSubCategory } = useContext(noteContext);
+    // menu catgegory handller
+    const [goldSubcate, setGoldSubcate] = useState([]);
+    const [silverSubcate, setSilverSubcate] = useState([]);
+    const [diamondSubcate, setDiamondSubcate] = useState([]);
+    const [earingSubcate, setEaringSubcate] = useState([]);
+    const [ringSubcate, setRingSubcate] = useState([]);
+    const [pendantsSubcate, setPendantSubcate] = useState([]);
+    const [platiumSubcate, setPlatiumSubcate] = useState([]);
+    const [watchSubcate, setWatchSubcate] = useState([]);
+    useEffect(() => {
+        const goldCategories = [];
+        allSubCategory.map((ele) => {
+            if (ele.category_name === "Gold") {
+                goldCategories.push(ele);
+            }
+            return null;
+        });
+        setGoldSubcate(goldCategories);
+        const silverCategories = [];
+        allSubCategory.map((ele) => {
+            if (ele.category_name === "Silver") {
+                silverCategories.push(ele);
+            }
+            return null;
+        });
+        setSilverSubcate(silverCategories);
+        const diamondCategories = [];
+        allSubCategory.map((ele) => {
+            if (ele.category_name === "Diamond") {
+                diamondCategories.push(ele);
+            }
+            return null;
+        });
+        setDiamondSubcate(diamondCategories);
+        const earingCategories = [];
+        allSubCategory.map((ele) => {
+            if (ele.category_name === "Earrings") {
+                earingCategories.push(ele);
+            }
+            return null;
+        });
+        setEaringSubcate(earingCategories);
+        const ringCategories = [];
+        allSubCategory.map((ele) => {
+            if (ele.category_name === "Rings") {
+                ringCategories.push(ele);
+            }
+            return null;
+        });
+        setRingSubcate(ringCategories);
+        const pendantCategories = [];
+        allSubCategory.map((ele) => {
+            if (ele.category_name === "Pendants") {
+                pendantCategories.push(ele);
+            }
+            return null;
+        });
+        setPendantSubcate(pendantCategories);
+        const PlatinumCategories = [];
+        allSubCategory.map((ele) => {
+            if (ele.category_name === "Platinum") {
+                PlatinumCategories.push(ele);
+            }
+            return null;
+        });
+        setPlatiumSubcate(PlatinumCategories);
+        const watchCategories = [];
+        allSubCategory.map((ele) => {
+            if (ele.category_name === "Watch") {
+                watchCategories.push(ele);
+            }
+            return null;
+        });
+        setWatchSubcate(watchCategories);
+    }, [allSubCategory]);
+
+    const [menGold, setMenGold] = useState([]);
+    const [menSilver, setMenSilver] = useState([]);
+    useEffect(() => {
+        // filter product by category
+        const goldProducts = allProduct.filter((ele) => ele.category_name === "Gold" && ele.gender === 'male');
+        setMenGold(goldProducts);
+
+        const silverProducts = allProduct.filter((ele) => ele.category_name === "Silver" && ele.gender === 'male');
+        setMenSilver(silverProducts);
+    }, [allProduct]);
+    // menu catgegory handller over ---------------
+
+    // search handdig 
+
+    const [Search, setSearch] = useState('');
+    const [searchData, setSearchData] = useState([]);
+    const searchHandle = () => {
+        console.log(Search)
+        const filteredSearchData = allProduct.filter(item => item.product_name.toLowerCase().includes(Search));
+        console.log(filteredSearchData);
+        setSearchData(filteredSearchData);
+    }
+
 
 
     // offcanvas 
@@ -16,8 +117,6 @@ function Header() {
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
-
 
     // Login Model
     const [showLogin, setShowLogin] = useState(false);
@@ -49,26 +148,6 @@ function Header() {
     const handleRegisterShow = () => setShowRegister(true);
 
 
-    // search model 
-    const [Search, setSearch] = useState('');
-
-    const allData = [
-        { name: 'ring', img: ring1, popular: false, price: '1200', oldPrice: '1500' },
-        { name: 'Finger rings', img: ring2, popular: false, price: '1200', oldPrice: '1500' },
-        { name: 'Couple rings', img: ring1, popular: false, price: '1200', oldPrice: '1500' },
-        { name: 'Vanki - rings', img: ring3, popular: false, price: '1200', oldPrice: '1500' },
-        { name: 'Baroque - Rings', img: ring1, popular: false, price: '1200', oldPrice: '1500' },
-        { name: 'ring', img: ring1, popular: false, price: '1200', oldPrice: '1500' },
-        { name: 'Diamond Ring Set', img: ring2, popular: true, price: '1200', oldPrice: '1500' },
-        { name: 'Golden Ring', img: ring3, popular: true, price: '1200', oldPrice: '1500' },
-    ]
-    const [searchData, setSearchData] = useState([]);
-    const searchHandle = () => {
-        const filteredSearchData = allData.filter(item => item.name.toLowerCase().includes(Search.toLowerCase()));
-        console.log(filteredSearchData);
-        setSearchData(filteredSearchData);
-    }
-
 
     // heart icon handller
     const [isFilled, setIsFilled] = useState(false);
@@ -78,7 +157,7 @@ function Header() {
                 <p className='ds_container mb-0'>Welcome to our Store</p></div>
             <section className='ds_container s_header_sec d-flex justify-content-between flex-wrap flex-lg-nowrap'>
                 <div className='s_header_input d-flex justify-content-between align-items-center col-lg-4 col-12 order-lg-1 order-3'>
-                    <input type='text' placeholder='Search for Jewellery and more...' onChange={(e) => { setSearch(e.target.value); searchHandle(); }}></input>
+                    <input type='text' placeholder='Search for Jewellery and more...' on={(e) => { setSearch(e.target.value); searchHandle(); }}></input>
                     <IoSearch />
                 </div>
                 <Link className='s_logo text-decoration-none col-lg-4 col-4 ms-lg-auto order-lg-2 order-1 align-self-center '>
@@ -109,20 +188,11 @@ function Header() {
                         <div className='s_submenu'>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head'>Category</h4>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/earings.png')}></img>Earrings</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/finger-ring.png')}></img>Finger Ring</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pandent.png')}></img>Pendants</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/mangalsutra.png')}></img>Mangalsutra</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/chain.png')}></img>Chains</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/nosepin.png')}></img>Nose Pin</Nav.Link>
-                            </div>
-                            <div className='s_submenu_list'>
-                                <h4 className='s_submenu_head'>&nbsp;</h4>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/necklace.png')}></img>Necklace</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/bangels.png')}></img>Bangels</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/braclets.png')}></img>Bracelets</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/goldcoin.png')}></img>Gold Coins</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/earings.png')}></img>Earrings</Nav.Link>
+                                {allSubCategory.slice(0, 9).map((ele, id) => {
+                                    return (
+                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                    )
+                                })}
                             </div>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-3'>Gender</h4>
@@ -143,27 +213,19 @@ function Header() {
                         <div className='s_submenu   '>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head'>Category</h4>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/bangels.png')}></img>Bangels</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/braclets.png')}></img>Bracelets</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/earings.png')}></img>Earrings</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/chain1.png')}></img>Gold chains</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pandent.png')}></img>Pendants</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/Ring.png')}></img>Rings</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/engage-ring.png')}></img>Engagement Rings</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/necklace.png')}></img>Necklace</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/nosepin.png')}></img>Nose Pins</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/kadas.png')}></img>Kadas</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/mangalsutra.png')}></img>Mangalsutra</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/mangtika.png')}></img>Mang Tika</Nav.Link>
+                                {goldSubcate.map((ele, id) => {
+                                    return (
+                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                    )
+                                })}
                             </div>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head'>Men</h4>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/braclets.png')}></img>Bracelets</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/chain.png')}></img>Chains</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/engage-ring1.png')}></img>Engagement Ring</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/kadas.png')}></img>Kadas</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pandent1.png')}></img>Pendants</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/Ring1.png')}></img>Rings</Nav.Link>
+                                {menGold.map((ele, id) => {
+                                    return (
+                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Nav.Link>
+                                    )
+                                })}
                             </div>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-3'>Gold Coin</h4>
@@ -186,25 +248,19 @@ function Header() {
                         <div className='s_submenu '>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head'>Category</h4>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sbangels.png')}></img>Bangels</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sbraclet.png')}></img>Bracelets</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/searing.png')}></img>Earrings</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/spendant.png')}></img>Pendants</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sring.png')}></img>Rings</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sengage-ring.png')}></img>Engagement Rings</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/snecklace.png')}></img>Necklace</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/snosepin.png')}></img>Nose Pins</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/skadas.png')}></img>Kadas</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/smangtika.png')}></img>Mang Tika</Nav.Link>
+                                {silverSubcate.map((ele, id) => {
+                                    return (
+                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                    )
+                                })}
                             </div>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head'>Men</h4>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sbracelet1.png')}></img>Bracelets</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/schain1.png')}></img>Chains</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sengage-ring1.png')}></img>Engagement Ring</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/skadas1.png')}></img>Kadas</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/spendants1.png')}></img>Pendants</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sring1.png')}></img>Rings</Nav.Link>
+                                {menSilver.map((ele, id) => {
+                                    return (
+                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.sub_category_name} src={ele.images[0]}></img>{ele.sub_category_name}</Nav.Link>
+                                    )
+                                })}
                             </div>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-3'>Price</h4>
@@ -220,30 +276,35 @@ function Header() {
                         <div className='s_submenu s_pos_50 '>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head'>Category</h4>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dbangels.png')}></img>Bangels</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dbracelet.png')}></img>Bracelets</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dmanaglsutra.png')}></img>Mangalsutra</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dnecklace.png')}></img>Necklace</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/drosepin.png')}></img>Nose Pins</Nav.Link>
+                                {diamondSubcate.map((ele, id) => {
+                                    return (
+                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                    )
+                                })}
                             </div>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head'>Earrings</h4>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dearing.png')}></img>Drop Earrings</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dearing1.png')}></img>Hoop Earrings</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/djhumka.png')}></img>Jhumkas</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dearing2.png')}></img>Stud Earrings</Nav.Link>
+                                {earingSubcate.map((ele, id) => {
+                                    return (
+                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                    )
+                                })}
                             </div>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head'>Rings</h4>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dengagering.png')}></img>Engagement Rings</Nav.Link>
+                                {ringSubcate.map((ele, id) => {
+                                    return (
+                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                    )
+                                })}
                             </div>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-3'>Pendants</h4>
-                                <Nav.Link href="/productlist">Casual Wear</Nav.Link>
-                                <Nav.Link href="/productlist">Daily Wear</Nav.Link>
-                                <Nav.Link href="/productlist">Party Wear</Nav.Link>
-                                <Nav.Link href="/productlist">Pendants & earrings Set</Nav.Link>
-                                <Nav.Link href="/productlist">Traditional</Nav.Link>
+                                {pendantsSubcate.map((ele, id) => {
+                                    return (
+                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                    )
+                                })}
                             </div>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-3'>Price</h4>
@@ -259,13 +320,11 @@ function Header() {
                         <div className='s_submenu s_pos_50'>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head'>Category</h4>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pring.png')}></img>Rings</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pbracelet.png')}></img>Chains</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pearing.png')}></img>Earrings</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pbracelet.png')}></img>Bracelets</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/ppandent.png')}></img>Daily Wear</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/ppandent1.png')}></img>Office Wear</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/ppandent2.png')}></img>Casual Wear</Nav.Link>
+                                {platiumSubcate.map((ele, id) => {
+                                    return (
+                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                    )
+                                })}
                             </div>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-3'>Price</h4>
@@ -308,27 +367,18 @@ function Header() {
                     </Nav.Item>
                     <Nav.Item className='position-relative'>
                         <Nav.Link href="/productlist">Wedding</Nav.Link>
-                        
+
                     </Nav.Item>
                     <Nav.Item className='position-relative'>
                         <Nav.Link href="/productlist">Watches</Nav.Link>
                         <div className='s_submenu s_pos_100 '>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head'>Brands</h4>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch.png')}></img>TAG Heuer</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch1.png')}></img>Rado</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch2.png')}></img>Calvin Klein</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch3.png')}></img>Seiko</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch4.png')}></img>Fossil</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch5.png')}></img>Alba</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch6.png')}></img>Longines</Nav.Link>
-                            </div>
-                            <div className='s_submenu_list'>
-                                <h4 className='s_submenu_head'>&nbsp;</h4>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch7.png')}></img>Tissot</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch8.png')}></img>MK</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch9.png')}></img>Guess</Nav.Link>
-                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch10.png')}></img>Skagen</Nav.Link>
+                                {watchSubcate.map((ele, id) => {
+                                    return (
+                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                    )
+                                })}
                             </div>
                         </div>
                     </Nav.Item>
@@ -364,17 +414,11 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Category</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/earings.png')}></img>Earrings</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/finger-ring.png')}></img>Finger Ring</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pandent.png')}></img>Pendants</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/mangalsutra.png')}></img>Mangalsutra</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/chain.png')}></img>Chains</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/nosepin.png')}></img>Nose Pin</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/necklace.png')}></img>Necklace</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/bangels.png')}></img>Bangels</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/braclets.png')}></img>Bracelets</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/goldcoin.png')}></img>Gold Coins</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/earings.png')}></img>Earrings</Nav.Link>
+                                                {allSubCategory.slice(0, 9).map((ele, id) => {
+                                                    return (
+                                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                                    )
+                                                })}
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -409,18 +453,11 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Category</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/bangels.png')}></img>Bangels</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/braclets.png')}></img>Bracelets</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/earings.png')}></img>Earrings</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/chain1.png')}></img>Gold chains</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pandent.png')}></img>Pendants</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/Ring.png')}></img>Rings</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/engage-ring.png')}></img>Engagement Rings</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/necklace.png')}></img>Necklace</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/nosepin.png')}></img>Nose Pins</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/kadas.png')}></img>Kadas</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/mangalsutra.png')}></img>Mangalsutra</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/mangtika.png')}></img>Mang Tika</Nav.Link>
+                                                {goldSubcate.map((ele, id) => {
+                                                    return (
+                                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                                    )
+                                                })}
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -428,12 +465,11 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Men</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/braclets.png')}></img>Bracelets</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/chain.png')}></img>Chains</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/engage-ring1.png')}></img>Engagement Ring</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/kadas.png')}></img>Kadas</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pandent1.png')}></img>Pendants</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/Ring1.png')}></img>Rings</Nav.Link>
+                                                {menGold.map((ele, id) => {
+                                                    return (
+                                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Nav.Link>
+                                                    )
+                                                })}
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -466,16 +502,11 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Category</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sbangels.png')}></img>Bangels</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sbraclet.png')}></img>Bracelets</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/searing.png')}></img>Earrings</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/spendant.png')}></img>Pendants</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sring.png')}></img>Rings</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sengage-ring.png')}></img>Engagement Rings</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/snecklace.png')}></img>Necklace</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/snosepin.png')}></img>Nose Pins</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/skadas.png')}></img>Kadas</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/smangtika.png')}></img>Mang Tika</Nav.Link>
+                                                {silverSubcate.map((ele, id) => {
+                                                    return (
+                                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                                    )
+                                                })}
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -483,12 +514,11 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Men</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sbracelet1.png')}></img>Bracelets</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/schain1.png')}></img>Chains</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sengage-ring1.png')}></img>Engagement Ring</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/skadas1.png')}></img>Kadas</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/spendants1.png')}></img>Pendants</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/sring1.png')}></img>Rings</Nav.Link>
+                                                {menSilver.map((ele, id) => {
+                                                    return (
+                                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Nav.Link>
+                                                    )
+                                                })}
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -514,11 +544,11 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Category</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dbangels.png')}></img>Bangels</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dbracelet.png')}></img>Bracelets</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dmanaglsutra.png')}></img>Mangalsutra</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dnecklace.png')}></img>Necklace</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/drosepin.png')}></img>Nose Pins</Nav.Link>
+                                                {diamondSubcate.map((ele, id) => {
+                                                    return (
+                                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                                    )
+                                                })}
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -526,10 +556,11 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Earrings</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dearing.png')}></img>Drop Earrings</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dearing1.png')}></img>Hoop Earrings</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/djhumka.png')}></img>Jhumkas</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dearing2.png')}></img>Stud Earrings</Nav.Link>
+                                                {earingSubcate.map((ele, id) => {
+                                                    return (
+                                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                                    )
+                                                })}
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -537,7 +568,11 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Rings</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dengagering.png')}></img>Engagement Rings</Nav.Link>
+                                                {ringSubcate.map((ele, id) => {
+                                                    return (
+                                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                                    )
+                                                })}
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -545,10 +580,11 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Pendants</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dearing.png')}></img>Drop Earrings</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dearing1.png')}></img>Hoop Earrings</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/djhumka.png')}></img>Jhumkas</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/dearing2.png')}></img>Stud Earrings</Nav.Link>
+                                                {pendantsSubcate.map((ele, id) => {
+                                                    return (
+                                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                                    )
+                                                })}
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -574,13 +610,11 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Category</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pring.png')}></img>Rings</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pbracelet.png')}></img>Chains</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pearing.png')}></img>Earrings</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/pbracelet.png')}></img>Bracelets</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/ppandent.png')}></img>Daily Wear</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/ppandent1.png')}></img>Office Wear</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/ppandent2.png')}></img>Casual Wear</Nav.Link>
+                                                {platiumSubcate.map((ele, id) => {
+                                                    return (
+                                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                                    )
+                                                })}
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -648,17 +682,11 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Brands</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch.png')}></img>TAG Heuer</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch1.png')}></img>Rado</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch2.png')}></img>Calvin Klein</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch3.png')}></img>Seiko</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch4.png')}></img>Fossil</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch5.png')}></img>Alba</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch6.png')}></img>Longines</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch7.png')}></img>Tissot</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch8.png')}></img>MK</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch9.png')}></img>Guess</Nav.Link>
-                                                <Nav.Link href="/productlist"><img alt='earing' src={require('../Img/Sujal/watch10.png')}></img>Skagen</Nav.Link>
+                                                {watchSubcate.map((ele, id) => {
+                                                    return (
+                                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                                    )
+                                                })}
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -723,7 +751,6 @@ function Header() {
                     <span className='d-flex' onClick={() => { handleLoginClose(); handleRegisterShow(); }}><p>Didn’t have any account?</p><Link to={'#'} > Signup</Link></span>
                 </Modal.Footer>
             </Modal>
-
 
             {/* forget  password*/}
             <Modal show={showForPass} onHide={handleForPassClose} animation={false} centered className='s_modal'>
@@ -873,14 +900,19 @@ function Header() {
                                     {!el.popular ?
                                         <p>
                                             <Link to={`#`}>
-                                                {el.name}
+                                                <Highlighter
+                                                    highlightClassName="text-dark bg-transparent"
+                                                    searchWords={[Search]} // Replace 'Search' with the array of words you want to highlight
+                                                    autoEscape={true}   // Ensure special characters are escaped
+                                                    textToHighlight={el.product_name} // The text where you want to apply the highlight
+                                                />
                                             </Link>
                                         </p>
                                         : ''}
                                 </div>
                             )
                         })}
-                        <div className='s_serach_head'><h5 className='mb-0'>Popular</h5></div>
+                        {/* <div className='s_serach_head'><h5 className='mb-0'>Popular</h5></div>
                         {searchData.map((el, id) => {
                             return (
                                 <div key={id} className='s_search_item'>
@@ -898,7 +930,7 @@ function Header() {
                                         : ''}
                                 </div>
                             )
-                        })}
+                        })} */}
                     </>
                 }
                 <div className='s_serach_head border-top border-0 mt-auto'><h5 className='mb-0'>Search for “{Search}”</h5><FaArrowRight /></div>

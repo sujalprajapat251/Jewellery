@@ -127,8 +127,8 @@
 }
 
 .s_cat_slider .owl-item img {
-    /* / height: 270px;/  */
-    object-fit: cover;
+     height: 250px;
+     object-fit: cover;
 }
 .s_cat_slider  a {
     text-decoration: none;

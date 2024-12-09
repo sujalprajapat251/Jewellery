@@ -1,18 +1,11 @@
 import '../Css/Sujal/Home.css';
-import React from 'react';
+import React, { useContext } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
 import slider1 from '../Img/Sujal/slider1.png';
 import slider2 from '../Img/Sujal/slider2.png';
 import slider3 from '../Img/Sujal/slider3.png';
-import cat1 from '../Img/Sujal/cat1.png';
-import cat2 from '../Img/Sujal/cat2.png';
-import cat3 from '../Img/Sujal/cat3.png';
-import cat4 from '../Img/Sujal/cat4.png';
-import cat5 from '../Img/Sujal/cat5.png';
-import cat6 from '../Img/Sujal/cat6.png';
-import cat7 from '../Img/Sujal/cat7.png';
 import seller1 from '../Img/Sujal/seller1.png';
 import seller2 from '../Img/Sujal/seller2.png';
 import seller3 from '../Img/Sujal/seller3.png';
@@ -31,10 +24,14 @@ import { GoHeart } from 'react-icons/go';
 import es_card1 from '../Img/Sujal/platinum.png';
 import es_card2 from '../Img/Sujal/design.png';
 import es_card3 from '../Img/Sujal/jewel.png';
+import noteContext from '../Context/noteContext';
 
 function Home() {
-    const cat_sliderres = {
+    // backend connection code
+    const { allCategory } = useContext(noteContext);
 
+    // cat slideer responsive
+    const cat_sliderres = {
         0: { items: 1 },
         376: { items: 2 },
         600: { items: 3 },
@@ -42,6 +39,8 @@ function Home() {
         1200: { items: 5 },
         1440: { items: 7 },
     }
+
+    // feature slideer responsive
     const feature_sliderres = {
 
         0: { items: 1 },
@@ -51,6 +50,8 @@ function Home() {
         1200: { items: 3 },
         1440: { items: 4 },
     }
+
+    // card detail slideer responsive
     const card_detail = [
         { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: seller1 },
         { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: seller2 },
@@ -124,38 +125,14 @@ function Home() {
                     </div>
                     <div className='s_cat_slider'>
                         <OwlCarousel className='owl-theme' loop margin={10} items={7} nav={true} responsive={cat_sliderres} dots={false} autoplay autoplayTimeout={3000} autoplayHoverPause>
-                            <Link className='item' to={'/productlist'}>
-                                <img src={cat1} alt=''></img>
-                                <h4>Diamond’s</h4>
-                            </Link>
-                            <Link className='item' to={'/productlist'}>
-                                <img src={cat2} alt=''></img>
-                                <h4>Earrings</h4>
-                            </Link>
-                            <Link className='item' to={'/productlist'}>
-                                <img src={cat3} alt=''></img>
-                                <h4>Rings</h4>
-
-                            </Link>
-                            <Link className='item' to={'/productlist'}>
-                                <img src={cat4} alt=''></img>
-                                <h4>Bracelets</h4>
-
-                            </Link>
-                            <Link className='item' to={'/productlist'}>
-                                <img src={cat5} alt=''></img>
-                                <h4>Necklace</h4>
-
-                            </Link>
-                            <Link className='item' to={'/productlist'}>
-                                <img src={cat6} alt=''></img>
-                                <h4>Gold Lava</h4>
-
-                            </Link>
-                            <Link className='item' to={'/productlist'}>
-                                <img src={cat7} alt=''></img>
-                                <h4>Charms</h4>
-                            </Link>
+                            {allCategory.map((ele,id)=>{
+                                return(
+                                    <Link className='item' key={id} to={'/productlist/' + ele.id}>
+                                        <img src={ele.image} alt=''></img>
+                                        <h4>{ele.name}</h4>
+                                    </Link>
+                                )
+                            })}
                         </OwlCarousel>
                     </div>
                 </section>
@@ -201,36 +178,6 @@ function Home() {
                                 )
                             })
                         }
-                        {/* <Col >
-                            <div className='s_seller_card'>
-                                <div className='sp_card_img'>
-                                    <img src={require('../Img/Sujal/seller1.png')} className='w-100'></img>
-                                </div>
-                                <div className='s_card_status'><p className='mb-0'>treading</p></div>
-                                <div className='s_card_text'>
-                                    <h5>Gold Ear Rings</h5>
-                                    <p className='mb-0'><span className='mx-2'>₹1200</span><strike className="mx-2">₹1500</strike></p>
-                                    <div className='sp_'></div>
-                                    <Link></Link>
-                                </div>
-                            </div>
-
-                        </Col> */}
-                        {/* <Col className='s_seller_card'>
-                            <img src={require('../Img/Sujal/seller2.png')} className='w-100'></img>
-                        </Col>
-                        <Col className='s_seller_card'>
-                            <img src={require('../Img/Sujal/seller3.png')} className='w-100'></img>
-                        </Col>
-                        <Col className='s_seller_card'>
-                            <img src={require('../Img/Sujal/seller4.png')} className='w-100'></img>
-                        </Col>
-                        <Col className='s_seller_card'>
-                            <img src={require('../Img/Sujal/seller5.png')} className='w-100'></img>
-                        </Col>
-                        <Col className='s_seller_card'>
-                            <img src={require('../Img/Sujal/seller6.png')} className='w-100'></img>
-                        </Col> */}
                     </Row>
                 </section>
             </section>
@@ -454,63 +401,60 @@ function Home() {
                     </div>
                 </div>
             </section>
-            {/* <div className='s_right_diamond'>
-                <img className='w-100' src={require('../Img/Sujal/diamond.png')} alt='diamonds'></img>
-            </div> */}
             <section className='s_service_sec'>
                 <div className='ds_container'>
-                <div className='s_cat_head'>
-                    <p className='mb-2'>Your satisfaction is our mission</p>
-                    <h2>Our Services</h2>
-                </div>
-                <Row lg={3} md={2}  className='justify-content-center row-cols-1 gx-0 gx-md-4'>
-                    <Col>
-                        <div className='s_service_box d-flex justify-content-between align-items-center'>
+                    <div className='s_cat_head'>
+                        <p className='mb-2'>Your satisfaction is our mission</p>
+                        <h2>Our Services</h2>
+                    </div>
+                    <Row lg={3} md={2} className='justify-content-center row-cols-1 gx-0 gx-md-4'>
+                        <Col>
+                            <div className='s_service_box d-flex justify-content-between align-items-center'>
                                 <img src={require('../Img/Sujal/shipping.png')} alt='Shipping'></img>
                                 <div>
                                     <h4>Shipping</h4>
                                     <p className='mb-0'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the </p>
                                 </div>
-                        </div>
-                    </Col>
-                    <Col>
-                        <div className='s_service_box d-flex justify-content-between align-items-center'>
+                            </div>
+                        </Col>
+                        <Col>
+                            <div className='s_service_box d-flex justify-content-between align-items-center'>
                                 <img src={require('../Img/Sujal/money-back.png')} alt='Money-Back'></img>
                                 <div>
                                     <h4>15 Day Money-Back</h4>
                                     <p className='mb-0'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the </p>
                                 </div>
-                        </div>
-                    </Col>
-                    <Col>
-                        <div className='s_service_box d-flex justify-content-between align-items-center'>
+                            </div>
+                        </Col>
+                        <Col>
+                            <div className='s_service_box d-flex justify-content-between align-items-center'>
                                 <img src={require('../Img/Sujal/hallmarks.png')} alt='BIS Hallmarked'></img>
                                 <div>
                                     <h4>BIS Hallmarked</h4>
                                     <p className='mb-0'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the </p>
                                 </div>
-                        </div>
-                    </Col>
-                    <Col>
-                        <div className='s_service_box d-flex justify-content-between align-items-center'>
+                            </div>
+                        </Col>
+                        <Col>
+                            <div className='s_service_box d-flex justify-content-between align-items-center'>
                                 <img src={require('../Img/Sujal/warranty.png')} alt='Warranty'></img>
                                 <div>
                                     <h4>One Year Warranty</h4>
                                     <p className='mb-0'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the </p>
                                 </div>
-                        </div>
-                    </Col>
-                    <Col>
-                        <div className='s_service_box d-flex justify-content-between align-items-center'>
+                            </div>
+                        </Col>
+                        <Col>
+                            <div className='s_service_box d-flex justify-content-between align-items-center'>
                                 <img src={require('../Img/Sujal/certified.png')} alt='Certified'></img>
                                 <div>
                                     <h4>100% Certified</h4>
                                     <p className='mb-0'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the </p>
                                 </div>
-                        </div>
-                    </Col>
+                            </div>
+                        </Col>
 
-                </Row>
+                    </Row>
                 </div>
 
             </section>

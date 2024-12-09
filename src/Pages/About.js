@@ -3,11 +3,6 @@ import '../Css/dhruvin/About.css'
 import noteContext from '../Context/noteContext'
 
 const About = () => {
-
-
-
-
-
 const {hello} = useContext(noteContext)
 
 console.log(hello());
@@ -15,7 +10,7 @@ console.log(hello());
 
   return (
     <>
-    <h1> </h1>
+    
      <section className=''>
         <div>
             <div className='ds_about-bg'>

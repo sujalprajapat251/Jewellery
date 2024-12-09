@@ -1,20 +1,64 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import noteContext from './noteContext'
+import axios from 'axios';
+
 
 const UseContext = (props) => {
+  const [allCategory,setAllCatgegory] = useState([]);
+  const [allSubCategory, setAllSubCategory] = useState([]);
+  const [allProduct, setAllProduct] = useState([]);
 
- let a = 10;
- let Arr = [1,2,3,4,5]
+  const ApiKey = 'https://shreekrishnaastrology.com/api';
 
- const hello  = (data) => {
-    console.log("I Am Context");
-        
- }
 
+  useEffect(() => {
+    const token = "77|x09LpLZRcGrA3RL0CrzCrV5Q7FdPgKUFLRlDhtTL62f9da53";
+    // fetch catgory
+    axios.get(`${ApiKey}/categories/getallactive`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        setAllCatgegory(response.data.categories);
+        // console.log(response.data.categories);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+
+    // fetch sub catgeory data
+    axios.get(`${ApiKey}/subcategories/getallactive`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        setAllSubCategory(response.data.subCategories);
+        // console.log(response.data.subCategories);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+
+    // fetch product data
+    axios.get(`${ApiKey}/products/getallactive`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        setAllProduct(response.data.data);
+        // console.log(response.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
   return (
-      <noteContext.Provider value={{a , Arr , hello}}>   
-        {props.children}
-      </noteContext.Provider>
+    <noteContext.Provider value={{ allCategory,allProduct,allSubCategory}}>
+      {props.children}
+    </noteContext.Provider>
   )
 }
 

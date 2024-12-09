@@ -30,6 +30,7 @@
 .s_fliter .accordion-body {
     padding: 20px !important;
     padding-top: 0px !important;
+    border-bottom:none ;
 }
 .s_fliter .show .accordion-body{
     max-height: 100%;

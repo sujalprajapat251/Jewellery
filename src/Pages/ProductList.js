@@ -69,7 +69,7 @@ function ProductList() {
                                 <div className='s_fliter_head d-none d-md-block'>
                                     <h4>Filter</h4>
                                 </div>
-                                <Accordion defaultActiveKey={['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']} alwaysOpen>
+                                <Accordion>
                                     <Accordion.Item eventKey="0">
                                         <Accordion.Header>Price</Accordion.Header>
                                         <Accordion.Body>
