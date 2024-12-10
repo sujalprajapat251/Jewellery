@@ -270,7 +270,7 @@
 .s_modal .s_modal_field input::placeholder {
     font-size: 18px;
 }
-.s_modal .s_modal_btn {
+.s_modal .s_modal_btn button{
     margin: 20px auto;
     width: 100%;
     height: 50px;
@@ -280,7 +280,7 @@
     align-items: center;
     border: 1px solid var(--brown);;
 }
-.s_modal .s_modal_btn a{
+.s_modal .s_modal_btn button{
     color: white;
     font-size: 20px;
     font-weight: 600;
@@ -289,8 +289,8 @@
 .s_modal .s_modal_btn:hover {
     background-color: transparent;
 }
-.s_modal .s_modal_btn:hover a {
-    color: var(--brown);
+.s_modal .s_modal_btn:hover button {
+    color: white;
 }
 
 .s_modal_or .s_modal_line {
@@ -328,8 +328,8 @@
     font-weight: 600;
 }
 .s_modal  .s_modal_otp input{
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     min-width: 50px;
     border: 1px solid black;
     outline: none;

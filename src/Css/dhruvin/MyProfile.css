@@ -1,3 +1,10 @@
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+
 .ds_cursor{
     cursor: pointer;
 }
@@ -68,6 +75,7 @@
     border: 1px solid #4D1F08;
     color: #4D1F08;
     background-color: white;
+    text-decoration: none;
 }
 .ds_edit-save{
     padding: 7px 65px;

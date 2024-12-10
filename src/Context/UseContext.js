@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import noteContext from './noteContext'
 import axios from 'axios';
 
@@ -10,6 +11,10 @@ const UseContext = (props) => {
 
   const ApiKey = 'https://shreekrishnaastrology.com/api';
 
+
+  const Api = 'https://shreekrishnaastrology.com/api'
+
+  
 
   useEffect(() => {
     const token = "77|x09LpLZRcGrA3RL0CrzCrV5Q7FdPgKUFLRlDhtTL62f9da53";
@@ -56,7 +61,7 @@ const UseContext = (props) => {
       });
   }, []);
   return (
-    <noteContext.Provider value={{ allCategory,allProduct,allSubCategory}}>
+    <noteContext.Provider value={{ allCategory,allProduct,allSubCategory,Api}}>
       {props.children}
     </noteContext.Provider>
   )
