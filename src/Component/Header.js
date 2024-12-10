@@ -3,17 +3,16 @@ import '../Css/Sujal/Header.css';
 import { IoCartOutline, IoCloseOutline, IoPersonOutline, IoSearch } from 'react-icons/io5';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 import { FaArrowRight, FaBars } from 'react-icons/fa';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import noteContext from '../Context/noteContext';
 import { Link } from 'react-router-dom';
 import Highlighter from 'react-highlight-words';
-import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
 import ring1 from '../Img/Sujal/s_diamond_earing.png';
 import ring2 from '../Img/Sujal/s_diamond_earing.png';
 import ring3 from '../Img/Sujal/engage-ring.png';
 import axios from 'axios';
-import noteContext from '../Context/noteContext';
+import { useFormik } from 'formik';
+import { ForgetPassSchema, LoginSchema } from '../schemas';
 
 
 
@@ -21,7 +20,7 @@ import noteContext from '../Context/noteContext';
 
 
 function Header() {
-    const { allProduct, allSubCategory } = useContext(noteContext);
+    const {Api , allProduct, allSubCategory } = useContext(noteContext);
     // menu catgegory handller
     const [goldSubcate, setGoldSubcate] = useState([]);
     const [silverSubcate, setSilverSubcate] = useState([]);
@@ -31,6 +30,7 @@ function Header() {
     const [pendantsSubcate, setPendantSubcate] = useState([]);
     const [platiumSubcate, setPlatiumSubcate] = useState([]);
     const [watchSubcate, setWatchSubcate] = useState([]);
+
     useEffect(() => {
         const goldCategories = [];
         allSubCategory.map((ele) => {
@@ -124,21 +124,6 @@ function Header() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    const {Api} =  useContext(noteContext)
-
     // offcanvas 
     const [show, setShow] = useState(false);
 
@@ -151,27 +136,30 @@ function Header() {
     const handleLoginClose = () => setShowLogin(false);
     const handleLoginShow = () => setShowLogin(true);
 
-    const [loginVal, setLoginVal] = useState({
+    const loginVal = {
         email:'',
         password:'',
-    })
-
-    const handleLogin = (e) => {
-        e.preventDefault();
-
-        axios.post(`${Api}/auth/login`, {
-            email:loginVal.email,
-            password:loginVal.password,
-        })
-        .then((value)=>{
-            console.log("LoginRes" , value.data); 
-            localStorage.setItem("Login", JSON.stringify(value.data.result))
-        }).catch((error)=>{
-            alert(error)
-        }) 
     }
 
-    // const [loginVal, setLoginVal] = useState("")
+    const LoginFormik = useFormik({
+        initialValues:loginVal,
+        validationSchema:LoginSchema,
+        onSubmit : (values , action) => {
+           
+            axios.post(`${Api}/auth/login`, {
+                email:values.email,
+                password:values.password,
+            })
+            .then((value)=>{
+                console.log("LoginRes" , value.data); 
+                localStorage.setItem("Login", JSON.stringify(value.data.result))
+            }).catch((error)=>{
+                alert(error)
+            }) 
+            action.resetForm()
+        }
+    })
+
 
     // forgot password Model
     const [showForPass, setShowForPass] = useState(false);
@@ -179,13 +167,17 @@ function Header() {
     const handleForPassClose = () => setShowForPass(false);
     const handleForPassShow = () => setShowForPass(true);
 
-    const [forgetEmail, setForgetEmail] = useState("")
+    const ForgetPassVal = {
+          email:'',
+    }
 
-    const handleForgetPassword = (e) => {
-        e.preventDefault();
+    const ForgetPassFormik = useFormik({
+        initialValues:ForgetPassVal,
+        validationSchema:ForgetPassSchema,
+        onSubmit : (values , action) => {
 
         axios.post(`${Api}/password/email`, {
-            email:forgetEmail,
+           email:values.email,
         })
         .then((value)=>{
             console.log("ForgetRes" , value.data); 
@@ -194,7 +186,12 @@ function Header() {
         }).catch((error)=>{
             alert(error)
         }) 
-    }
+
+        action.resetForm()
+        }
+    })
+
+ 
 
     // Verify Otp Model
     const [showOTP, setShowOTP] = useState(false);
@@ -202,31 +199,42 @@ function Header() {
     const handleOTPClose = () => setShowOTP(false);
     const handleOTPShow = () => setShowOTP(true);
 
-    const [otpVal, setOtpVal] = useState({
-         otp1:'',
-         otp2:'',
-         otp3:'',
-         otp4:''
-    })
     const [storeOtp, setStoreOtp] = useState("")
 
-    const handleOtpSubmit = (e) => {
-         e.preventDefault();
-
-         axios.post(`${Api}/password/otp`, {
-            otp:parseInt(otpVal.otp1 + otpVal.otp2 + otpVal.otp3 + otpVal.otp4),
-           
-        }).then((value)=>{
-            console.log("OtpRes" , value.data); 
-            handleOTPClose()
-            handleResetPassShow()
-            setStoreOtp(parseInt(otpVal.otp1 + otpVal.otp2 + otpVal.otp3 + otpVal.otp4))
-
-        }).catch((error)=>{
-            alert(error)
-        }) 
-
+    const OtpVal = {
+        otp1:'',
+        otp2:'',
+        otp3:'',
+        otp4:''
     }
+
+    const OtpFormik = useFormik({
+        initialValues:OtpVal,
+        onSubmit : (values , action) => {
+
+            axios.post(`${Api}/password/otp`, {
+                otp:parseInt(values.otp1 + values.otp2 + values.otp3 + values.otp4),
+               
+            }).then((value)=>{
+                console.log("OtpRes" , value.data); 
+                handleOTPClose()
+                handleResetPassShow()
+                setStoreOtp(parseInt(values.otp1 + values.otp2 + values.otp3 + values.otp4))
+    
+            }).catch((error)=>{
+                alert(error)
+            })  
+
+            action.resetForm()
+        }
+    })
+
+    const otp1Ref = useRef(null);
+    const otp2Ref = useRef(null);
+    const otp3Ref = useRef(null);
+    const otp4Ref = useRef(null);
+
+
 
     // Reset Password Model
     const [showResetPass, setShowResetPass] = useState(false);
@@ -237,6 +245,18 @@ function Header() {
     const [resetPassVal, setResetPassVal] = useState({
         newPass:'',
         conPass:'',
+    })
+
+    const ResetPassVal = {
+        newPass:'',
+        conPass:'',
+    }
+
+    const ReserPassFormik = useFormik({
+        initialValues:ResetPassVal,
+        onSubmit: (values , action) => {
+            
+        }
     })
 
     const handleResetPassword = (e) => {
@@ -854,18 +874,21 @@ function Header() {
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='s_model_con'>
-                   <form onSubmit={handleLogin}>
+                   <form onSubmit={LoginFormik.handleSubmit}>
                        <div className='s_modal_head text-center' >
                             <h2>Login</h2>
                             <p>Login to your existing account to access your account</p>
                         </div>
                         <div className='s_modal_field'>
                             <p>Email</p>
-                            <input type='text' value={loginVal.email} onChange={(e)=> setLoginVal({...loginVal , email:e.target.value})} placeholder='Enter email'></input>
+                            <input type='email' name='email' value={LoginFormik.values.email} onChange={LoginFormik.handleChange} onBlur={LoginFormik.handleBlur} placeholder='Enter email'></input>
+                            { LoginFormik.errors.email &&  LoginFormik.touched.email ? <p className='ds_new-danger mb-0'>{LoginFormik.errors.email}</p> : null}
+
                         </div>
                         <div className='s_modal_field'>
                             <p>Password</p>
-                            <input type='text' value={loginVal.password} onChange={(e)=>setLoginVal({...loginVal , password:e.target.value})} placeholder='Enter password'></input>
+                            <input type='text' name='password' value={LoginFormik.values.password} onChange={LoginFormik.handleChange} onBlur={LoginFormik.handleBlur} placeholder='Enter password'></input>
+                            { LoginFormik.errors.password &&  LoginFormik.touched.password ? <p className='ds_new-danger mb-0'>{LoginFormik.errors.password}</p> : null}
                             <span className='d-flex justify-content-end' onClick={() => { handleLoginClose(); handleForPassShow(); }}><Link to={'#'} >Forgot Password?</Link></span>
                         </div>
                         <div className='s_modal_btn'>
@@ -898,14 +921,16 @@ function Header() {
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='s_model_con'>
-                    <form onSubmit={handleForgetPassword}>
+                    <form onSubmit={ForgetPassFormik.handleSubmit}>
                          <div className='s_modal_head text-center' >
                              <h2>Forgot Password</h2>
                              <p>Enter your email below to recover your password</p>
                          </div>
                          <div className='s_modal_field'>
                              <p>Email</p>
-                             <input type='text' value={forgetEmail} onChange={(e)=>setForgetEmail(e.target.value)} placeholder='Enter email'></input>
+                             <input  type='text' name='email' value={ForgetPassFormik.values.email} onChange={ForgetPassFormik.handleChange} onBlur={ForgetPassFormik.handleBlur} placeholder='Enter email'></input>
+                            { ForgetPassFormik.errors.email &&  ForgetPassFormik.touched.email ? <p className='ds_new-danger mb-0'>{ForgetPassFormik.errors.email}</p> : null}
+
                          </div>
                          <div className='s_modal_btn'>
                              <button type='submit'>Send Code</button>
@@ -925,16 +950,16 @@ function Header() {
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='s_model_con'>
-                    <form onSubmit={handleOtpSubmit}>
+                    <form onSubmit={OtpFormik.handleSubmit}>
                         <div className='s_modal_head text-center' >
                             <h2>Verify OTP</h2>
                             <p>Enter verification code which we’ve sent to your registered email</p>
                         </div>
                         <div className='s_modal_otp d-flex justify-content-between mx-4'>
-                            <input type='text' value={otpVal.otp1} onChange={(e)=> setOtpVal({...otpVal , otp1:e.target.value})}></input>
-                            <input type='text' value={otpVal.otp2} onChange={(e)=> setOtpVal({...otpVal , otp2:e.target.value})}></input>
-                            <input type='text' value={otpVal.otp3} onChange={(e)=> setOtpVal({...otpVal , otp3:e.target.value})}></input>
-                            <input type='text' value={otpVal.otp4} onChange={(e)=> setOtpVal({...otpVal , otp4:e.target.value})}></input>
+                            <input ref={otp1Ref} maxLength="1"  type='text' name='otp1' value={OtpFormik.values.otp1} onChange={(e) => {OtpFormik.handleChange(e);if (e.target.value.length === 1) otp2Ref.current.focus();}} onBlur={OtpFormik.handleBlur} onKeyDown={(e) => { if (e.key === "Backspace" && !OtpFormik.values.otp1) { e.preventDefault(); } }}></input>
+                            <input ref={otp2Ref} maxLength="1" type='text' name='otp2' value={OtpFormik.values.otp2} onChange={(e) => {OtpFormik.handleChange(e);if (e.target.value.length === 1) otp3Ref.current.focus();}} onBlur={OtpFormik.handleBlur} onKeyDown={(e) => { if (e.key === "Backspace" && !OtpFormik.values.otp2) { otp1Ref.current.focus(); } }}></input>
+                            <input ref={otp3Ref} maxLength="1" type='text' name='otp3' value={OtpFormik.values.otp3} onChange={(e) => {OtpFormik.handleChange(e);if (e.target.value.length === 1) otp4Ref.current.focus();}} onBlur={OtpFormik.handleBlur} onKeyDown={(e) => { if (e.key === "Backspace" && !OtpFormik.values.otp3) { otp2Ref.current.focus(); } }}></input>
+                            <input ref={otp4Ref} maxLength="1" type='text' name='otp4' value={OtpFormik.values.otp4} onChange={OtpFormik.handleChange} onBlur={OtpFormik.handleBlur} onKeyDown={(e) => { if (e.key === "Backspace" && !OtpFormik.values.otp4) { otp3Ref.current.focus(); } }}></input>
                         </div>
                         <div className='s_modal_btn'>
                             <button type='submit'>Verify</button>
@@ -948,24 +973,23 @@ function Header() {
 
 
             {/* reset password */}
-
             <Modal show={showResetPass} onHide={handleResetPassClose} animation={false} centered className='s_modal'>
                 <Modal.Header closeButton>
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='s_model_con'>
-                    <form onSubmit={handleResetPassword}>
+                    <form onSubmit={ReserPassFormik.handleSubmit}>
                         <div className='s_modal_head text-center' >
                             <h2>Reset Password</h2>
                             <p>Reset your password & create new password</p>
                         </div>
                         <div className='s_modal_field'>
                             <p>New Password</p>
-                            <input type='text' value={resetPassVal.newPass} onChange={(e)=> setResetPassVal({...resetPassVal , newPass:e.target.value})} placeholder='New Password'></input>
+                            <input type='text' name='newPass' value={ReserPassFormik.values.newPass} onChange={ReserPassFormik.handleChange} onBlur={ReserPassFormik.handleBlur} placeholder='New Password'></input>
                         </div>
                         <div className='s_modal_field'>
                             <p>Confirm New Password</p>
-                            <input type='text' value={resetPassVal.conPass} onChange={(e)=> setResetPassVal({...resetPassVal , conPass:e.target.value})} placeholder='Confirm New Password'></input>
+                            <input type='text' name='conPass' value={ReserPassFormik.values.conPass} onChange={ReserPassFormik.handleChange} onBlur={ReserPassFormik.handleBlur} placeholder='Confirm New Password'></input>
                         </div>
                         <div className='s_modal_btn' >
                             <button type='submit'>Reset Password</button>

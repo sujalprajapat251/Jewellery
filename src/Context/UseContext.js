@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import React, { useState } from 'react'
 import noteContext from './noteContext'
 import axios from 'axios';
 
@@ -60,6 +59,7 @@ const UseContext = (props) => {
         console.error("Error fetching data:", error);
       });
   }, []);
+
   return (
     <noteContext.Provider value={{ allCategory,allProduct,allSubCategory,Api}}>
       {props.children}

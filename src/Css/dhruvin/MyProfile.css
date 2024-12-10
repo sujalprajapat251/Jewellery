@@ -107,6 +107,69 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding: 20px;
     box-shadow: 0px 0px 24px 3px #7272721A;
 }
+
+/* {*************** Add New Address Popup ************   } */
+.ds_add-modal{
+    max-width: 700px !important;
+  }
+  .ds_new-input{
+    border: 0.75px solid #4D1F08;
+    padding: 7px 10px;
+    width: 100%;
+  }
+  .ds_new-danger{
+    color:red;
+    font-size: 12px !important;
+  }
+ .ds_new-home{
+    padding: 10px 20px;
+    background: white;
+    color: #4D1F08;
+    border: none;
+    outline: none;
+    border: 1px solid #4D1F08 !important; 
+    text-decoration: none;
+    cursor: pointer;
+
+ }
+ .ds_select_type_active{
+    background: #4D1F08 !important;
+    color: white !important;
+ }
+ .ds_home-icon{
+    font-size: 22px;
+}
+ .ds_new-work{
+    padding: 10px 20px;
+    border: 1px solid #4D1F08 !important; 
+    background: white;
+    color: #4D1F08;
+    border: none;
+    outline: none;
+    text-decoration: none;
+    cursor: pointer;
+ }
+.ds_new-other{
+    padding: 10px 30px;
+    border: 1px solid #4D1F08 !important; 
+    background: white;
+    color: #4D1F08;
+    border: none;
+    outline: none; 
+    text-decoration: none;
+    cursor: pointer;
+}
+.ds_new-save{
+    padding: 10px 10px;
+    background: #4D1F08;
+    width: 100%;
+    color: white;
+    border: none;
+    outline: none;
+}
+
+
+
 /* {---------------- Delete Item Modal ------------------} */
 .ds_delete-no{
     border: 1px solid #4D1F08;

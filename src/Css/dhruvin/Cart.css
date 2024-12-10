@@ -166,49 +166,7 @@
   }
 
   
-/* {*************** Add New Address Popup ************   } */
-  .ds_add-modal{
-    max-width: 700px !important;
-  }
-  .ds_new-input{
-    border: 0.75px solid #4D1F08;
-    padding: 7px 10px;
-    width: 100%;
-  }
- .ds_new-home{
-    padding: 10px 20px;
-    background: #4D1F08;
-    color: white;
-    border: none;
-    outline: none;
- }
- .ds_home-icon{
-    font-size: 22px;
-}
- .ds_new-work{
-    padding: 10px 20px;
-    border: 1px solid #4D1F08 !important; 
-    background: white;
-    color: #4D1F08;
-    border: none;
-    outline: none;
- }
-.ds_new-other{
-    padding: 10px 30px;
-    border: 1px solid #4D1F08 !important; 
-    background: white;
-    color: #4D1F08;
-    border: none;
-    outline: none; 
-}
-.ds_new-save{
-    padding: 10px 10px;
-    background: #4D1F08;
-    width: 100%;
-    color: white;
-    border: none;
-    outline: none;
-}
+
 
 
 /* {*************** Change Address Popup ************   } */
