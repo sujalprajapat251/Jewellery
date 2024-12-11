@@ -19,7 +19,7 @@ function ProductDetail() {
     const inStock = true;
     const category = '';
 
-
+    
     // video handdler
     const [controlsVisible, setControlsVisible] = useState(false);
     const videoRef = useRef(null);
@@ -51,9 +51,9 @@ function ProductDetail() {
     // review modal handller 
     const [lgShow, setLgShow] = useState(false);
 
-    let detail= []
+    let detail = []
     // you also like product
-    if(category !=='Watch'){
+    if (category !== 'Watch') {
         detail = [
             { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
             { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
@@ -63,7 +63,7 @@ function ProductDetail() {
         ]
     }
     else {
-        detail=[
+        detail = [
             { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: watch1 },
             { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: watch2 },
             { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: watch3 },
@@ -141,9 +141,9 @@ function ProductDetail() {
                                 }
                             </div>
                             <div className='d-flex align-items-center'>
-                            <h2 className='s_price'>₹141268.00</h2>
-                            {inStock !== true ? <div className='s_stock_status'>out of stack</div> : ''}
-                            
+                                <h2 className='s_price'>₹141268.00</h2>
+                                {inStock !== true ? <div className='s_stock_status'>out of stack</div> : ''}
+
                             </div>
                             <p className='s_description'>Make a statement with this 18 Karat white and rose gold Finger Ring, featuring a dazzling central Diamond surrounded by two halos of real Diamonds.
                                 Perfect for engagements or special occasions, this real Diamond Finger Ring brings together modern sophistication and classic charm, making it a truly memorable piece</p>

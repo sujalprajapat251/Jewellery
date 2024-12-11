@@ -8,10 +8,6 @@ import noteContext from '../Context/noteContext';
 import { Link } from 'react-router-dom';
 import Highlighter from 'react-highlight-words';
 import axios from 'axios';
-import ring1 from '../Img/Sujal/s_diamond_earing.png';
-import ring2 from '../Img/Sujal/s_diamond_earing.png';
-import ring3 from '../Img/Sujal/engage-ring.png';
-import axios from 'axios';
 import { useFormik } from 'formik';
 import { ForgetPassSchema, LoginSchema } from '../schemas';
 
@@ -410,7 +406,7 @@ function Header() {
                                 <h4 className='s_submenu_head'>Category</h4>
                                 {silverSubcate.map((ele, id) => {
                                     return (
-                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                        <Nav.Link href={`/productlist/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
                                     )
                                 })}
                             </div>
@@ -418,7 +414,7 @@ function Header() {
                                 <h4 className='s_submenu_head'>Men</h4>
                                 {menSilver.map((ele, id) => {
                                     return (
-                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.sub_category_name} src={ele.images[0]}></img>{ele.sub_category_name}</Nav.Link>
+                                        <Nav.Link href={`/productlist/${ele.id}`} key={ele.id}><img alt={ele.sub_category_name} src={ele.images[0]}></img>{ele.sub_category_name}</Nav.Link>
                                     )
                                 })}
                             </div>
@@ -438,7 +434,7 @@ function Header() {
                                 <h4 className='s_submenu_head'>Category</h4>
                                 {diamondSubcate.map((ele, id) => {
                                     return (
-                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                        <Nav.Link href={`/productlist/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
                                     )
                                 })}
                             </div>
@@ -446,7 +442,7 @@ function Header() {
                                 <h4 className='s_submenu_head'>Earrings</h4>
                                 {earingSubcate.map((ele, id) => {
                                     return (
-                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                        <Nav.Link href={`/productlist/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
                                     )
                                 })}
                             </div>
@@ -454,7 +450,7 @@ function Header() {
                                 <h4 className='s_submenu_head'>Rings</h4>
                                 {ringSubcate.map((ele, id) => {
                                     return (
-                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                        <Nav.Link href={`/productlist/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
                                     )
                                 })}
                             </div>
@@ -462,7 +458,7 @@ function Header() {
                                 <h4 className='s_submenu_head ps-3'>Pendants</h4>
                                 {pendantsSubcate.map((ele, id) => {
                                     return (
-                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                        <Nav.Link href={`/productlist/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
                                     )
                                 })}
                             </div>
@@ -482,7 +478,7 @@ function Header() {
                                 <h4 className='s_submenu_head'>Category</h4>
                                 {platiumSubcate.map((ele, id) => {
                                     return (
-                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                        <Nav.Link href={`/productlist/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
                                     )
                                 })}
                             </div>
@@ -536,7 +532,7 @@ function Header() {
                                 <h4 className='s_submenu_head'>Brands</h4>
                                 {watchSubcate.map((ele, id) => {
                                     return (
-                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                        <Nav.Link href={`/productlist/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
                                     )
                                 })}
                             </div>

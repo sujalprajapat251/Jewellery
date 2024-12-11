@@ -125,8 +125,8 @@ function Home() {
                     </div>
                     <div className='s_cat_slider'>
                         <OwlCarousel className='owl-theme' loop margin={10} items={7} nav={true} responsive={cat_sliderres} dots={false} autoplay autoplayTimeout={3000} autoplayHoverPause>
-                            {allCategory.map((ele,id)=>{
-                                return(
+                            {allCategory.map((ele, id) => {
+                                return (
                                     <Link className='item' key={id} to={'/productlist/' + ele.id}>
                                         <img src={ele.image} alt=''></img>
                                         <h4>{ele.name}</h4>
@@ -146,34 +146,36 @@ function Home() {
                             card_detail.map((ele, id) => {
                                 return (
                                     <Col key={id} className='py-4'>
-                                        <Link to={'/productlist'} className='s_seller_card'>
-                                            <div className='s_card_img'>
-                                                <img src={ele.img} className="w-100" alt={ele.title} key={ele.title} />
-                                            </div>
-                                            <div className='s_heart_icon'>
-                                                <GoHeart />
-                                            </div>
-                                            {ele.status ?
-                                                <div className='s_card_status'><p className='mb-0'>{ele.status}</p></div>
-                                                : ''}
-                                            <div className='s_card_text'>
-                                                <h5>{ele.title}</h5>
-                                                <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.old_price}</strike></p>
-                                                <div className='s_rating'>
-                                                    {
-                                                        [...Array(5)].map((_, index) => {
-                                                            if (index < ele.rating) {
-                                                                return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                            } else {
-                                                                return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                                ;
-                                                            }
-                                                        })
-                                                    }
+                                        <div className='s_seller_card'>
+                                            <Link to={'/productlist'} >
+                                                <div className='s_card_img'>
+                                                    <img src={ele.img} className="w-100" alt={ele.title} key={ele.title} />
                                                 </div>
-                                                <Link></Link>
-                                            </div>
-                                        </Link>
+                                                <div className='s_heart_icon'>
+                                                    <GoHeart />
+                                                </div>
+                                                {ele.status ?
+                                                    <div className='s_card_status'><p className='mb-0'>{ele.status}</p></div>
+                                                    : ''}
+                                                <div className='s_card_text'>
+                                                    <h5>{ele.title}</h5>
+                                                    <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.old_price}</strike></p>
+                                                    <div className='s_rating'>
+                                                        {
+                                                            [...Array(5)].map((_, index) => {
+                                                                if (index < ele.rating) {
+                                                                    return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                } else {
+                                                                    return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                                    ;
+                                                                }
+                                                            })
+                                                        }
+                                                    </div>
+                                                    <Link></Link>
+                                                </div>
+                                            </Link>
+                                        </div>
                                     </Col>
                                 )
                             })

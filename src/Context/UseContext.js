@@ -14,9 +14,9 @@ const UseContext = (props) => {
   const Api = 'https://shreekrishnaastrology.com/api'
 
   
+  const token = "166|WKmeJed3S8OccXi1CWl3NTzLGePGxUb5rDNgQ1YZ6f6850e8";
 
   useEffect(() => {
-    const token = "77|x09LpLZRcGrA3RL0CrzCrV5Q7FdPgKUFLRlDhtTL62f9da53";
     // fetch catgory
     axios.get(`${ApiKey}/categories/getallactive`, {
       headers: {
@@ -58,10 +58,10 @@ const UseContext = (props) => {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, []);
+  },[]);
 
   return (
-    <noteContext.Provider value={{ allCategory,allProduct,allSubCategory,Api}}>
+    <noteContext.Provider value={{ allCategory,allProduct,allSubCategory,Api,token}}>
       {props.children}
     </noteContext.Provider>
   )
