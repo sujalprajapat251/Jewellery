@@ -20,7 +20,7 @@ function ProductList() {
          setproductList_detail(productList);
         // alert('');
         console.log('hellllo')
-    },[allProduct])
+    },[id])
 
 
     // backend connection code over 
