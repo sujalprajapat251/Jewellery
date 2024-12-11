@@ -7,19 +7,7 @@ import { useContext, useEffect, useState } from 'react';
 import noteContext from '../Context/noteContext';
 import { Link } from 'react-router-dom';
 import Highlighter from 'react-highlight-words';
-import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
-import ring1 from '../Img/Sujal/s_diamond_earing.png';
-import ring2 from '../Img/Sujal/s_diamond_earing.png';
-import ring3 from '../Img/Sujal/engage-ring.png';
 import axios from 'axios';
-import noteContext from '../Context/noteContext';
-
-
-
-
-
-
 function Header() {
     const { allProduct, allSubCategory } = useContext(noteContext);
     // menu catgegory handller
@@ -114,9 +102,10 @@ function Header() {
 
     const [Search, setSearch] = useState('');
     const [searchData, setSearchData] = useState([]);
-    const searchHandle = () => {
-        console.log(Search)
-        const filteredSearchData = allProduct.filter(item => item.product_name.toLowerCase().includes(Search));
+    const searchHandle = (x) => {
+        setSearch(x);
+        console.log(Search);
+        const filteredSearchData = allProduct.filter(item => item.product_name.toLowerCase().includes(x));
         console.log(filteredSearchData);
         setSearchData(filteredSearchData);
     }
@@ -295,7 +284,7 @@ function Header() {
                 <p className='ds_container mb-0'>Welcome to our Store</p></div>
             <section className='ds_container s_header_sec d-flex justify-content-between flex-wrap flex-lg-nowrap'>
                 <div className='s_header_input d-flex justify-content-between align-items-center col-lg-4 col-12 order-lg-1 order-3'>
-                    <input type='text' placeholder='Search for Jewellery and more...' on={(e) => { setSearch(e.target.value); searchHandle(); }}></input>
+                    <input type='text' placeholder='Search for Jewellery and more...' onChange={(e) => {searchHandle(e.target.value); }}></input>
                     <IoSearch />
                 </div>
                 <Link className='s_logo text-decoration-none col-lg-4 col-4 ms-lg-auto order-lg-2 order-1 align-self-center '>
@@ -328,7 +317,7 @@ function Header() {
                                 <h4 className='s_submenu_head'>Category</h4>
                                 {allSubCategory.slice(0, 9).map((ele, id) => {
                                     return (
-                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                        <Nav.Link href={`/productlist/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
                                     )
                                 })}
                             </div>
@@ -353,7 +342,7 @@ function Header() {
                                 <h4 className='s_submenu_head'>Category</h4>
                                 {goldSubcate.map((ele, id) => {
                                     return (
-                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
+                                        <Nav.Link href={`/productlist/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Nav.Link>
                                     )
                                 })}
                             </div>
@@ -361,7 +350,7 @@ function Header() {
                                 <h4 className='s_submenu_head'>Men</h4>
                                 {menGold.map((ele, id) => {
                                     return (
-                                        <Nav.Link href="/productlist" key={ele.id}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Nav.Link>
+                                        <Nav.Link href={`/productlist/${ele.id}`} key={ele.id}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Nav.Link>
                                     )
                                 })}
                             </div>
@@ -942,7 +931,6 @@ function Header() {
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-
                 </Modal.Footer>
             </Modal>
 
@@ -1046,7 +1034,7 @@ function Header() {
                                         <p>
                                             <Link to={`#`}>
                                                 <Highlighter
-                                                    highlightClassName="text-dark bg-transparent"
+                                                    highlightClassName="text-dark bg-transparent p-0"
                                                     searchWords={[Search]} // Replace 'Search' with the array of words you want to highlight
                                                     autoEscape={true}   // Ensure special characters are escaped
                                                     textToHighlight={el.product_name} // The text where you want to apply the highlight

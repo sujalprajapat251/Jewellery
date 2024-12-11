@@ -1,17 +1,30 @@
 import { Accordion, Col, Offcanvas, Row } from 'react-bootstrap';
 import '../Css/Sujal/ProductList.css'
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import MultiRangeSlider from "multi-range-slider-react";
 import { IoCloseOutline } from 'react-icons/io5';
-import wishlist1 from '../Img/Sujal/wishlist1.png';
-import wishlist2 from '../Img/Sujal/wishlist2.png';
-import wishlist3 from '../Img/Sujal/wishlist3.png';
-
-
 import { FaAngleDown, FaBars } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import noteContext from '../Context/noteContext';
 function ProductList() {
+
+    // backend connection code
+    const {id}  = useParams();
+    const {allProduct} = useContext(noteContext);
     //  fliter handling
+    // let productList_detail=[];
+    const [productList_detail,setproductList_detail] = useState([]);
+    useEffect(()=>{
+         var productList = allProduct.filter((product)=>{return product.sub_category_id === parseInt(id);})
+         console.log(productList);
+         setproductList_detail(productList);
+        // alert('');
+        console.log('hellllo')
+    },[allProduct])
+
+
+    // backend connection code over 
+
     const category = '';
 
     const [minValue, set_minValue] = useState(60);
@@ -21,33 +34,32 @@ function ProductList() {
         set_maxValue(e.maxValue);
     };
 
-
-    const productList_detail = [
-        { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
-        { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
-        { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
-        { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
-        { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
-        { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
-        { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
-        { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
-        { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
-        { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
-        { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
-        { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
-        { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
-        { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
-        { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
-        { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
-        { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
-        { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
-        { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
-        { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
-        { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
-        { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
-        { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
-        { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
-    ]
+    // const productList_detail = [
+    //     { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
+    //     { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
+    //     { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
+    //     { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
+    //     { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
+    //     { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
+    //     { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
+    //     { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
+    //     { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
+    //     { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
+    //     { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
+    //     { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
+    //     { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
+    //     { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
+    //     { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
+    //     { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
+    //     { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
+    //     { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
+    //     { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
+    //     { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
+    //     { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
+    //     { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
+    //     { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
+    //     { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
+    // ]
     // offcanvas handdler   
     const [show, setShow] = useState(false);
 
@@ -791,14 +803,13 @@ function ProductList() {
                                         <Col key={id} className='py-4'>
                                             <Link to={'/productdetail'} className='s_seller_card'>
                                                 <div className='s_card_img'>
-                                                    <img src={ele.img} className="w-100" alt={ele.title} key={ele.title} />
+                                                    <img src={ele.images} className="w-100" alt={ele.title} key={ele.title} />
                                                 </div>
-
                                                 {ele.status ?
                                                     <div className='s_card_status'><p className='mb-0'>{ele.status}</p></div>
                                                     : ''}
                                                 <div className='s_card_text'>
-                                                    <h5>{ele.title}</h5>
+                                                    <h5>{ele.product_name}</h5>
                                                     <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.old_price}</strike></p>
                                                     <div className='s_rating'>
                                                         {
