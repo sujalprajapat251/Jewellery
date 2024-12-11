@@ -59,6 +59,7 @@ const UseContext = (props) => {
         console.error("Error fetching data:", error);
       });
   }, []);
+
   return (
     <noteContext.Provider value={{ allCategory,allProduct,allSubCategory,Api}}>
       {props.children}

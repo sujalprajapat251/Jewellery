@@ -8,6 +8,9 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import noteContext from '../Context/noteContext';
 import { Modal } from 'react-bootstrap';
+import { useFormik } from 'formik';
+import { EditProfileSchema, NewAddSchema } from '../schemas';
+import { type } from '@testing-library/user-event/dist/type';
 
 const MyProfile = () => {
 
@@ -20,37 +23,7 @@ const MyProfile = () => {
     const [profileData, setProfileData] = useState([])
     const [newAddModal, setNewAddModal] = useState(false)
 
-    // ******* Edit User State *******
-    const [edit, setEdit] = useState({
-       name:'',
-       email:'',
-       role_id:2,
-       phone:'',
-       gender:'',
-       dob:'',
-       pin:''
-    })
 
-    const toggleDropdown = (index) => {
-      setActiveCard(activeCard === index ? null : index);
-    };
-  
-    const addresses = [
-      {
-        id: 1,
-        title: 'Home',
-        name: 'Johan Patel',
-        phone: '+91 8541200236',
-        address: '510, Shelley Street, Sydney, NSW 2000, dgdf, ruhwbd, Perth 650145, Australia',
-      },
-      {
-        id: 2,
-        title: 'Home',
-        name: 'Johan Patel',
-        phone: '+91 8541200236',
-        address: '510, Shelley Street, Sydney, NSW 2000, dgdf, ruhwbd, Perth 650145, Australia',
-      },
-    ];
 
     const orders = [
       {
@@ -131,7 +104,7 @@ const MyProfile = () => {
         }
       })
       .then((value)=>{
-          console.log(value?.data);
+          // console.log(value?.data);
           setProfileData(value?.data?.user)
       }).catch((error)=>{
         alert(error)
@@ -139,34 +112,183 @@ const MyProfile = () => {
       
     },[])
 
-    const handleEditSubmit = (e) => {
-        e.preventDefault();
-        axios.post(`${Api}/user/updateprofile/${store?.id}`,{
-           name:edit.name,
-           email:edit.email,
-           role_id:2,
-           phone:edit.phone,
-           gender:edit.gender,
-           dob:edit.dob,
-           pin:edit.pin,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${store?.access_token}`,
-         },
-        }
-      ).then((value)=>{
-          console.log(value);
-          setEditToggle(false)
 
-        }).catch((error)=>{
-          alert(error)
-        })
+    // ******* Edit User State *******
+    let editVal = {
+      name:'',
+      email:'',
+      phone:'',
+      gender:'',
+      dob:'',
+      pin:''
     }
+
+    const EditFormik = useFormik({
+      initialValues:editVal,
+      validationSchema:EditProfileSchema,
+      onSubmit : (values , action) => {
+          // console.log(values);
+
+          axios.post(`${Api}/user/updateprofile/${store?.id}`,{
+            name:values.name,
+            email:values.email,
+            role_id:2,
+            phone:values.phone,
+            gender:values.gender,
+            dob:values.dob,
+            pin:values.pin,
+         },
+         {
+           headers: {
+             Authorization: `Bearer ${store?.access_token}`,
+          },
+         }
+       ).then((value)=>{
+           console.log(value);
+           setEditToggle(false)
+ 
+         }).catch((error)=>{
+           alert(error)
+         })
+
+          action.resetForm()  
+      }
+    })
+
+    
+
 
     const handleCancel = () => {
       setEditToggle(false)
     }
+
+    // ********** My Address ********
+    const [addType, setAddType] = useState("Home")
+    const [myAddData, setMyAddData] = useState([])
+
+    const newAddVal = {
+        address:'',
+        pincode:'',
+        state:'',
+        city:'',
+        name:'',
+        phone:''
+    }
+
+    const AddFormik = useFormik({
+      initialValues:newAddVal,
+      validationSchema:NewAddSchema,
+      onSubmit: (values , action) => {
+        axios.post(`${Api}/deliveryAddress/create`, {
+          
+          customer_id: store?.id,
+          address: values.address,
+          status:'active',
+          state: values.state,
+          city: values.city,
+          pincode: values.pincode,
+          contact_name: values.name,
+          contact_no: values.phone,
+          type: addType,
+          
+       } ,
+       {
+          headers: {
+            Authorization: `Bearer ${store?.access_token}`,
+         },
+        }
+      )
+      .then((value) => {
+          console.log("NewAdd", value);
+      })
+      .catch((error) => {
+          console.error("Error submitting address:", error);
+          alert("Failed to submit address.");
+      });
+
+        action.resetForm()
+      }
+    })
+
+    const handleAddType = (type) => {
+        setAddType(type)
+    }
+
+    const toggleDropdown = (index) => {
+      setActiveCard(activeCard === index ? null : index);
+      console.log(activeCard);
+      
+    };
+
+  
+    const [singleNewAdd, setSingleNewAdd] = useState(false)
+
+    useEffect(()=>{
+
+      axios.get(`${Api}/deliveryAddress/getall`,{
+        headers: {
+          Authorization: `Bearer ${store?.access_token}`
+        }
+
+      }).then((value)=>{
+        setMyAddData(value?.data?.deliveryAddress)
+      })
+
+    },[singleNewAdd])
+
+
+// {/* ---------------- Add New Single Address Popup ------------------ */}
+   const [singleId, setSingleId] = useState(null)
+
+   const singleAddVal = {
+    address:'',
+    pincode:'',
+    state:'',
+    city:'',
+    name:'',
+    phone:''
+   }
+
+  const SingleAddFormik = useFormik({
+       initialValues:singleAddVal,
+       validationSchema:NewAddSchema,
+       onSubmit: (values , action) => {
+            axios.post(`${Api}/deliveryAddress/update/${singleId}`, {
+            customer_id: store?.id,
+            address: values.address,
+            status:'active',
+            state: values.state,
+            city: values.city,
+            pincode: values.pincode,
+            contact_name: values.name,
+            contact_no: values.phone,
+            type: addType,
+        } ,
+        {
+           headers: {
+             Authorization: `Bearer ${store?.access_token}`,
+          },
+         }
+       )
+       .then((value) => {
+           console.log("UpdateAdd", value);
+           setSingleNewAdd(false)
+           setActiveCard(0)
+           
+       })
+       .catch((error) => {
+           alert(error);
+       });
+   
+         action.resetForm()
+       }
+   })
+
+  const handleSingleNewAdd = (id) => {
+    setSingleNewAdd(true)
+    setSingleId(id)    
+  }
+
 
   
 
@@ -280,49 +402,58 @@ const MyProfile = () => {
                                    <h3>Edit Profile</h3>
                                 </div>
                                 <div className='ds_edit-box mt-4'>
-                                    <form onSubmit={handleEditSubmit}>
+                                    <form onSubmit={EditFormik.handleSubmit}>
                                          <div className="row">
                                              <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
                                                  <div>
                                                      <label htmlFor="" className='ds_600 d-block mb-1'>Name</label>
-                                                     <input type="text" value={edit.name} onChange={(e)=>setEdit({...edit , name:e.target.value})} className='ds_edit-input' placeholder='Jhon Wick' />
+                                                     <input type="text" name='name' value={EditFormik.values.name} onChange={EditFormik.handleChange} onBlur={EditFormik.handleBlur} className='ds_edit-input' placeholder='Jhon Wick' />
+                                                     { EditFormik.errors.name &&  EditFormik.touched.name ? <p className='ds_new-danger mb-0'>{EditFormik.errors.name}</p> : null}
                                                  </div>
                                              </div>
                                              <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
                                                  <div className='position-relative'>
                                                      <label htmlFor="" className='ds_600 d-block mb-1'>Date of Birth</label>
-                                                     <input type="date" id="dob" value={edit.dob} onChange={(e) => setEdit({ ...edit, dob: e.target.value })} className='ds_edit-input' placeholder='Jhon Wick' />
+                                                     <input type="date" id="dob" name='dob' value={EditFormik.values.dob} onChange={EditFormik.handleChange} onBlur={EditFormik.handleBlur} className='ds_edit-input' placeholder='Jhon Wick' />
                                                      <div className=''>
                                                          {/* <img className='ds_edit-calender' src={require("../Img/dhruvin/calender.png")} alt="" width="4%" /> */}
                                                          <i className="fa-solid fa-calendar-days ds_edit-calender ds_color"  onClick={() => { const dateInput = document.getElementById('dob');if (dateInput) {dateInput.showPicker ? dateInput.showPicker() : dateInput.focus(); }}} ></i>
                                                      </div>
+                                                     { EditFormik.errors.dob &&  EditFormik.touched.dob ? <p className='ds_new-danger mb-0'>{EditFormik.errors.dob}</p> : null}
+
                                                  </div>
                                              </div>
                                              <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
                                                  <div>
                                                      <label htmlFor="" className='ds_600 d-block mb-1'>Phone No.</label>
-                                                     <input type="number" value={edit.phone} onChange={(e)=>setEdit({...edit , phone:e.target.value})} className='ds_edit-input' placeholder='85555 55555' />
+                                                     <input type="number" name='phone' value={EditFormik.values.phone} onChange={EditFormik.handleChange} onBlur={EditFormik.handleBlur} className='ds_edit-input' placeholder='85555 55555' />
+                                                     { EditFormik.errors.phone &&  EditFormik.touched.phone ? <p className='ds_new-danger mb-0'>{EditFormik.errors.phone}</p> : null}
+                                                    
                                                  </div>
                                              </div>
                                              <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
                                                  <div>
                                                      <label htmlFor="" className='ds_600 d-block mb-1'>Email</label>
-                                                     <input type="email" value={edit.email} onChange={(e)=>setEdit({...edit , email:e.target.value})} className='ds_edit-input' placeholder='example@gmail.com' />
+                                                     <input type="email" name='email' value={EditFormik.values.email} onChange={EditFormik.handleChange} onBlur={EditFormik.handleBlur} className='ds_edit-input' placeholder='example@gmail.com' />
+                                                     { EditFormik.errors.email &&  EditFormik.touched.email ? <p className='ds_new-danger mb-0'>{EditFormik.errors.email}</p> : null}
                                                  </div>
                                              </div>
                                              <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
                                                  <div>
                                                      <label htmlFor="" className='ds_600 d-block mb-1'>Gender</label>
-                                                     <select value={edit.gender} onChange={(e) => setEdit({ ...edit, gender: e.target.value })} className='ds_edit-input'>
+                                                     <select name='gender' value={EditFormik.values.gender} onChange={EditFormik.handleChange} onBlur={EditFormik.handleBlur} className='ds_edit-input'>
+                                                         <option selected>Gender</option>
                                                          <option value="male">Male</option>
                                                          <option value="female">Female</option>
                                                      </select>
+                                                     { EditFormik.errors.gender &&  EditFormik.touched.gender ? <p className='ds_new-danger mb-0'>{EditFormik.errors.gender}</p> : null}
                                                  </div>
                                              </div>
                                              <div className="col-xl-6 col-lg-6 col-md-6 mt-4">
                                                  <div>
                                                      <label htmlFor="" className='ds_600 d-block mb-1'>Pin code</label>
-                                                     <input type="number"  value={edit.pin} onChange={(e) => setEdit({ ...edit, pin: e.target.value })} className='ds_edit-input' placeholder='596921'/>
+                                                     <input type="number"  name='pin' value={EditFormik.values.pin} onChange={EditFormik.handleChange} onBlur={EditFormik.handleBlur} className='ds_edit-input' placeholder='596921'/>
+                                                     { EditFormik.errors.pin &&  EditFormik.touched.pin ? <p className='ds_new-danger mb-0'>{EditFormik.errors.pin}</p> : null}
                                                  </div>
                                              </div>
                                          </div>
@@ -353,15 +484,15 @@ const MyProfile = () => {
                                <div className='ds_add-box mt-4'>
                                   <div className='mb-4'>
                                      <div className="row">
-                                     {addresses.map((item, index) => (
+                                     {myAddData.map((item, index) => (
                                          <div key={item.id} className="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mt-4">
                                            <div className="ds_chan-box position-relative">
                                              <div className="d-flex justify-content-between align-items-center px-3">
-                                               <h5 className="mb-0 ds_color">{item.title}</h5>
+                                               <h5 className="mb-0 ds_color">{item.type}</h5>
                                                <BsThreeDotsVertical onClick={() => toggleDropdown(index)} style={{ cursor: 'pointer' }} />
                                                {activeCard === index && (
                                                  <div className="ds_add-mini">
-                                                   <p className="ds_600 ds_cursor" data-bs-toggle="modal" data-bs-target="#addressModal">Edit</p>
+                                                   <p className="ds_600 ds_cursor" onClick={()=>handleSingleNewAdd(item.id)}>Edit</p>
                                                    <p className="ds_600 ds_cursor" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</p>
                                                    <p className="ds_600">Make as default</p>
                                                  </div>
@@ -369,8 +500,8 @@ const MyProfile = () => {
                                              </div>
                                              <div className="ds_chan-line mt-2"></div>
                                              <div className="px-3 mt-3">
-                                               <p className="ds_600 mb-2">{item.name}</p>
-                                               <p className="ds_600 mb-2">{item.phone}</p>
+                                               <p className="ds_600 mb-2">{item.contact_name}</p>
+                                               <p className="ds_600 mb-2">{item.contact_no}</p>
                                                <p className="ds_600">{item.address}</p>
                                              </div>
                                            </div>
@@ -381,7 +512,7 @@ const MyProfile = () => {
                                </div>
 
                                {/* ---------------- Add New Address Popup ------------------ */}
-                                   <section>
+                                  <section>
                                           <div>
                                            <Modal className="modal fade" show={newAddModal} onHide={()=> setNewAddModal(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
                                              <div className="modal-dialog ds_add-modal modal-dialog-centered m-0">
@@ -391,41 +522,38 @@ const MyProfile = () => {
                                                  </div>
                                                  <div className="modal-body pt-0 px-4">
                                                     <h4 className="modal-title text-center ds_color" >Add New Address</h4>
-                                                    <div>
+                                                    <form onSubmit={AddFormik.handleSubmit}>
                                                       <h6 className='ds_color mt-3'>Area Details</h6>
                                                       <div className="row">
                                                           <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                                                               <div>
                                                                   <label htmlFor="" className='ds_600 mb-1'>Address (House No, Building, Street, Area)</label>
-                                                                  <input type="text" className='ds_new-input' placeholder="Address (House No, Building, Street, Area)" />
-                                                              </div>
-                                                          </div>
-                                  
-                                                          <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
-                                                              <div>
-                                                                <label htmlFor="" className='ds_600 mb-1'>Locality</label>
-                                                                <input type="text" className='ds_new-input' placeholder="Sector/Locality" />
+                                                                  <input type="text" name='address' value={AddFormik.values.address} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Address (House No, Building, Street, Area)" />
+                                                                  { AddFormik.errors.address &&  AddFormik.touched.address ? <p className='ds_new-danger mb-0'>{AddFormik.errors.address}</p> : null}
                                                               </div>
                                                           </div>
                                   
                                                           <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
                                                               <div>
                                                                 <label htmlFor="" className='ds_600 mb-1'>Pincode</label>
-                                                                <input type="text" className='ds_new-input' placeholder="Pincode" />
+                                                                <input type="text" name='pincode' value={AddFormik.values.pincode} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Pincode" />
+                                                                { AddFormik.errors.pincode &&  AddFormik.touched.pincode ? <p className='ds_new-danger mb-0'>{AddFormik.errors.pincode}</p> : null}
                                                               </div>
                                                           </div>
                                   
                                                           <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
                                                               <div>
                                                                 <label htmlFor="" className='ds_600 mb-1'>State</label>
-                                                                <input type="text" className='ds_new-input' placeholder="State" />
+                                                                <input type="text" name='state' value={AddFormik.values.state} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur}  className='ds_new-input' placeholder="State" />
+                                                                { AddFormik.errors.state &&  AddFormik.touched.state ? <p className='ds_new-danger mb-0'>{AddFormik.errors.state}</p> : null}
                                                               </div>
                                                           </div>
                                   
                                                           <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
                                                               <div>
                                                                 <label htmlFor="" className='ds_600 mb-1'>City</label>
-                                                                <input type="text" className='ds_new-input' placeholder="City" />
+                                                                <input type="text" name='city' value={AddFormik.values.city} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="City" />
+                                                                { AddFormik.errors.city &&  AddFormik.touched.city ? <p className='ds_new-danger mb-0'>{AddFormik.errors.city}</p> : null}
                                                               </div>
                                                           </div>
                                   
@@ -436,38 +564,129 @@ const MyProfile = () => {
                                                          <div className="col-xl-6 mt-3">
                                                               <div>
                                                                   <label htmlFor="" className='ds_600 mb-1'>Full Name </label>
-                                                                  <input type="text" className='ds_new-input' placeholder="Full Name" />
+                                                                  <input type="text" name='name' value={AddFormik.values.name} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Full Name" />
+                                                                  { AddFormik.errors.name &&  AddFormik.touched.name ? <p className='ds_new-danger mb-0'>{AddFormik.errors.name}</p> : null}
                                                               </div>
                                                           </div>
                                                           <div className="col-xl-6 mt-3">
                                                               <div>
                                                                   <label htmlFor="" className='ds_600 mb-1'>Contact No. </label>
-                                                                  <input type="text" className='ds_new-input' placeholder="Contact No" />
+                                                                  <input type="text" name='phone' value={AddFormik.values.phone} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Contact No" />
+                                                                  { AddFormik.errors.phone &&  AddFormik.touched.phone ? <p className='ds_new-danger mb-0'>{AddFormik.errors.phone}</p> : null}
                                                               </div>
                                                           </div>
                                                       </div>
                                                       <div>
-                                                        <h6 className='ds_color mt-3'>Address Type</h6>
-                                                        <button className='ds_new-home mt-2 me-2'><GoHome className='ds_home-icon' /> Home</button>
-                                                        <button className='ds_new-work mt-2 me-2'><IoBagHandleOutline className="ds_home-icon" /> Work</button>
-                                                        <button className='ds_new-other mt-2'> Other</button>
+                                                        <h6 className='ds_color mt-3 mb-3'>Address Type</h6>
+                                                        <a className={`ds_new-home ${addType === 'Home' ? 'ds_select_type_active' : ''}  me-2`} onClick={()=>handleAddType("Home")}><GoHome className='ds_home-icon' /> Home</a>
+                                                        <a className={`ds_new-work ${addType === 'Work' ? 'ds_select_type_active' : ''} mt-2 me-2`} onClick={()=>handleAddType("Work")}><IoBagHandleOutline className="ds_home-icon" /> Work</a>
+                                                        <a className={`ds_new-other ${addType === 'Other' ? 'ds_select_type_active' : ''} mt-2`} onClick={()=>handleAddType("Other")}> Other</a>
                                                       </div>
                                                       <div>
                                                         <div className="row justify-content-center">
                                                           <div className="col-xl-6 mt-5 mb-3">
                                                             <div>
-                                                               <button className='ds_new-save'>Save Address</button>
+                                                               <button type='submit' className='ds_new-save'>Save Address</button>
                                                             </div>
                                                           </div>
                                                         </div>
                                                       </div>
-                                                    </div>
+                                                    </form>
                                                  </div>
                                                </div>
                                              </div>
                                             </Modal>
                                           </div>
                                   </section>
+
+
+                                 {/* ---------------- Add New Single Address Popup ------------------ */}
+                                 <section>
+                                          <div>
+                                           <Modal className="modal fade" show={singleNewAdd} onHide={()=> setSingleNewAdd(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                             <div className="modal-dialog ds_add-modal modal-dialog-centered m-0">
+                                               <div className="modal-content border-0" style={{borderRadius:'0'}}>
+                                                 <div className="modal-header border-0 pb-0">
+                                                   <button type="button" className="btn-close" onClick={()=> setSingleNewAdd(false)}></button>
+                                                 </div>
+                                                 <div className="modal-body pt-0 px-4">
+                                                    <h4 className="modal-title text-center ds_color" >Add New Address</h4>
+                                                    <form onSubmit={SingleAddFormik.handleSubmit}>
+                                                      <h6 className='ds_color mt-3'>Area Details</h6>
+                                                      <div className="row">
+                                                          <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
+                                                              <div>
+                                                                  <label htmlFor="" className='ds_600 mb-1'>Address (House No, Building, Street, Area)</label>
+                                                                  <input type="text" name='address' value={SingleAddFormik.values.address} onChange={SingleAddFormik.handleChange} onBlur={SingleAddFormik.handleBlur} className='ds_new-input' placeholder="Address (House No, Building, Street, Area)" />
+                                                                  { SingleAddFormik.errors.address &&  SingleAddFormik.touched.address ? <p className='ds_new-danger mb-0'>{SingleAddFormik.errors.address}</p> : null}
+                                                              </div>
+                                                          </div>
+                                  
+                                                          <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
+                                                              <div>
+                                                                <label htmlFor="" className='ds_600 mb-1'>Pincode</label>
+                                                                <input type="text" name='pincode' value={SingleAddFormik.values.pincode} onChange={SingleAddFormik.handleChange} onBlur={SingleAddFormik.handleBlur} className='ds_new-input' placeholder="Pincode" />
+                                                                { SingleAddFormik.errors.pincode &&  SingleAddFormik.touched.pincode ? <p className='ds_new-danger mb-0'>{SingleAddFormik.errors.pincode}</p> : null}
+                                                              </div>
+                                                          </div>
+                                  
+                                                          <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
+                                                              <div>
+                                                                <label htmlFor="" className='ds_600 mb-1'>State</label>
+                                                                <input type="text" name='state' value={SingleAddFormik.values.state} onChange={SingleAddFormik.handleChange} onBlur={SingleAddFormik.handleBlur}  className='ds_new-input' placeholder="State" />
+                                                                { SingleAddFormik.errors.state &&  SingleAddFormik.touched.state ? <p className='ds_new-danger mb-0'>{SingleAddFormik.errors.state}</p> : null}
+                                                              </div>
+                                                          </div>
+                                  
+                                                          <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
+                                                              <div>
+                                                                <label htmlFor="" className='ds_600 mb-1'>City</label>
+                                                                <input type="text" name='city' value={SingleAddFormik.values.city} onChange={SingleAddFormik.handleChange} onBlur={SingleAddFormik.handleBlur} className='ds_new-input' placeholder="City" />
+                                                                { SingleAddFormik.errors.city &&  SingleAddFormik.touched.city ? <p className='ds_new-danger mb-0'>{SingleAddFormik.errors.city}</p> : null}
+                                                              </div>
+                                                          </div>
+                                  
+                                                      </div>
+                                  
+                                                      <h6 className='ds_color mt-3'>Contact Details</h6>
+                                                      <div className="row">
+                                                         <div className="col-xl-6 mt-3">
+                                                              <div>
+                                                                  <label htmlFor="" className='ds_600 mb-1'>Full Name </label>
+                                                                  <input type="text" name='name' value={SingleAddFormik.values.name} onChange={SingleAddFormik.handleChange} onBlur={SingleAddFormik.handleBlur} className='ds_new-input' placeholder="Full Name" />
+                                                                  { SingleAddFormik.errors.name &&  SingleAddFormik.touched.name ? <p className='ds_new-danger mb-0'>{SingleAddFormik.errors.name}</p> : null}
+                                                              </div>
+                                                          </div>
+                                                          <div className="col-xl-6 mt-3">
+                                                              <div>
+                                                                  <label htmlFor="" className='ds_600 mb-1'>Contact No. </label>
+                                                                  <input type="text" name='phone' value={SingleAddFormik.values.phone} onChange={SingleAddFormik.handleChange} onBlur={SingleAddFormik.handleBlur} className='ds_new-input' placeholder="Contact No" />
+                                                                  { SingleAddFormik.errors.phone &&  SingleAddFormik.touched.phone ? <p className='ds_new-danger mb-0'>{SingleAddFormik.errors.phone}</p> : null}
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                      <div>
+                                                        <h6 className='ds_color mt-3 mb-3'>Address Type</h6>
+                                                        <a className={`ds_new-home ${addType === 'Home' ? 'ds_select_type_active' : ''}  me-2`} onClick={()=>handleAddType("Home")}><GoHome className='ds_home-icon' /> Home</a>
+                                                        <a className={`ds_new-work ${addType === 'Work' ? 'ds_select_type_active' : ''} mt-2 me-2`} onClick={()=>handleAddType("Work")}><IoBagHandleOutline className="ds_home-icon" /> Work</a>
+                                                        <a className={`ds_new-other ${addType === 'Other' ? 'ds_select_type_active' : ''} mt-2`} onClick={()=>handleAddType("Other")}> Other</a>
+                                                      </div>
+                                                      <div>
+                                                        <div className="row justify-content-center">
+                                                          <div className="col-xl-6 mt-5 mb-3">
+                                                            <div>
+                                                               <button type='submit' className='ds_new-save'>Save Address</button>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    </form>
+                                                 </div>
+                                               </div>
+                                             </div>
+                                            </Modal>
+                                          </div>
+                                </section> 
 
 
                                {/* ---------------- Delete Item Popup ------------------ */}
