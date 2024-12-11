@@ -11,7 +11,6 @@ import axios from 'axios';
 import ring1 from '../Img/Sujal/s_diamond_earing.png';
 import ring2 from '../Img/Sujal/s_diamond_earing.png';
 import ring3 from '../Img/Sujal/engage-ring.png';
-import axios from 'axios';
 import { useFormik } from 'formik';
 import { ForgetPassSchema, LoginSchema } from '../schemas';
 

@@ -171,6 +171,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 
 /* {---------------- Delete Item Modal ------------------} */
+.ds_delete-modal{
+    width: 100% !important;
+}
 .ds_delete-no{
     border: 1px solid #4D1F08;
     color: #4D1F08;
@@ -360,10 +363,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     width: 43%;
 }   
 /* {---------------- Delete Item Modal ------------------} */
-.ds_delete-modal{
+.ds_delete-modal .modal-dialog  .modal-content{
     max-width: 370px !important;
     margin: auto;
 }
+
 /* {-------------- Add New Card Popup ------------} */
 .ds_add-new-popup{
     max-width: 390px !important;
@@ -400,8 +404,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .ds_add-mini{
         width: 50%;
     }  
+
     /* {---------------- Delete Item Modal ------------------} */
-   .ds_delete-modal{
+   .ds_delete-modal .modal-dialog  .modal-content{
        max-width: 320px !important;
        margin: auto;
    }
@@ -410,6 +415,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     max-width: 330px !important;
     margin: auto;
  }
+
+
+/* {*************** Add New Address Popup ************   } */
+/* .ds_new-other{
+    display: block;
+    margin-top: 10px;
+} */
 
 /* {*************** Remove Product Popup ************   } */
 .ds_order-all{
@@ -442,14 +454,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     width: 65%;
 }   
 /* {---------------- Delete Item Modal ------------------} */
-.ds_delete-modal{
+.ds_delete-modal .modal-dialog  .modal-content{
     max-width: 290px !important;
     margin: auto;
+}
+.ds_delete-no{
+    margin-right: 0;
+    margin-bottom: 10px;
 }
  /* {-------------- Add New Card Popup ------------} */
  .ds_add-new-popup{
     max-width: 290px !important;
     margin: auto;
+ }
+ .ds_delete-flex{
+    display: flex;
+    flex-direction: column;
  }
 
  /* {********************  Return Order Popup  *********} */

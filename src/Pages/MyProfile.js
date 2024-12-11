@@ -7,7 +7,7 @@ import { FaRegTrashAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import noteContext from '../Context/noteContext';
-import { Modal } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import { useFormik } from 'formik';
 import { EditProfileSchema, NewAddSchema } from '../schemas';
 import { type } from '@testing-library/user-event/dist/type';
@@ -22,7 +22,7 @@ const MyProfile = () => {
     const [editToggle, setEditToggle] = useState(false)
     const [profileData, setProfileData] = useState([])
     const [newAddModal, setNewAddModal] = useState(false)
-
+    const [deleteAdd, setDeleteAdd] = useState(false)
 
 
     const orders = [
@@ -97,6 +97,7 @@ const MyProfile = () => {
 
     let store = JSON.parse(localStorage.getItem("Login"))
 
+
     useEffect(()=>{
       axios.get(`${Api}/user/get/${store?.id}` ,{
         headers: {
@@ -110,7 +111,7 @@ const MyProfile = () => {
         alert(error)
       })
       
-    },[])
+    },[editToggle])
 
 
     // ******* Edit User State *******
@@ -146,6 +147,7 @@ const MyProfile = () => {
        ).then((value)=>{
            console.log(value);
            setEditToggle(false)
+
  
          }).catch((error)=>{
            alert(error)
@@ -156,8 +158,6 @@ const MyProfile = () => {
     })
 
     
-
-
     const handleCancel = () => {
       setEditToggle(false)
     }
@@ -165,6 +165,8 @@ const MyProfile = () => {
     // ********** My Address ********
     const [addType, setAddType] = useState("Home")
     const [myAddData, setMyAddData] = useState([])
+    const [addMainNewAdd, setAddMainNewAdd] = useState(0)
+
 
     const newAddVal = {
         address:'',
@@ -200,6 +202,8 @@ const MyProfile = () => {
       )
       .then((value) => {
           console.log("NewAdd", value);
+          setNewAddModal(false)
+          setAddMainNewAdd(addMainNewAdd + 1)
       })
       .catch((error) => {
           console.error("Error submitting address:", error);
@@ -222,6 +226,8 @@ const MyProfile = () => {
 
   
     const [singleNewAdd, setSingleNewAdd] = useState(false)
+    const [deleteUseEffect, setdeleteUseEffect] = useState(0)
+
 
     useEffect(()=>{
 
@@ -234,7 +240,7 @@ const MyProfile = () => {
         setMyAddData(value?.data?.deliveryAddress)
       })
 
-    },[singleNewAdd])
+    },[addMainNewAdd , singleNewAdd , deleteUseEffect])
 
 
 // {/* ---------------- Add New Single Address Popup ------------------ */}
@@ -273,7 +279,7 @@ const MyProfile = () => {
        .then((value) => {
            console.log("UpdateAdd", value);
            setSingleNewAdd(false)
-           setActiveCard(0)
+           setActiveCard(!null)
            
        })
        .catch((error) => {
@@ -289,7 +295,111 @@ const MyProfile = () => {
     setSingleId(id)    
   }
 
+{/* ---------------- Delete Item Popup ------------------ */}
+const [deleteId, setDeleteId] = useState(null)
 
+const handleDeleteAdd = (id) => {
+  setDeleteAdd(true)
+  setDeleteId(id)
+}
+
+const handleDeleteYes = () => {
+   axios.delete(`${Api}/deliveryAddress/delete/${deleteId}`,{
+       headers: {
+         Authorization: `Bearer ${store?.access_token}`
+       }
+   })
+   .then((value)=>{
+     console.log("DeleteAdd " , value);
+     setDeleteAdd(false)
+     setdeleteUseEffect(deleteUseEffect + 1)
+     setActiveCard(!null)
+   }).catch((error)=>{
+      alert(error)
+   })
+}
+
+
+// ********** My Order **********
+const [orderMain, setOrderMain] = useState({})
+const [orderData, setOrderData] = useState([])
+
+// console.log("Token ", store?.access_token);
+
+
+useEffect(()=>{
+   axios.post(`${Api}/order/getbyuserid`,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    {
+       customer_id:1
+   },{
+    headers: {
+      Authorization: `Bearer ${store?.access_token}`
+    }
+   }).then((value)=>{
+      console.log("Order " ,value.data.orders);
+      setOrderMain(value?.data?.orders)
+      setOrderData(value?.data?.orders[0]?.order_items) 
+
+   }).catch((error)=>{
+      alert(error)
+   })
+},[])
   
 
   return (
@@ -387,7 +497,7 @@ const MyProfile = () => {
                                             <p className='ds_600'>{profileData.name}</p>
                                             <p className='ds_600'>{profileData.dob ?  profileData.dob : '1/1/2002'}</p>
                                             <p className='ds_600'>{profileData.phone}</p>
-                                            <p className='ds_600'>{profileData.email}</p>
+                                            <p className='ds_600 text-break'>{profileData.email}</p>
                                             <p className='ds_600'>{profileData.gender}</p>
                                             <p className='ds_600'>596921</p>
                                         </div>
@@ -465,12 +575,12 @@ const MyProfile = () => {
                                          </div>
                                     </form>
                                 </div>
-                            </div>) : ("")}
-                          </section>
-                         )
-                         :
-                         ("")
-                        }
+                             </div>) : ("")}
+                             </section>
+                            )
+                           :
+                          ("")
+                          }
                           
 
                          {/* ************* My Address ************** */}
@@ -493,7 +603,7 @@ const MyProfile = () => {
                                                {activeCard === index && (
                                                  <div className="ds_add-mini">
                                                    <p className="ds_600 ds_cursor" onClick={()=>handleSingleNewAdd(item.id)}>Edit</p>
-                                                   <p className="ds_600 ds_cursor" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</p>
+                                                   <p className="ds_600 ds_cursor" onClick={()=>handleDeleteAdd(item.id)}>Delete</p>
                                                    <p className="ds_600">Make as default</p>
                                                  </div>
                                                )}
@@ -514,7 +624,7 @@ const MyProfile = () => {
                                {/* ---------------- Add New Address Popup ------------------ */}
                                   <section>
                                           <div>
-                                           <Modal className="modal fade" show={newAddModal} onHide={()=> setNewAddModal(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                           <Modal className="modal fade" show={newAddModal} centered onHide={()=> setNewAddModal(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
                                              <div className="modal-dialog ds_add-modal modal-dialog-centered m-0">
                                                <div className="modal-content border-0" style={{borderRadius:'0'}}>
                                                  <div className="modal-header border-0 pb-0">
@@ -524,7 +634,7 @@ const MyProfile = () => {
                                                     <h4 className="modal-title text-center ds_color" >Add New Address</h4>
                                                     <form onSubmit={AddFormik.handleSubmit}>
                                                       <h6 className='ds_color mt-3'>Area Details</h6>
-                                                      <div className="row">
+                                                       <div className="row">
                                                           <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                                                               <div>
                                                                   <label htmlFor="" className='ds_600 mb-1'>Address (House No, Building, Street, Area)</label>
@@ -536,7 +646,7 @@ const MyProfile = () => {
                                                           <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
                                                               <div>
                                                                 <label htmlFor="" className='ds_600 mb-1'>Pincode</label>
-                                                                <input type="text" name='pincode' value={AddFormik.values.pincode} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Pincode" />
+                                                                <input type="number" name='pincode' value={AddFormik.values.pincode} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Pincode" />
                                                                 { AddFormik.errors.pincode &&  AddFormik.touched.pincode ? <p className='ds_new-danger mb-0'>{AddFormik.errors.pincode}</p> : null}
                                                               </div>
                                                           </div>
@@ -571,16 +681,24 @@ const MyProfile = () => {
                                                           <div className="col-xl-6 mt-3">
                                                               <div>
                                                                   <label htmlFor="" className='ds_600 mb-1'>Contact No. </label>
-                                                                  <input type="text" name='phone' value={AddFormik.values.phone} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Contact No" />
+                                                                  <input type="number" name='phone' value={AddFormik.values.phone} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Contact No" />
                                                                   { AddFormik.errors.phone &&  AddFormik.touched.phone ? <p className='ds_new-danger mb-0'>{AddFormik.errors.phone}</p> : null}
                                                               </div>
                                                           </div>
                                                       </div>
                                                       <div>
-                                                        <h6 className='ds_color mt-3 mb-3'>Address Type</h6>
-                                                        <a className={`ds_new-home ${addType === 'Home' ? 'ds_select_type_active' : ''}  me-2`} onClick={()=>handleAddType("Home")}><GoHome className='ds_home-icon' /> Home</a>
-                                                        <a className={`ds_new-work ${addType === 'Work' ? 'ds_select_type_active' : ''} mt-2 me-2`} onClick={()=>handleAddType("Work")}><IoBagHandleOutline className="ds_home-icon" /> Work</a>
-                                                        <a className={`ds_new-other ${addType === 'Other' ? 'ds_select_type_active' : ''} mt-2`} onClick={()=>handleAddType("Other")}> Other</a>
+                                                        <h6 className='ds_color mt-3'>Address Type</h6>
+                                                        <div className="d-flex flex-wrap">
+                                                            <div className="me-2 mt-">
+                                                               <button type="button" className={`ds_new-home ${addType === 'Home' ? 'ds_select_type_active' : ''}  `} onClick={()=>handleAddType("Home")}><GoHome className='ds_home-icon' /> Home</button>
+                                                            </div>
+                                                            <div className="mt- me-2">
+                                                              <button type="button" className={`ds_new-work ${addType === 'Work' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Work")}><IoBagHandleOutline className="ds_home-icon" /> Work</button>
+                                                            </div>
+                                                            <div className="mt-">
+                                                                <button type="button" className={`ds_new-other ${addType === 'Other' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Other")}> Other</button>
+                                                            </div>
+                                                        </div>
                                                       </div>
                                                       <div>
                                                         <div className="row justify-content-center">
@@ -603,7 +721,7 @@ const MyProfile = () => {
                                  {/* ---------------- Add New Single Address Popup ------------------ */}
                                  <section>
                                           <div>
-                                           <Modal className="modal fade" show={singleNewAdd} onHide={()=> setSingleNewAdd(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                           <Modal className="modal fade" centered show={singleNewAdd} onHide={()=> setSingleNewAdd(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
                                              <div className="modal-dialog ds_add-modal modal-dialog-centered m-0">
                                                <div className="modal-content border-0" style={{borderRadius:'0'}}>
                                                  <div className="modal-header border-0 pb-0">
@@ -625,7 +743,7 @@ const MyProfile = () => {
                                                           <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
                                                               <div>
                                                                 <label htmlFor="" className='ds_600 mb-1'>Pincode</label>
-                                                                <input type="text" name='pincode' value={SingleAddFormik.values.pincode} onChange={SingleAddFormik.handleChange} onBlur={SingleAddFormik.handleBlur} className='ds_new-input' placeholder="Pincode" />
+                                                                <input type="number" name='pincode' value={SingleAddFormik.values.pincode} onChange={SingleAddFormik.handleChange} onBlur={SingleAddFormik.handleBlur} className='ds_new-input' placeholder="Pincode" />
                                                                 { SingleAddFormik.errors.pincode &&  SingleAddFormik.touched.pincode ? <p className='ds_new-danger mb-0'>{SingleAddFormik.errors.pincode}</p> : null}
                                                               </div>
                                                           </div>
@@ -660,16 +778,24 @@ const MyProfile = () => {
                                                           <div className="col-xl-6 mt-3">
                                                               <div>
                                                                   <label htmlFor="" className='ds_600 mb-1'>Contact No. </label>
-                                                                  <input type="text" name='phone' value={SingleAddFormik.values.phone} onChange={SingleAddFormik.handleChange} onBlur={SingleAddFormik.handleBlur} className='ds_new-input' placeholder="Contact No" />
+                                                                  <input type="number" name='phone' value={SingleAddFormik.values.phone} onChange={SingleAddFormik.handleChange} onBlur={SingleAddFormik.handleBlur} className='ds_new-input' placeholder="Contact No" />
                                                                   { SingleAddFormik.errors.phone &&  SingleAddFormik.touched.phone ? <p className='ds_new-danger mb-0'>{SingleAddFormik.errors.phone}</p> : null}
                                                               </div>
                                                           </div>
                                                       </div>
                                                       <div>
-                                                        <h6 className='ds_color mt-3 mb-3'>Address Type</h6>
-                                                        <a className={`ds_new-home ${addType === 'Home' ? 'ds_select_type_active' : ''}  me-2`} onClick={()=>handleAddType("Home")}><GoHome className='ds_home-icon' /> Home</a>
-                                                        <a className={`ds_new-work ${addType === 'Work' ? 'ds_select_type_active' : ''} mt-2 me-2`} onClick={()=>handleAddType("Work")}><IoBagHandleOutline className="ds_home-icon" /> Work</a>
-                                                        <a className={`ds_new-other ${addType === 'Other' ? 'ds_select_type_active' : ''} mt-2`} onClick={()=>handleAddType("Other")}> Other</a>
+                                                        <h6 className='ds_color mt-3'>Address Type</h6>
+                                                        <div className="d-flex flex-wrap">
+                                                            <div className="me-2 mt-">
+                                                               <button type="button" className={`ds_new-home ${addType === 'Home' ? 'ds_select_type_active' : ''}  `} onClick={()=>handleAddType("Home")}><GoHome className='ds_home-icon' /> Home</button>
+                                                            </div>
+                                                            <div className="mt- me-2">
+                                                              <button type="button" className={`ds_new-work ${addType === 'Work' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Work")}><IoBagHandleOutline className="ds_home-icon" /> Work</button>
+                                                            </div>
+                                                            <div className="mt-">
+                                                                <button type="button" className={`ds_new-other ${addType === 'Other' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Other")}> Other</button>
+                                                            </div>
+                                                        </div>
                                                       </div>
                                                       <div>
                                                         <div className="row justify-content-center">
@@ -692,23 +818,18 @@ const MyProfile = () => {
                                {/* ---------------- Delete Item Popup ------------------ */}
                                  <section>
                                     <div>
-                                    <div className="modal fade" id="deleteModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                       <div className="modal-dialog modal-dialog-centered ds_delete-modal">
-                                         <div className="modal-content">
-                                           <div className="modal-header border-0">
-                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                           </div>
-                                           <div className="modal-body text-center pt-0">
-                                             <h4 className="modal-title ds_color" id="exampleModalLabel">Delete Address</h4>
-                                             <h6>Are you sure you want to Delete Address?</h6>
-                                             <div className='mt-5 mb-4'>
-                                                <button className='ds_delete-no'>No</button>
-                                                <button className='ds_delete-yes'>Yes</button>
+                                    <Modal className="ds_delete-modal" show={deleteAdd} onHide={()=>setDeleteAdd(false)} aria-labelledby="contained-modal-title-vcenter" centered>
+                                          <Modal.Header closeButton className="px-3 pt-3 pb-0 border-0">
+                                          </Modal.Header>
+                                          <Modal.Body className="text-center">
+                                          <h4 className="modal-title ds_color" id="exampleModalLabel">Delete</h4>
+                                             <h6>Are you sure you want to delete card?</h6>
+                                             <div className='mt-4 pt-3 mb-4 ds_delete-flex'>
+                                                <button onClick={()=>setDeleteAdd(false)} className='ds_delete-no'>No</button>
+                                                <button onClick={handleDeleteYes} className='ds_delete-yes'>Yes</button>
                                              </div>
-                                           </div>
-                                         </div>
-                                       </div>
-                                     </div>
+                                          </Modal.Body>
+                                        </Modal>
                                     </div>
                                  </section>
                             </div>
@@ -912,69 +1033,82 @@ const MyProfile = () => {
                                   <div>
                                     <div className=' px-4 pb-4'>
                                       <div className="row">
-                                          {filterOrder?.map((order, index) => (
-                                            <div className="col-xl-12 mt-4" key={index}>
-                                              <div className="ds_order-inner">
+                                           {orderMain.map((element)=>{  
+                                             console.log(element);
+                                                                                        
+                                             return(
+                                              <div className="col-xl-12 mt-4" key={element?.id}>
+                                               <div className="ds_order-inner">
                                                 <div className="d-flex flex-wrap ds_order-flex align-items-center">
                                                   <div className="d-flex flex-wrap px-3 pt-2">
-                                                    <p className={`${order.status === "In progress" ? 'ds_order-progress' : ''} ${order.status === "Delivered" ? 'ds_order-deliver' : ''} ${order.status === "Cancelled" ? 'ds_order-cencel' : ''} mb-0`}>{order.status}</p>
-                                                    <p className="ds_order-text ds_600 mb-0">{order.date}</p>
+                                                    <p className={`${element.order_status === "pending" ? 'ds_order-progress' : ''} ${element.order_status === "Delivered" ? 'ds_order-deliver' : ''} ${element.order_status === "Cancelled" ? 'ds_order-cencel' : ''} mb-0`}>{element.order_status}</p>
+                                                    <p className="ds_order-text ds_600 mb-0">{element?.order_date}</p>
                                                     <p className="ds_order-order mb-0">
                                                       <span className="text-muted">Order Id : </span>
-                                                      <span className="ds_color">{order.orderId}</span>
+                                                      <span className="ds_color">{element.order_number}</span>
                                                     </p>
                                                   </div>
-                                                  {order.actionLink && (
-                                                    <Link to={order.actionLink.href} className="text-dark ds_600 pe-3 ms-lg-0 ms-3" >
-                                                      {order.actionLink.text}
+                                                    <Link className="text-dark ds_600 pe-3 ms-lg-0 ms-3" >
+                                                      {element?.order_status === "pending" ? 'Track Order' : '' } {element?.order_status === "delivered" ? 'Return Order' : '' }
                                                     </Link>
-                                                  )}
                                                 </div>
                                                 <div className="ds_order-line mt-2"></div>
-                                                <div className="px-3 my-4">
-                                                  <div className="d-flex justify-content-between flex-wrap">
-                                                    <div>
-                                                      <div className="d-flex ds_cart-flex">
-                                                        <div className="mx-auto">
-                                                          <img className="ds_oder-img" src={order.product.image} alt={order.product.name} />
-                                                        </div>
-                                                        <div className="ds_cart-deta">
-                                                          <h6>{order.product.name}</h6>
-                                                          <p className="ds_tcolor mb-0">
-                                                            SKU : <span className="ds_color">{order.product.details.sku}</span>
-                                                          </p>
-                                                          <p className="ds_tcolor mb-0">
-                                                            Metal :<span className="ds_color">{order.product.details.metal}</span>
-                                                          </p>
-                                                          <p className="ds_tcolor mb-0">
-                                                            Metal Color :<span className="ds_color">{order.product.details.metalColor}</span>
-                                                          </p>
-                                                          {order.product.details.size && (
-                                                            <p className="ds_tcolor mb-0">
-                                                              Size : <span className="ds_color">{order.product.details.size}</span>
-                                                            </p>
-                                                          )}
-                                             </div>
-                                           </div>
-                                         </div>
-                                         <div className="d-flex flex-column mt-lg-0 mt-4">
-                                           <h5>
-                                             <span className="ds_color">{order.price.current}</span>
-                                             <span className="ms-2 ds_order-line-txt">{order.price.original}</span>
-                                           </h5>
-                                           {order.extraLink && (
-                                             <h6 className="mt-auto">
-                                               <Link to={order.extraLink.href} className="text-dark">
-                                                 {order.extraLink.text}
-                                               </Link>
-                                             </h6>
-                                           )}
-                                      </div>
-                                                  </div>
-                                                </div>
+
+                                                {element?.order_items?.map((element)=>{
+                                                   return (
+                                                    <>
+                                                    <h1>{element?.product_name}</h1>
+                                                    </>
+                                                        //  <div className="px-3 my-4">
+                                                        //    <div className="d-flex justify-content-between flex-wrap">
+                                                        //      <div>
+                                                        //        <div className="d-flex ds_cart-flex">
+                                                        //          <div className="mx-auto">
+                                                        //            <img className="ds_oder-img" src={order.product.image} alt={order.product.name} />
+                                                        //          </div>
+                                                        //          <div className="ds_cart-deta">
+                                                        //            <h6>{order.product.name}</h6>
+                                                        //            <p className="ds_tcolor mb-0">
+                                                        //              SKU : <span className="ds_color">{order.product.details.sku}</span>
+                                                        //            </p>
+                                                        //            <p className="ds_tcolor mb-0">
+                                                        //              Metal :<span className="ds_color">{order.product.details.metal}</span>
+                                                        //            </p>
+                                                        //            <p className="ds_tcolor mb-0">
+                                                        //              Metal Color :<span className="ds_color">{order.product.details.metalColor}</span>
+                                                        //            </p>
+                                                        //            {order.product.details.size && (
+                                                        //              <p className="ds_tcolor mb-0">
+                                                        //                Size : <span className="ds_color">{order.product.details.size}</span>
+                                                        //              </p>
+                                                        //            )}
+                                                        //         </div>
+                                                        //       </div>
+                                                        //      </div>
+                                                        //       <div className="d-flex flex-column mt-lg-0 mt-4">
+                                                        //         <h5>
+                                                        //           <span className="ds_color">{order.price.current}</span>
+                                                        //           <span className="ms-2 ds_order-line-txt">{order.price.original}</span>
+                                                        //         </h5>
+                                                        //         {order.extraLink && (
+                                                        //           <h6 className="mt-auto">
+                                                        //             <Link to={order.extraLink.href} className="text-dark">
+                                                        //               {order.extraLink.text}
+                                                        //             </Link>
+                                                        //           </h6>
+                                                        //         )}
+                                                        //       </div>
+                                                        //    </div>
+                                                        // </div>
+                                                        )
+                                                   })}
+                                                
+
                                                </div>
-                                              </div>
-                                           ))}
+                                             </div>
+                                             )
+                                           })}
+                                            
                                       </div>
                                     </div>
                                   </div>
