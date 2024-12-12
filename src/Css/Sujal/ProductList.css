@@ -139,11 +139,12 @@
     padding: 0px 20px;
     text-align: center;
     border: 1px solid black;
-    margin-left: 10px;
+    /* margin-left: 10px; */
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
+    margin: 2px 5px;
 }
 .s_product_list .s_top .s_fliter_option p {
     font-size: 18px;
@@ -209,6 +210,8 @@
     height: 18px;
     margin-right: 5px;
 }
+
+
 
 
 
