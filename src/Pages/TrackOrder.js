@@ -1,9 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import '../Css/dhruvin/TrackOrder.css'
 import ReviewFeedback from './ReviewFeedback'
 import { Link } from 'react-router-dom'
+import noteContext from '../Context/noteContext'
 
 const TrackOrder = () => {
+
+const {filteredOrders} = useContext(noteContext)
+console.log(filteredOrders?.map((element)=>{
+    return element
+}));
 
 
   return (
@@ -94,57 +100,63 @@ const TrackOrder = () => {
                               </div>
                             </div>
                             <div className='ds_track-line mt-1'></div>
-                            <div className="row px-4 mt-4">
-                                <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 ">
-                                    <div>
-                                        <div className='d-flex ds_track-manage'>
-                                          <div className='ds_track-center'>
-                                              <img className='ds_oder-img' src={require("../Img/dhruvin/ring.png")} alt="" />
-                                              <p className='ds_tcolor mb-0 ds_track-mini'>Order Id : <span className='ds_color'>12057598140</span></p>
-                                          </div>
-                                          <div className='ds_cart-deta mt-xl-0 mt-2'>
-                                             <h6>Dual Tone Halo Diamond Finger Ring</h6>
-                                             <h6 className='mb-0'><span className='ds_color'>₹1200</span> <span className='ms-2 ds_order-line-txt'>₹1500</span></h6>
-                                             <p className='ds_tcolor mb-0'>Metal Color :<span className='ds_color'> Silver</span>  <span className='ds_tcolor ms-4'>Size : </span> <span className='ds_color'>5</span></p>
-                                             <p className='ds_tcolor mb-0'>Diamond Quality:  <span className='ds_color'>FG / VVS-VS</span></p>
-                                             <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'>PD00003-14-RS-FGVVSVS</span></p>
-                                             <p className='ds_tcolor mb-0'>Metal :<span className='ds_color'> 925 Silver</span></p>
-                                             <p className='ds_tcolor mb-0'>Size : <span className='ds_color'> 5</span></p>
-                                             <p className='ds_tcolor mb-0'>Order Date : <span className='ds_color'> 10 Oct 2023</span></p>
-                                          </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 ">
-                                    <div>
-                                      <h6 className='fw-bold'>Johan Patel</h6>
-                                      <p className='ds_600 mb-1'>+91 8541200236</p>
-                                      <p className='ds_600' style={{whiteSpace:"wrap"}}>510, Shelley Street, Sydney, NSW 2000, dgdf, ruhwbd, Perth 650145, Australia</p>
-                                    </div>
-                                </div>
-
-                                <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 ">
-                                    <div>
-                                        <h6 className='fw-bold'>Debit Card</h6>
-                                        <p className='ds_tcolor mb-0'>Card Name : <span className='ds_color'> American Express</span></p>
-                                        <p className='ds_tcolor mb-0'>Transaction Id :  <span className='ds_color'> 2154786787</span></p>
-                                        <p className='ds_tcolor mb-0'>Payment Status : <span className='ds_color'>  Success</span></p>
-    
-                                    </div>
-                                </div>
-
-                                <div className="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 ">
-                                    <div className='d-flex flex-column h-100'>
-                                        <h6 className='fw-bold'>
-                                            <Link to="" className='text-dark'>Download Invoice</Link>
-                                        </h6>
-                                        <div className='mt-auto mb-3'>
+                              <h6 className='fw-bold text-end ds_track-margin pe-4 mt-2'>
+                                  <Link to="" className='text-dark'>Download Invoice</Link>
+                              </h6>
+                            {filteredOrders?.map((element)=>{
+                                
+                               return (
+                                <div className="row px-4 mt-4">
+                                   <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 ">
+                                       <div>
+                                           <div className='d-flex ds_track-manage'>
+                                             <div className='ds_track-center'>
+                                                 <img className='ds_TrackOrder-img' src={require("../Img/dhruvin/ring.png")} alt="" />
+                                                 <p className='ds_tcolor mb-0 ds_track-mini'>Order Id : <span className='ds_color'>12057598140</span></p>
+                                             </div>
+                                             <div className='ds_cart-deta mt-xl-0 mt-2'>
+                                                <h6>Dual Tone Halo Diamond Finger Ring</h6>
+                                                <h6 className='mb-0'><span className='ds_color'>₹1200</span> <span className='ms-2 ds_order-line-txt'>₹1500</span></h6>
+                                                <p className='ds_tcolor mb-0'>Metal Color :<span className='ds_color'> Silver</span>  <span className='ds_tcolor ms-4'>Size : </span> <span className='ds_color'>5</span></p>
+                                                <p className='ds_tcolor mb-0'>Diamond Quality:  <span className='ds_color'>FG / VVS-VS</span></p>
+                                                <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'>PD00003-14-RS-FGVVSVS</span></p>
+                                                <p className='ds_tcolor mb-0'>Metal :<span className='ds_color'> 925 Silver</span></p>
+                                                <p className='ds_tcolor mb-0'>Size : <span className='ds_color'> 5</span></p>
+                                                <p className='ds_tcolor mb-0'>Order Date : <span className='ds_color'> 10 Oct 2023</span></p>
+                                             </div>
+                                           </div>
+                                       </div>
+                                   </div>
+   
+                                   <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 ">
+                                       <div>
+                                         <h6 className='fw-bold'>Johan Patel</h6>
+                                         <p className='ds_600 mb-1'>+91 8541200236</p>
+                                         <p className='ds_600' style={{whiteSpace:"wrap"}}>510, Shelley Street, Sydney, NSW 2000, dgdf, ruhwbd, Perth 650145, Australia</p>
+                                       </div>
+                                   </div>
+   
+                                   <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 ">
+                                       <div>
+                                           <h6 className='fw-bold'>Debit Card</h6>
+                                           <p className='ds_tcolor mb-0'>Card Name : <span className='ds_color'> American Express</span></p>
+                                           <p className='ds_tcolor mb-0'>Transaction Id :  <span className='ds_color'> 2154786787</span></p>
+                                           <p className='ds_tcolor mb-0'>Payment Status : <span className='ds_color'>  Success</span></p>
+       
+                                       </div>
+                                   </div>
+                                   {/* <div className="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 ">
+                                       
+                                   </div> */}
+                            </div>
+                               )
+                            })}
+                            <div className='d-flex flex-column h-100'>
+                                        
+                                        <div className='text-end ds_track-margin mb-2'>
                                             <button className='ds_track-cancel' data-bs-toggle="modal" data-bs-target="#cancelOrder">Cancel Order</button>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
                           </div> 
                         </div>
                     </div>

@@ -1,14 +1,19 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import '../Css/dhruvin/Faq.css'
+import noteContext from '../Context/noteContext';
 
 const Faq = () => {
 
-    const [activeCategory, setActiveCategory] = useState('General Merchandise Quries');
+    const {mainFaq , subFaq } = useContext(noteContext)
+
+    const [activeCategory, setActiveCategory] = useState('Registration');
     const [openIndex, setOpenIndex] = useState(null);
+    const [data, setData] = useState([])
+    
 
     const toggleAccordion = (index) => {
         setOpenIndex(openIndex === index ? null : index);        
-      };
+    };
 
       const categories = [
         'General Merchandise Quries',
@@ -237,6 +242,31 @@ const Faq = () => {
       ];
 
       const filteredData = accordionData.find(item => item.category === activeCategory)?.data || [];
+
+      const handle = () => {
+        let filter = subFaq.filter((element)=> {
+            return element.faq_name === 'Registration'
+        })
+        setData(filter)
+        console.log("Filter ",filter);
+      }
+
+
+
+      useEffect(()=>{
+       handle()
+        
+      },[])
+
+
+      const handleFilter = (name) => {
+        setActiveCategory(name)
+        
+        let filter = subFaq.filter((element)=> {
+            return element.faq_name === name
+        })
+        setData(filter)
+      }
       
 
   return (
@@ -272,9 +302,9 @@ const Faq = () => {
                     <div className="row">
                         <div className="col-xl-3 col-lg-4 col-md-4 mt-md-5">
                           <div>
-                          {categories.map((category, index) => (
-                              <button key={index} className={`ds_drop-btn ds_600 mt-2 ${   activeCategory === category ? 'ds_faq-btn-color' : '' }`} onClick={() => setActiveCategory(category)}>
-                                {category}
+                          {mainFaq.map((element, index) => (
+                              <button key={index} className={`ds_drop-btn ds_600 mt-2 ${   activeCategory === element?.name ? 'ds_faq-btn-color' : '' }`} onClick={() => handleFilter(element?.name)}>
+                                {element.name}
                               </button>
                                ))}
                           </div>
@@ -284,10 +314,10 @@ const Faq = () => {
                                 <div>
                                 <h2 className="ds_color fw-bold text-uppercase mb-4">{activeCategory} </h2>
                                   <div className="ds_faq-drop-box">
-                                        {filteredData.map((item, index) => (
+                                        {data?.map((item, index) => (
                                                           <div key={index} className={`accordion border-0 position-relative ${openIndex === index ? 'open' : ''}`}>
-                                                              <div className={`accordion-header ${filteredData.length - 1 === index ? 'border-0' : ''} ${openIndex === index ? 'ds_accor-shadow ds_accor-question' : ''}`} onClick={() => toggleAccordion(index)}>
-                                                                  <h5 className="ds_accor-title mb-0 me-1">{item.title}</h5>
+                                                              <div className={`accordion-header ${data.length - 1 === index ? 'border-0' : ''} ${openIndex === index ? 'ds_accor-shadow ds_accor-question' : ''}`} onClick={() => toggleAccordion(index)}>
+                                                                  <h5 className="ds_accor-title mb-0 me-1">{item?.question}</h5>
                                                                   <i className={`fas fa-plus ${openIndex === index ? 'd-none' : ''}`}/>
                                                                   <i className={`fa-solid fa-minus ms-2 text-dark ${openIndex === index ? '' : 'd-none'}`}/>
                                                               </div>
@@ -295,12 +325,12 @@ const Faq = () => {
                                                               <div className={`accordion-body ds-transition ${openIndex === index ? '' : 'border-0'}`} style={{     maxHeight: openIndex === index ? '500px' : '0',     padding: openIndex === index ? '10px 0px' : '0px', }}>
                                                                   <div className="px-3 pt-2">
                                                                       <p className="ds_accor-para ds_font ds_lh text-muted">
-                                                                          {item.content}
+                                                                          {item?.answer}
                                                                       </p>
                                                                   </div>
                                                               </div>
                                                           </div>
-                                            ))}
+                                        ))}
                                     </div>
                                 </div>
 

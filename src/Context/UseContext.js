@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import noteContext from './noteContext'
 import axios from 'axios';
+import { EditProfileSchema, NewAddSchema } from '../schemas';
+import { useFormik } from 'formik';
 
 
 const UseContext = (props) => {
@@ -60,8 +62,315 @@ const UseContext = (props) => {
       });
   },[]);
 
+
+  // ************ My Profile **********
+  let store = JSON.parse(localStorage.getItem("Login"))
+
+  const [profileData, setProfileData] = useState([])
+  const [editToggle, setEditToggle] = useState(false)
+
+  useEffect(()=>{
+    axios.get(`${Api}/user/get/${store?.id}` ,{
+      headers: {
+        Authorization: `Bearer ${store?.access_token}`
+      }
+    })
+    .then((value)=>{
+        // console.log(value?.data);
+        setProfileData(value?.data?.user)
+    }).catch((error)=>{
+      alert(error)
+    })
+    
+  },[editToggle])
+
+
+  // ******* Edit User State *******
+  let editVal = {
+    name:'',
+    email:'',
+    phone:'',
+    gender:'',
+    dob:'',
+    pin:''
+  }
+
+  const EditFormik = useFormik({
+    initialValues:editVal,
+    validationSchema:EditProfileSchema,
+    onSubmit : (values , action) => {
+        // console.log(values);
+
+        axios.post(`${Api}/user/updateprofile/${store?.id}`,{
+          name:values.name,
+          email:values.email,
+          role_id:2,
+          phone:values.phone,
+          gender:values.gender,
+          dob:values.dob,
+          pin:values.pin,
+       },
+       {
+         headers: {
+           Authorization: `Bearer ${store?.access_token}`,
+        },
+       }
+     ).then((value)=>{
+        //  console.log(value);
+         setEditToggle(false)
+
+
+       }).catch((error)=>{
+         alert(error)
+       })
+
+        action.resetForm()  
+    }
+  })
+
+  const handleCancel = () => {
+    setEditToggle(false)
+  }
+
+
+  // ********** My Address ********
+  const [addType, setAddType] = useState("Home")
+  const [myAddData, setMyAddData] = useState([])
+  const [addMainNewAdd, setAddMainNewAdd] = useState(0)
+  const [newAddModal, setNewAddModal] = useState(false)
+
+
+  const newAddVal = {
+    address:'',
+    pincode:'',
+    state:'',
+    city:'',
+    name:'',
+    phone:''
+  }
+
+ const AddFormik = useFormik({
+  initialValues:newAddVal,
+  validationSchema:NewAddSchema,
+  onSubmit: (values , action) => {
+    axios.post(`${Api}/deliveryAddress/create`, {
+      
+      customer_id: store?.id,
+      address: values.address,
+      status:'active',
+      state: values.state,
+      city: values.city,
+      pincode: values.pincode,
+      contact_name: values.name,
+      contact_no: values.phone,
+      type: addType,
+      
+   } ,
+   {
+      headers: {
+        Authorization: `Bearer ${store?.access_token}`,
+     },
+    }
+  )
+  .then((value) => {
+      console.log("NewAdd", value);
+      setNewAddModal(false)
+      setAddMainNewAdd(addMainNewAdd + 1)
+  })
+  .catch((error) => {
+      console.error("Error submitting address:", error);
+      alert("Failed to submit address.");
+  });
+
+    action.resetForm()
+  }
+ })
+
+ const handleAddType = (type) => {
+  setAddType(type)
+}
+
+const [singleNewAdd, setSingleNewAdd] = useState(false)
+const [deleteUseEffect, setdeleteUseEffect] = useState(0)
+
+useEffect(()=>{
+  axios.get(`${Api}/deliveryAddress/getall`,{
+    headers: {
+      Authorization: `Bearer ${store?.access_token}`
+    }
+
+  }).then((value)=>{
+    setMyAddData(value?.data?.deliveryAddress)
+  })
+
+},[addMainNewAdd , singleNewAdd , deleteUseEffect])
+
+
+// {/* ---------------- Add New Single Address Popup ------------------ */}
+const [singleId, setSingleId] = useState(null)
+const [activeCard, setActiveCard] = useState(null);
+
+
+const singleAddVal = {
+  address:'',
+  pincode:'',
+  state:'',
+  city:'',
+  name:'',
+  phone:''
+ }
+
+ const SingleAddFormik = useFormik({
+  initialValues:singleAddVal,
+  validationSchema:NewAddSchema,
+  onSubmit: (values , action) => {
+       axios.post(`${Api}/deliveryAddress/update/${singleId}`, {
+       customer_id: store?.id,
+       address: values.address,
+       status:'active',
+       state: values.state,
+       city: values.city,
+       pincode: values.pincode,
+       contact_name: values.name,
+       contact_no: values.phone,
+       type: addType,
+   } ,
+   {
+      headers: {
+        Authorization: `Bearer ${store?.access_token}`,
+     },
+    }
+  )
+  .then((value) => {
+      console.log("UpdateAdd", value);
+      setSingleNewAdd(false)
+      setActiveCard(!null)
+      
+  })
+  .catch((error) => {
+      alert(error);
+  });
+
+    action.resetForm()
+  }
+ })
+
+ const handleSingleNewAdd = (id) => {
+  setSingleNewAdd(true)
+  setSingleId(id)    
+ }
+
+//--------------- Delete Item Popup --------------
+const [deleteId, setDeleteId] = useState(null)
+const [deleteAdd, setDeleteAdd] = useState(false)
+
+
+const handleDeleteAdd = (id) => {
+  setDeleteAdd(true)
+  setDeleteId(id)
+}
+
+const handleDeleteYes = () => {
+  axios.delete(`${Api}/deliveryAddress/delete/${deleteId}`,{
+      headers: {
+        Authorization: `Bearer ${store?.access_token}`
+      }
+  })
+  .then((value)=>{
+    console.log("DeleteAdd " , value);
+    setDeleteAdd(false)
+    setdeleteUseEffect(deleteUseEffect + 1)
+    setActiveCard(!null)
+  }).catch((error)=>{
+     alert(error)
+  })
+}
+
+
+// ********** My Order **********
+const [orderMain, setOrderMain] = useState({})
+const [filteredOrders, setFilteredOrders] = useState([]);
+
+useEffect(()=>{
+  axios.post(`${Api}/order/getbyuserid`,
+   {
+      customer_id:1
+   },
+   {
+   headers: {
+     Authorization: `Bearer ${store?.access_token}`
+   }
+  }).then((value)=>{
+     // console.log("Order " ,value.data.orders);
+     setOrderMain(value?.data?.orders)
+     setFilteredOrders(value?.data?.orders);
+
+  }).catch((error)=>{
+     alert(error)
+  })
+},[])
+
+
+// ************ Faq **********
+
+const [mainFaq, setMainFaq] = useState([])
+const [subFaq, setSubFaq] = useState([])
+
+useEffect(()=>{
+
+  axios.get(`${Api}/faqs/getall` ,{
+    headers: {
+      Authorization: `Bearer ${store?.access_token}`
+    }
+  }).then((value)=>{
+    console.log("Faq " , value.data.faqs);
+    setMainFaq(value?.data?.faqs)
+  })
+
+},[])
+
+useEffect(()=>{
+
+  axios.get(`${Api}/subfaqs/getall` ,{
+    headers: {
+      Authorization: `Bearer ${store?.access_token}`
+    }
+  }).then((value)=>{
+    console.log("SubFaq " , value.data.subfaqs);
+    setSubFaq(value?.data?.subfaqs)
+  })
+
+},[])
+
+
   return (
-    <noteContext.Provider value={{ allCategory,allProduct,allSubCategory,Api,token}}>
+    <noteContext.Provider value={{ allCategory,allProduct,allSubCategory,token,
+
+      Api
+      // ******* My Profile *******
+       ,store , profileData , setProfileData,
+
+      // ------ Edit User State -----
+      editToggle, setEditToggle , editVal , EditFormik , handleCancel ,
+
+     // ------ My Address ------
+       addType , setAddType , myAddData, setMyAddData , addMainNewAdd, setAddMainNewAdd , newAddVal , newAddModal, setNewAddModal,
+       AddFormik , handleAddType , singleNewAdd, setSingleNewAdd , deleteUseEffect, setdeleteUseEffect,
+
+    // ------- Add New Single Address Popup --------
+       singleId, setSingleId , singleAddVal , activeCard, setActiveCard , SingleAddFormik , handleSingleNewAdd ,
+
+     //--------- Delete Item Popup ---------
+      deleteId, setDeleteId , deleteAdd, setDeleteAdd , handleDeleteAdd , handleDeleteYes ,
+
+      // ********** My Order **********
+      orderMain, setOrderMain , filteredOrders, setFilteredOrders,
+
+      // ************ Faq **********
+      mainFaq,subFaq,setSubFaq
+      
+      }}>
+
       {props.children}
     </noteContext.Provider>
   )

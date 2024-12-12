@@ -36,7 +36,13 @@
     border: 1px solid #4D1F08;
     padding: 7px 40px;
 }
-
+.ds_TrackOrder-img{
+    height: 125px;
+    object-fit: cover;
+}
+.ds_track-margin{
+    margin-right: 120px;
+}
 
 /* {************* Cancel Order Popup ************} */
 .ds_cancel-check{

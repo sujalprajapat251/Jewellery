@@ -1,406 +1,65 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext , useState } from 'react'
 import '../Css/dhruvin/MyProfile.css'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { IoBagHandleOutline } from 'react-icons/io5';
 import { GoHome } from 'react-icons/go';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import noteContext from '../Context/noteContext';
-import { Button, Modal } from 'react-bootstrap';
-import { useFormik } from 'formik';
-import { EditProfileSchema, NewAddSchema } from '../schemas';
-import { type } from '@testing-library/user-event/dist/type';
+import { Modal } from 'react-bootstrap';
 
 const MyProfile = () => {
 
-    const {Api} = useContext(noteContext)
+      // ******* My Profile *******
+    const { profileData , 
 
-    const [activeCard, setActiveCard] = useState(null);
+     // ------ Edit User State -----
+     editToggle, setEditToggle , EditFormik , handleCancel , 
+
+     // ------ My Address ------
+     addType, myAddData, newAddModal, setNewAddModal 
+     , AddFormik , handleAddType , singleNewAdd, setSingleNewAdd ,
+    
+     // ------- Add New Single Address Popup --------
+     activeCard, setActiveCard , SingleAddFormik , handleSingleNewAdd ,
+
+     //--------- Delete Item Popup ---------
+     deleteAdd, setDeleteAdd , handleDeleteAdd , handleDeleteYes ,
+
+     // ********** My Order **********
+     orderMain,filteredOrders, setFilteredOrders
+
+    } = useContext(noteContext) 
+
+    
+    function capitalizeFirstLetter(val) {
+      return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+    }
+
     const [activeBtn, setActiveBtn] = useState("All")
     const [mainActive, setMainActive] = useState("My Profile")
-    const [editToggle, setEditToggle] = useState(false)
-    const [profileData, setProfileData] = useState([])
-    const [newAddModal, setNewAddModal] = useState(false)
-    const [deleteAdd, setDeleteAdd] = useState(false)
-
-
-    const orders = [
-      {
-        status: "In progress",
-        date: "10 Oct 2023",
-        orderId: "12057598140",
-        actionLink: { text: "Track Order", href: "/TrackOrder" },
-        product: {
-          name: "Dual Tone Halo Diamond Finger Ring",
-          image: require("../Img/dhruvin/ring.png"),
-          details: {
-            sku: "PD00003-14-RS-FGVVSVS",
-            metal: "925 Silver",
-            metalColor: "Silver",
-            size: "5",
-          },
-        },
-        price: { current: "₹1200", original: "₹1500" },
-      },
-      {
-        status: "Delivered",
-        date: "05 Oct 2023",
-        orderId: "12057598140",
-        actionLink: { text: "Return Order", href: "/ReturnOrder", modalTarget: "" },
-        product: {
-          name: "Pal Gold Earrings",
-          image: require("../Img/dhruvin/gold.png"),
-          details: {
-            sku: "PD00003-14-RS-FGVVSVS",
-            metal: "925 Silver",
-            metalColor: "Gold",
-          },
-        },
-        price: { current: "₹1200", original: "₹1500" },
-        extraLink: { text: "Submit review", href: "" },
-      },
-      {
-        status: "Cancelled",
-        date: "10 Oct 2023",
-        orderId: "12057598140",
-        product: {
-          name: "Pal Gold Earrings",
-          image: require("../Img/dhruvin/ring.png"),
-          details: {
-            sku: "PD00003-14-RS-FGVVSVS",
-            metal: "925 Silver",
-            metalColor: "Gold",
-          },
-        },
-        price: { current: "₹1000", original: "₹1500" },
-      },
-    ];
-    
-    const [filterOrder, setFilterOrder] = useState(orders);
-
-    const handleFilter = (data) => {
-       setActiveBtn(data)
-      if(data === "All"){
-        setFilterOrder(orders)
-      }
-      else{
-          let filterData = orders.filter((element)=> {
-             return element.status === data
-           }) 
-         setFilterOrder(filterData)
-      }
-
-     
-    }
-
-
-    let store = JSON.parse(localStorage.getItem("Login"))
-
-
-    useEffect(()=>{
-      axios.get(`${Api}/user/get/${store?.id}` ,{
-        headers: {
-          Authorization: `Bearer ${store?.access_token}`
-        }
-      })
-      .then((value)=>{
-          // console.log(value?.data);
-          setProfileData(value?.data?.user)
-      }).catch((error)=>{
-        alert(error)
-      })
-      
-    },[editToggle])
-
-
-    // ******* Edit User State *******
-    let editVal = {
-      name:'',
-      email:'',
-      phone:'',
-      gender:'',
-      dob:'',
-      pin:''
-    }
-
-    const EditFormik = useFormik({
-      initialValues:editVal,
-      validationSchema:EditProfileSchema,
-      onSubmit : (values , action) => {
-          // console.log(values);
-
-          axios.post(`${Api}/user/updateprofile/${store?.id}`,{
-            name:values.name,
-            email:values.email,
-            role_id:2,
-            phone:values.phone,
-            gender:values.gender,
-            dob:values.dob,
-            pin:values.pin,
-         },
-         {
-           headers: {
-             Authorization: `Bearer ${store?.access_token}`,
-          },
-         }
-       ).then((value)=>{
-           console.log(value);
-           setEditToggle(false)
-
- 
-         }).catch((error)=>{
-           alert(error)
-         })
-
-          action.resetForm()  
-      }
-    })
-
-    
-    const handleCancel = () => {
-      setEditToggle(false)
-    }
-
-    // ********** My Address ********
-    const [addType, setAddType] = useState("Home")
-    const [myAddData, setMyAddData] = useState([])
-    const [addMainNewAdd, setAddMainNewAdd] = useState(0)
-
-
-    const newAddVal = {
-        address:'',
-        pincode:'',
-        state:'',
-        city:'',
-        name:'',
-        phone:''
-    }
-
-    const AddFormik = useFormik({
-      initialValues:newAddVal,
-      validationSchema:NewAddSchema,
-      onSubmit: (values , action) => {
-        axios.post(`${Api}/deliveryAddress/create`, {
-          
-          customer_id: store?.id,
-          address: values.address,
-          status:'active',
-          state: values.state,
-          city: values.city,
-          pincode: values.pincode,
-          contact_name: values.name,
-          contact_no: values.phone,
-          type: addType,
-          
-       } ,
-       {
-          headers: {
-            Authorization: `Bearer ${store?.access_token}`,
-         },
-        }
-      )
-      .then((value) => {
-          console.log("NewAdd", value);
-          setNewAddModal(false)
-          setAddMainNewAdd(addMainNewAdd + 1)
-      })
-      .catch((error) => {
-          console.error("Error submitting address:", error);
-          alert("Failed to submit address.");
-      });
-
-        action.resetForm()
-      }
-    })
-
-    const handleAddType = (type) => {
-        setAddType(type)
-    }
 
     const toggleDropdown = (index) => {
       setActiveCard(activeCard === index ? null : index);
       console.log(activeCard);
-      
     };
 
-  
-    const [singleNewAdd, setSingleNewAdd] = useState(false)
-    const [deleteUseEffect, setdeleteUseEffect] = useState(0)
+ 
+   const handleFilter = (data) => {
+  setActiveBtn(data);
 
-
-    useEffect(()=>{
-
-      axios.get(`${Api}/deliveryAddress/getall`,{
-        headers: {
-          Authorization: `Bearer ${store?.access_token}`
-        }
-
-      }).then((value)=>{
-        setMyAddData(value?.data?.deliveryAddress)
-      })
-
-    },[addMainNewAdd , singleNewAdd , deleteUseEffect])
-
-
-// {/* ---------------- Add New Single Address Popup ------------------ */}
-   const [singleId, setSingleId] = useState(null)
-
-   const singleAddVal = {
-    address:'',
-    pincode:'',
-    state:'',
-    city:'',
-    name:'',
-    phone:''
-   }
-
-  const SingleAddFormik = useFormik({
-       initialValues:singleAddVal,
-       validationSchema:NewAddSchema,
-       onSubmit: (values , action) => {
-            axios.post(`${Api}/deliveryAddress/update/${singleId}`, {
-            customer_id: store?.id,
-            address: values.address,
-            status:'active',
-            state: values.state,
-            city: values.city,
-            pincode: values.pincode,
-            contact_name: values.name,
-            contact_no: values.phone,
-            type: addType,
-        } ,
-        {
-           headers: {
-             Authorization: `Bearer ${store?.access_token}`,
-          },
-         }
-       )
-       .then((value) => {
-           console.log("UpdateAdd", value);
-           setSingleNewAdd(false)
-           setActiveCard(!null)
-           
-       })
-       .catch((error) => {
-           alert(error);
-       });
-   
-         action.resetForm()
-       }
-   })
-
-  const handleSingleNewAdd = (id) => {
-    setSingleNewAdd(true)
-    setSingleId(id)    
+  if (data === "All") {
+    setFilteredOrders(orderMain); // Reset to all orders
+  } else {
+    const filterData = orderMain.filter((element)=>{
+      return element?.order_status === data
+    })  
+    setFilteredOrders(filterData);
   }
-
-{/* ---------------- Delete Item Popup ------------------ */}
-const [deleteId, setDeleteId] = useState(null)
-
-const handleDeleteAdd = (id) => {
-  setDeleteAdd(true)
-  setDeleteId(id)
-}
-
-const handleDeleteYes = () => {
-   axios.delete(`${Api}/deliveryAddress/delete/${deleteId}`,{
-       headers: {
-         Authorization: `Bearer ${store?.access_token}`
-       }
-   })
-   .then((value)=>{
-     console.log("DeleteAdd " , value);
-     setDeleteAdd(false)
-     setdeleteUseEffect(deleteUseEffect + 1)
-     setActiveCard(!null)
-   }).catch((error)=>{
-      alert(error)
-   })
-}
+   };
 
 
-// ********** My Order **********
-const [orderMain, setOrderMain] = useState({})
-const [orderData, setOrderData] = useState([])
 
-// console.log("Token ", store?.access_token);
-
-
-useEffect(()=>{
-   axios.post(`${Api}/order/getbyuserid`,
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    {
-       customer_id:1
-   },{
-    headers: {
-      Authorization: `Bearer ${store?.access_token}`
-    }
-   }).then((value)=>{
-      console.log("Order " ,value.data.orders);
-      setOrderMain(value?.data?.orders)
-      setOrderData(value?.data?.orders[0]?.order_items) 
-
-   }).catch((error)=>{
-      alert(error)
-   })
-},[])
-  
 
   return (
     <>
@@ -1006,8 +665,8 @@ useEffect(()=>{
                                   <h3 style={{whiteSpace:'nowrap'}} className='mb-md-2'>My Orders</h3>
                                   <div>
                                       <button onClick={()=>handleFilter("All")} className={`ds_order-all ${activeBtn === "All" ? 'ds_order-active-btn' :''} me-2`}>All</button>
-                                      <button onClick={()=>handleFilter("In progress")} className={`ds_order-prog ${activeBtn === "In progress" ? 'ds_order-active-btn' :''} me-2`}>In Progress</button>
-                                      <button onClick={()=>handleFilter("Delivered")} className={`ds_order-prog ${activeBtn === "Delivered" ? 'ds_order-active-btn' :''} me-2`}>Delivered</button>
+                                      <button onClick={()=>handleFilter("pending")} className={`ds_order-prog ${activeBtn === "pending" ? 'ds_order-active-btn' :''} me-2`}>In Progress</button>
+                                      <button onClick={()=>handleFilter("delivered")} className={`ds_order-prog ${activeBtn === "delivered" ? 'ds_order-active-btn' :''} me-2`}>Delivered</button>
                                       <button onClick={()=>handleFilter("Cancelled")} className={`ds_order-prog ${activeBtn === "Cancelled" ? 'ds_order-active-btn' :''} me-2`}>Cancelled</button>
                                   </div>
                               </div>
@@ -1033,76 +692,75 @@ useEffect(()=>{
                                   <div>
                                     <div className=' px-4 pb-4'>
                                       <div className="row">
-                                           {orderMain.map((element)=>{  
-                                             console.log(element);
-                                                                                        
+                                           {filteredOrders?.map((element , index)=>{ 
+                                              console.log(element);
+                                                                        
                                              return(
-                                              <div className="col-xl-12 mt-4" key={element?.id}>
+                                              <div className="col-xl-12 mt-4" key={index}>
                                                <div className="ds_order-inner">
                                                 <div className="d-flex flex-wrap ds_order-flex align-items-center">
                                                   <div className="d-flex flex-wrap px-3 pt-2">
-                                                    <p className={`${element.order_status === "pending" ? 'ds_order-progress' : ''} ${element.order_status === "Delivered" ? 'ds_order-deliver' : ''} ${element.order_status === "Cancelled" ? 'ds_order-cencel' : ''} mb-0`}>{element.order_status}</p>
+                                                    <p className={`${element?.order_status === "pending" ? 'ds_order-progress' : ''} ${element?.order_status === "delivered" ? 'ds_order-deliver' : ''} ${element?.order_status === "Cancelled" ? 'ds_order-cencel' : ''} mb-0`}>{capitalizeFirstLetter(element?.order_status)}</p>
                                                     <p className="ds_order-text ds_600 mb-0">{element?.order_date}</p>
                                                     <p className="ds_order-order mb-0">
                                                       <span className="text-muted">Order Id : </span>
-                                                      <span className="ds_color">{element.order_number}</span>
+                                                      <span className="ds_color">{element?.order_number}</span>
                                                     </p>
                                                   </div>
-                                                    <Link className="text-dark ds_600 pe-3 ms-lg-0 ms-3" >
+                                                    <Link to={element?.order_status === "pending" ? '/TrackOrder' : ''} className="text-dark ds_600 pe-3 ms-lg-0 ms-3" >
                                                       {element?.order_status === "pending" ? 'Track Order' : '' } {element?.order_status === "delivered" ? 'Return Order' : '' }
                                                     </Link>
                                                 </div>
                                                 <div className="ds_order-line mt-2"></div>
+                                                <h5 className='text-end me-4 mt-2'>
+                                                      <span className="ds_color">{  parseInt(element?.total_amount) - (element?.total_amount * 20 / 100) }</span>
+                                                      <span className="ms-2 ds_order-line-txt">{element?.total_amount}</span>
+                                                  </h5>
 
-                                                {element?.order_items?.map((element)=>{
+                                                {element?.order_items?.map((item)=>{
                                                    return (
-                                                    <>
-                                                    <h1>{element?.product_name}</h1>
-                                                    </>
-                                                        //  <div className="px-3 my-4">
-                                                        //    <div className="d-flex justify-content-between flex-wrap">
-                                                        //      <div>
-                                                        //        <div className="d-flex ds_cart-flex">
-                                                        //          <div className="mx-auto">
-                                                        //            <img className="ds_oder-img" src={order.product.image} alt={order.product.name} />
-                                                        //          </div>
-                                                        //          <div className="ds_cart-deta">
-                                                        //            <h6>{order.product.name}</h6>
-                                                        //            <p className="ds_tcolor mb-0">
-                                                        //              SKU : <span className="ds_color">{order.product.details.sku}</span>
-                                                        //            </p>
-                                                        //            <p className="ds_tcolor mb-0">
-                                                        //              Metal :<span className="ds_color">{order.product.details.metal}</span>
-                                                        //            </p>
-                                                        //            <p className="ds_tcolor mb-0">
-                                                        //              Metal Color :<span className="ds_color">{order.product.details.metalColor}</span>
-                                                        //            </p>
-                                                        //            {order.product.details.size && (
-                                                        //              <p className="ds_tcolor mb-0">
-                                                        //                Size : <span className="ds_color">{order.product.details.size}</span>
-                                                        //              </p>
-                                                        //            )}
-                                                        //         </div>
-                                                        //       </div>
-                                                        //      </div>
-                                                        //       <div className="d-flex flex-column mt-lg-0 mt-4">
-                                                        //         <h5>
-                                                        //           <span className="ds_color">{order.price.current}</span>
-                                                        //           <span className="ms-2 ds_order-line-txt">{order.price.original}</span>
-                                                        //         </h5>
-                                                        //         {order.extraLink && (
-                                                        //           <h6 className="mt-auto">
-                                                        //             <Link to={order.extraLink.href} className="text-dark">
-                                                        //               {order.extraLink.text}
-                                                        //             </Link>
-                                                        //           </h6>
-                                                        //         )}
-                                                        //       </div>
-                                                        //    </div>
-                                                        // </div>
+                                                         <div className="px-3 my-4" key={item?.id} style={{borderBottom:'1px solid #dcdedc'}}>
+                                                          <div className="d-flex justify-content-between flex-wrap">
+                                                           <div>
+                                                             <div className="d-flex ds_cart-flex">
+                                                               <div className="mx-auto">
+                                                                 <img className="ds_oder-img" src={item?.image[0]} alt={item?.product_name}  />
+                                                               </div>
+                                                               <div className="ds_cart-deta">
+                                                                 <h6> {item?.product_name}</h6>
+                                                                 {item?.sku && <p className="ds_tcolor mb-0">
+                                                                   SKU : <span className="ds_color">{item?.sku}</span>
+                                                                 </p>}
+                                                                 <p className="ds_tcolor mb-0">
+                                                                   Metal :<span className="ds_color"> {item?.metal}</span>
+                                                                 </p>
+                                                                 <p className="ds_tcolor mb-0">
+                                                                   Metal Color :<span className="ds_color"> {item?.metal_color}</span>
+                                                                 </p>
+                                                                 {item?.size && (
+                                                                   <p className="ds_tcolor mb-0">
+                                                                     Size : <span className="ds_color"> {item?.size}</span>
+                                                                   </p>
+                                                                 )}
+                                                              </div>
+                                                            </div>
+                                                           </div>
+                                                            <div className="d-flex flex-column mt-lg-0 mt-4">
+                                                              
+                                                              {element?.order_status === "delivered" && (
+                                                                <h6 className="mt-auto">
+                                                                  <Link className="text-dark"> 
+                                                                      Submit Review
+                                                                   </Link>
+                                                                </h6>
+                                                              )}
+                                                           </div>
+                                                        </div>
+                                                       </div>
                                                         )
                                                    })}
                                                 
+                                                    
 
                                                </div>
                                              </div>
