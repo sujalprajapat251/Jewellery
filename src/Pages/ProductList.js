@@ -42,55 +42,121 @@ function ProductList() {
         setProductList(product);
         // alert('');
     }, [id, allProduct])
-
+    let [newFilterData, setNewFliterData] = useState([]);
     const [fliterOptionData, setFliterOptionData] = useState([]);
     const fliterOptions = (x, y, z) => {
+        // x is value y is id and z is name of input type
         const exists = fliterOptionData.some(option => option.name === x);
         if (exists) {
-            // console.log(x,y,z);
             setFliterOptionData(fliterOptionData.filter(option => option.name !== x));
-            const newFilterData = productList_detail.filter((product) => { return product.gender !== x });
-            // console.log('hey', newFilterData);
-            if (newFilterData.length === 0) {
-                setproductList_detail(productlist);
+            let FilterData = [];
+
+            // for gender data
+            if (z === 'gender') {
+                FilterData = productList_detail.filter((product) => { return product.gender !== x });
+            }
+
+            // for purity data
+            if (z === 'purity') {
+                FilterData = productList_detail.filter((product) => { return product.metal !== x });
+            }
+
+            // for diamond clarity 
+            if (z === 'Diamond Clarity') {
+                FilterData = productList_detail.filter((product) => { return product.diamond_clarity !== x });
+            }
+            // storing data in state
+            if (FilterData.length === 0) {
+                setNewFliterData(productlist);
             }
             else {
-                setproductList_detail(newFilterData);
+                setNewFliterData(FilterData);
             }
-            // console.log(productList_detail);
+
         } else {
-            setFliterOptionData([...fliterOptionData, { id: y, name: x }]);
+            setFliterOptionData([...fliterOptionData, { id: y, name: x, type: z }]);
             fliterhanddler(x, y, z);
         }
     }
-    const fliterhanddler = (x, y, z) => {
-        //  console.log("x" , x );
-        //  console.log("y" , y );
-        //  console.log("z" , z );
 
-        if (z === 'gender') {
-            const newFilterData = productlist.filter((product) => { return product.gender === x });
-            // console.log(newFilterData)
-            setproductList_detail(newFilterData);
+    // ?this function perform the fliter
+    const fliterhanddler = (x, y, z) => {
+        let FilterData = [];
+        let updatedData = [];
+        // for gender handling
+        if (z === "gender") {
+            FilterData = productlist.filter((product) => product.gender === x);
+            updatedData = [
+                ...newFilterData,
+                ...FilterData.filter(
+                    (item) => !newFilterData.some((p) => p.gender === item.gender)
+                ),
+            ];
         }
 
-    }
-    const fliterOptionsClose = (x) => {
-        setFliterOptionData(fliterOptionData.filter((y) => y !== x));
-        console.log(x);
-        const checkboxs = document.getElementById(x.id);
-        checkboxs.checked = false;
-        const newFilterData = productList_detail.filter((product) => { return product.gender !== x.name });
-        console.log('hey', newFilterData);
-        if (newFilterData.length === 0) {
+        // for purity handling
+        if (z === "purity") {
+            FilterData = productlist.filter((product) => product.metal === x);
+            updatedData = [
+                ...newFilterData,
+                ...FilterData.filter(
+                    (item) => !newFilterData.some((p) => p.metal === item.metal)
+                ),
+            ];
+        }
+        if (z === "Diamond Clarity") {
+            FilterData = productlist.filter((product) => product.clarity === x);
+            updatedData = [
+                ...newFilterData,
+                ...FilterData.filter(
+                    (item) => !newFilterData.some((p) => p.clarity === item.clarity)
+                ),
+            ];
+        }
+        setNewFliterData(updatedData);
+    };
+
+    // this useeffect called when fliter applied into product list 
+    useEffect(() => {
+        if (newFilterData.length > productlist.length) {
+            setNewFliterData([]);
             setproductList_detail(productlist);
         }
         else {
             setproductList_detail(newFilterData);
         }
+    }, [newFilterData])
+
+    // close fliter data using icon
+    const fliterOptionsClose = (x) => {
+        setFliterOptionData(fliterOptionData.filter((y) => y !== x));
+        console.log(x);
+        const checkboxs = document.getElementById(x.id);
+        checkboxs.checked = false;
+        let FilterData = [];
+        if (x.type === 'gender') {
+            FilterData = productList_detail.filter((product) => { return product.gender !== x.name });
+        }
+        if (x.type === 'purity') {
+            FilterData = productList_detail.filter((product) => { return product.metal !== x.name });
+        }
+        console.log('hey', newFilterData);
+
+        // store data in state
+        if (FilterData.length === 0) {
+            setNewFliterData(productlist);
+        }
+        else {
+            setNewFliterData(FilterData);
+        }
     }
 
     // backend connection code over 
+
+
+
+
+
     const [minValue, set_minValue] = useState(60);
     const [maxValue, set_maxValue] = useState(300);
     const handleInput = (e) => {
@@ -442,24 +508,29 @@ function ProductList() {
                                         <Accordion.Header>Purity</Accordion.Header>
                                         <Accordion.Body>
                                             <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="14"
-                                                    name="purity" value={'Purity-14'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
-                                                <label for="14"  >14</label>
+                                                <input type="checkbox" className="me-2" id="14K"
+                                                    name="purity" value={'14k'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
+                                                <label for="14K"  >14K</label>
                                             </div>
                                             <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="20"
-                                                    name="purity" value={'Purity-20'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
-                                                <label for="20" >20</label>
+                                                <input type="checkbox" className="me-2" id="18K"
+                                                    name="purity" value={'18k'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
+                                                <label for="18K" >18K</label>
                                             </div>
                                             <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="24"
-                                                    name="purity" value={'Purity-24'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
-                                                <label for="24" >24</label>
+                                                <input type="checkbox" className="me-2" id="22K"
+                                                    name="purity" value={'22k'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
+                                                <label for="22K" >22K</label>
                                             </div>
                                             <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="32"
-                                                    name="purity" value={'Purity-32'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
-                                                <label for="32" >32</label>
+                                                <input type="checkbox" className="me-2" id="24K"
+                                                    name="purity" value={'24k'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
+                                                <label for="24K" >24K</label>
+                                            </div>
+                                            <div className="d-flex align-items-center s_checkbox">
+                                                <input type="checkbox" className="me-2" id="Silver-metal"
+                                                    name="purity" value={'silver'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
+                                                <label for="Silver-metal" >Silver</label>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -498,32 +569,32 @@ function ProductList() {
                                         <Accordion.Body>
                                             <div className="d-flex align-items-center s_checkbox">
                                                 <input type="checkbox" className="me-2" id="FL"
-                                                    name="Diamond Clarity" value={'Clarity-FL'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
+                                                    name="Diamond Clarity" value={'FL'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
                                                 <label for="FL">FL</label>
                                             </div>
                                             <div className="d-flex align-items-center s_checkbox">
                                                 <input type="checkbox" className="me-2" id="I1"
-                                                    name="Diamond Clarity" value={'Clarity-I1'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
+                                                    name="Diamond Clarity" value={'I1'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
                                                 <label for="I1">I1</label>
                                             </div>
                                             <div className="d-flex align-items-center s_checkbox">
                                                 <input type="checkbox" className="me-2" id="S12"
-                                                    name="Diamond Clarity" value={'Clarity-S12'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
+                                                    name="Diamond Clarity" value={'S12'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
                                                 <label for="S12">S12</label>
                                             </div>
                                             <div className="d-flex align-items-center s_checkbox">
                                                 <input type="checkbox" className="me-2" id="VS"
-                                                    name="Diamond Clarity" value={'Clarity-VS'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
+                                                    name="Diamond Clarity" value={'VS'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
                                                 <label for="VS">VS</label>
                                             </div>
                                             <div className="d-flex align-items-center s_checkbox">
                                                 <input type="checkbox" className="me-2" id="VS2"
-                                                    name="Diamond Clarity" value={'Clarity-VS2'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
+                                                    name="Diamond Clarity" value={'VS2'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
                                                 <label for="VS2">VS2</label>
                                             </div>
                                             <div className="d-flex align-items-center s_checkbox">
                                                 <input type="checkbox" className="me-2" id="V1S1"
-                                                    name="Diamond Clarity" value={'Clarity-V1S1'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
+                                                    name="Diamond Clarity" value={'V1S1'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
                                                 <label for="V1S1">V1S1</label>
                                             </div>
                                         </Accordion.Body>
@@ -533,7 +604,7 @@ function ProductList() {
                                         <Accordion.Body>
                                             <div className="d-flex align-items-center s_checkbox">
                                                 <input type="checkbox" className="me-2" id="Gold"
-                                                    name="Metal" value={'Metal-Gold'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
+                                                    name="Metal" value={'Metal-Gold'} onChange={(e) => { fliterOptions(e.target.value, e.target.id,); }}></input>
                                                 <label for="Gold" >Gold</label>
                                             </div>
                                             <div className="d-flex align-items-center s_checkbox">
@@ -569,31 +640,6 @@ function ProductList() {
                                         </Accordion.Body>
                                     </Accordion.Item>
                                     <Accordion.Item eventKey="7">
-                                        <Accordion.Header>Type</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Drops"
-                                                    name="Type" value={'Drops'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
-                                                <label for="Drops">Drops</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Jhumka"
-                                                    name="Type" value={'Jhumka'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
-                                                <label for="Jhumka">Jhumka</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Hoops"
-                                                    name="Type" value={'Hoops'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
-                                                <label for="Hoops">Hoops</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Studs"
-                                                    name="Type" value={'Studs'} onChange={(e) => { fliterOptions(e.target.value, e.target.id); }}></input>
-                                                <label for="Studs">Studs</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                    <Accordion.Item eventKey="8">
                                         <Accordion.Header>Width</Accordion.Header>
                                         <Accordion.Body>
                                             <div className="d-flex align-items-center s_checkbox">
@@ -851,7 +897,7 @@ function ProductList() {
                                                         <img src={ele.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
                                                     </div>
                                                     {ele.gender ?
-                                                        <div className='s_card_status'><p className='mb-0'>{ele.gender}</p></div>
+                                                        <div className='s_card_status'><p className='mb-0'>{ele.metal}{ele.gender}</p></div>
                                                         : ''}
                                                     <div className='s_card_text'>
                                                         <h5>{ele.product_name}</h5>

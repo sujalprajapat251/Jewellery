@@ -8,9 +8,6 @@ import noteContext from '../Context/noteContext';
 import { Link } from 'react-router-dom';
 import Highlighter from 'react-highlight-words';
 import axios from 'axios';
-import ring1 from '../Img/Sujal/s_diamond_earing.png';
-import ring2 from '../Img/Sujal/s_diamond_earing.png';
-import ring3 from '../Img/Sujal/engage-ring.png';
 import { useFormik } from 'formik';
 import { ForgetPassSchema, LoginSchema } from '../schemas';
 

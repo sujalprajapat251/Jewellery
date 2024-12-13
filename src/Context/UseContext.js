@@ -10,17 +10,14 @@ const UseContext = (props) => {
   const [allSubCategory, setAllSubCategory] = useState([]);
   const [allProduct, setAllProduct] = useState([]);
 
-  const ApiKey = 'https://shreekrishnaastrology.com/api';
-
-
   const Api = 'https://shreekrishnaastrology.com/api'
 
   
-  const token = "166|WKmeJed3S8OccXi1CWl3NTzLGePGxUb5rDNgQ1YZ6f6850e8";
+  const token = "180|ls2n8Yy2XCsrpJ0SAF0wjvTpQmrHosp1q8GzMb9mc0508976";
 
   useEffect(() => {
     // fetch catgory
-    axios.get(`${ApiKey}/categories/getallactive`, {
+    axios.get(`${Api}/categories/getallactive`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -34,7 +31,7 @@ const UseContext = (props) => {
       });
 
     // fetch sub catgeory data
-    axios.get(`${ApiKey}/subcategories/getallactive`, {
+    axios.get(`${Api}/subcategories/getallactive`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -48,7 +45,7 @@ const UseContext = (props) => {
       });
 
     // fetch product data
-    axios.get(`${ApiKey}/products/getallactive`, {
+    axios.get(`${Api}/products/getallactive`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
