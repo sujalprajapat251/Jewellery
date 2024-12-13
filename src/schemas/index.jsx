@@ -90,3 +90,19 @@ export const NewAddSchema = Yup.object({
         .required("Enter Your Phone Number"),
 });
 
+export const ChangePass = Yup.object({
+  Old_Pass: Yup.string()
+    .required('Old password is required'),
+  
+  New_Pass: Yup.string()
+    .required('New password is required')
+    .min(8, 'Password must be at least 8 characters long'),
+    // .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    // .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+    // .matches(/[0-9]/, 'Password must contain at least one number')
+    // .matches(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character'),
+  
+  Con_Pass: Yup.string()
+    .required('Confirm password is required')
+    .oneOf([Yup.ref('New_Pass'), null], 'Passwords must match'),
+});

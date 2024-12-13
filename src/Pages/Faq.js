@@ -241,22 +241,14 @@ const Faq = () => {
         },
       ];
 
-      const filteredData = accordionData.find(item => item.category === activeCategory)?.data || [];
-
-      const handle = () => {
-        let filter = subFaq.filter((element)=> {
-            return element.faq_name === 'Registration'
-        })
-        setData(filter)
-        console.log("Filter ",filter);
-      }
-
-
+    //   const filteredData = accordionData.find(item => item.category === activeCategory)?.data || [];
 
       useEffect(()=>{
-       handle()
-        
-      },[])
+       let filter = subFaq.filter((element)=> {
+        return element.faq_name === "Registration"
+        })
+        setData(filter);        
+      },[subFaq])
 
 
       const handleFilter = (name) => {

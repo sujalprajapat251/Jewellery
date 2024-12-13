@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import noteContext from './noteContext'
 import axios from 'axios';
-import { EditProfileSchema, NewAddSchema } from '../schemas';
+import { ChangePass, EditProfileSchema, NewAddSchema } from '../schemas';
 import { useFormik } from 'formik';
 
 
@@ -23,7 +23,7 @@ const UseContext = (props) => {
       },
     })
       .then((response) => {
-        setAllCatgegory(response.data.categories);
+        setAllCatgegory(response?.data?.categories);
         // console.log(response.data.categories);
       })
       .catch((error) => {
@@ -133,7 +133,7 @@ const UseContext = (props) => {
   // ********** My Address ********
   const [addType, setAddType] = useState("Home")
   const [myAddData, setMyAddData] = useState([])
-  const [addMainNewAdd, setAddMainNewAdd] = useState(0)
+  const [addMainNewAdd, setAddMainNewAdd] = useState(false)
   const [newAddModal, setNewAddModal] = useState(false)
 
 
@@ -172,7 +172,7 @@ const UseContext = (props) => {
   .then((value) => {
       console.log("NewAdd", value);
       setNewAddModal(false)
-      setAddMainNewAdd(addMainNewAdd + 1)
+      setAddMainNewAdd(true)
   })
   .catch((error) => {
       console.error("Error submitting address:", error);
@@ -308,6 +308,57 @@ useEffect(()=>{
 },[])
 
 
+// ********** Change Password **********
+const [changePassToggle, setChangePassToggle] = useState(false)
+
+const changePassVal = {
+   Old_Pass:'',
+   New_Pass:'',
+   Con_Pass:''
+}
+
+const ChangePassFormik = useFormik({
+  initialValues:changePassVal,
+  validationSchema:ChangePass,
+  onSubmit : (values , action) => {
+      console.log(values);
+      axios.post(`${Api}/password/change` , {
+        current_password:values.Old_Pass,
+        new_password:values.New_Pass,
+        confirm_password:values.Con_Pass
+
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${store?.access_token}`,
+       },
+      }
+      ).then((value)=>{
+        console.log("Change Pass " , value);
+        setChangePassToggle(false)
+      }).catch((error)=>{
+        alert(error)
+      })
+ 
+      action.resetForm()
+  }
+})
+
+
+// *************** Track Order Page ************
+const [trackData, setTrackData] = useState([])
+
+const handleTrackOrder = (data) => {
+   let filter = filteredOrders?.filter((element)=>{
+      return element?.order_number === data
+   })
+
+  //  console.log(filter);
+  localStorage.setItem("TrackOrder" , JSON.stringify(filter))
+   
+}
+
+
 // ************ Faq **********
 
 const [mainFaq, setMainFaq] = useState([])
@@ -320,7 +371,7 @@ useEffect(()=>{
       Authorization: `Bearer ${store?.access_token}`
     }
   }).then((value)=>{
-    console.log("Faq " , value.data.faqs);
+    // console.log("Faq " , value.data.faqs);
     setMainFaq(value?.data?.faqs)
   })
 
@@ -333,7 +384,7 @@ useEffect(()=>{
       Authorization: `Bearer ${store?.access_token}`
     }
   }).then((value)=>{
-    console.log("SubFaq " , value.data.subfaqs);
+    // console.log("SubFaq " , value.data.subfaqs);
     setSubFaq(value?.data?.subfaqs)
   })
 
@@ -363,8 +414,15 @@ useEffect(()=>{
       // ********** My Order **********
       orderMain, setOrderMain , filteredOrders, setFilteredOrders,
 
+    //  ******** Change Password **********
+      changePassToggle, setChangePassToggle , ChangePassFormik,
+
       // ************ Faq **********
-      mainFaq,subFaq,setSubFaq
+      mainFaq,subFaq,setSubFaq ,
+
+    // *************** Track Order Page ************
+      handleTrackOrder , trackData
+ 
       
       }}>
 

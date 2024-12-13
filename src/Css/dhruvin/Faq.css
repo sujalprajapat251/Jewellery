@@ -3,6 +3,7 @@
     background-repeat: no-repeat;
     background-size: cover;
     background-position:left;
+
 }     
 .ds_faq-box{
     position: absolute;
@@ -22,6 +23,7 @@
 /* *********** Accordian ************ */
 .ds_faq-drop{
     background: #F4EFEB;
+    padding-bottom: 50px;
 }
 .ds_drop-btn{
     width: 100%;

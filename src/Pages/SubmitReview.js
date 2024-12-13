@@ -73,7 +73,7 @@ const SubmitReview = () => {
                                             </div>
                                         </div>
                                     </div>
-                                   </div>
+                                </div>
                                 </div>
                             </div>
                         </div>

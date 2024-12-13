@@ -3,10 +3,12 @@ import '../Css/dhruvin/MyProfile.css'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { IoBagHandleOutline } from 'react-icons/io5';
 import { GoHome } from 'react-icons/go';
-import { FaRegTrashAlt } from 'react-icons/fa';
+import { FaRegTrashAlt, FaStar } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
 import { Modal } from 'react-bootstrap';
+import { FiPlus } from 'react-icons/fi';
+import { IoMdClose } from 'react-icons/io';
 
 const MyProfile = () => {
 
@@ -27,7 +29,10 @@ const MyProfile = () => {
      deleteAdd, setDeleteAdd , handleDeleteAdd , handleDeleteYes ,
 
      // ********** My Order **********
-     orderMain,filteredOrders, setFilteredOrders
+     orderMain,filteredOrders, setFilteredOrders,handleTrackOrder,
+
+    //  ******** Change Password **********
+    changePassToggle, setChangePassToggle ,ChangePassFormik 
 
     } = useContext(noteContext) 
 
@@ -44,22 +49,22 @@ const MyProfile = () => {
       console.log(activeCard);
     };
 
- 
-   const handleFilter = (data) => {
-  setActiveBtn(data);
-
-  if (data === "All") {
-    setFilteredOrders(orderMain); // Reset to all orders
-  } else {
-    const filterData = orderMain.filter((element)=>{
-      return element?.order_status === data
-    })  
-    setFilteredOrders(filterData);
-  }
-   };
-
+    const handleFilter = (data) => {
+       setActiveBtn(data);
+     
+       if (data === "All") {
+         setFilteredOrders(orderMain); // Reset to all orders
+       } else {
+         const filterData = orderMain.filter((element)=>{
+           return element?.order_status === data
+         })  
+         setFilteredOrders(filterData);
+       }
+    };
 
 
+  // **********  Submit Review Popup  ********
+   const [subRevToggle, setSubRevToggle] = useState(false)
 
   return (
     <>
@@ -78,8 +83,8 @@ const MyProfile = () => {
                                 <button onClick={()=>setMainActive("Saved Cards")} className={`ds_profile-btn ${mainActive === "Saved Cards" ? 'ds_active-color' : ''} ds_600`}> <img className={`${mainActive === "Saved Cards" ? 'ds_profile_img_color ' : ''} `}  src={require("../Img/dhruvin/card.png")} alt="" width="7%" /> <span className='ms-2'>Saved Cards</span></button>
                                 <button onClick={()=>setMainActive("My Order")} className={`ds_profile-btn ${mainActive === "My Order" ? 'ds_active-color' : ''} ds_600`}> <img className={`${mainActive === "My Order" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/order.png")} alt="" width="7%" /> <span className='ms-2'>My Order</span></button>
                                 <button onClick={()=>setMainActive("My Wishlist")} className={`ds_profile-btn ${mainActive === "My Wishlist" ? 'ds_active-color' : ''} ds_600`}>  <img className={`${mainActive === "My Wishlist" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/heart.png")} alt="" width="7%" /> <span className='ms-2'>My Wishlist</span></button>
-                                <button onClick={()=>setMainActive("Change Password")} className={`ds_profile-btn ${mainActive === "Change Password" ? 'ds_active-color' : ''} ds_600`} data-bs-toggle="modal" data-bs-target="#changePassword"> <img className={`${mainActive === "Change Password" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/lock.png")} alt="" width="7%" /> <span className='ms-2'>Change Password</span></button>
-                                <button onClick={()=>setMainActive("Logout")} className={`ds_profile-btn ${mainActive === "Logout" ? 'ds_active-color' : ''} ds_600`} data-bs-toggle="modal" data-bs-target="#logOut"> <img className={`${mainActive === "Logout" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/logout.png")} alt="" width="7%" /> <span className='ms-2'>Logout</span></button>
+                                <button onClick={()=>{setMainActive("Change Password"); setChangePassToggle(true);}} className={`ds_profile-btn ${mainActive === "Change Password" ? 'ds_active-color' : ''} ds_600`}> <img className={`${mainActive === "Change Password" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/lock.png")} alt="" width="7%" /> <span className='ms-2'>Change Password</span></button>
+                                <button onClick={() =>setMainActive("Logout")} className={`ds_profile-btn ${mainActive === "Logout" ? 'ds_active-color' : ''} ds_600`}  > <img className={`${mainActive === "Logout" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/logout.png")} alt="" width="7%" /> <span className='ms-2'>Logout</span></button>
                               </div>
                            </div>
                            <div className='ds_offcanvas-main'>
@@ -103,7 +108,7 @@ const MyProfile = () => {
                                 <button onClick={()=>setMainActive("Saved Cards")} className={`ds_profile-btn ${mainActive === "Saved Cards" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "Saved Cards" ? 'ds_profile_img_color ' : ''} `}  src={require("../Img/dhruvin/card.png")} alt="" width="7%" /> <span className='ms-2'>Saved Cards</span></button>
                                 <button onClick={()=>setMainActive("My Order")} className={`ds_profile-btn ${mainActive === "My Order" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "My Order" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/order.png")} alt="" width="7%" /> <span className='ms-2'> My Order</span></button>
                                 <button onClick={()=>setMainActive("My Wishlist")} className={`ds_profile-btn ${mainActive === "My Wishlist" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close">  <img className={`${mainActive === "My Wishlist" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/heart.png")} alt="" width="7%" /> <span className='ms-2'>My Wishlist</span></button>
-                                <button onClick={()=>setMainActive("Change Password")} className={`ds_profile-btn ${mainActive === "Change Password" ? 'ds_active-color' : ''} ds_600`} data-bs-toggle="modal" data-bs-target="#changePassword" > <img className={`${mainActive === "Change Password" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/lock.png")} alt="" width="7%" /> <span className='ms-2'>Change Password</span></button>
+                                <button onClick={()=>{setMainActive("Change Password"); setChangePassToggle(true);}} className={`ds_profile-btn ${mainActive === "Change Password" ? 'ds_active-color' : ''} ds_600`} > <img className={`${mainActive === "Change Password" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/lock.png")} alt="" width="7%" /> <span className='ms-2'>Change Password</span></button>
                                 <button onClick={()=>setMainActive("Logout")} className={`ds_profile-btn ${mainActive === "Logout" ? 'ds_active-color' : ''} ds_600`} data-bs-toggle="modal" data-bs-target="#logOut" > <img className={`${mainActive === "Logout" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/logout.png")} alt="" width="7%" /> <span className='ms-2'>Logout</span></button>
                                 </div>
                               </div>
@@ -693,8 +698,8 @@ const MyProfile = () => {
                                     <div className=' px-4 pb-4'>
                                       <div className="row">
                                            {filteredOrders?.map((element , index)=>{ 
-                                              console.log(element);
-                                                                        
+                                                  console.log("element " ,element);
+
                                              return(
                                               <div className="col-xl-12 mt-4" key={index}>
                                                <div className="ds_order-inner">
@@ -707,17 +712,31 @@ const MyProfile = () => {
                                                       <span className="ds_color">{element?.order_number}</span>
                                                     </p>
                                                   </div>
-                                                    <Link to={element?.order_status === "pending" ? '/TrackOrder' : ''} className="text-dark ds_600 pe-3 ms-lg-0 ms-3" >
-                                                      {element?.order_status === "pending" ? 'Track Order' : '' } {element?.order_status === "delivered" ? 'Return Order' : '' }
-                                                    </Link>
-                                                </div>
-                                                <div className="ds_order-line mt-2"></div>
-                                                <h5 className='text-end me-4 mt-2'>
+                                                  <h5 className='text-end me-4 mt-2'>
                                                       <span className="ds_color">{  parseInt(element?.total_amount) - (element?.total_amount * 20 / 100) }</span>
                                                       <span className="ms-2 ds_order-line-txt">{element?.total_amount}</span>
                                                   </h5>
+                                                  {
+                                                    element?.order_status === "pending" ? (
+                                                         <Link onClick={()=> handleTrackOrder(element?.order_number)} to='/TrackOrder'  className="text-dark ds_600 pe-3 ms-lg-0 ms-3" >
+                                                            Track Order
+                                                        </Link>
+                                                    ) : ("")
+                                                  }
 
+                                                  {
+                                                    element?.order_status === "delivered" ? (
+                                                        <Link  to='/ReturnOrder' className="text-dark ds_600 pe-3 ms-lg-0 ms-3" >
+                                                            Return Order
+                                                        </Link>
+                                                    ) : ("")
+                                                  }
+                                                    
+                                                    
+                                                </div>
+                                                <div className="ds_order-line mt-2"></div>
                                                 {element?.order_items?.map((item)=>{
+                                                  
                                                    return (
                                                          <div className="px-3 my-4" key={item?.id} style={{borderBottom:'1px solid #dcdedc'}}>
                                                           <div className="d-flex justify-content-between flex-wrap">
@@ -747,21 +766,20 @@ const MyProfile = () => {
                                                            </div>
                                                             <div className="d-flex flex-column mt-lg-0 mt-4">
                                                               
-                                                              {element?.order_status === "delivered" && (
-                                                                <h6 className="mt-auto">
-                                                                  <Link className="text-dark"> 
-                                                                      Submit Review
-                                                                   </Link>
-                                                                </h6>
-                                                              )}
+                                                              
                                                            </div>
                                                         </div>
                                                        </div>
                                                         )
                                                    })}
-                                                
-                                                    
-
+                                                {element?.order_status === "delivered" && (
+                                                      <h6 className="mt-auto ms-3 mb-1">
+                                                        
+                                                        <Link className="text-dark" onClick={()=>setSubRevToggle(true)} > 
+                                                            Submit Review
+                                                         </Link>
+                                                      </h6>
+                                                    )}
                                                </div>
                                              </div>
                                              )
@@ -786,39 +804,85 @@ const MyProfile = () => {
       </section>
 
 
-      
+      {/* ****************** Submit Review Popup ************* */}
+      <section>
+        <div>
+        <Modal size='lg' show={subRevToggle} onHide={()=>setSubRevToggle(false)} style={{borderRadius:'0'}}  aria-labelledby="contained-modal-title-vcenter" centered>
+           <Modal.Header closeButton className='border-0 pb-0'>
+           </Modal.Header>
+           <Modal.Body className='pt-1 px-0'>
+           <div className=''>
+               <div>
+                   <div className='px-4'>
+                      <h6 className='ds_600 mb-0'>Overall Rating</h6>
+                      <FaStar className='me-1 ds_review-color' />
+                      <FaStar className='me-1 ds_review-color' />
+                      <FaStar className='me-1 ds_review-color' />
+                      <FaStar className='me-1 ds_review-color' />
+                      <FaStar className='me-1' />
+                   </div>
+                   <div className='ds_review-line mt-2'></div>
+                   <div className='px-4 mt-3'>
+                       <h6 className='ds_600 mb-0'>Add Photo or Video</h6>
+                       <div className='d-flex mt-2'>
+                           <div className='ds_review-inner position-relative'>
+                               <img src={require("../Img/dhruvin/ring.png")} alt="" width="100%"/>
+                               <IoMdClose className='ds_review-cancel-icon' />
+                           </div>
+                           <div className='ds_review-add'>
+                              <FiPlus className='ds_review-plus' />
+                           </div>
+                       </div>
+                   </div>
+                   <div className='ds_review-line mt-3'></div>
+                   <div className='px-4 mt-3'>
+                      <h6 className='ds_600 mb-0'>Feedback</h6>
+                      <div className="form-floating mt-2">
+                         <textarea className="form-control ds_review-area" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                         <label htmlFor="floatingTextarea">Write your feedback</label>
+                       </div>
+                       <div className='mt-4 pt-2 mb-2'>
+                          <button className='ds_review-submit '>Submit</button>
+                       </div>
+                   </div>
+               </div>
+              </div>
+           </Modal.Body>
+         </Modal>
+        </div>
+      </section>
 
       {/* ********************  Change Password Popup  ********* */}
       <section>
         <div>
-          <div className="modal fade" id="changePassword"  aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog  ds_return-popup  modal-dialog-centered">
-              <div className="modal-content" style={{borderRadius:'0'}}>
-                <div className="modal-header border-0 pb-0">
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div className="modal-body pt-0 px-5">
-                   <h4 className="modal-title text-center ds_color fw-bold" >Change Password</h4>
-                   <div className='mt-3'>
+        <Modal  className='p-0' show={changePassToggle} onHide={()=> setChangePassToggle(false)} aria-labelledby="contained-modal-title-vcenter" centered>
+           <Modal.Header className='border-0' closeButton>
+           </Modal.Header>
+           <Modal.Body className='pt-0 px-5 border-0'>
+           <h4 className="modal-title text-center ds_color fw-bold" >Change Password</h4>
+                   <form className='mt-3' onSubmit={ChangePassFormik.handleSubmit}>
                      <div className="row">
                          <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                              <div>
                                  <label htmlFor="" className='ds_600 mb-1'>Old Password</label>
-                                 <input type="text" className='ds_new-input' placeholder="Enter old password" />
+                                 <input type="text" name='Old_Pass' value={ChangePassFormik.values.Old_Pass} onChange={ChangePassFormik.handleChange} onBlur={ChangePassFormik.handleBlur} className='ds_new-input' placeholder="Enter old password" />
+                                 { ChangePassFormik.errors.Old_Pass &&  ChangePassFormik.touched.Old_Pass ? <p className='ds_new-danger mb-0'>{ChangePassFormik.errors.Old_Pass}</p> : null}
                              </div>
                          </div>
 
                          <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                              <div>
                                <label htmlFor="" className='ds_600 mb-1'>New Password</label>
-                               <input type="text" className='ds_new-input' placeholder="New password" />
+                               <input type="text" name='New_Pass' value={ChangePassFormik.values.New_Pass} onChange={ChangePassFormik.handleChange} onBlur={ChangePassFormik.handleBlur} className='ds_new-input' placeholder="New password" />
+                               { ChangePassFormik.errors.New_Pass &&  ChangePassFormik.touched.New_Pass ? <p className='ds_new-danger mb-0'>{ChangePassFormik.errors.New_Pass}</p> : null}
                              </div>
                          </div>
 
                          <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                              <div>
                                <label htmlFor="" className='ds_600 mb-1'>Confirm New Password</label>
-                               <input type="text" className='ds_new-input' placeholder="Enter new password" />
+                               <input type="text" name='Con_Pass' value={ChangePassFormik.values.Con_Pass} onChange={ChangePassFormik.handleChange} onBlur={ChangePassFormik.handleBlur} className='ds_new-input' placeholder="Enter new password" />
+                               { ChangePassFormik.errors.Con_Pass &&  ChangePassFormik.touched.Con_Pass ? <p className='ds_new-danger mb-0'>{ChangePassFormik.errors.Con_Pass}</p> : null}
                              </div>
                          </div>
                      </div>
@@ -826,16 +890,14 @@ const MyProfile = () => {
                        <div className="row justify-content-center">
                          <div className="col-xl-12 mt-5 mb-3">
                            <div>
-                              <button className='ds_new-save w-100' >Change Password</button>
+                              <button type='submit' className='ds_new-save w-100' >Change Password</button>
                            </div>
                          </div>
                        </div>
                      </div>
-                   </div>
-                </div>
-              </div>
-            </div>
-           </div>
+                   </form>
+           </Modal.Body>
+         </Modal>
         </div>
       </section>
 
