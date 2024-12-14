@@ -1,11 +1,11 @@
 import '../Css/Sujal/ProductDetail.css'
 import { Accordion, Col, Modal, Nav, Row } from "react-bootstrap";
 import video from '../Img/Sujal/ringvideo.mp4'
-import { useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import { GoHeart } from 'react-icons/go';
 import { FaAngleDown, FaShareAlt } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 import wishlist1 from '../Img/Sujal/wishlist1.png';
 import wishlist2 from '../Img/Sujal/wishlist2.png';
@@ -15,11 +15,51 @@ import watch2 from '../Img/Sujal/w2.png';
 import watch3 from '../Img/Sujal/w3.png';
 import watch4 from '../Img/Sujal/w4.png';
 import watch5 from '../Img/Sujal/w5.png';
+import noteContext from '../Context/noteContext';
+import axios from 'axios';
 function ProductDetail() {
-    const inStock = true;
-    const category = '';
 
-    
+    const { id } = useParams();
+    let [inStock, setInStock] = useState(true);
+    const category = '';
+    // backend connnectivity code here
+
+    const { Api, token } = useContext(noteContext);
+    const [product, setProduct] = useState([]);
+    useEffect(() => {
+        axios
+            .get(`${Api}/products/get/65`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .then((response) => {
+                const fetchedProducts = response?.data?.data || [];
+
+                // Update product state
+                setProduct(fetchedProducts);
+
+                // Check stock availability
+                if (fetchedProducts.qty <= 0) {
+                    setInStock(false);
+                }
+
+                // Filter products based on metal_color
+
+            })
+            .catch((error) => {
+                console.error("Error fetching products:", error);
+            });
+    }, [id, token, Api]);
+    // console.log('qty', inStock);
+    useEffect(() => {
+
+    }, [product])
+
+    // backend connnectivity code oevr here
+
+
+
     // video handdler
     const [controlsVisible, setControlsVisible] = useState(false);
     const videoRef = useRef(null);
@@ -38,7 +78,17 @@ function ProductDetail() {
 
 
     //  size handler 
+    // const color = [{ name: 'rose-gold', code: '#B76E79' }, { name: 'gold', code: '#FFD700' }, { name: 'silver', code: '#C0C0C0' }, { name: 'platinum', code: '#e5e4e2' }, { name: 'white-gold', code: '#FFFFF4' }, { name: 'yellow-gold', code: '##FFDF00' }]
+    // if (product.metal_color) {
+    //     const fliterData = color.filter((color) => color.name === product.metal_color);
+    //     console.log(fliterData);
+    // } else {
+    // }
+    // const filteredProducts = product?.filter((product) =>
+    //     color.some((c) => c.name === product.metal_color)
+    // );
 
+    // console.log("Filtered Products:", filteredProducts);
     const [size, setSize] = useState(5);
 
     const sizeData = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
@@ -71,7 +121,6 @@ function ProductDetail() {
             { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: watch5 },
         ]
     }
-
     return (
         <>
             <section className="s_prodetail_page ds_container">
@@ -127,7 +176,7 @@ function ProductDetail() {
                                 <GoHeart />
                                 <FaShareAlt />
                             </div>
-                            <h3 className='s_title'>Dual Tone Halo Diamond Finger Ring</h3>
+                            <h3 className='s_title text-capitalize'>{product?.product_name}</h3>
                             <div className='s_rating'>
                                 {
                                     [...Array(5)].map((_, index) => {
@@ -141,39 +190,29 @@ function ProductDetail() {
                                 }
                             </div>
                             <div className='d-flex align-items-center'>
-                                <h2 className='s_price'>₹141268.00</h2>
+                                <h2 className='s_price'>{product?.price}</h2>
                                 {inStock !== true ? <div className='s_stock_status'>out of stack</div> : ''}
-
                             </div>
-                            <p className='s_description'>Make a statement with this 18 Karat white and rose gold Finger Ring, featuring a dazzling central Diamond surrounded by two halos of real Diamonds.
-                                Perfect for engagements or special occasions, this real Diamond Finger Ring brings together modern sophistication and classic charm, making it a truly memorable piece</p>
+                            <p className='s_description'>{product?.description}</p>
 
                             {category !== 'Watch' ? <>
-                                <div className='s_metal_option d-flex justify-content-between'>
+                                <div className='s_metal_option d-flex justify-content-between text-capitalize'>
                                     <div>
                                         <h5>Metal Color</h5>
-                                        <Nav variant="pills" defaultActiveKey="link-0">
+                                        <div variant="pills" defaultActiveKey="link-0" className='nav'>
                                             <Nav.Item>
-                                                <Nav.Link eventKey="link-0">
-                                                    <div className='s_color' style={{ background: '#F1C3A6' }}></div>
-                                                    Rose</Nav.Link>
-                                            </Nav.Item>
-                                            <Nav.Item>
-                                                <Nav.Link eventKey="link-1">
-                                                    <div className='s_color' style={{ background: '#EDCD90' }}></div>
-                                                    Gold
+                                                <Nav.Link eventKey="link-0" className='active'>
+                                                    <div className='s_color' style={{ background: 'Rose' }}></div>
+                                                    {product?.metal_color}
                                                 </Nav.Link>
                                             </Nav.Item>
-                                        </Nav>
+                                        </div>
                                     </div>
                                     <div>
                                         <h5>Metal</h5>
                                         <Nav variant="pills" defaultActiveKey="link-0">
                                             <Nav.Item>
-                                                <Nav.Link eventKey="link-0">14 K Gold</Nav.Link>
-                                            </Nav.Item>
-                                            <Nav.Item>
-                                                <Nav.Link eventKey="link-1">18 K Gold</Nav.Link>
+                                                <Nav.Link eventKey="link-0">{product?.metal}</Nav.Link>
                                             </Nav.Item>
                                         </Nav>
                                     </div>
@@ -194,13 +233,11 @@ function ProductDetail() {
                                     <div>
                                         <h4>Diamond Quality</h4>
                                         <div className='s_box d-flex  align-items-center'>
-                                            <span>FG - VVS - VS</span>
+                                            <span>{product?.metal}</span>
                                         </div>
                                     </div>
                                 </div>
-
                             </> :
-
                                 ''}
 
                             <div className='s_pincode'>

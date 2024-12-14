@@ -6,6 +6,11 @@ import { useFormik } from 'formik';
 
 
 const UseContext = (props) => {
+// acces token form localstores
+let store = JSON.parse(localStorage.getItem("Login"))
+
+
+
   const [allCategory,setAllCatgegory] = useState([]);
   const [allSubCategory, setAllSubCategory] = useState([]);
   const [allProduct, setAllProduct] = useState([]);
@@ -13,7 +18,7 @@ const UseContext = (props) => {
   const Api = 'https://shreekrishnaastrology.com/api'
 
   
-  const token = "180|ls2n8Yy2XCsrpJ0SAF0wjvTpQmrHosp1q8GzMb9mc0508976";
+  const token = store?.access_token;
 
   useEffect(() => {
     // fetch catgory
@@ -57,17 +62,17 @@ const UseContext = (props) => {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  },[]);
+  },[token]);
 
 
   // ************ My Profile **********
-  let store = JSON.parse(localStorage.getItem("Login"))
+  // let store = JSON.parse(localStorage.getItem("Login"))
 
   const [profileData, setProfileData] = useState([])
   const [editToggle, setEditToggle] = useState(false)
 
   useEffect(()=>{
-    axios.get(`${Api}/user/get/${store?.id}` ,{
+    axios.get(`${Api}/user/get/${store?.id}`,{
       headers: {
         Authorization: `Bearer ${store?.access_token}`
       }
