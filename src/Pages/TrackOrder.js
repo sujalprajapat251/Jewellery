@@ -14,17 +14,18 @@ const [trackId, setTrackId] = useState(null)
 
 let data = JSON.parse(localStorage.getItem("TrackOrder")) || [];
 
-console.log("TrackData ", data);
+// console.log("TrackData ", data);
 
 const handleCancelOrder = (id) => {
      setTrackPopup(true)
-     setTrackId(id)
+     setTrackId(id)     
 }
 
 
-// ********** Reason For Cencellation **********
+// ********** Reason For Cencellation Popup **********
 
 const [reasonPopData, setReasonPopData] = useState([])
+const [checkData, setCheckData] = useState("")
 
 useEffect(()=>{
   axios.get(`${Api}/reasonCancellation/getall`,{
@@ -36,6 +37,30 @@ useEffect(()=>{
     setReasonPopData(value?.data?.reasonCancellation.filter((element)=> element.status === 'active'))
   })
 },[])
+
+
+// ************* Order cancelled Popup ************ 
+const [orderCancel, setOrderCancel] = useState(false)
+
+const handleContinue = () => {
+     setTrackPopup(false)
+     setOrderCancel(true)
+
+     axios.post(`${Api}/order/updatestatus/${trackId}`,{
+      order_status:'cancelled',
+      reason:checkData
+     } ,
+     {
+      headers: {
+        Authorization: `Bearer ${store?.access_token}`
+      }
+     }
+     ).then((value)=>{
+       console.log("Response " , value);
+     }).catch((error)=>{
+       alert(error)
+     })  
+}
 
   return (
     <>
@@ -100,6 +125,8 @@ useEffect(()=>{
                     <div className='ds_track-overflow mt-4'>
                         <div className='ds_track-box '>
                            { data?.map((element , index)=>{
+                            console.log(element);
+                            
                              return (
                                         <div key={index}> 
                                           <div className='px-4'>
@@ -206,15 +233,17 @@ useEffect(()=>{
                          <h4 className='text-center ds_color'>Reason for Cancellation</h4>
                          <div className='mt-4 pt-2'>
                             {reasonPopData?.map((element , index)=>{
+                              //  console.log("resDAta " , element);
+                               
                               return (
                                   <div key={index} className='d-flex justify-content-between mb-2'>
                                     <label className="form-check-label ds_cancel-label ds_600" htmlFor="exampleRadios1">{element?.name}</label>
-                                    <input className=" ds_cancel-check" type="radio" name="exampleRadios" id="exampleRadios1" value="option1"/>
+                                    <input className=" ds_cancel-check" onClick={()=> setCheckData(element?.name)} type="radio" name="exampleRadios" id="exampleRadios1" value="option1"/>
                                   </div>
                               )
                             })}
                             <div className='text-ceter mx-4 mt-4 pt-3 mb-3'>
-                                <button className='ds_cancel-btn' data-bs-toggle="modal" data-bs-target="#cancelled">Continue</button>
+                                <button className='ds_cancel-btn' onClick={()=> handleContinue()}>Continue</button>
                             </div>
                          </div>
                        </div>
@@ -226,30 +255,21 @@ useEffect(()=>{
       {/* ************* Order cancelled ************ */}
       <section>
         <div>
-             <div className="modal fade" id="cancelled" aria-labelledby="exampleModalLabel" aria-hidden="true">
-               <div className="modal-dialog ds_cancel-dialog modal-dialog-centered">
-                 <div className="modal-content">
-                   <div className="modal-header pb-0 border-0">
-                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                   </div>
-                   <div className="modal-body pt-0 px-4">
-                       <div>
-                         <h4 className='text-center ds_color'>Order Cancelled</h4>
-                         <div className='mt-4 pt-3'>
-                            <div className='text-center'>
-                               <img src={require("../Img/dhruvin/order-cancel.png")} alt="" width="40%" />
-                               <h6 className='ds_tcolor mt-4'>Your order has been cancelled successfully.</h6>
-                            </div>
-                            <div className='text-ceter mx-4 mt-4 pt-3 mb-3'>
-                                <button className='ds_cancel-btn'>Back To Home</button>
-                            </div>
-                         </div>
-                       </div>
-                   </div>
-                   
-                 </div>
-               </div>
-            </div>
+        <Modal show={orderCancel} onHide={()=> setOrderCancel(false)} aria-labelledby="contained-modal-title-vcenter" centered>
+           <Modal.Header closeButton>
+             <Modal.Title id="contained-modal-title-vcenter">
+               Modal heading
+             </Modal.Title>
+           </Modal.Header>
+           <Modal.Body>
+             <h4>Centered Modal</h4>
+             <p>
+               Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
+               dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
+               consectetur ac, vestibulum at eros.
+             </p>
+           </Modal.Body>
+        </Modal>
         </div>
       </section>
 
