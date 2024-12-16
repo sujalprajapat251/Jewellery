@@ -181,6 +181,7 @@
 }
 .s_seller_cards .s_card_img img {
     max-height: 250px;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
 }
 

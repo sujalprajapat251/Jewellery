@@ -1,5 +1,5 @@
 import '../Css/Sujal/Home.css';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
@@ -28,7 +28,7 @@ import noteContext from '../Context/noteContext';
 
 function Home() {
     // backend connection code
-    const { allCategory } = useContext(noteContext);
+    const { allCategory,allProduct } = useContext(noteContext);
 
     // cat slideer responsive
     const cat_sliderres = {
@@ -52,20 +52,27 @@ function Home() {
     }
 
     // card detail slideer responsive
-    const card_detail = [
-        { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: seller1 },
-        { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: seller2 },
-        { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: seller3 },
-        { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: seller4 },
-        { title: 'Dimond Set', price: '1200', old_price: '1500', rating: 1, img: seller5 },
-        { title: 'Dimond Earring', price: '1200', old_price: '1500', rating: 5, img: seller6 },
-        { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, img: seller7 },
-        { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 1, img: seller8 },
-        { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: seller9 },
-        { title: 'Dimond Set', price: '1200', old_price: '1500', rating: 5, img: seller10 },
-        { title: 'Dimond Earring', price: '1200', old_price: '1500', rating: 2, img: seller11 },
-        { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 1, img: seller12 },
-    ]
+    const [bestSeller,setBestSeller] = useState([])
+    useEffect(()=>{
+    console.log(allProduct);
+    const data = allProduct.filter((product)=> product?.collection === 'best seller')
+    // console.log(data)
+    setBestSeller(data)
+    },[allProduct])
+    // const card_detail = [
+    //     { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: seller1 },
+    //     { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: seller2 },
+    //     { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: seller3 },
+    //     { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: seller4 },
+    //     { title: 'Dimond Set', price: '1200', old_price: '1500', rating: 1, img: seller5 },
+    //     { title: 'Dimond Earring', price: '1200', old_price: '1500', rating: 5, img: seller6 },
+    //     { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, img: seller7 },
+    //     { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 1, img: seller8 },
+    //     { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: seller9 },
+    //     { title: 'Dimond Set', price: '1200', old_price: '1500', rating: 5, img: seller10 },
+    //     { title: 'Dimond Earring', price: '1200', old_price: '1500', rating: 2, img: seller11 },
+    //     { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 1, img: seller12 },
+    // ]
     return (
         <>
             <section className='s_slider'>
@@ -127,7 +134,7 @@ function Home() {
                         <OwlCarousel className='owl-theme' loop margin={10} items={7} nav={true} responsive={cat_sliderres} dots={false} autoplay autoplayTimeout={3000} autoplayHoverPause>
                             {allCategory.map((ele, id) => {
                                 return (
-                                    <Link className='item' key={id} to={'/productlist/' + ele.id}>
+                                    <Link className='item' key={id} to={`/productlist/category/${ele.id}`}>
                                         <img src={ele.image} alt=''></img>
                                         <h4>{ele.name}</h4>
                                     </Link>
@@ -143,39 +150,36 @@ function Home() {
                     </div>
                     <Row xxl={6} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
                         {
-                            card_detail.map((ele, id) => {
+                           bestSeller.slice(0,12).map((ele, id) => {
                                 return (
                                     <Col key={id} className='py-4'>
                                         <div className='s_seller_card'>
-                                            <Link to={'/productlist'} >
-                                                <div className='s_card_img'>
-                                                    <img src={ele.img} className="w-100" alt={ele.title} key={ele.title} />
-                                                </div>
-                                                <div className='s_heart_icon'>
-                                                    <GoHeart />
-                                                </div>
-                                                {ele.status ?
-                                                    <div className='s_card_status'><p className='mb-0'>{ele.status}</p></div>
-                                                    : ''}
-                                                <div className='s_card_text'>
-                                                    <h5>{ele.title}</h5>
-                                                    <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.old_price}</strike></p>
-                                                    <div className='s_rating'>
-                                                        {
-                                                            [...Array(5)].map((_, index) => {
-                                                                if (index < ele.rating) {
-                                                                    return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                                } else {
-                                                                    return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                                    ;
-                                                                }
-                                                            })
-                                                        }
+                                                <Link to={`/productdetail/${ele.id}`}>
+                                                    <div className='s_card_img'>
+                                                        <img src={ele.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
                                                     </div>
-                                                    <Link></Link>
-                                                </div>
-                                            </Link>
-                                        </div>
+                                                    {ele.gender ?
+                                                        <div className='s_card_status'><p className='mb-0'>{ele.metal_color}</p></div>
+                                                        : ''}
+                                                    <div className='s_card_text'>
+                                                        <h5>{ele.product_name}</h5>
+                                                        <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.discount}</strike></p>
+                                                        <div className='s_rating'>
+                                                            {
+                                                                [...Array(5)].map((_, index) => {
+                                                                    if (index < 0) {
+                                                                        return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                    } else {
+                                                                        return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                                        ;
+                                                                    }
+                                                                })
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </Link>
+
+                                            </div>
                                     </Col>
                                 )
                             })

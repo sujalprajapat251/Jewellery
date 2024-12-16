@@ -1,6 +1,8 @@
 
 
-
+.s_product_img {
+    cursor: pointer;
+}
 .s_product_img img {
     width: 50%;
     object-fit: cover;
@@ -8,7 +10,7 @@
 }
 .s_product_img .s_product_video{
     width: 50%;
-    height: same-as-width;
+    aspect-ratio: 1 / 1 !important;  
     object-fit: cover;
     padding: 10px;
     position: relative;
