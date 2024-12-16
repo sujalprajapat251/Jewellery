@@ -1,16 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../Css/dhruvin/TrackOrder.css'
 import ReviewFeedback from './ReviewFeedback'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import noteContext from '../Context/noteContext'
 import { Button, Modal } from 'react-bootstrap'
 import axios from 'axios'
 
 const TrackOrder = () => {
 
-const {trackData , Api , store} = useContext(noteContext)
+const { Api , store} = useContext(noteContext)
 const [trackPopup, setTrackPopup] = useState(false)
 const [trackId, setTrackId] = useState(null)
+const navigate = useNavigate()
 
 let data = JSON.parse(localStorage.getItem("TrackOrder")) || [];
 
@@ -43,23 +44,29 @@ useEffect(()=>{
 const [orderCancel, setOrderCancel] = useState(false)
 
 const handleContinue = () => {
-     setTrackPopup(false)
-     setOrderCancel(true)
-
-     axios.post(`${Api}/order/updatestatus/${trackId}`,{
-      order_status:'cancelled',
-      reason:checkData
-     } ,
-     {
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`
-      }
+     if(checkData){
+        
+        setTrackPopup(false)
+        setOrderCancel(true)
+   
+        axios.post(`${Api}/order/updatestatus/${trackId}`,{
+         order_status:'cancelled',
+         reason:checkData
+        } ,
+        {
+         headers: {
+           Authorization: `Bearer ${store?.access_token}`
+         }
+        }
+        ).then((value)=>{
+          console.log("Response " , value);
+        }).catch((error)=>{
+          alert(error)
+        })  
      }
-     ).then((value)=>{
-       console.log("Response " , value);
-     }).catch((error)=>{
-       alert(error)
-     })  
+     else{
+      alert("Please check all at once")
+     }
 }
 
   return (
@@ -256,18 +263,20 @@ const handleContinue = () => {
       <section>
         <div>
         <Modal show={orderCancel} onHide={()=> setOrderCancel(false)} aria-labelledby="contained-modal-title-vcenter" centered>
-           <Modal.Header closeButton>
-             <Modal.Title id="contained-modal-title-vcenter">
-               Modal heading
-             </Modal.Title>
+           <Modal.Header className='pb-0 border-0' closeButton>
+             
            </Modal.Header>
-           <Modal.Body>
-             <h4>Centered Modal</h4>
-             <p>
-               Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-               dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-               consectetur ac, vestibulum at eros.
-             </p>
+           <Modal.Body className='pt-0 px-5'>
+                <div className='text-center'>
+                   <h3 className='ds_color fw-bold'>Order Cancelled</h3>
+                   <div className='mt-5'>
+                     <img src={require("../Img/dhruvin/order-cancel.png")} alt="" width="50%" />
+                   </div>
+                   <h5 className='ds_tcolor mt-3'>Your order has been cancelled successfully.</h5>
+                   <div>
+                     <button onClick={()=>navigate("/")} className='ds_cancel-btn mb-3 mt-sm-5 mt-4'>Back To Home</button>
+                   </div>
+                </div>
            </Modal.Body>
         </Modal>
         </div>

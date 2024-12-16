@@ -351,7 +351,6 @@ const ChangePassFormik = useFormik({
 
 
 // *************** Track Order Page ************
-const [trackData, setTrackData] = useState([])
 
 const handleTrackOrder = (data) => {
    let filter = filteredOrders?.filter((element)=>{
@@ -396,6 +395,17 @@ useEffect(()=>{
 },[])
 
 
+
+// ************** Return Order *********
+
+const handleReturnOrder = (customer) => {
+    localStorage.setItem( "ReturnOrder" , JSON.stringify(customer))
+};
+
+useEffect(()=>{
+   
+},[])
+
   return (
     <noteContext.Provider value={{ allCategory,allProduct,allSubCategory,token,
 
@@ -426,7 +436,10 @@ useEffect(()=>{
       mainFaq,subFaq,setSubFaq ,
 
     // *************** Track Order Page ************
-      handleTrackOrder , trackData
+      handleTrackOrder , 
+
+      // ************** Return Order *********
+      handleReturnOrder 
  
       
       }}>

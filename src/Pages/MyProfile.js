@@ -4,7 +4,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs'
 import { IoBagHandleOutline } from 'react-icons/io5';
 import { GoHome } from 'react-icons/go';
 import { FaRegTrashAlt, FaStar } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
 import { Modal } from 'react-bootstrap';
 import { FiPlus } from 'react-icons/fi';
@@ -32,9 +32,13 @@ const MyProfile = () => {
      orderMain,filteredOrders, setFilteredOrders,handleTrackOrder,
 
     //  ******** Change Password **********
-    changePassToggle, setChangePassToggle ,ChangePassFormik 
+    changePassToggle, setChangePassToggle ,ChangePassFormik ,
+
+    // ************ Return Order ***********
+    handleReturnOrder
 
     } = useContext(noteContext) 
+
 
     
     function capitalizeFirstLetter(val) {
@@ -61,6 +65,10 @@ const MyProfile = () => {
          setFilteredOrders(filterData);
        }
     };
+
+
+
+    
 
 
   // **********  Submit Review Popup  ********
@@ -672,7 +680,7 @@ const MyProfile = () => {
                                       <button onClick={()=>handleFilter("All")} className={`ds_order-all ${activeBtn === "All" ? 'ds_order-active-btn' :''} me-2`}>All</button>
                                       <button onClick={()=>handleFilter("pending")} className={`ds_order-prog ${activeBtn === "pending" ? 'ds_order-active-btn' :''} me-2`}>In Progress</button>
                                       <button onClick={()=>handleFilter("delivered")} className={`ds_order-prog ${activeBtn === "delivered" ? 'ds_order-active-btn' :''} me-2`}>Delivered</button>
-                                      <button onClick={()=>handleFilter("Cancelled")} className={`ds_order-prog ${activeBtn === "Cancelled" ? 'ds_order-active-btn' :''} me-2`}>Cancelled</button>
+                                      <button onClick={()=>handleFilter("cancelled")} className={`ds_order-prog ${activeBtn === "cancelled" ? 'ds_order-active-btn' :''} me-2`}>Cancelled</button>
                                   </div>
                               </div>
                               <div className='ds_order-bg mt-4'>
@@ -705,7 +713,7 @@ const MyProfile = () => {
                                                <div className="ds_order-inner">
                                                 <div className="d-flex flex-wrap ds_order-flex align-items-center">
                                                   <div className="d-flex flex-wrap px-3 pt-2">
-                                                    <p className={`${element?.order_status === "pending" ? 'ds_order-progress' : ''} ${element?.order_status === "delivered" ? 'ds_order-deliver' : ''} ${element?.order_status === "Cancelled" ? 'ds_order-cencel' : ''} mb-0`}>{capitalizeFirstLetter(element?.order_status)}</p>
+                                                    <p className={`${element?.order_status === "pending" ? 'ds_order-progress fw-bold' : ''} ${element?.order_status === "delivered" ? 'ds_order-deliver fw-bold' : ''} ${element?.order_status === "cancelled" ? 'ds_order-cencel fw-bold' : ''} mb-0`}>{capitalizeFirstLetter(element?.order_status)}</p>
                                                     <p className="ds_order-text ds_600 mb-0">{element?.order_date}</p>
                                                     <p className="ds_order-order mb-0">
                                                       <span className="text-muted">Order Id : </span>
@@ -726,7 +734,7 @@ const MyProfile = () => {
 
                                                   {
                                                     element?.order_status === "delivered" ? (
-                                                        <Link  to='/ReturnOrder' className="text-dark ds_600 pe-3 ms-lg-0 ms-3" >
+                                                        <Link  to='/returnOrder'  onClick={() => handleReturnOrder(element)} className="text-dark ds_600 pe-3 ms-lg-0 ms-3" >
                                                             Return Order
                                                         </Link>
                                                     ) : ("")

@@ -47,7 +47,7 @@
     width: 160px;
 }
 .ds_track-margin{
-    margin-right: 120px;
+    margin-right: 160px;
 }
 
 /* {************* Cancel Order Popup ************} */
@@ -73,6 +73,9 @@
    .ds_track-cancel{
     padding: 7px 38px;
    } 
+   .ds_track-margin{
+     margin-right: 100px;
+   }
 }
 
 @media (max-width:1200px) {
@@ -90,6 +93,9 @@
         white-space: nowrap;
         width: 1000px;
     }
+    .ds_track-margin{
+        margin-right: 35px;
+      }
     
     
 }

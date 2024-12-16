@@ -5,7 +5,7 @@ import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 import { FaArrowRight, FaBars } from 'react-icons/fa';
 import { useContext, useEffect, useRef, useState } from 'react';
 import noteContext from '../Context/noteContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Highlighter from 'react-highlight-words';
 import axios from 'axios';
 import { useFormik } from 'formik';
@@ -17,7 +17,8 @@ import { ForgetPassSchema, LoginSchema } from '../schemas';
 
 
 function Header() {
-    const {Api , allProduct, allSubCategory } = useContext(noteContext);
+    const {Api , allProduct, allSubCategory , store } = useContext(noteContext);
+    const navigate =  useNavigate()
     // menu catgegory handller
     const [goldSubcate, setGoldSubcate] = useState([]);
     const [silverSubcate, setSilverSubcate] = useState([]);
@@ -150,6 +151,11 @@ function Header() {
             })
             .then((value)=>{
                 console.log("LoginRes" , value.data); 
+                if(value){
+                    alert("Login SuccessFully");
+                    setShowLogin(false)
+                    navigate("/myprofile")
+                }
                 localStorage.setItem("Login", JSON.stringify(value.data.result))
             }).catch((error)=>{
                 alert(error)
@@ -253,24 +259,24 @@ function Header() {
     const ReserPassFormik = useFormik({
         initialValues:ResetPassVal,
         onSubmit: (values , action) => {
-            
+            axios.post(`${Api}/password/reset/${storeOtp}`, {
+                new_password:values.newPass,
+                confirm_password:values.conPass
+                
+            }).then((value)=>{
+                console.log("ResetPassRes" , value.data); 
+                handleResetPassClose()
+                handleLoginShow();
+            }).catch((error)=>{
+                alert(error)
+            }) 
+
+            action.resetForm();
         }
     })
 
     const handleResetPassword = (e) => {
         e.preventDefault();
-
-        axios.post(`${Api}/password/reset/${storeOtp}`, {
-            new_password:resetPassVal.newPass,
-            confirm_password:resetPassVal.conPass
-            
-        }).then((value)=>{
-            console.log("ResetPassRes" , value.data); 
-            handleResetPassClose()
-            handleLoginShow();
-        }).catch((error)=>{
-            alert(error)
-        }) 
     }
 
     // SignUp Model
@@ -328,10 +334,17 @@ function Header() {
                         <IoCartOutline />
                         <p className='mb-0'>Cart</p>
                     </Link>
-                    <Link to={'#'} className='s_header_icon' onClick={handleLoginShow}>
-                        <IoPersonOutline />
-                        <p className='mb-0'>Account</p>
-                    </Link>
+                    {
+                        store ? (<Link to={'/myprofile'} className='s_header_icon'>
+                            <IoPersonOutline />
+                            <p className='mb-0'>My Pofile</p>
+                        </Link>) :
+                        (<Link to={'#'} className='s_header_icon' onClick={handleLoginShow}>
+                            <IoPersonOutline />
+                            <p className='mb-0'>Account</p>
+                        </Link>)
+                    }
+                    
                     <Link to={'#'} className=' d-lg-none d-flex align-items-center fs-2 s_bar_icon' onClick={handleShow}>
                         <FaBars />
                     </Link>
