@@ -23,37 +23,50 @@ function ProductDetail() {
     let [inStock, setInStock] = useState(true);
     const category = '';
     // backend connnectivity code here
+    const [size, setSize] = useState(5);
 
+    const sizeData = [];
     const { Api, token } = useContext(noteContext);
     const [product, setProduct] = useState([]);
     useEffect(() => {
-        axios
-            .get(`${Api}/products/get/65`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+        axios.get(`${Api}/products/get/65`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
             .then((response) => {
                 const fetchedProducts = response?.data?.data || [];
 
-                // Update product state
                 setProduct(fetchedProducts);
 
-                // Check stock availability
                 if (fetchedProducts.qty <= 0) {
                     setInStock(false);
                 }
-
-                // Filter products based on metal_color
-
             })
             .catch((error) => {
                 console.error("Error fetching products:", error);
             });
+        // fetch size data
+
     }, [id, token, Api]);
     // console.log('qty', inStock);
+    const [sizeArray, setSizeArray] = useState([]);
     useEffect(() => {
-
+        console.log("Fetched products", product.size_id);
+        axios.get(`${Api}/sizes/get/2`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((response) => {
+                console.log(response.data.size);
+                const array = response.data.size.split(',').map(Number);
+            setSizeArray(array);
+            console.log(array.length);
+            })
+            .catch((error) => {
+                console.error("Error fetching products:", error);
+            });
     }, [product])
 
     // backend connnectivity code oevr here
@@ -77,21 +90,17 @@ function ProductDetail() {
     }
 
 
-    //  size handler 
-    // const color = [{ name: 'rose-gold', code: '#B76E79' }, { name: 'gold', code: '#FFD700' }, { name: 'silver', code: '#C0C0C0' }, { name: 'platinum', code: '#e5e4e2' }, { name: 'white-gold', code: '#FFFFF4' }, { name: 'yellow-gold', code: '##FFDF00' }]
-    // if (product.metal_color) {
-    //     const fliterData = color.filter((color) => color.name === product.metal_color);
-    //     console.log(fliterData);
-    // } else {
-    // }
-    // const filteredProducts = product?.filter((product) =>
-    //     color.some((c) => c.name === product.metal_color)
-    // );
+    //  size handler  and color
+    const color = [{ name: 'rose', code: '#B76E79' }, { name: 'gold', code: '#FFD700' }, { name: 'silver', code: '#C0C0C0' }, { name: 'platinum', code: '#e5e4e2' }, { name: 'white-gold', code: '#FFFFF4' }, { name: 'yellow-gold', code: '##FFDF00' }]
+    let metalColor = [];
+    if (product.metal_color) {
+        metalColor = color?.filter((color) => {
+            return product.metal_color.includes(color.name);
+        });
+    }
+    // console.log(metalColor);
 
-    // console.log("Filtered Products:", filteredProducts);
-    const [size, setSize] = useState(5);
 
-    const sizeData = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 
 
     // other detail nav-tabe handller {}
@@ -202,7 +211,7 @@ function ProductDetail() {
                                         <div variant="pills" defaultActiveKey="link-0" className='nav'>
                                             <Nav.Item>
                                                 <Nav.Link eventKey="link-0" className='active'>
-                                                    <div className='s_color' style={{ background: 'Rose' }}></div>
+                                                    <div className='s_color' style={{ background: `${metalColor[0]?.code}` }}></div>
                                                     {product?.metal_color}
                                                 </Nav.Link>
                                             </Nav.Item>
@@ -224,7 +233,7 @@ function ProductDetail() {
                                             <p className='mb-0'>{size}</p>
                                             <FaAngleDown className='ms-auto' />
                                             <div className='s_size_menu'>
-                                                {sizeData.map((item) => {
+                                                {sizeArray.map((item) => {
                                                     return <div className={`s_size_box ${item === size ? 'active' : ''}`} onClick={() => { setSize(item) }}>{item}</div>
                                                 })}
                                             </div>
@@ -233,7 +242,7 @@ function ProductDetail() {
                                     <div>
                                         <h4>Diamond Quality</h4>
                                         <div className='s_box d-flex  align-items-center'>
-                                            <span>{product?.metal}</span>
+                                            <span>{product?.diamond_quality}</span>
                                         </div>
                                     </div>
                                 </div>
