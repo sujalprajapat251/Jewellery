@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import { GoHeart } from 'react-icons/go';
 import { FaAngleDown, FaShareAlt } from 'react-icons/fa';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 import wishlist1 from '../Img/Sujal/wishlist1.png';
 import wishlist2 from '../Img/Sujal/wishlist2.png';
@@ -18,7 +18,7 @@ import watch5 from '../Img/Sujal/w5.png';
 import noteContext from '../Context/noteContext';
 import axios from 'axios';
 function ProductDetail() {
-
+    const navigate = useNavigate();
     const { id } = useParams();
     let [inStock, setInStock] = useState(true);
     const category = '';
@@ -51,13 +51,14 @@ function ProductDetail() {
                 console.error("Error fetching products:", error);
             });
 
-    }, [id, token, Api]);
+    }, [id]);
 
     // size haddler
     const [size, setSize] = useState('');
     const [sizeArray, setSizeArray] = useState([]);
     const [reviews, setReviews] = useState([]);
     const [youAlsoLike, setYouAlsoLike] = useState([]);
+    const [offers, setOffers] = useState([]);
     useEffect(() => {
         // console.log("Fetched products", product.size_id);
         // fetch size data
@@ -93,21 +94,54 @@ function ProductDetail() {
         const youAlso = allProduct.filter((item) => item.category_id === product.category_id)
         setYouAlsoLike(youAlso);
 
+
+        // offer handling code and fetch offers data
         axios.get(`${Api}/productoffers/getall`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-            }).then((response) => { console.log(response.data.productOffers); })
+            }).then((response) => {
+                const offersData = response.data.productOffers.filter((offer) => offer.product_id === parseInt(id));
+                setOffers(offersData);
+                ;
+            })
     }, [product])
-
-
+    // addto card handler
+    const [addToCard,setAddToCard] = useState(true);
+    const addCardHandle = () => {
+        if (addToCard) {
+            var data = { product: product, offers: selectedOffers, size: size, }
+            // const cardDetail = JSON.parse(localStorage.getItem('cardDetail')) || [];
+            localStorage.setItem('cardDetail', JSON.stringify(data));
+            console.log(data);
+            // addCard = false;
+            setAddToCard(false);
+        }
+        // console.log(addCard);
+    }
     // backend connnectivity code oevr here ////////////////////////////////
 
+    // offer handling code 
+    const [selectedOffers, setSelectedOffers] = useState([]);
 
-    // offer handling code
+    const handleOfferSelect = (offer, e) => {
+        const parent = e.target.closest('.s_parent');
 
+        const isChecking = selectedOffers.find((item) => item.id === offer.id);
 
+        if (isChecking) {
+            const data = selectedOffers.filter((item) => item.id !== offer.id);
+            setSelectedOffers(data);
+            console.log("Updated Offers:", data);
+            parent.classList.remove('s_light_brown');
+        } else {
+            const offers = [...selectedOffers, offer];
+            console.log("Updated Offers:", offers);
+            setSelectedOffers(offers);
+            parent.classList.add('s_light_brown');
+        }
+    }
 
 
 
@@ -157,8 +191,10 @@ function ProductDetail() {
     // you also like product
 
 
-
-
+    // ------------------------
+    const sub_total =(parseFloat(product?.price)+parseFloat(product?.stone_price))/parseFloat(product.making_charge)*100 || '-';
+    const gst_total = sub_total*3/100;
+    const great_total = sub_total+gst_total;
     return (
         <>
             <section className="s_prodetail_page ds_container">
@@ -173,7 +209,7 @@ function ProductDetail() {
                                         Your browser does not support the video tag.
                                     </video>
                                 ) : (
-                                    <img src={thumbnail} alt="thumbnail" className="w-100 object-fit-cover h-100" />
+                                    <img src={thumbnail} alt="thumbnail" className="w-100 object-fit-cover " />
                                 );
                             })()
                             :
@@ -211,18 +247,17 @@ function ProductDetail() {
                                 className="owl-theme"
                                 margin={20}
                                 nav
-                                loop
                                 responsive={{
                                     0: {
                                         items: 4, // Show 4 items on very small screens
                                     },
                                     576: {
-                                        items:6 , // Safely use the length or default to 1
+                                        items: 6, // Safely use the length or default to 1
                                     },
                                 }}
                             >
                                 {product.images?.map((item, index) => {
-                                    
+
                                     const isVideo = /\.(mp4|webm|ogg)$/i.test(item);
                                     return (
                                         <div className='item ' key={index} >
@@ -242,7 +277,7 @@ function ProductDetail() {
                                                         />
                                                     </div>
                                                     :
-                                                    <img src={item} alt={`product-media-${index}`} className={ "w-100"} />}
+                                                    <img src={item} alt={`product-media-${index}`} className={"w-100"} />}
                                             </div>
                                         </div>
                                     );
@@ -281,7 +316,7 @@ function ProductDetail() {
                                 }
                             </div>
                             <div className='d-flex align-items-center'>
-                                <h2 className='s_price'>{product?.price}</h2>
+                                <h2 className='s_price'>₹{great_total  || product?.price}</h2>
                                 {inStock !== true ? <div className='s_stock_status'>out of stack</div> : ''}
                             </div>
                             <p className='s_description'>{product?.description}</p>
@@ -343,13 +378,24 @@ function ProductDetail() {
                                     <Accordion.Item eventKey="0">
                                         <Accordion.Header>Trending Offers</Accordion.Header>
                                         <Accordion.Body>
-                                            <div className='d-flex align-items-center'>
+                                            {offers.map((item, index) => {
+                                                return (
+                                                    <div key={index} className={`d-flex align-items-center s_parent px-2`} onClick={(e) => { handleOfferSelect(item, e) }}>
+                                                        <img src={item.image} alt='discount' />
+                                                        <div>
+                                                            <p className='mb-0'>{item?.name}</p>
+                                                            <span>{item?.description}</span>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })}
+                                            {/* <div className='d-flex align-items-center'>
                                                 <img src={require('../Img/Sujal/discount.png')} alt='discount' />
                                                 <div>
                                                     <p className='mb-0'>Get flat 12% discount</p>
                                                     <span>On your first order with us as new customer</span>
                                                 </div>
-                                            </div>
+                                            </div> */}
                                         </Accordion.Body>
                                     </Accordion.Item>
                                 </Accordion>
@@ -357,7 +403,11 @@ function ProductDetail() {
 
                             <div className='s_button_sec '>
                                 <div className='s_cart_btn'>
-                                    <Link to={'#'}>Add to cart</Link>
+                                    {!addToCard ? (
+                                        <Link to='/cart'>View Cart</Link>
+                                    ) : (
+                                        <Link to='#' onClick={addCardHandle}>Add to Cart</Link>
+                                    )}
                                 </div>
                                 <div className='s_buy_btn'>
                                     <Link to={'#'}>Buy Now</Link>
@@ -459,45 +509,45 @@ function ProductDetail() {
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Silver 18K</td>
-                                    <td>₹1200.06</td>
-                                    <td>3.450 g</td>
+                                    <td>{product?.metal || '-'}</td>
+                                    <td>₹{product?.price || '-'}</td>
+                                    <td>{product?.weight || '-'}g</td>
                                     <td>-</td>
-                                    <td>₹20308</td>
+                                    <td>₹{parseFloat(product?.price)*parseFloat(product?.weight) || '-'}</td>
                                 </tr>
                                 <tr>
                                     <td>Stone</td>
+                                    <td>₹{product?.stone_price || '-'}</td>
+                                    <td>{product?.gram || '-'}g</td>
                                     <td>-</td>
-                                    <td>0.116 ct/ 0.023g</td>
-                                    <td>-</td>
-                                    <td>₹12503</td>
+                                    <td>₹{parseFloat(product.stone_price)*parseFloat(product?.gram)}</td>
                                 </tr>
                                 <tr>
                                     <td>Making Charges</td>
                                     <td>-</td>
                                     <td>-</td>
                                     <td>-</td>
-                                    <td>₹6891</td>
+                                    <td>₹{(parseFloat(product?.price)+parseFloat(product?.stone_price))/parseFloat(product.making_charge)}</td>
                                 </tr>
                                 <tr>
                                     <td>Sub Total</td>
                                     <td>-</td>
-                                    <td>3.473 g</td>
+                                    <td>{parseFloat(product?.weight) + parseFloat(product?.gram) || '-'}g</td>
                                     <td>-</td>
-                                    <td>$100</td>
+                                    <td>₹{sub_total}</td>
                                 </tr>
                                 <tr>
-                                    <td>3.473 g</td>
+                                    <td>GST</td>
+                                    <td>3%</td>
                                     <td>-</td>
-                                    <td>3.473 g</td>
                                     <td>-</td>
-                                    <td>₹1191.71</td>
+                                    <td>₹{gst_total}</td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <td colSpan='4'>Grand Total</td>
-                                    <td>₹141268</td>
+                                    <td>₹{great_total}</td>
                                 </tr>
                             </tfoot>
                         </table>

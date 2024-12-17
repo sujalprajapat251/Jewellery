@@ -242,6 +242,8 @@
 }
 .s_productdetail_sec .s_offers .accordion-body img{
     margin-right: 10px;
+    width: 24px;
+    height: 24px;
 }
 .s_productdetail_sec .s_offers .accordion-body p{
     font-size: 18px;

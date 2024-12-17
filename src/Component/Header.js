@@ -17,8 +17,8 @@ import { ForgetPassSchema, LoginSchema } from '../schemas';
 
 
 function Header() {
-    const {Api , allProduct, allSubCategory , store } = useContext(noteContext);
-    const navigate =  useNavigate()
+    const { Api, allProduct, allSubCategory, store } = useContext(noteContext);
+    const navigate = useNavigate()
     // menu catgegory handller
     const [goldSubcate, setGoldSubcate] = useState([]);
     const [silverSubcate, setSilverSubcate] = useState([]);
@@ -136,30 +136,30 @@ function Header() {
     const handleLoginShow = () => setShowLogin(true);
 
     const loginVal = {
-        email:'',
-        password:'',
+        email: '',
+        password: '',
     }
 
     const LoginFormik = useFormik({
-        initialValues:loginVal,
-        validationSchema:LoginSchema,
-        onSubmit : (values , action) => {
-           
+        initialValues: loginVal,
+        validationSchema: LoginSchema,
+        onSubmit: (values, action) => {
+
             axios.post(`${Api}/auth/login`, {
-                email:values.email,
-                password:values.password,
+                email: values.email,
+                password: values.password,
             })
-            .then((value)=>{
-                console.log("LoginRes" , value.data); 
-                if(value){
-                    alert("Login SuccessFully");
-                    setShowLogin(false)
-                    navigate("/myprofile")
-                }
-                localStorage.setItem("Login", JSON.stringify(value.data.result))
-            }).catch((error)=>{
-                alert(error)
-            }) 
+                .then((value) => {
+                    console.log("LoginRes", value.data);
+                    if (value) {
+                        alert("Login SuccessFully");
+                        setShowLogin(false)
+                        navigate("/myprofile")
+                    }
+                    localStorage.setItem("Login", JSON.stringify(value.data.result))
+                }).catch((error) => {
+                    alert(error)
+                })
             action.resetForm()
         }
     })
@@ -172,30 +172,30 @@ function Header() {
     const handleForPassShow = () => setShowForPass(true);
 
     const ForgetPassVal = {
-          email:'',
+        email: '',
     }
 
     const ForgetPassFormik = useFormik({
-        initialValues:ForgetPassVal,
-        validationSchema:ForgetPassSchema,
-        onSubmit : (values , action) => {
+        initialValues: ForgetPassVal,
+        validationSchema: ForgetPassSchema,
+        onSubmit: (values, action) => {
 
-        axios.post(`${Api}/password/email`, {
-           email:values.email,
-        })
-        .then((value)=>{
-            console.log("ForgetRes" , value.data); 
-            handleForPassClose()
-            handleOTPShow()
-        }).catch((error)=>{
-            alert(error)
-        }) 
+            axios.post(`${Api}/password/email`, {
+                email: values.email,
+            })
+                .then((value) => {
+                    console.log("ForgetRes", value.data);
+                    handleForPassClose()
+                    handleOTPShow()
+                }).catch((error) => {
+                    alert(error)
+                })
 
-        action.resetForm()
+            action.resetForm()
         }
     })
 
- 
+
 
     // Verify Otp Model
     const [showOTP, setShowOTP] = useState(false);
@@ -206,28 +206,28 @@ function Header() {
     const [storeOtp, setStoreOtp] = useState("")
 
     const OtpVal = {
-        otp1:'',
-        otp2:'',
-        otp3:'',
-        otp4:''
+        otp1: '',
+        otp2: '',
+        otp3: '',
+        otp4: ''
     }
 
     const OtpFormik = useFormik({
-        initialValues:OtpVal,
-        onSubmit : (values , action) => {
+        initialValues: OtpVal,
+        onSubmit: (values, action) => {
 
             axios.post(`${Api}/password/otp`, {
-                otp:parseInt(values.otp1 + values.otp2 + values.otp3 + values.otp4),
-               
-            }).then((value)=>{
-                console.log("OtpRes" , value.data); 
+                otp: parseInt(values.otp1 + values.otp2 + values.otp3 + values.otp4),
+
+            }).then((value) => {
+                console.log("OtpRes", value.data);
                 handleOTPClose()
                 handleResetPassShow()
                 setStoreOtp(parseInt(values.otp1 + values.otp2 + values.otp3 + values.otp4))
-    
-            }).catch((error)=>{
+
+            }).catch((error) => {
                 alert(error)
-            })  
+            })
 
             action.resetForm()
         }
@@ -247,29 +247,29 @@ function Header() {
     const handleResetPassShow = () => setShowResetPass(true);
 
     const [resetPassVal, setResetPassVal] = useState({
-        newPass:'',
-        conPass:'',
+        newPass: '',
+        conPass: '',
     })
 
     const ResetPassVal = {
-        newPass:'',
-        conPass:'',
+        newPass: '',
+        conPass: '',
     }
 
     const ReserPassFormik = useFormik({
-        initialValues:ResetPassVal,
-        onSubmit: (values , action) => {
+        initialValues: ResetPassVal,
+        onSubmit: (values, action) => {
             axios.post(`${Api}/password/reset/${storeOtp}`, {
-                new_password:values.newPass,
-                confirm_password:values.conPass
-                
-            }).then((value)=>{
-                console.log("ResetPassRes" , value.data); 
+                new_password: values.newPass,
+                confirm_password: values.conPass
+
+            }).then((value) => {
+                console.log("ResetPassRes", value.data);
                 handleResetPassClose()
                 handleLoginShow();
-            }).catch((error)=>{
+            }).catch((error) => {
                 alert(error)
-            }) 
+            })
 
             action.resetForm();
         }
@@ -286,27 +286,27 @@ function Header() {
     const handleRegisterShow = () => setShowRegister(true);
 
     const [signUpVal, setSignUpVal] = useState({
-        name:'',
-        phone:'',
-        email:'',
-        password:'',
+        name: '',
+        phone: '',
+        email: '',
+        password: '',
     })
 
     const handleSignUp = (e) => {
         e.preventDefault();
         axios.post(`${Api}/user/create`, {
-            name:signUpVal.name,
-            phone:signUpVal.phone,
-            email:signUpVal.email,
-            password:signUpVal.password,
-            role_id:2,
+            name: signUpVal.name,
+            phone: signUpVal.phone,
+            email: signUpVal.email,
+            password: signUpVal.password,
+            role_id: 2,
             dob: "2001-01-01",
         })
-        .then((value)=>{
-            console.log("Res" , value); 
-        }).catch((error)=>{
-            alert(error)
-        }) 
+            .then((value) => {
+                console.log("Res", value);
+            }).catch((error) => {
+                alert(error)
+            })
     }
 
 
@@ -319,7 +319,7 @@ function Header() {
                 <p className='ds_container mb-0'>Welcome to our Store</p></div>
             <section className='ds_container s_header_sec d-flex justify-content-between flex-wrap flex-lg-nowrap'>
                 <div className='s_header_input d-flex justify-content-between align-items-center col-lg-4 col-12 order-lg-1 order-3'>
-                    <input type='text' placeholder='Search for Jewellery and more...' onChange={(e) => {searchHandle(e.target.value); }}></input>
+                    <input type='text' placeholder='Search for Jewellery and more...' onChange={(e) => { searchHandle(e.target.value); }}></input>
                     <IoSearch />
                 </div>
                 <Link className='s_logo text-decoration-none col-lg-4 col-4 ms-lg-auto order-lg-2 order-1 align-self-center '>
@@ -339,12 +339,12 @@ function Header() {
                             <IoPersonOutline />
                             <p className='mb-0'>My Pofile</p>
                         </Link>) :
-                        (<Link to={'#'} className='s_header_icon' onClick={handleLoginShow}>
-                            <IoPersonOutline />
-                            <p className='mb-0'>Account</p>
-                        </Link>)
+                            (<Link to={'#'} className='s_header_icon' onClick={handleLoginShow}>
+                                <IoPersonOutline />
+                                <p className='mb-0'>Account</p>
+                            </Link>)
                     }
-                    
+
                     <Link to={'#'} className=' d-lg-none d-flex align-items-center fs-2 s_bar_icon' onClick={handleShow}>
                         <FaBars />
                     </Link>
@@ -885,27 +885,27 @@ function Header() {
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='s_model_con'>
-                   <form onSubmit={LoginFormik.handleSubmit}>
-                       <div className='s_modal_head text-center' >
+                    <form onSubmit={LoginFormik.handleSubmit}>
+                        <div className='s_modal_head text-center' >
                             <h2>Login</h2>
                             <p>Login to your existing account to access your account</p>
                         </div>
                         <div className='s_modal_field'>
                             <p>Email</p>
                             <input type='email' name='email' value={LoginFormik.values.email} onChange={LoginFormik.handleChange} onBlur={LoginFormik.handleBlur} placeholder='Enter email'></input>
-                            { LoginFormik.errors.email &&  LoginFormik.touched.email ? <p className='ds_new-danger mb-0'>{LoginFormik.errors.email}</p> : null}
+                            {LoginFormik.errors.email && LoginFormik.touched.email ? <p className='ds_new-danger mb-0'>{LoginFormik.errors.email}</p> : null}
 
                         </div>
                         <div className='s_modal_field'>
                             <p>Password</p>
                             <input type='text' name='password' value={LoginFormik.values.password} onChange={LoginFormik.handleChange} onBlur={LoginFormik.handleBlur} placeholder='Enter password'></input>
-                            { LoginFormik.errors.password &&  LoginFormik.touched.password ? <p className='ds_new-danger mb-0'>{LoginFormik.errors.password}</p> : null}
+                            {LoginFormik.errors.password && LoginFormik.touched.password ? <p className='ds_new-danger mb-0'>{LoginFormik.errors.password}</p> : null}
                             <span className='d-flex justify-content-end' onClick={() => { handleLoginClose(); handleForPassShow(); }}><Link to={'#'} >Forgot Password?</Link></span>
                         </div>
                         <div className='s_modal_btn'>
                             <button type='submit'>Login</button>
                         </div>
-                   </form>
+                    </form>
 
                     <div className='s_modal_or d-flex my-3'>
                         <div className='s_modal_line'></div>
@@ -933,19 +933,19 @@ function Header() {
                 </Modal.Header>
                 <Modal.Body className='s_model_con'>
                     <form onSubmit={ForgetPassFormik.handleSubmit}>
-                         <div className='s_modal_head text-center' >
-                             <h2>Forgot Password</h2>
-                             <p>Enter your email below to recover your password</p>
-                         </div>
-                         <div className='s_modal_field'>
-                             <p>Email</p>
-                             <input  type='text' name='email' value={ForgetPassFormik.values.email} onChange={ForgetPassFormik.handleChange} onBlur={ForgetPassFormik.handleBlur} placeholder='Enter email'></input>
-                            { ForgetPassFormik.errors.email &&  ForgetPassFormik.touched.email ? <p className='ds_new-danger mb-0'>{ForgetPassFormik.errors.email}</p> : null}
+                        <div className='s_modal_head text-center' >
+                            <h2>Forgot Password</h2>
+                            <p>Enter your email below to recover your password</p>
+                        </div>
+                        <div className='s_modal_field'>
+                            <p>Email</p>
+                            <input type='text' name='email' value={ForgetPassFormik.values.email} onChange={ForgetPassFormik.handleChange} onBlur={ForgetPassFormik.handleBlur} placeholder='Enter email'></input>
+                            {ForgetPassFormik.errors.email && ForgetPassFormik.touched.email ? <p className='ds_new-danger mb-0'>{ForgetPassFormik.errors.email}</p> : null}
 
-                         </div>
-                         <div className='s_modal_btn'>
-                             <button type='submit'>Send Code</button>
-                         </div>
+                        </div>
+                        <div className='s_modal_btn'>
+                            <button type='submit'>Send Code</button>
+                        </div>
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
@@ -967,9 +967,9 @@ function Header() {
                             <p>Enter verification code which we’ve sent to your registered email</p>
                         </div>
                         <div className='s_modal_otp d-flex justify-content-between mx-4'>
-                            <input ref={otp1Ref} maxLength="1"  type='text' name='otp1' value={OtpFormik.values.otp1} onChange={(e) => {OtpFormik.handleChange(e);if (e.target.value.length === 1) otp2Ref.current.focus();}} onBlur={OtpFormik.handleBlur} onKeyDown={(e) => { if (e.key === "Backspace" && !OtpFormik.values.otp1) { e.preventDefault(); } }}></input>
-                            <input ref={otp2Ref} maxLength="1" type='text' name='otp2' value={OtpFormik.values.otp2} onChange={(e) => {OtpFormik.handleChange(e);if (e.target.value.length === 1) otp3Ref.current.focus();}} onBlur={OtpFormik.handleBlur} onKeyDown={(e) => { if (e.key === "Backspace" && !OtpFormik.values.otp2) { otp1Ref.current.focus(); } }}></input>
-                            <input ref={otp3Ref} maxLength="1" type='text' name='otp3' value={OtpFormik.values.otp3} onChange={(e) => {OtpFormik.handleChange(e);if (e.target.value.length === 1) otp4Ref.current.focus();}} onBlur={OtpFormik.handleBlur} onKeyDown={(e) => { if (e.key === "Backspace" && !OtpFormik.values.otp3) { otp2Ref.current.focus(); } }}></input>
+                            <input ref={otp1Ref} maxLength="1" type='text' name='otp1' value={OtpFormik.values.otp1} onChange={(e) => { OtpFormik.handleChange(e); if (e.target.value.length === 1) otp2Ref.current.focus(); }} onBlur={OtpFormik.handleBlur} onKeyDown={(e) => { if (e.key === "Backspace" && !OtpFormik.values.otp1) { e.preventDefault(); } }}></input>
+                            <input ref={otp2Ref} maxLength="1" type='text' name='otp2' value={OtpFormik.values.otp2} onChange={(e) => { OtpFormik.handleChange(e); if (e.target.value.length === 1) otp3Ref.current.focus(); }} onBlur={OtpFormik.handleBlur} onKeyDown={(e) => { if (e.key === "Backspace" && !OtpFormik.values.otp2) { otp1Ref.current.focus(); } }}></input>
+                            <input ref={otp3Ref} maxLength="1" type='text' name='otp3' value={OtpFormik.values.otp3} onChange={(e) => { OtpFormik.handleChange(e); if (e.target.value.length === 1) otp4Ref.current.focus(); }} onBlur={OtpFormik.handleBlur} onKeyDown={(e) => { if (e.key === "Backspace" && !OtpFormik.values.otp3) { otp2Ref.current.focus(); } }}></input>
                             <input ref={otp4Ref} maxLength="1" type='text' name='otp4' value={OtpFormik.values.otp4} onChange={OtpFormik.handleChange} onBlur={OtpFormik.handleBlur} onKeyDown={(e) => { if (e.key === "Backspace" && !OtpFormik.values.otp4) { otp3Ref.current.focus(); } }}></input>
                         </div>
                         <div className='s_modal_btn'>
@@ -1018,29 +1018,29 @@ function Header() {
                 </Modal.Header>
                 <Modal.Body className='s_model_con'>
                     <form onSubmit={handleSignUp}>
-                       <div className='s_modal_head text-center' >
-                           <h2>Create Account</h2>
-                           <p>Create an account & get access to exclusive collection of jewelry</p>
-                       </div>
-                       <div className='s_modal_field'>
-                           <p>Name</p>
-                           <input type='text' placeholder='Enter name' value={signUpVal.name} onChange={(e) => setSignUpVal({ ...signUpVal, name: e.target.value })} ></input>
-                       </div>
-                       <div className='s_modal_field'>
-                           <p>Mobile No.</p>
-                           <input type='text' placeholder='Enter mobile no.' value={signUpVal.phone} onChange={(e) => setSignUpVal({ ...signUpVal, phone: e.target.value })}></input>
-                       </div>
-                       <div className='s_modal_field'>
-                           <p>Email</p>
-                           <input type='text' placeholder='Enter email' value={signUpVal.email} onChange={(e) => setSignUpVal({ ...signUpVal, email: e.target.value })}></input>
-                       </div>
-                       <div className='s_modal_field'>
-                           <p>Password</p>
-                           <input type='text' placeholder='Enter password' value={signUpVal.password} onChange={(e) => setSignUpVal({ ...signUpVal, password: e.target.value })}></input>
-                       </div>
-                       <div className='s_modal_btn' onClick={(e)=> handleSignUp(e)}>
-                           <button type='submit' >Register</button>
-                       </div>
+                        <div className='s_modal_head text-center' >
+                            <h2>Create Account</h2>
+                            <p>Create an account & get access to exclusive collection of jewelry</p>
+                        </div>
+                        <div className='s_modal_field'>
+                            <p>Name</p>
+                            <input type='text' placeholder='Enter name' value={signUpVal.name} onChange={(e) => setSignUpVal({ ...signUpVal, name: e.target.value })} ></input>
+                        </div>
+                        <div className='s_modal_field'>
+                            <p>Mobile No.</p>
+                            <input type='text' placeholder='Enter mobile no.' value={signUpVal.phone} onChange={(e) => setSignUpVal({ ...signUpVal, phone: e.target.value })}></input>
+                        </div>
+                        <div className='s_modal_field'>
+                            <p>Email</p>
+                            <input type='text' placeholder='Enter email' value={signUpVal.email} onChange={(e) => setSignUpVal({ ...signUpVal, email: e.target.value })}></input>
+                        </div>
+                        <div className='s_modal_field'>
+                            <p>Password</p>
+                            <input type='text' placeholder='Enter password' value={signUpVal.password} onChange={(e) => setSignUpVal({ ...signUpVal, password: e.target.value })}></input>
+                        </div>
+                        <div className='s_modal_btn' onClick={(e) => handleSignUp(e)}>
+                            <button type='submit' >Register</button>
+                        </div>
                     </form>
 
                     <div className='s_modal_or d-flex my-3'>
@@ -1073,12 +1073,12 @@ function Header() {
                     </>
                     : <>
                         <div className='s_serach_head'><h5 className='mb-0'>Suggestions</h5><IoCloseOutline onClick={() => { setSearch(''); }} /></div>
-                        {searchData.map((el, id) => {
+                        {searchData.slice(0,10).map((el, id) => {
                             return (
                                 <div key={id} className='s_search_item'>
                                     {!el.popular ?
                                         <p>
-                                            <Link to={`#`}>
+                                            <Link to={`productdetail/${el.id}`}>
                                                 <Highlighter
                                                     highlightClassName="text-dark bg-transparent p-0"
                                                     searchWords={[Search]} // Replace 'Search' with the array of words you want to highlight
@@ -1112,7 +1112,7 @@ function Header() {
                         })} */}
                     </>
                 }
-                <div className='s_serach_head border-top border-0 mt-auto'><h5 className='mb-0'>Search for “{Search}”</h5><FaArrowRight /></div>
+                <Link to={`/productlist/search/${Search}`} className='s_serach_head border-top border-0 mt-auto'><h5 className='mb-0'>Search for “{Search}”</h5><FaArrowRight /></Link>
             </section>
         </>
     );

@@ -33,7 +33,7 @@ function ProductList() {
                 setSubCategoryData(response.data.subCategory);
             });
         }
-    }, [Api, id, token]);
+    }, [id]);
 
 
     //  fliter handling
@@ -46,6 +46,9 @@ function ProductList() {
         }
         if(type === 'category'){
             product = allProduct.filter((product) => { return product.category_id === parseInt(id); })
+        }
+        if(type === 'search'){
+            product = allProduct.filter((product) => { return product.product_name.toLowerCase().includes(id.toLowerCase()); })
         }
         setproductList_detail(product);
         setProductList(product);
