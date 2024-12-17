@@ -8,12 +8,13 @@ import axios from 'axios'
 
 const TrackOrder = () => {
 
-const { Api , store} = useContext(noteContext)
+const { Api , store , trackFilter} = useContext(noteContext)
 const [trackPopup, setTrackPopup] = useState(false)
 const [trackId, setTrackId] = useState(null)
 const navigate = useNavigate()
+const [trackOrderData, setTrackOrderData] = useState([])
 
-let data = JSON.parse(localStorage.getItem("TrackOrder")) || [];
+const trackKey = JSON.parse(localStorage.getItem("TrackOrderKey")) || null
 
 // console.log("TrackData ", data);
 
@@ -21,6 +22,25 @@ const handleCancelOrder = (id) => {
      setTrackPopup(true)
      setTrackId(id)     
 }
+
+
+useEffect(()=>{
+  axios.post(`${Api}/order/getbyuserid`,
+    {
+       customer_id:1
+    },
+    {
+    headers: {
+      Authorization: `Bearer ${store?.access_token}`
+    }
+   }).then((value)=>{
+      console.log("TrackOrder " ,value?.data?.orders?.filter((element)=> element?.order_number === trackKey));  
+      setTrackOrderData(value?.data?.orders?.filter((element)=> element?.order_number === trackKey))
+      
+   }).catch((error)=>{
+      alert(error)
+   })
+},[trackFilter])
 
 
 // ********** Reason For Cencellation Popup **********
@@ -131,7 +151,7 @@ const handleContinue = () => {
                     <div>
                     <div className='ds_track-overflow mt-4'>
                         <div className='ds_track-box '>
-                           { data?.map((element , index)=>{
+                           { trackOrderData?.map((element , index)=>{
                             console.log(element);
                             
                              return (

@@ -8,6 +8,7 @@ import { useFormik } from 'formik';
 const UseContext = (props) => {
 // acces token form localstores
 let store = JSON.parse(localStorage.getItem("Login"))
+// console.log(store.access_token);
 
 
 
@@ -351,16 +352,15 @@ const ChangePassFormik = useFormik({
 
 
 // *************** Track Order Page ************
+const [trackFilter, seTrackFilter] = useState("")
+// use
 
 const handleTrackOrder = (data) => {
-   let filter = filteredOrders?.filter((element)=>{
-      return element?.order_number === data
-   })
-
-  //  console.log(filter);
-  localStorage.setItem("TrackOrder" , JSON.stringify(filter))
-   
+  seTrackFilter(data)
+  localStorage.setItem("TrackOrderKey" , JSON.stringify(data))
 }
+
+
 
 
 // ************ Faq **********
@@ -398,13 +398,16 @@ useEffect(()=>{
 
 // ************** Return Order *********
 
+const [returnOrderData, setReturnOrderData] = useState("")
+
 const handleReturnOrder = (customer) => {
-    localStorage.setItem( "ReturnOrder" , JSON.stringify(customer))
+    setReturnOrderData(customer)
+    localStorage.setItem( "ReturnOrderKey" , JSON.stringify(customer))
 };
 
-useEffect(()=>{
+// useEffect(()=>{
    
-},[])
+// },[])
 
   return (
     <noteContext.Provider value={{ allCategory,allProduct,allSubCategory,token,
@@ -436,10 +439,10 @@ useEffect(()=>{
       mainFaq,subFaq,setSubFaq ,
 
     // *************** Track Order Page ************
-      handleTrackOrder , 
+      handleTrackOrder , trackFilter,
 
       // ************** Return Order *********
-      handleReturnOrder 
+      handleReturnOrder  , returnOrderData
  
       
       }}>

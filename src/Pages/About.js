@@ -1,11 +1,8 @@
 import React, { useContext } from 'react'
 import '../Css/dhruvin/About.css'
-import noteContext from '../Context/noteContext'
 
 const About = () => {
-const {hello} = useContext(noteContext)
 
-console.log(hello());
 
 
   return (

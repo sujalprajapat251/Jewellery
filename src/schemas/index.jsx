@@ -108,7 +108,7 @@ export const ChangePass = Yup.object({
 });
 
 export const ReturnOrderSchema = Yup.object({
-  order_id: Yup.string().required('Order id is required').min(6 , 'OrderId must be at least 6 characters long'),
+  order_id: Yup.string().required('Order id is required').min(1 , 'OrderId must be at least 6 characters long'),
   reason:Yup.string().required("Reason is required"),
   phone: Yup.string().required('Phone number is required').matches(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits'),  
 })

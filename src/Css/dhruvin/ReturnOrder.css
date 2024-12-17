@@ -1,7 +1,7 @@
 /* {********************  Return Order With OTP Popup  *********} */
 .ds_return-otp-input{
-    height: 50px;
-    width: 50px;
+    height: 50px !important;
+    width: 50px !important;
     text-align: center;
     font-size: 15px;
 }
@@ -17,8 +17,8 @@
 
      /* {********************  Return Order With OTP Popup  *********} */
     .ds_return-otp-input{
-        height: 40px;
-        width: 40px;
+        height: 40px !important;
+        width: 40px !important;
     }
 }
 
@@ -32,7 +32,7 @@
    }
    /* {********************  Return Order With OTP Popup  *********} */
   .ds_return-otp-input{
-      height: 35px;
-      width: 35px;
+      height: 35px !important;
+      width: 35px !important;
   }
 }
