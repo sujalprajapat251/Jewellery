@@ -24,11 +24,11 @@ function ProductDetail() {
     const category = '';
     // backend connnectivity code here
 
-    const { Api, token } = useContext(noteContext);
+    const { Api, token, allProduct } = useContext(noteContext);
     const [product, setProduct] = useState([]);
     useEffect(() => {
         axios
-            .get(`${Api}/products/get/65`, {
+            .get(`${Api}/products/get/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -50,13 +50,64 @@ function ProductDetail() {
             .catch((error) => {
                 console.error("Error fetching products:", error);
             });
-    }, [id, token, Api]);
-    // console.log('qty', inStock);
-    useEffect(() => {
 
+    }, [id, token, Api]);
+
+    // size haddler
+    const [size, setSize] = useState('');
+    const [sizeArray, setSizeArray] = useState([]);
+    const [reviews, setReviews] = useState([]);
+    const [youAlsoLike, setYouAlsoLike] = useState([]);
+    useEffect(() => {
+        // console.log("Fetched products", product.size_id);
+        // fetch size data
+        axios.get(`${Api}/sizes/get/${product.size_id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((response) => {
+                const array = response.data.size.split(',').map(Number);
+                setSizeArray(array);
+            })
+            .catch((error) => {
+                console.error("Error fetching products:", error);
+            });
+
+
+        // fetch review data 
+        axios.get(`${Api}/reviews/getall`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((response) => {
+                setReviews(response.data.data);
+
+            })
+            .catch((error) => {
+                console.error("Error fetching products:", error);
+            });
+
+        // fetch you also like data
+        const youAlso = allProduct.filter((item) => item.category_id === product.category_id)
+        setYouAlsoLike(youAlso);
+
+        axios.get(`${Api}/productoffers/getall`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then((response) => { console.log(response.data.productOffers); })
     }, [product])
 
-    // backend connnectivity code oevr here
+
+    // backend connnectivity code oevr here ////////////////////////////////
+
+
+    // offer handling code
+
+
 
 
 
@@ -76,87 +127,127 @@ function ProductDetail() {
         }
     }
 
+    // review handller
+    const [lgShow, setLgShow] = useState(false);
+    const [reviewDetail, setreviewDetail] = useState([]);
+    useEffect(() => {
+        const product_review = reviews?.filter((item) => item.product_id === parseInt(id));
+        setreviewDetail(product_review);
+    }, [reviews])
 
-    //  size handler 
-    // const color = [{ name: 'rose-gold', code: '#B76E79' }, { name: 'gold', code: '#FFD700' }, { name: 'silver', code: '#C0C0C0' }, { name: 'platinum', code: '#e5e4e2' }, { name: 'white-gold', code: '#FFFFF4' }, { name: 'yellow-gold', code: '##FFDF00' }]
-    // if (product.metal_color) {
-    //     const fliterData = color.filter((color) => color.name === product.metal_color);
-    //     console.log(fliterData);
-    // } else {
-    // }
-    // const filteredProducts = product?.filter((product) =>
-    //     color.some((c) => c.name === product.metal_color)
-    // );
-
-    // console.log("Filtered Products:", filteredProducts);
-    const [size, setSize] = useState(5);
-
-    const sizeData = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+    //  color handdler
+    const color = [{ name: 'rose', code: '#B76E79' }, { name: 'gold', code: '#FFD700' }, { name: 'silver', code: '#C0C0C0' }, { name: 'platinum', code: '#e5e4e2' }, { name: 'white-gold', code: '#FFFFF4' }, { name: 'yellow-gold', code: '##FFDF00' }]
+    let metalColor = [];
+    if (product.metal_color) {
+        metalColor = color?.filter((color) => {
+            return product.metal_color.includes(color.name);
+        });
+    }
 
 
-    // other detail nav-tabe handller {}
+    // thumbnail image handdlers {}
+    const [thumbnail, setThumbnail] = useState(null);
+    const productImgHanddler = (index) => {
+        setThumbnail(product.images[index]);
+    }
 
+    // other detail nav-tabe handller 
     const [tab, setTab] = useState('tab-0');
 
-    // review modal handller 
-    const [lgShow, setLgShow] = useState(false);
-
-    let detail = []
     // you also like product
-    if (category !== 'Watch') {
-        detail = [
-            { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
-            { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: wishlist2 },
-            { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: wishlist3 },
-            { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: wishlist1 },
-            { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: wishlist1 },
-        ]
-    }
-    else {
-        detail = [
-            { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: watch1 },
-            { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: watch2 },
-            { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: watch3 },
-            { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: watch4 },
-            { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: watch5 },
-        ]
-    }
+
+
+
+
     return (
         <>
             <section className="s_prodetail_page ds_container">
                 <Row lg={2} className='gx-0 gx-md-4 py-4'>
                     <Col>
-                        <div className="s_product_img d-flex flex-wrap">
-                            <img src={require('../Img/Sujal/p_ring1.png')} alt="ring1"></img>
-                            <img src={require('../Img/Sujal/p_ring2.png')} alt="ring1"></img>
-                            <img src={require('../Img/Sujal/p_ring3.png')} alt="ring1"></img>
-                            <div className='s_product_video'
-                                onMouseLeave={handleStopclick}>
-                                <video ref={videoRef}
-                                    controls={controlsVisible} muted>
-                                    <source src={video} type="video/mp4" />
-                                    Your browser does not support the video tag.
-                                </video>
-                                {!controlsVisible && (
-                                    <img
-                                        src={require("../Img/Sujal/play.png")}
-                                        alt="play"
-                                        onClick={handlePlayClick}
-                                    />
-                                )}
+                        {thumbnail !== null ?
+                            (() => {
+                                const isVideo = /\.(mp4|webm|ogg)$/i.test(thumbnail);
+                                return isVideo ? (
+                                    <video controls className="w-100">
+                                        <source src={thumbnail} type="video/mp4" />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                ) : (
+                                    <img src={thumbnail} alt="thumbnail" className="w-100 object-fit-cover h-100" />
+                                );
+                            })()
+                            :
+                            <div className="s_product_img d-flex flex-wrap">
+                                {product?.images?.slice(0, 4).map((media, index) => {
+                                    // Check if the media source ends with an image or video extension
+                                    const isVideo = /\.(mp4|webm|ogg)$/i.test(media);
+                                    const isImage = /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/i.test(media);
+
+                                    return isVideo ? (
+                                        <div className='s_product_video'
+                                            onMouseLeave={handleStopclick}>
+                                            <video ref={videoRef}
+                                                controls={controlsVisible} muted>
+                                                <source src={video} type="video/mp4" />
+                                                Your browser does not support the video tag.
+                                            </video>
+                                            {!controlsVisible && (
+                                                <img
+                                                    src={require("../Img/Sujal/play.png")}
+                                                    alt="play"
+                                                    onClick={handlePlayClick}
+                                                />
+                                            )}
+                                        </div>
+                                    ) : isImage ? (
+                                        <img key={index} src={media} alt={`product-media-${index}`} className="product-image" onClick={() => productImgHanddler(index)} />
+                                    ) : null; // Handle unknown formats
+                                })}
                             </div>
-                        </div>
+                        }
 
                         <div className='s_product_slider'>
-                            <OwlCarousel className='owl-theme' loop margin={20} nav responsive={{
-                                0: {
-                                    items: 4,
-                                },
-                                576: {
-                                    items: 6,
-                                },
-                            }}>
-                                <div className='item'>
+                            <OwlCarousel
+                                className="owl-theme"
+                                margin={20}
+                                nav
+                                loop
+                                responsive={{
+                                    0: {
+                                        items: 4, // Show 4 items on very small screens
+                                    },
+                                    576: {
+                                        items:6 , // Safely use the length or default to 1
+                                    },
+                                }}
+                            >
+                                {product.images?.map((item, index) => {
+                                    
+                                    const isVideo = /\.(mp4|webm|ogg)$/i.test(item);
+                                    return (
+                                        <div className='item ' key={index} >
+                                            <div className='s_product_img' onClick={() => productImgHanddler(index)}>
+                                                {isVideo ?
+                                                    <div className='s_product_video w-100'
+                                                        onMouseLeave={handleStopclick}>
+                                                        <video ref={videoRef}
+                                                            className=''
+                                                            controls={controlsVisible} muted>
+                                                            <source src={video} type="video/mp4" />
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                        <img
+                                                            src={require("../Img/Sujal/play.png")}
+                                                            alt="play"
+                                                        />
+                                                    </div>
+                                                    :
+                                                    <img src={item} alt={`product-media-${index}`} className={ "w-100"} />}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                                {/* <div className='item'>
                                     <img src={require('../Img/Sujal/p_ring1.png')} alt="ring1"></img>
 
                                 </div>
@@ -166,7 +257,7 @@ function ProductDetail() {
                                 </div>
                                 <div className='item'>
                                     <img src={require('../Img/Sujal/p_ring3.png')} alt="ring1"></img>
-                                </div>
+                                </div> */}
                             </OwlCarousel>
                         </div>
                     </Col>
@@ -202,7 +293,7 @@ function ProductDetail() {
                                         <div variant="pills" defaultActiveKey="link-0" className='nav'>
                                             <Nav.Item>
                                                 <Nav.Link eventKey="link-0" className='active'>
-                                                    <div className='s_color' style={{ background: 'Rose' }}></div>
+                                                    <div className='s_color' style={{ background: `${metalColor[0]?.code}` }}></div>
                                                     {product?.metal_color}
                                                 </Nav.Link>
                                             </Nav.Item>
@@ -224,7 +315,7 @@ function ProductDetail() {
                                             <p className='mb-0'>{size}</p>
                                             <FaAngleDown className='ms-auto' />
                                             <div className='s_size_menu'>
-                                                {sizeData.map((item) => {
+                                                {sizeArray.map((item) => {
                                                     return <div className={`s_size_box ${item === size ? 'active' : ''}`} onClick={() => { setSize(item) }}>{item}</div>
                                                 })}
                                             </div>
@@ -272,20 +363,16 @@ function ProductDetail() {
                                     <Link to={'#'}>Buy Now</Link>
                                 </div>
                             </div>
-                            <div className='s_product_service'>
-                                <div className='s_box'>
+                            <div className='s_product_service justify-content-start'>
+                                <div className='s_box mx-2'>
                                     <img src={require('../Img/Sujal/service1.png')} alt='service1'></img>
                                     <span>Dispatch in 2 days</span>
                                 </div>
-                                <div className='s_box'>
-                                    <img src={require('../Img/Sujal/service2.png')} alt='service2'></img>
-                                    <span>Easy Return</span>
-                                </div>
-                                <div className='s_box'>
+                                <div className='s_box mx-2'>
                                     <img src={require('../Img/Sujal/service3.png')} alt='service3'></img>
                                     <span>Support 24*7</span>
                                 </div>
-                                <div className='s_box'>
+                                <div className='s_box mx-2'>
                                     <img src={require('../Img/Sujal/service4.png')} alt='service4'></img>
                                     <span>Best Quality</span>
                                 </div>
@@ -297,10 +384,6 @@ function ProductDetail() {
                         </div>
                     </Col>
                 </Row>
-
-
-
-
                 <div className='s_other_sec '>
                     <div className='overflow-x-auto'>
                         <Nav justify className='' variant="tabs" defaultActiveKey="tab-0" onSelect={(selectedKey) => { setTab(selectedKey) }}>
@@ -319,29 +402,27 @@ function ProductDetail() {
 
                     <div className={`s_table_sec d-lg-flex  px-0 ${tab === 'tab-0' ? '' : 'd-none d-lg-none'}`}>
                         {category !== 'Watch' ? <>
-
                             <div className='s_table s_w_30'>
                                 <h4 className='s_table_head'>Metal Details</h4>
-                                <span className='d-flex justify-content-between'><p>Metal Type</p><b>Silver</b></span>
-                                <span className='d-flex justify-content-between'><p>Karat</p><b>18 K</b></span>
-                                <span className='d-flex justify-content-between'><p>Weight</p><b>3.812 Gm</b></span>
-                                <span className='d-flex justify-content-between'><p>Color</p><b>White</b></span>
+                                <span className='d-flex justify-content-between'><p>Metal Type</p><b>{product?.metal || '--'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Weight</p><b>{product?.weight || '--'} gm</b></span>
+                                <span className='d-flex justify-content-between'><p>Color</p><b>{product?.metal_color || '--'}</b></span>
                             </div>
                             <div className='s_table s_w_40'>
                                 <h4 className='s_table_head'>Diamond Details</h4>
-                                <span className='d-flex justify-content-between'><p>Clarity</p><b>VS</b></span>
-                                <span className='d-flex justify-content-between'><p>Setting</p><b>Pressure, Free, Prong</b></span>
-                                <span className='d-flex justify-content-between'><p>Color</p><b>G-H</b></span>
-                                <span className='d-flex justify-content-between'><p>Shape</p><b>Round</b></span>
-                                <span className='d-flex justify-content-between'><p>No. of Diamonds</p><b>17</b></span>
+                                <span className='d-flex justify-content-between'><p>Clarity</p><b>{product?.clarity || '--'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Setting</p><b>{product?.diamond_setting || '--'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Color</p><b>{product?.diamond_color || '--'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Shape</p><b>{product?.diamond_shape || '--'}</b></span>
+                                <span className='d-flex justify-content-between'><p>No. of Diamonds</p><b>{product?.no_of_diamonds || '--'}</b></span>
                             </div>
                             <div className='s_table s_w_30'>
                                 <h4 className='s_table_head'>General Details</h4>
-                                <span className='d-flex justify-content-between'><p>Jewellry Type</p><b>Diamond</b></span>
-                                <span className='d-flex justify-content-between'><p>Gender</p><b>Women</b></span>
-                                <span className='d-flex justify-content-between'><p>Collection</p><b>Best Seller</b></span>
-                                <span className='d-flex justify-content-between'><p>Occasion</p><b>Engagement</b></span>
-                                <span className='d-flex justify-content-between'><p>Occasion</p><b>5</b></span>
+                                <span className='d-flex justify-content-between'><p>Jewellry Type</p><b>{product?.category_name || '--'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Gender</p><b>{product?.gender || '--'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Collection</p><b>{product?.collection || '--'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Occasion</p><b>{product?.occasion || '--'}</b></span>
+                                <span className='d-flex justify-content-between text-wrap'><p>Size</p><b>{sizeArray.join('  ') || '--'}</b></span>
                             </div>
                         </> : <>
                             <div className='s_table s_w_30'>
@@ -423,155 +504,50 @@ function ProductDetail() {
                     </div>
                     <div className={` ${tab === 'tab-2' ? '' : 'd-none d-lg-none'}`}>
                         <div className='s_review'>
-                            <div className='d-flex s_review_div'>
-                                <div className='s_review_profile'>
-                                    <p className='mb-0'>NL</p>
-                                </div>
-                                <div className='s_review_detail'>
-                                    <p className='mb-0'>Nathon Lyon</p>
-                                    <div className='s_rating'>
-                                        {
-                                            [...Array(5)].map((_, index) => {
-                                                if (index < 3) {
-                                                    return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                } else {
-                                                    return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                    ;
+                            {reviewDetail.slice(0, 4).map((item, index) => {
+                                return (
+                                    <div className='d-flex s_review_div'>
+                                        <div className='s_review_profile'>
+                                            <p className='mb-0 text-capitalize'>{item.customer_name[0]}</p>
+                                        </div>
+                                        <div className='s_review_detail'>
+                                            <p className='mb-0'>{item.customer_name}</p>
+                                            <div className='s_rating'>
+                                                {
+                                                    [...Array(5)].map((_, index) => {
+                                                        if (index < item.rating) {
+                                                            return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                        } else {
+                                                            return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                            ;
+                                                        }
+                                                    })
                                                 }
-                                            })
-                                        }
-                                        <p className='mb-0'>Great Product</p>
-                                        <span>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour</span>
-                                        <div className='s_review_img'>
-                                            <img src={require('../Img/Sujal/p_ring1.png')} alt='review 1'></img>
-                                            <img src={require('../Img/Sujal/p_ring2.png')} alt='review 1'></img>
-                                            <img src={require('../Img/Sujal/p_ring3.png')} alt='review 1'></img>
-                                        </div>
-                                    </div>
-                                    <div className='s_review_icon d-flex'>
-                                        <div className="d-flex align-items-center me-4">
-                                            <AiOutlineLike />
-                                            <span>Like</span>
-                                        </div>
-                                        <div className="d-flex align-items-center me-4">
-                                            <AiOutlineDislike />
-                                            <span>Dislike</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='d-flex s_review_div'>
-                                <div className='s_review_profile'>
-                                    <p className='mb-0'>NL</p>
-                                </div>
-                                <div className='s_review_detail'>
-                                    <p className='mb-0'>Nathon Lyon</p>
-                                    <div className='s_rating'>
-                                        {
-                                            [...Array(5)].map((_, index) => {
-                                                if (index < 3) {
-                                                    return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                } else {
-                                                    return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                    ;
-                                                }
-                                            })
-                                        }
-                                        <p className='mb-0'>Great Product</p>
-                                        <span>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour</span>
-                                        <div className='s_review_img'>
-                                            <img src={require('../Img/Sujal/p_ring1.png')} alt='review 1'></img>
-                                            <img src={require('../Img/Sujal/p_ring2.png')} alt='review 1'></img>
-                                            <img src={require('../Img/Sujal/p_ring3.png')} alt='review 1'></img>
-                                        </div>
-                                    </div>
-                                    <div className='s_review_icon d-flex'>
-                                        <div className="d-flex align-items-center me-4">
-                                            <AiOutlineLike />
-                                            <span>Like</span>
-                                        </div>
-                                        <div className="d-flex align-items-center me-4">
-                                            <AiOutlineDislike />
-                                            <span>Dislike</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='d-flex s_review_div'>
-                                <div className='s_review_profile'>
-                                    <p className='mb-0'>NL</p>
-                                </div>
-                                <div className='s_review_detail'>
-                                    <p className='mb-0'>Nathon Lyon</p>
-                                    <div className='s_rating'>
-                                        {
-                                            [...Array(5)].map((_, index) => {
-                                                if (index < 3) {
-                                                    return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                } else {
-                                                    return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                    ;
-                                                }
-                                            })
-                                        }
-                                        <p className='mb-0'>Great Product</p>
-                                        <span>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour</span>
-                                        <div className='s_review_img'>
-                                            <img src={require('../Img/Sujal/p_ring1.png')} alt='review 1'></img>
-                                            <img src={require('../Img/Sujal/p_ring2.png')} alt='review 1'></img>
-                                            <img src={require('../Img/Sujal/p_ring3.png')} alt='review 1'></img>
-                                        </div>
-                                    </div>
-                                    <div className='s_review_icon d-flex'>
-                                        <div className="d-flex align-items-center me-4">
-                                            <AiFillLike />
-                                            <span>Like</span>
-                                        </div>
-                                        <div className="d-flex align-items-center me-4">
-                                            <AiOutlineDislike />
-                                            <span>Dislike</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='d-flex s_review_div'>
-                                <div className='s_review_profile'>
-                                    <p className='mb-0'>NL</p>
-                                </div>
-                                <div className='s_review_detail'>
-                                    <p className='mb-0'>Nathon Lyon</p>
-                                    <div className='s_rating'>
-                                        {
-                                            [...Array(5)].map((_, index) => {
-                                                if (index < 3) {
-                                                    return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                } else {
-                                                    return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                    ;
-                                                }
-                                            })
-                                        }
-                                        <p className='mb-0'>Great Product</p>
-                                        <span>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour</span>
-                                        <div className='s_review_img'>
-                                            <img src={require('../Img/Sujal/p_ring1.png')} alt='review 1'></img>
-                                            <img src={require('../Img/Sujal/p_ring2.png')} alt='review 1'></img>
-                                            <img src={require('../Img/Sujal/p_ring3.png')} alt='review 1'></img>
-                                        </div>
-                                    </div>
-                                    <div className='s_review_icon d-flex'>
-                                        <div className="d-flex align-items-center me-4">
-                                            <AiOutlineLike />
-                                            <span>Like</span>
-                                        </div>
-                                        <div className="d-flex align-items-center me-4">
-                                            <AiFillDislike />
-                                            <span>Dislike</span>
-                                        </div>
-                                    </div>
+                                                <p className='mb-0'>Great Product</p>
+                                                <span>{item.description}</span>
+                                                {item.image ?
+                                                    <div className='s_review_img'>
+                                                        {item?.image.map((item) => {
+                                                            return <img src={item} alt='review' key={item} />
+                                                        })}
+                                                    </div>
+                                                    : ''}
 
-                                </div>
-                            </div>
+                                            </div>
+                                            <div className='s_review_icon d-flex'>
+                                                <div className="d-flex align-items-center me-4">
+                                                    <AiOutlineLike />
+                                                    <span>Like</span>
+                                                </div>
+                                                <div className="d-flex align-items-center me-4">
+                                                    <AiOutlineDislike />
+                                                    <span>Dislike</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            })}
                         </div>
                         <div className='s_view_all' onClick={() => setLgShow(true)}>
                             <Link>View All</Link>
@@ -581,25 +557,23 @@ function ProductDetail() {
                 <div className='s_also_like'>
                     <div className='d-flex justify-content-between'>
                         <h2>You may also like</h2>
-                        <Link>View More</Link>
+                        <Link to={`/productlist/${product?.sub_category_id}`}>View More</Link>
                     </div>
                     <div>
                         <Row xxl={5} lg={4} md={4} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
                             {
-                                detail.map((ele, id) => {
+                                youAlsoLike.slice(0, 5).map((ele, id) => {
                                     return (
                                         <Col key={id} className='py-4 '>
-                                            <Link to={'/productdetail'} className='s_seller_card'>
+                                            <Link to={`/productdetail/${ele.id}`} className='s_seller_card'>
                                                 <div className='s_card_img'>
-                                                    <img src={ele.img} className="w-100" alt={ele.title} key={ele.title} />
+                                                    <img src={ele.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
                                                 </div>
 
-                                                {ele.status ?
-                                                    <div className='s_card_status'><p className='mb-0'>{ele.status}</p></div>
-                                                    : ''}
                                                 <div className='s_card_text'>
-                                                    <h5>{ele.title}</h5>
-                                                    <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.old_price}</strike></p>
+                                                    <h5>{ele.product_name}</h5>
+                                                    <p className='mb-0'><span className='mx-2'>₹{ele.base_price}</span><strike className="mx-2">₹{ele.discount
+                                                    }</strike></p>
                                                     <div className='s_rating'>
                                                         {
                                                             [...Array(5)].map((_, index) => {
@@ -628,7 +602,7 @@ function ProductDetail() {
                         <Link>View More</Link>
                     </div>
                     <div>
-                        <Row xxl={5} lg={4} md={4} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
+                        {/* <Row xxl={5} lg={4} md={4} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
                             {
                                 detail.map((ele, id) => {
                                     return (
@@ -663,7 +637,7 @@ function ProductDetail() {
                                 })
                             }
 
-                        </Row>
+                        </Row> */}
                     </div>
                 </div>
             </section>
@@ -685,155 +659,50 @@ function ProductDetail() {
                 </Modal.Header>
                 <Modal.Body>
                     <div className='s_review'>
-                        <div className='d-flex s_review_div'>
-                            <div className='s_review_profile'>
-                                <p className='mb-0'>NL</p>
-                            </div>
-                            <div className='s_review_detail'>
-                                <p className='mb-0'>Nathon Lyon</p>
-                                <div className='s_rating'>
-                                    {
-                                        [...Array(5)].map((_, index) => {
-                                            if (index < 3) {
-                                                return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                            } else {
-                                                return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                ;
+                        {reviewDetail.map((item, index) => {
+                            return (
+                                <div className='d-flex s_review_div'>
+                                    <div className='s_review_profile'>
+                                        <p className='mb-0 text-capitalize'>{item.customer_name[0]}</p>
+                                    </div>
+                                    <div className='s_review_detail'>
+                                        <p className='mb-0'>{item.customer_name}</p>
+                                        <div className='s_rating'>
+                                            {
+                                                [...Array(5)].map((_, index) => {
+                                                    if (index < item.rating) {
+                                                        return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                    } else {
+                                                        return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                        ;
+                                                    }
+                                                })
                                             }
-                                        })
-                                    }
-                                    <p className='mb-0'>Great Product</p>
-                                    <span>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour</span>
-                                    <div className='s_review_img'>
-                                        <img src={require('../Img/Sujal/p_ring1.png')} alt='review 1'></img>
-                                        <img src={require('../Img/Sujal/p_ring2.png')} alt='review 1'></img>
-                                        <img src={require('../Img/Sujal/p_ring3.png')} alt='review 1'></img>
-                                    </div>
-                                </div>
-                                <div className='s_review_icon d-flex'>
-                                    <div className="d-flex align-items-center me-4">
-                                        <AiOutlineLike />
-                                        <span>Like</span>
-                                    </div>
-                                    <div className="d-flex align-items-center me-4">
-                                        <AiOutlineDislike />
-                                        <span>Dislike</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className='d-flex s_review_div'>
-                            <div className='s_review_profile'>
-                                <p className='mb-0'>NL</p>
-                            </div>
-                            <div className='s_review_detail'>
-                                <p className='mb-0'>Nathon Lyon</p>
-                                <div className='s_rating'>
-                                    {
-                                        [...Array(5)].map((_, index) => {
-                                            if (index < 3) {
-                                                return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                            } else {
-                                                return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                ;
-                                            }
-                                        })
-                                    }
-                                    <p className='mb-0'>Great Product</p>
-                                    <span>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour</span>
-                                    <div className='s_review_img'>
-                                        <img src={require('../Img/Sujal/p_ring1.png')} alt='review 1'></img>
-                                        <img src={require('../Img/Sujal/p_ring2.png')} alt='review 1'></img>
-                                        <img src={require('../Img/Sujal/p_ring3.png')} alt='review 1'></img>
-                                    </div>
-                                </div>
-                                <div className='s_review_icon d-flex'>
-                                    <div className="d-flex align-items-center me-4">
-                                        <AiOutlineLike />
-                                        <span>Like</span>
-                                    </div>
-                                    <div className="d-flex align-items-center me-4">
-                                        <AiOutlineDislike />
-                                        <span>Dislike</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className='d-flex s_review_div'>
-                            <div className='s_review_profile'>
-                                <p className='mb-0'>NL</p>
-                            </div>
-                            <div className='s_review_detail'>
-                                <p className='mb-0'>Nathon Lyon</p>
-                                <div className='s_rating'>
-                                    {
-                                        [...Array(5)].map((_, index) => {
-                                            if (index < 3) {
-                                                return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                            } else {
-                                                return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                ;
-                                            }
-                                        })
-                                    }
-                                    <p className='mb-0'>Great Product</p>
-                                    <span>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour</span>
-                                    <div className='s_review_img'>
-                                        <img src={require('../Img/Sujal/p_ring1.png')} alt='review 1'></img>
-                                        <img src={require('../Img/Sujal/p_ring2.png')} alt='review 1'></img>
-                                        <img src={require('../Img/Sujal/p_ring3.png')} alt='review 1'></img>
-                                    </div>
-                                </div>
-                                <div className='s_review_icon d-flex'>
-                                    <div className="d-flex align-items-center me-4">
-                                        <AiFillLike />
-                                        <span>Like</span>
-                                    </div>
-                                    <div className="d-flex align-items-center me-4">
-                                        <AiOutlineDislike />
-                                        <span>Dislike</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className='d-flex s_review_div'>
-                            <div className='s_review_profile'>
-                                <p className='mb-0'>NL</p>
-                            </div>
-                            <div className='s_review_detail'>
-                                <p className='mb-0'>Nathon Lyon</p>
-                                <div className='s_rating'>
-                                    {
-                                        [...Array(5)].map((_, index) => {
-                                            if (index < 3) {
-                                                return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                            } else {
-                                                return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                ;
-                                            }
-                                        })
-                                    }
-                                    <p className='mb-0'>Great Product</p>
-                                    <span>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour</span>
-                                    <div className='s_review_img'>
-                                        <img src={require('../Img/Sujal/p_ring1.png')} alt='review 1'></img>
-                                        <img src={require('../Img/Sujal/p_ring2.png')} alt='review 1'></img>
-                                        <img src={require('../Img/Sujal/p_ring3.png')} alt='review 1'></img>
-                                    </div>
-                                </div>
-                                <div className='s_review_icon d-flex'>
-                                    <div className="d-flex align-items-center me-4">
-                                        <AiOutlineLike />
-                                        <span>Like</span>
-                                    </div>
-                                    <div className="d-flex align-items-center me-4">
-                                        <AiFillDislike />
-                                        <span>Dislike</span>
-                                    </div>
-                                </div>
+                                            <p className='mb-0'>Great Product</p>
+                                            <span>{item.description}</span>
+                                            {item.image ?
+                                                <div className='s_review_img'>
+                                                    {item?.image.map((item) => {
+                                                        return <img src={item} alt='review' key={item} />
+                                                    })}
+                                                </div>
+                                                : ''}
 
-                            </div>
-                        </div>
+                                        </div>
+                                        <div className='s_review_icon d-flex'>
+                                            <div className="d-flex align-items-center me-4">
+                                                <AiOutlineLike />
+                                                <span>Like</span>
+                                            </div>
+                                            <div className="d-flex align-items-center me-4">
+                                                <AiOutlineDislike />
+                                                <span>Dislike</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        })}
                     </div>
                 </Modal.Body>
             </Modal>

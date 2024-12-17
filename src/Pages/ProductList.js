@@ -6,30 +6,33 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { FaAngleDown, FaBars } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
-import axios from 'axios';
+import axios, { all } from 'axios';
 function ProductList() {
     const { Api, token, allProduct } = useContext(noteContext);
 
     // backend connection code
-    const { id } = useParams();
+    const { id, type } = useParams();
 
     // get subcategory data
     const [subCategoryData, setSubCategoryData] = useState([]);
     const [isRing, setIsRing] = useState(false);
     const [isWatch, setIsWatch] = useState(false);
+
     useEffect(() => {
-        axios.get(`${Api}/subcategories/get/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }).then((response) => {
-            const data = response.data.subCategory;
-            const checkRing = data.name?.includes('Ring') || data.category_name?.includes('Ring');
-            setIsRing(checkRing);
-            const checkWatch = data.name?.includes('Watch') || data.category_name?.includes('Watch');
-            setIsWatch(checkWatch);
-            setSubCategoryData(response.data.subCategory);
-        });
+        if(type === 'subcategory'){
+            axios.get(`${Api}/subcategories/get/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then((response) => {
+                const data = response.data.subCategory;
+                const checkRing = data.name?.includes('Ring') || data.category_name?.includes('Ring');
+                setIsRing(checkRing);
+                const checkWatch = data.name?.includes('Watch') || data.category_name?.includes('Watch');
+                setIsWatch(checkWatch);
+                setSubCategoryData(response.data.subCategory);
+            });
+        }
     }, [Api, id, token]);
 
 
@@ -37,7 +40,13 @@ function ProductList() {
     const [productList_detail, setproductList_detail] = useState([]);
     const [productlist, setProductList] = useState([]);
     useEffect(() => {
-        const product = allProduct.filter((product) => { return product.sub_category_id === parseInt(id); })
+        let product =[]
+        if(type === 'subcategory'){
+            product = allProduct.filter((product) => { return product.sub_category_id === parseInt(id); })
+        }
+        if(type === 'category'){
+            product = allProduct.filter((product) => { return product.category_id === parseInt(id); })
+        }
         setproductList_detail(product);
         setProductList(product);
         // alert('');
@@ -51,7 +60,7 @@ function ProductList() {
         // x is value y is id and z is name of input type
         const exists = fliterOptionData.some(option => option.name === x);
         if (exists) {
-            
+
             setFliterOptionData(fliterOptionData.filter(option => option.name !== x));
         } else {
             setFliterOptionData([...fliterOptionData, { id: y, name: x, type: z }]);
@@ -74,16 +83,16 @@ function ProductList() {
                 if (ele.type === "purity") {
                     return product.metal === ele.name;
                 }
-                if(ele.type==="occasion"){
+                if (ele.type === "occasion") {
                     return product?.occasion === ele.name;
                 }
-                if(ele.type==="Diamond Clarity"){
+                if (ele.type === "Diamond Clarity") {
                     return product?.clarity === ele.name;
                 }
                 if (ele.type === "Metal") {
                     return product?.metal?.includes(ele.name);
                 }
-                if(ele.type === "Metal Color"){
+                if (ele.type === "Metal Color") {
                     return product?.metal_color === ele.name;
                 }
                 return false;
@@ -96,9 +105,9 @@ function ProductList() {
     };
 
     // this useeffect called when fliter applied into product list 
-    useEffect(()=>{
+    useEffect(() => {
         fliterhanddler()
-    },[fliterOptionData])
+    }, [fliterOptionData])
     useEffect(() => {
         if (newFilterData.length > productlist.length) {
             setNewFliterData([]);
@@ -120,7 +129,7 @@ function ProductList() {
         // console.log(x);
         const checkboxs = document.getElementById(x.id);
         checkboxs.checked = false;
-        
+
         // }
     }
 
@@ -597,22 +606,22 @@ function ProductList() {
                                         <Accordion.Body>
                                             <div className="d-flex align-items-center s_checkbox">
                                                 <input type="checkbox" className="me-2" id="Rose Gold"
-                                                    name="Metal Color" value={'rose'} onChange={(e) => { fliterOptions(e.target.value, e.target.id ,e.target.name); }}></input>
+                                                    name="Metal Color" value={'rose'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
                                                 <label for="Rose Gold">Rose Gold</label>
                                             </div>
                                             <div className="d-flex align-items-center s_checkbox">
                                                 <input type="checkbox" className="me-2" id="White"
-                                                    name="Metal Color" value={'silver'} onChange={(e) => { fliterOptions(e.target.value, e.target.id,e.target.name); }}></input>
+                                                    name="Metal Color" value={'silver'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
                                                 <label for="White">White</label>
                                             </div>
                                             <div className="d-flex align-items-center s_checkbox">
                                                 <input type="checkbox" className="me-2" id="white_gold"
-                                                    name="Metal Color" value={'white_gold'} onChange={(e) => { fliterOptions(e.target.value, e.target.id,e.target.name); }}></input>
+                                                    name="Metal Color" value={'white_gold'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
                                                 <label for="white_gold">White Gold</label>
                                             </div>
                                             <div className="d-flex align-items-center s_checkbox">
                                                 <input type="checkbox" className="me-2" id="gold"
-                                                    name="Metal Color" value={'gold'} onChange={(e) => { fliterOptions(e.target.value, e.target.id,e.target.name); }}></input>
+                                                    name="Metal Color" value={'gold'} onChange={(e) => { fliterOptions(e.target.value, e.target.id, e.target.name); }}></input>
                                                 <label for="gold">Gold</label>
                                             </div>
                                         </Accordion.Body>
@@ -885,7 +894,6 @@ function ProductList() {
                                                         </div>
                                                     </div>
                                                 </Link>
-
                                             </div>
                                         </Col>
                                     )
