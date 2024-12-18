@@ -18,6 +18,7 @@ const returnMainData = JSON.parse(localStorage.getItem("ReturnOrder")) || []
 // console.log(returnMainData);
 
 const ReturnOrderKey = JSON.parse(localStorage.getItem("ReturnOrderKey")) || null
+
 const [returnData, setReturnData] = useState([])
 const [prodID, setProdID] = useState([])
 
@@ -33,19 +34,20 @@ useEffect(()=>{
    }) .then((value) => {
     const data = value?.data?.orders?.filter(
       (element) => element?.order_number === ReturnOrderKey
-    );
-    console.log(data);
+    );    
     const First = data?.map((element)=> element?.order_items)
     const Second = First[0]?.map((element)=> element?.product_id)
     // console.log("Fliter" , new Set(Second) );
-    setProdID(new Set(Second))
-
+    setProdID([...new Set(Second)]);
+    setReturnData(data)
     
-    setReturnData(data);
   }).catch((error)=>{
       alert(error)
    })
 },[returnOrderData])
+
+
+// console.log("Hello ", prodID);
 
 
 // --------------- Return Order Popup -------------
@@ -141,7 +143,7 @@ const handleConfirmReturn = (e) => {
        customer_id:store?.id,
        return_date:finalDate,
        return_status:"pending",
-       price:returnMainData?.total_amount,
+       price:returnData[0]?.total_amount,
        phone:returnPopup.phone,
        otp:MergeOtp,
      },
@@ -174,10 +176,9 @@ const handleRating = (value) => {
 const handleImageUpload = (event) => {
   const files = Array.from(event.target.files);
   const newImages = files.map((file) => ({
-    file, // Store the file object for upload
     preview: URL.createObjectURL(file), // Generate a local preview URL
   }));
-  setUploadedImages([...uploadedImages, ...newImages]);
+  setUploadedImages((prevImages) => [...prevImages, ...newImages]);
 };
 
 const handleRemoveImage = (index) => {
@@ -192,24 +193,40 @@ const day = String(today.getDate()).padStart(2, '0');
 
 const finalDate = `${year}-${month}-${day}`
 
+// console.log("data " , returnData[0]?.customer_id);
+// console.log("Pro " , prodID);
+
+
 const handleReviewSubmit = () => {
   if (uploadedImages.length === 0 || rating === 0 || feedback === "") {
-    alert("Please upload at least one image or video, provide a rating, and add feedback.");
+    alert("Please upload at least one image, provide a rating, and add feedback.");
     return;
   }
 
   const formData = new FormData();
-  formData.append("customer_id", returnMainData?.customer_id);
-  formData.append("product_id", prodID);
+  formData.append("customer_id", returnData[0]?.customer_id);
   formData.append("description", feedback);
   formData.append("rating", rating);
   formData.append("date", finalDate);
-  formData.append("order_id", returnMainData?.id);
+  formData.append("order_id", returnData[0]?.id);
 
-  // Append images to the formData
-  uploadedImages.forEach((imageData, index) => {
-    formData.append(`image[${index}]`, imageData.file);
+  prodID.forEach((element, index) => {
+    formData.append(`product_id[${index}]`, element);
   });
+
+  // Append image URLs (not the preview, but the actual file URL or base64 encoded string)
+  uploadedImages.forEach((imageData, index) => {
+    console.log("ImageData " , imageData?.preview);
+    console.log("Index " , index);
+    
+    console.log("Appending image URL:", formData?.append(`image[${index}]`, imageData?.preview)); // Debugging: Ensure preview URL exists
+    formData.append(`image[${index}]`, imageData?.preview); // Append the image preview URL
+  });
+
+
+
+  console.log("formData " , formData);
+  
 
   axios
     .post(`${Api}/reviews/create`, formData, {
@@ -226,6 +243,10 @@ const handleReviewSubmit = () => {
     });
 };
 
+
+
+console.log(returnData);
+console.log(prodID);
 
 
 
@@ -325,7 +346,7 @@ const handleReviewSubmit = () => {
                                             </h6>
                                        {
                                          returnData[0]?.order_items?.map((item , index)=>{
-                                                
+                                              
                                             return(
                                               <div className="row px-4 mt-4" key={index}>
                                               <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 ">

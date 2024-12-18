@@ -103,7 +103,6 @@ const UseContext = (props) => {
   }
   // Fetch wishlist
   const fetchWishlist = async () => {
-    console.log('iscalled');
     try {
       const response = await axios.get(`${Api}/wishlists/getall`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -118,7 +117,6 @@ const UseContext = (props) => {
         const idData = response.data.data
           .filter((item) => item.product_id) // Filter items with valid product_id
           .map((item) => item.product_id);
-        console.log('ids', idData);
         setWishlistID(idData);
       }
     } catch (error) {

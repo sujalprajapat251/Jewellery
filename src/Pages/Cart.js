@@ -8,9 +8,12 @@ import { BsThreeDotsVertical } from 'react-icons/bs'
 
 const Cart = () => {
 
+ const cartData = JSON.parse(localStorage.getItem("cardDetail")) || []
+  console.log(cartData);
+  
+
   return (
     <>
-
 
     {/* *************** Empty Cart ************    */}
      <section className='d-none'>
@@ -35,45 +38,53 @@ const Cart = () => {
             </div>
             <div className="row ">
                 <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 mt-3">
-                    <div className='ds_cart-box mt-4'>
-                        <div className='text-end'>
-                           <IoIosCloseCircle className='ds_cart-cancel' />
-                        </div>
-                       <div className='d-flex justify-content-between flex-wrap'>
-                          <div>
-                            <div className='d-flex ds_cart-flex'>
-                                <div className='mx-auto'>
-                                    <img src={require("../Img/dhruvin/ring.png")} alt="" />
-                                </div>
-                                <div className='ds_cart-deta'>
-                                   <h6>Dual Tone Halo Diamond Finger Ring</h6>
-                                   <p className='ds_tcolor mb-0'>Metal : <span className='ds_color'>925 Silver</span></p>
-                                   <p className='ds_tcolor mb-0'>Metal Color  : <span className='ds_color'> Silver</span></p>
-                                   <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'> PD00003-14-RS-FGVVSVS</span></p>
-                                   <p className='ds_tcolor mb-0'>Size : <span className='ds_color'> 5</span></p>
-                                   <p className='ds_tcolor mb-0'>Diamond Quality: <span className='ds_color'> FG / VVS-VS</span></p>
-                                </div>
-                            </div>
-                          </div>
 
-                          <div className='d-flex ds_cart-manage'>
-                             <h5 className='ds_color mt-2'>₹1200 <span className='ds_cart-less-price'>₹1500</span></h5>
-                             <div className='ds_cart-mul mt-auto'>
-                                <div className='d-flex justify-content-between'>
-                                    <div>
-                                      <FaMinus className='text-light ds_cart-ico' />
-                                    </div>
-                                    <div className='text-light'>
-                                        1
-                                    </div>
-                                    <div>
-                                       <FaPlus className='text-light ds_cart-ico' />
-                                    </div>
-                                </div>
+                      {cartData?.map((element)=>{
+                         const {product} = element                         
+                           return(
+                              <div key={product?.id} className='ds_cart-box mt-4'>
+                                   <div className='text-end'>
+                                      <IoIosCloseCircle className='ds_cart-cancel' />
+                                   </div>
+                                  <div className='d-flex justify-content-between flex-wrap'>
+                                     <div>
+                                       <div className='d-flex ds_cart-flex'>
+                                           <div className='mx-auto'>
+                                               <img src={require("../Img/dhruvin/ring.png")} alt="" />
+                                           </div>
+                                           <div className='ds_cart-deta'>
+                                              <h6>{product?.product_name}</h6>
+                                              <p className='ds_tcolor mb-0'>Metal : <span className='ds_color'>{product?.metal} {product?.metal}</span></p>
+                                              <p className='ds_tcolor mb-0'>Metal Color  : <span className='ds_color'> Silver</span></p>
+                                              <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'> PD00003-14-RS-FGVVSVS</span></p>
+                                              <p className='ds_tcolor mb-0'>Size : <span className='ds_color'> 5</span></p>
+                                              <p className='ds_tcolor mb-0'>Diamond Quality: <span className='ds_color'> FG / VVS-VS</span></p>
+                                           </div>
+                                       </div>
+                                     </div>
+           
+                                     <div className='d-flex ds_cart-manage'>
+                                        <h5 className='ds_color mt-2'>₹1200 <span className='ds_cart-less-price'>₹1500</span></h5>
+                                        <div className='ds_cart-mul mt-auto'>
+                                           <div className='d-flex justify-content-between'>
+                                               <div>
+                                                 <FaMinus className='text-light ds_cart-ico' />
+                                               </div>
+                                               <div className='text-light'>
+                                                   1
+                                               </div>
+                                               <div>
+                                                  <FaPlus className='text-light ds_cart-ico' />
+                                               </div>
+                                           </div>
+                                        </div>
+                                     </div>
+                                  </div>
                              </div>
-                          </div>
-                       </div>
-                    </div>
+                           )
+                         })}
+
+                    
 
                     <div className='ds_cart-box mt-4'>
                         <div className='text-end'>
