@@ -6,21 +6,9 @@ import 'owl.carousel/dist/assets/owl.theme.default.css';
 import slider1 from '../Img/Sujal/slider1.png';
 import slider2 from '../Img/Sujal/slider2.png';
 import slider3 from '../Img/Sujal/slider3.png';
-import seller1 from '../Img/Sujal/seller1.png';
-import seller2 from '../Img/Sujal/seller2.png';
-import seller3 from '../Img/Sujal/seller3.png';
-import seller4 from '../Img/Sujal/seller4.png';
-import seller5 from '../Img/Sujal/seller5.png';
-import seller6 from '../Img/Sujal/seller6.png';
-import seller7 from '../Img/Sujal/seller7.png';
-import seller8 from '../Img/Sujal/seller8.png';
-import seller9 from '../Img/Sujal/seller9.png';
-import seller10 from '../Img/Sujal/seller10.png';
-import seller11 from '../Img/Sujal/seller11.png';
-import seller12 from '../Img/Sujal/seller12.png';
 import { Col, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { GoHeart } from 'react-icons/go';
+import { GoHeart, GoHeartFill } from 'react-icons/go';
 import es_card1 from '../Img/Sujal/platinum.png';
 import es_card2 from '../Img/Sujal/design.png';
 import es_card3 from '../Img/Sujal/jewel.png';
@@ -28,7 +16,7 @@ import noteContext from '../Context/noteContext';
 
 function Home() {
     // backend connection code
-    const { allCategory,allProduct } = useContext(noteContext);
+    const { allCategory , allProduct , addwishlistHandler , wishlistID , removeWishlistHandler } = useContext(noteContext);
 
     // cat slideer responsive
     const cat_sliderres = {
@@ -52,13 +40,12 @@ function Home() {
     }
 
     // card detail slideer responsive
-    const [bestSeller,setBestSeller] = useState([])
-    useEffect(()=>{
-    console.log(allProduct);
-    const data = allProduct.filter((product)=> product?.collection === 'best seller')
-    // console.log(data)
-    setBestSeller(data)
-    },[allProduct])
+    const [bestSeller, setBestSeller] = useState([])
+    useEffect(() => {
+        const data = allProduct.filter((product) => product?.collection === 'best seller')
+        // console.log(data)
+        setBestSeller(data);
+    }, [allProduct]);
     // const card_detail = [
     //     { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: seller1 },
     //     { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: seller2 },
@@ -150,36 +137,48 @@ function Home() {
                     </div>
                     <Row xxl={6} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
                         {
-                           bestSeller.slice(0,12).map((ele, id) => {
+                            bestSeller.slice(0, 12).map((ele, id) => {
+                                var isSelected = wishlistID.find((items) => items === ele.id);
                                 return (
                                     <Col key={id} className='py-4'>
                                         <div className='s_seller_card'>
-                                                <Link to={`/productdetail/${ele.id}`}>
-                                                    <div className='s_card_img'>
-                                                        <img src={ele.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
+                                            <Link to={'#'}>
+                                                <div className='s_card_img bg-white'>
+                                                    <img src={ele.images?.[0]} className="w-100 bg-white" alt={ele.title} key={ele.title} />
+                                                </div>
+                                                {
+                                                    isSelected ? 
+                                                    <div className='s_heart_icon active' onClick={()=>{removeWishlistHandler(isSelected)}}>
+                                                        <GoHeartFill />
+                                                    </div> : <div className='s_heart_icon' onClick={() => { addwishlistHandler(ele.id) }}>
+                                                        <GoHeart />
                                                     </div>
-                                                    {ele.gender ?
-                                                        <div className='s_card_status'><p className='mb-0'>{ele.metal_color}</p></div>
-                                                        : ''}
-                                                    <div className='s_card_text'>
-                                                        <h5>{ele.product_name}</h5>
-                                                        <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.discount}</strike></p>
-                                                        <div className='s_rating'>
-                                                            {
-                                                                [...Array(5)].map((_, index) => {
-                                                                    if (index < 0) {
-                                                                        return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                                    } else {
-                                                                        return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                                        ;
-                                                                    }
-                                                                })
-                                                            }
-                                                        </div>
+                                                }
+                                                    { 
+                                                    console.log('isSelected', isSelected)
+                                                    }
+                                                {ele.gender ?
+                                                    <div className='s_card_status'><p className='mb-0'>{ele.metal_color}</p></div>
+                                                    : ''}
+                                                <Link className='s_card_text' to={`/productdetail/${ele.id}`}>
+                                                    <h5>{ele.product_name}</h5>
+                                                    <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.discount}</strike></p>
+                                                    <div className='s_rating'>
+                                                        {
+                                                            [...Array(5)].map((_, index) => {
+                                                                if (index < 0) {
+                                                                    return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                } else {
+                                                                    return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                                    ;
+                                                                }
+                                                            })
+                                                        }
                                                     </div>
                                                 </Link>
+                                            </Link>
 
-                                            </div>
+                                        </div>
                                     </Col>
                                 )
                             })
@@ -322,25 +321,30 @@ function Home() {
                                     feature_sliderres
                                 }
                             >
-                                <Link className='item' to={'/productlist'}>
-                                    <img src={require('../Img/Sujal/s_necklace.png')} className='w-100' alt='Necklace'></img>
-                                    <div className='s_slider_text'>
-                                        <h5>Necklace</h5>
-                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike className="mx-2">₹1500</strike></p>
-                                        <div className='s_rating'>
-                                            {
-                                                [...Array(5)].map((_, index) => {
-                                                    if (index < 3) {
-                                                        return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                    } else {
-                                                        return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                        ;
+                                {allProduct.slice(0, 5).map((item, idx) => {
+                                    return (
+                                        <Link className='item' key={idx} to={`/productdetail/${item.id}`}>
+                                            <img src={item.images[0]} className='w-100' alt={`image${idx}`}></img>
+                                            <div className='s_slider_text'>
+                                                <h5 className='text-capitalize'>{item.product_name}</h5>
+                                                <p className='mb-0'><span className='mx-2'>{item.price}</span><strike className="mx-2">{item.discount}</strike></p>
+                                                <div className='s_rating'>
+                                                    {
+                                                        [...Array(5)].map((_, index) => {
+                                                            if (index < item.rating) {
+                                                                return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                            } else {
+                                                                return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                                ;
+                                                            }
+                                                        })
                                                     }
-                                                })
-                                            }
-                                        </div>
-                                    </div>
-                                </Link>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    )
+                                })}
+                                {/* 
                                 <Link className='item' to={'/productlist'}>
                                     <img src={require('../Img/Sujal/s_bracelet.png')} className='w-100' alt='Bracelet'></img>
                                     <div className='s_slider_text'>
@@ -397,7 +401,7 @@ function Home() {
                                             }
                                         </div>
                                     </div>
-                                </Link>
+                                </Link> */}
 
                             </OwlCarousel>
                         </div>
@@ -459,7 +463,6 @@ function Home() {
                                 </div>
                             </div>
                         </Col>
-
                     </Row>
                 </div>
 

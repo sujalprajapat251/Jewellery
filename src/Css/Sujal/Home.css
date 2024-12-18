@@ -2,6 +2,9 @@
 :root {
     --brown: #4D1F08;
 }
+.s_light_brown{
+    background-color: rgba(77, 31, 8, .1)
+}
 .s_w_30 {
     width: 30%;
 }
@@ -268,7 +271,9 @@
     z-index: 1;
     text-transform: capitalize;
 }
-
+.s_heart_icon.active svg {
+    fill: red;
+}
 .s_heart_icon:hover svg {
     fill: red;
 }
