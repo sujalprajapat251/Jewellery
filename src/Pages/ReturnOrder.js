@@ -10,6 +10,7 @@ import { Modal } from 'react-bootstrap'
 import { useFormik } from 'formik'
 
 const ReturnOrder = () => {
+  
 
 const {Api , store , returnOrderData} = useContext(noteContext)
 
@@ -18,6 +19,7 @@ const returnMainData = JSON.parse(localStorage.getItem("ReturnOrder")) || []
 
 const ReturnOrderKey = JSON.parse(localStorage.getItem("ReturnOrderKey")) || null
 const [returnData, setReturnData] = useState([])
+const [prodID, setProdID] = useState([])
 
 useEffect(()=>{
   axios.post(`${Api}/order/getbyuserid`,
@@ -32,6 +34,13 @@ useEffect(()=>{
     const data = value?.data?.orders?.filter(
       (element) => element?.order_number === ReturnOrderKey
     );
+    console.log(data);
+    const First = data?.map((element)=> element?.order_items)
+    const Second = First[0]?.map((element)=> element?.product_id)
+    // console.log("Fliter" , new Set(Second) );
+    setProdID(new Set(Second))
+
+    
     setReturnData(data);
   }).catch((error)=>{
       alert(error)
@@ -73,19 +82,7 @@ const handleRequestOtp = (e) => {
     })  
 }
 
-// const ReturnOrderFormilk = useFormik({
-//     initialValues:returnOrderVal,
-//     validationSchema:ReturnOrderSchema,
-//     onSubmit: (values , action) => {  
-//       setReturnOtpVal((prev) => ({
-//         ...prev,
-//         order_id: values?.order_id,
-//         phone: values?.phone,
-//         reason: values?.reason,
-//     })); 
-         
-//     } 
-// })
+
 
 
 
@@ -139,9 +136,11 @@ const handleConfirmReturn = (e) => {
    else{
      axios.post(`${Api}/returnorder/create`,{
        order_id:returnPopup.order_id,
+       stock_id: null,
+       product_id: null,
        customer_id:store?.id,
        return_date:finalDate,
-       return_status:returnMainData?.order_status,
+       return_status:"pending",
        price:returnMainData?.total_amount,
        phone:returnPopup.phone,
        otp:MergeOtp,
@@ -153,6 +152,7 @@ const handleConfirmReturn = (e) => {
      }
     ).then((value)=>{
          console.log("Final Val " , value);
+         setReturnToggle(false)
      }).catch((error)=>{
        alert(error)
      })
@@ -172,9 +172,12 @@ const handleRating = (value) => {
 };
 
 const handleImageUpload = (event) => {
-  const files = Array.from(event.target.files); 
-  const uploaded = files.map((file) => URL.createObjectURL(file));
-  setUploadedImages([...uploadedImages, ...uploaded]); 
+  const files = Array.from(event.target.files);
+  const newImages = files.map((file) => ({
+    file, // Store the file object for upload
+    preview: URL.createObjectURL(file), // Generate a local preview URL
+  }));
+  setUploadedImages([...uploadedImages, ...newImages]);
 };
 
 const handleRemoveImage = (index) => {
@@ -190,36 +193,39 @@ const day = String(today.getDate()).padStart(2, '0');
 const finalDate = `${year}-${month}-${day}`
 
 const handleReviewSubmit = () => {
-  //  const Arr = []
   if (uploadedImages.length === 0 || rating === 0 || feedback === "") {
-     alert("Please upload at least one image or video or rating and feedback.");
+    alert("Please upload at least one image or video, provide a rating, and add feedback.");
+    return;
   }
-  else{
-     axios.post(`${Api}/reviews/create`,{
-      customer_id:returnMainData?.customer_id,
-      product_id:2,
-      description:feedback ,
-      rating:rating,
-      date:finalDate,
-      order_id: returnMainData?.id,
-      image:uploadedImages
-     },
-     {
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`
-      }
-     } 
-    ).then((value)=>{
-      console.log(value);
-      
-    }).catch((error)=>{
-      alert(error)
-    })
-  }
-  
-}
 
-console.log(uploadedImages);
+  const formData = new FormData();
+  formData.append("customer_id", returnMainData?.customer_id);
+  formData.append("product_id", prodID);
+  formData.append("description", feedback);
+  formData.append("rating", rating);
+  formData.append("date", finalDate);
+  formData.append("order_id", returnMainData?.id);
+
+  // Append images to the formData
+  uploadedImages.forEach((imageData, index) => {
+    formData.append(`image[${index}]`, imageData.file);
+  });
+
+  axios
+    .post(`${Api}/reviews/create`, formData, {
+      headers: {
+        Authorization: `Bearer ${store?.access_token}`,
+        "Content-Type": "multipart/form-data", // Important for file uploads
+      },
+    })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      alert(error);
+    });
+};
+
 
 
 
@@ -400,14 +406,19 @@ console.log(uploadedImages);
                                 <div className='px-4 mt-3'>
                                     <h6 className='ds_600 mb-0'>Add Photo or Video</h6>
                                     <div className='d-flex mt-2'>
-                                    {uploadedImages.map((image, index) => (
-                                           <div className='ds_review-inner position-relative' key={index}>
-                                             <img src={image} alt={`Uploaded ${index}`} width="100%" className='ds_review-upload-img' />
+                                    {uploadedImages.map((image, index)=> {
+                                         return(
+                                          <div className='ds_review-inner position-relative' key={index}>
+                                             <img src={image?.preview} alt={`Uploaded ${index}`} width="100%" className='ds_review-upload-img' />
                                              <IoMdClose className='ds_review-cancel-icon' onClick={() => handleRemoveImage(index)}
 
                                              />
                                            </div>
-                                         ))}
+                                         )
+                                      })}
+                                           
+                                          
+                                        
                                         <div className='ds_review-add' onClick={() => document.getElementById('imageUploadInput').click()} style={{ cursor: 'pointer' }}>
                                            <FiPlus className='ds_review-plus' />
                                          </div>

@@ -39,6 +39,7 @@ const MyProfile = () => {
 
     } = useContext(noteContext) 
 
+    const navigate = useNavigate()
 
     
     function capitalizeFirstLetter(val) {
@@ -67,12 +68,18 @@ const MyProfile = () => {
     };
 
 
-
-    
-
-
   // **********  Submit Review Popup  ********
    const [subRevToggle, setSubRevToggle] = useState(false)
+
+
+  //  ************ LogOut Modal *********
+  const [logOut, setLogOut] = useState(false)
+
+  const handleLogOut = () => {
+      localStorage.removeItem("Login")
+      setLogOut(false)
+      navigate("/")
+  }
 
   return (
     <>
@@ -92,7 +99,7 @@ const MyProfile = () => {
                                 <button onClick={()=>setMainActive("My Order")} className={`ds_profile-btn ${mainActive === "My Order" ? 'ds_active-color' : ''} ds_600`}> <img className={`${mainActive === "My Order" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/order.png")} alt="" width="7%" /> <span className='ms-2'>My Order</span></button>
                                 <button onClick={()=>setMainActive("My Wishlist")} className={`ds_profile-btn ${mainActive === "My Wishlist" ? 'ds_active-color' : ''} ds_600`}>  <img className={`${mainActive === "My Wishlist" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/heart.png")} alt="" width="7%" /> <span className='ms-2'>My Wishlist</span></button>
                                 <button onClick={()=>{setMainActive("Change Password"); setChangePassToggle(true);}} className={`ds_profile-btn ${mainActive === "Change Password" ? 'ds_active-color' : ''} ds_600`}> <img className={`${mainActive === "Change Password" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/lock.png")} alt="" width="7%" /> <span className='ms-2'>Change Password</span></button>
-                                <button onClick={() =>setMainActive("Logout")} className={`ds_profile-btn ${mainActive === "Logout" ? 'ds_active-color' : ''} ds_600`}  > <img className={`${mainActive === "Logout" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/logout.png")} alt="" width="7%" /> <span className='ms-2'>Logout</span></button>
+                                <button onClick={() =>{setMainActive("Logout"); setLogOut(true)}} className={`ds_profile-btn ${mainActive === "Logout" ? 'ds_active-color' : ''} ds_600`}  > <img className={`${mainActive === "Logout" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/logout.png")} alt="" width="7%" /> <span className='ms-2'>Logout</span></button>
                               </div>
                            </div>
                            <div className='ds_offcanvas-main'>
@@ -117,7 +124,7 @@ const MyProfile = () => {
                                 <button onClick={()=>setMainActive("My Order")} className={`ds_profile-btn ${mainActive === "My Order" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "My Order" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/order.png")} alt="" width="7%" /> <span className='ms-2'> My Order</span></button>
                                 <button onClick={()=>setMainActive("My Wishlist")} className={`ds_profile-btn ${mainActive === "My Wishlist" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close">  <img className={`${mainActive === "My Wishlist" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/heart.png")} alt="" width="7%" /> <span className='ms-2'>My Wishlist</span></button>
                                 <button onClick={()=>{setMainActive("Change Password"); setChangePassToggle(true);}} className={`ds_profile-btn ${mainActive === "Change Password" ? 'ds_active-color' : ''} ds_600`} > <img className={`${mainActive === "Change Password" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/lock.png")} alt="" width="7%" /> <span className='ms-2'>Change Password</span></button>
-                                <button onClick={()=>setMainActive("Logout")} className={`ds_profile-btn ${mainActive === "Logout" ? 'ds_active-color' : ''} ds_600`} data-bs-toggle="modal" data-bs-target="#logOut" > <img className={`${mainActive === "Logout" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/logout.png")} alt="" width="7%" /> <span className='ms-2'>Logout</span></button>
+                                <button onClick={() =>{setMainActive("Logout"); setLogOut(true)}} className={`ds_profile-btn ${mainActive === "Logout" ? 'ds_active-color' : ''} ds_600`}  > <img className={`${mainActive === "Logout" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/logout.png")} alt="" width="7%" /> <span className='ms-2'>Logout</span></button>
                                 </div>
                               </div>
                              </div>
@@ -909,28 +916,23 @@ const MyProfile = () => {
         </div>
       </section>
 
-       {/* ---------------- Delete Popup ------------------ */}
+       {/* ---------------- Logout Popup ------------------ */}
        <section>
          <div>
-           <div className="modal fade" id="logOut"  aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog modal-dialog-centered ds_delete-modal">
-              <div className="modal-content">
-                <div className="modal-header border-0">
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div className="modal-body text-center pt-0">
-                  <h4 className="modal-title ds_color" id="exampleModalLabel">Logout</h4>
+         <Modal show={logOut} onHide={()=> setLogOut(false)} aria-labelledby="contained-modal-title-vcenter" centered>
+             <Modal.Header className='border-0 pb-0' closeButton>
+             </Modal.Header>
+             <Modal.Body className='text-center pt-0'>
+                <h4 className="modal-title ds_color" id="exampleModalLabel">Logout</h4>
                   <h6>Are you sure you want to Logout?</h6>
-                  <div className='mt-4 pt-3 mb-4'>
-                     <button className='ds_delete-no'>No</button>
-                     <button className='ds_delete-yes'>Yes</button>
+                  <div className='mt-4 pt-3 mb-4 ds_log-popup'>
+                     <button className='ds_delete-no' onClick={()=> setLogOut(false)}>No</button>
+                     <button className='ds_delete-yes' onClick={handleLogOut}>Yes</button>
                   </div>
-                </div>
-              </div>
-            </div>
-           </div>
+             </Modal.Body>
+           </Modal>
          </div>
-      </section>
+       </section>
 
       
 
