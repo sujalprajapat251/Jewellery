@@ -72,6 +72,9 @@
 .s_productdetail_sec .s_share_icon {
     padding: 10px 0px; 
 }
+.s_productdetail_sec .s_share_icon .s_active  {
+    fill:#F9595F;
+}
 .s_productdetail_sec .s_share_icon svg{
     color: var(--brown);
     width: 20px;
@@ -301,11 +304,19 @@
 .s_productdetail_sec .s_other_info {
     margin-top: 10px;
 }
-.s_productdetail_sec .s_other_info p{
-    margin-bottom: 0px;
-    color: #727272;
+.s_productdetail_sec .s_other_info h4 {
+    color: var(--brown);
 }
-
+.s_productdetail_sec .s_other_info span{
+    margin-bottom: 0px;
+    font-size: 18px;
+    font-weight: 500;
+    color:black;
+}
+.s_productdetail_sec .s_other_info p{
+    font-weight: 500;
+    color:#727272;
+}
 
 
 
