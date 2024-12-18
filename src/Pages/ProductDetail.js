@@ -3,18 +3,10 @@ import { Accordion, Col, Modal, Nav, Row } from "react-bootstrap";
 import video from '../Img/Sujal/ringvideo.mp4'
 import { useContext, useEffect, useRef, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
-import { GoHeart } from 'react-icons/go';
+import { GoHeart, GoHeartFill } from 'react-icons/go';
 import { FaAngleDown, FaShareAlt } from 'react-icons/fa';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
-import wishlist1 from '../Img/Sujal/wishlist1.png';
-import wishlist2 from '../Img/Sujal/wishlist2.png';
-import wishlist3 from '../Img/Sujal/wishlist3.png';
-import watch1 from '../Img/Sujal/w1.png';
-import watch2 from '../Img/Sujal/w2.png';
-import watch3 from '../Img/Sujal/w3.png';
-import watch4 from '../Img/Sujal/w4.png';
-import watch5 from '../Img/Sujal/w5.png';
 import noteContext from '../Context/noteContext';
 import axios from 'axios';
 function ProductDetail() {
@@ -24,7 +16,7 @@ function ProductDetail() {
     const category = '';
     // backend connnectivity code here
 
-    const { Api, token, allProduct } = useContext(noteContext);
+    const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler } = useContext(noteContext);
     const [product, setProduct] = useState([]);
     useEffect(() => {
         axios
@@ -50,7 +42,7 @@ function ProductDetail() {
             .catch((error) => {
                 console.error("Error fetching products:", error);
             });
-
+            setAddToCard(true);
     }, [id]);
 
     // size haddler
@@ -108,12 +100,12 @@ function ProductDetail() {
             })
     }, [product])
     // addto card handler
-    const [addToCard,setAddToCard] = useState(true);
+    const [addToCard, setAddToCard] = useState(true);
     const addCardHandle = () => {
         if (addToCard) {
             var data = { product: product, offers: selectedOffers, size: size, }
-            // const cardDetail = JSON.parse(localStorage.getItem('cardDetail')) || [];
-            localStorage.setItem('cardDetail', JSON.stringify(data));
+            const cardDetail = JSON.parse(localStorage.getItem('cardDetail')) || [];
+            localStorage.setItem('cardDetail', JSON.stringify([...cardDetail , data]));
             console.log(data);
             // addCard = false;
             setAddToCard(false);
@@ -192,9 +184,10 @@ function ProductDetail() {
 
 
     // ------------------------
-    const sub_total =(parseFloat(product?.price)+parseFloat(product?.stone_price))/parseFloat(product.making_charge)*100 || '-';
-    const gst_total = sub_total*3/100;
-    const great_total = sub_total+gst_total;
+    const sub_total = (parseFloat(product?.price) + parseFloat(product?.stone_price)) / parseFloat(product.making_charge) * 100 || '-';
+    const gst_total = sub_total * 3 / 100;
+    const great_total = sub_total + gst_total;
+    const isSelected = wishlistID.find((items) => items === product.id);
     return (
         <>
             <section className="s_prodetail_page ds_container">
@@ -298,10 +291,17 @@ function ProductDetail() {
                     </Col>
                     <Col>
                         <div className='s_productdetail_sec'>
-                            <div className='d-flex justify-content-end s_share_icon'>
-                                <GoHeart />
-                                <FaShareAlt />
-                            </div>
+                            {
+                                isSelected ?
+                                    <div className='d-flex justify-content-end s_share_icon' onClick={() => { findWishlistID(isSelected) }}>
+                                        <GoHeartFill className='s_active' />
+                                        <FaShareAlt />
+                                    </div> :
+                                     <div className='d-flex justify-content-end s_share_icon' onClick={() => { addwishlistHandler(product.id) }}>
+                                        <GoHeart />
+                                        <FaShareAlt />
+                                    </div>
+                            }
                             <h3 className='s_title text-capitalize'>{product?.product_name}</h3>
                             <div className='s_rating'>
                                 {
@@ -316,7 +316,7 @@ function ProductDetail() {
                                 }
                             </div>
                             <div className='d-flex align-items-center'>
-                                <h2 className='s_price'>₹{great_total  || product?.price}</h2>
+                                <h2 className='s_price'>₹{great_total || product?.price}</h2>
                                 {inStock !== true ? <div className='s_stock_status'>out of stack</div> : ''}
                             </div>
                             <p className='s_description'>{product?.description}</p>
@@ -365,7 +365,6 @@ function ProductDetail() {
                                 </div>
                             </> :
                                 ''}
-
                             <div className='s_pincode'>
                                 <h4>Pincode</h4>
                                 <div className='s_box'>
@@ -389,13 +388,6 @@ function ProductDetail() {
                                                     </div>
                                                 )
                                             })}
-                                            {/* <div className='d-flex align-items-center'>
-                                                <img src={require('../Img/Sujal/discount.png')} alt='discount' />
-                                                <div>
-                                                    <p className='mb-0'>Get flat 12% discount</p>
-                                                    <span>On your first order with us as new customer</span>
-                                                </div>
-                                            </div> */}
                                         </Accordion.Body>
                                     </Accordion.Item>
                                 </Accordion>
@@ -428,8 +420,13 @@ function ProductDetail() {
                                 </div>
                             </div>
                             <div className='s_other_info'>
-                                <p>* Additional 5 - 6 business days is required for delivery.</p>
-                                <p>* For Plus Size Extra 5 - 10 business days is required for delivery.</p>
+                                <h4>Return Policy</h4>
+                                <span>Return Reason</span>
+                                <p>Physical Damage, Defective, Wrong and missing item and any other reason</p>
+                                <span>Return Reason</span>
+                                <p>Physical Damage, Defective, Wrong and missing item and any other reason</p>
+                                <span>Return Reason</span>
+                                <p>Physical Damage, Defective, Wrong and missing item and any other reason</p>
                             </div>
                         </div>
                     </Col>
@@ -448,8 +445,6 @@ function ProductDetail() {
                             </Nav.Item>
                         </Nav>
                     </div>
-
-
                     <div className={`s_table_sec d-lg-flex  px-0 ${tab === 'tab-0' ? '' : 'd-none d-lg-none'}`}>
                         {category !== 'Watch' ? <>
                             <div className='s_table s_w_30'>
@@ -513,21 +508,21 @@ function ProductDetail() {
                                     <td>₹{product?.price || '-'}</td>
                                     <td>{product?.weight || '-'}g</td>
                                     <td>-</td>
-                                    <td>₹{parseFloat(product?.price)*parseFloat(product?.weight) || '-'}</td>
+                                    <td>₹{parseFloat(product?.price) * parseFloat(product?.weight) || '-'}</td>
                                 </tr>
                                 <tr>
                                     <td>Stone</td>
                                     <td>₹{product?.stone_price || '-'}</td>
                                     <td>{product?.gram || '-'}g</td>
                                     <td>-</td>
-                                    <td>₹{parseFloat(product.stone_price)*parseFloat(product?.gram)}</td>
+                                    <td>₹{parseFloat(product.stone_price) * parseFloat(product?.gram)}</td>
                                 </tr>
                                 <tr>
                                     <td>Making Charges</td>
                                     <td>-</td>
                                     <td>-</td>
                                     <td>-</td>
-                                    <td>₹{(parseFloat(product?.price)+parseFloat(product?.stone_price))/parseFloat(product.making_charge)}</td>
+                                    <td>₹{(parseFloat(product?.price) + parseFloat(product?.stone_price)) / parseFloat(product.making_charge)}</td>
                                 </tr>
                                 <tr>
                                     <td>Sub Total</td>

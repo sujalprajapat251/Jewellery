@@ -83,26 +83,32 @@ const UseContext = (props) => {
       }
     })
     console.log('response', res);
-
     fetchWishlist();
   }
   // Remove from wishlist handler {}
   const removeWishlistHandler = async (id) => {
-    console.log('id', id);
-    await axios.delete(`${Api}/wishlists/delete/${id}`, {
+    var res = await axios.delete(`${Api}/wishlists/delete/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     })
-    
+    if(res.data){
+      console.log('Removed from wishlist',res);
+      fetchWishlist();
+    }
+  }
+  const findWishlistID = (id)=>{
+    var data  = wishlistData.find((item)=>{ return item.product_id === id;});
+    removeWishlistHandler(data.id)
   }
   // Fetch wishlist
   const fetchWishlist = async () => {
+    console.log('iscalled');
     try {
       const response = await axios.get(`${Api}/wishlists/getall`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (response.data.data.length > 0) {
+      if (response.data.data.length >= 0) {
         const filteredData = response.data.data.filter(
           (item) => item.customer_id == store?.id
         );
@@ -241,7 +247,6 @@ const UseContext = (props) => {
           console.error("Error submitting address:", error);
           alert("Failed to submit address.");
         });
-
       action.resetForm()
     }
   })
@@ -468,7 +473,7 @@ const handleReturnOrder = (customer) => {
 
   return (
     <noteContext.Provider value={{
-      allCategory, allProduct, allSubCategory, token, wishlistData, addwishlistHandler, removeWishlistHandler,wishlistID,
+      allCategory, allProduct, allSubCategory, token, wishlistData, addwishlistHandler, removeWishlistHandler,wishlistID,findWishlistID,
 
       Api
       // ******* My Profile *******

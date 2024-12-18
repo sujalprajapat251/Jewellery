@@ -64,6 +64,8 @@
     cursor: pointer;
     text-decoration: none;
     color: var(--brown);
+    text-wrap: nowrap;
+
 }
 
 .s_header_icon svg {

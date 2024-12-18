@@ -16,7 +16,7 @@ import noteContext from '../Context/noteContext';
 
 function Home() {
     // backend connection code
-    const { allCategory , allProduct , addwishlistHandler , wishlistID , removeWishlistHandler } = useContext(noteContext);
+    const { allCategory , allProduct , addwishlistHandler , wishlistID , findWishlistID } = useContext(noteContext);
 
     // cat slideer responsive
     const cat_sliderres = {
@@ -148,15 +148,12 @@ function Home() {
                                                 </div>
                                                 {
                                                     isSelected ? 
-                                                    <div className='s_heart_icon active' onClick={()=>{removeWishlistHandler(isSelected)}}>
+                                                    <div className='s_heart_icon active' onClick={()=>{findWishlistID(isSelected)}}>
                                                         <GoHeartFill />
                                                     </div> : <div className='s_heart_icon' onClick={() => { addwishlistHandler(ele.id) }}>
                                                         <GoHeart />
                                                     </div>
                                                 }
-                                                    { 
-                                                    console.log('isSelected', isSelected)
-                                                    }
                                                 {ele.gender ?
                                                     <div className='s_card_status'><p className='mb-0'>{ele.metal_color}</p></div>
                                                     : ''}

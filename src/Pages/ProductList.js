@@ -41,7 +41,7 @@ function ProductList() {
     const [productlist, setProductList] = useState([]);
     useEffect(() => {
         let product =[]
-        if(type === 'subcategory'){
+        if(type === 'subcatgeory'){
             product = allProduct.filter((product) => { return product.sub_category_id === parseInt(id); })
         }
         if(type === 'category'){
