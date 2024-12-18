@@ -13,7 +13,7 @@ function ProductDetail() {
     const navigate = useNavigate();
     const { id } = useParams();
     let [inStock, setInStock] = useState(true);
-    const category = '';
+    const [category, setCategory] = useState(false);
     // backend connnectivity code here
 
     const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler } = useContext(noteContext);
@@ -42,7 +42,7 @@ function ProductDetail() {
             .catch((error) => {
                 console.error("Error fetching products:", error);
             });
-            setAddToCard(true);
+        setAddToCard(true);
     }, [id]);
 
     // size haddler
@@ -52,6 +52,10 @@ function ProductDetail() {
     const [youAlsoLike, setYouAlsoLike] = useState([]);
     const [offers, setOffers] = useState([]);
     useEffect(() => {
+        if (product?.category_name === 'watch');
+        {
+            setCategory(true);
+        }
         // console.log("Fetched products", product.size_id);
         // fetch size data
         axios.get(`${Api}/sizes/get/${product.size_id}`, {
@@ -105,7 +109,7 @@ function ProductDetail() {
         if (addToCard) {
             var data = { product: product, offers: selectedOffers, size: size, }
             const cardDetail = JSON.parse(localStorage.getItem('cardDetail')) || [];
-            localStorage.setItem('cardDetail', JSON.stringify([...cardDetail , data]));
+            localStorage.setItem('cardDetail', JSON.stringify([...cardDetail, data]));
             console.log(data);
             // addCard = false;
             setAddToCard(false);
@@ -173,6 +177,14 @@ function ProductDetail() {
 
     // thumbnail image handdlers {}
     const [thumbnail, setThumbnail] = useState(null);
+    useEffect(() => {
+        if (product?.images?.length <= 1) {
+            setThumbnail(product.images[0]); // Set the default thumbnail
+        }
+        else {
+            setThumbnail(null)
+        }
+    }, [product?.images]);
     const productImgHanddler = (index) => {
         setThumbnail(product.images[index]);
     }
@@ -184,9 +196,18 @@ function ProductDetail() {
 
 
     // ------------------------
-    const sub_total = (parseFloat(product?.price) + parseFloat(product?.stone_price)) / parseFloat(product.making_charge) * 100 || '-';
+    const metal_total = product?.price && product?.weight
+        ? `${(parseFloat(product.price) * parseFloat(product.weight)).toFixed(2)}`
+        : 0;
+    const stone_total = product?.stone_price && product?.gram
+        ? `${(parseFloat(product.stone_price) * parseFloat(product.gram)).toFixed(2)}`
+        : +0 ;
+    const making_charge =product?.price && product?.stone_price && product?.making_charge
+        ? `${((parseFloat(product.price) + parseFloat(product.stone_price)) / parseFloat(product.making_charge)).toFixed(2)}`
+        : 0;
+    const sub_total = (parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)).toFixed(2);
     const gst_total = sub_total * 3 / 100;
-    const great_total = sub_total + gst_total;
+    const great_total = (parseFloat(sub_total) + parseFloat(gst_total)).toFixed(2);
     const isSelected = wishlistID.find((items) => items === product.id);
     return (
         <>
@@ -198,7 +219,7 @@ function ProductDetail() {
                                 const isVideo = /\.(mp4|webm|ogg)$/i.test(thumbnail);
                                 return isVideo ? (
                                     <video controls className="w-100">
-                                        <source src={thumbnail} type="video/mp4" />
+                                        <source src={thumbnail} type="video/mp4" className='h-100 object-fit-cover' />
                                         Your browser does not support the video tag.
                                     </video>
                                 ) : (
@@ -236,57 +257,77 @@ function ProductDetail() {
                         }
 
                         <div className='s_product_slider'>
-                            <OwlCarousel
-                                className="owl-theme"
-                                margin={20}
-                                nav
-                                responsive={{
-                                    0: {
-                                        items: 4, // Show 4 items on very small screens
-                                    },
-                                    576: {
-                                        items: 6, // Safely use the length or default to 1
-                                    },
-                                }}
-                            >
-                                {product.images?.map((item, index) => {
-
-                                    const isVideo = /\.(mp4|webm|ogg)$/i.test(item);
-                                    return (
-                                        <div className='item ' key={index} >
-                                            <div className='s_product_img' onClick={() => productImgHanddler(index)}>
-                                                {isVideo ?
-                                                    <div className='s_product_video w-100'
-                                                        onMouseLeave={handleStopclick}>
-                                                        <video ref={videoRef}
-                                                            className=''
-                                                            controls={controlsVisible} muted>
-                                                            <source src={video} type="video/mp4" />
-                                                            Your browser does not support the video tag.
-                                                        </video>
-                                                        <img
-                                                            src={require("../Img/Sujal/play.png")}
-                                                            alt="play"
-                                                        />
-                                                    </div>
-                                                    :
-                                                    <img src={item} alt={`product-media-${index}`} className={"w-100"} />}
+                            {product?.images?.length <= 6 ?
+                                <div className='d-flex justify-content-lg-center overflow-auto'>
+                                    {product.images?.map((item, index) => {
+                                        const isVideo = /\.(mp4|webm|ogg)$/i.test(item);
+                                        return (
+                                            <div className='' key={index} >
+                                                <div className='s_product_img' onClick={() => productImgHanddler(index)}>
+                                                    {isVideo ?
+                                                        <div className='s_product_video'
+                                                            onMouseLeave={handleStopclick}
+                                                            style={{ width: '100px', height: '100px' }}>
+                                                            <video ref={videoRef}
+                                                                className=''
+                                                                controls={controlsVisible} muted>
+                                                                <source src={video} type="video/mp4" />
+                                                                Your browser does not support the video tag.
+                                                            </video>
+                                                            <img
+                                                                src={require("../Img/Sujal/play.png")}
+                                                                alt="play"
+                                                            />
+                                                        </div>
+                                                        :
+                                                        <img src={item} alt={`product-media-${index}`} style={{ width: '100px', height: '100px' }} />}
+                                                </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
-                                {/* <div className='item'>
-                                    <img src={require('../Img/Sujal/p_ring1.png')} alt="ring1"></img>
-
+                                        );
+                                    })}
                                 </div>
-                                <div className='item'>
-                                    <img src={require('../Img/Sujal/p_ring2.png')} alt="ring1"></img>
+                                :
+                                <OwlCarousel
+                                    className="owl-theme"
+                                    margin={20}
+                                    nav
+                                    responsive={{
+                                        0: {
+                                            items: 4, // Show 4 items on very small screens
+                                        },
+                                        576: {
+                                            items: 6,
+                                        },
+                                    }}
+                                >
+                                    {product.images?.map((item, index) => {
 
-                                </div>
-                                <div className='item'>
-                                    <img src={require('../Img/Sujal/p_ring3.png')} alt="ring1"></img>
-                                </div> */}
-                            </OwlCarousel>
+                                        const isVideo = /\.(mp4|webm|ogg)$/i.test(item);
+                                        return (
+                                            <div className='item ' key={index} >
+                                                <div className='s_product_img' onClick={() => productImgHanddler(index)}>
+                                                    {isVideo ?
+                                                        <div className='s_product_video w-100'
+                                                            onMouseLeave={handleStopclick}>
+                                                            <video ref={videoRef}
+                                                                className=''
+                                                                controls={controlsVisible} muted>
+                                                                <source src={video} type="video/mp4" />
+                                                                Your browser does not support the video tag.
+                                                            </video>
+                                                            <img
+                                                                src={require("../Img/Sujal/play.png")}
+                                                                alt="play"
+                                                            />
+                                                        </div>
+                                                        :
+                                                        <img src={item} alt={`product-media-${index}`} className={"w-100"} />}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </OwlCarousel>}
+
                         </div>
                     </Col>
                     <Col>
@@ -297,7 +338,7 @@ function ProductDetail() {
                                         <GoHeartFill className='s_active' />
                                         <FaShareAlt />
                                     </div> :
-                                     <div className='d-flex justify-content-end s_share_icon' onClick={() => { addwishlistHandler(product.id) }}>
+                                    <div className='d-flex justify-content-end s_share_icon' onClick={() => { addwishlistHandler(product.id) }}>
                                         <GoHeart />
                                         <FaShareAlt />
                                     </div>
@@ -306,7 +347,7 @@ function ProductDetail() {
                             <div className='s_rating'>
                                 {
                                     [...Array(5)].map((_, index) => {
-                                        if (index < 3) {
+                                        if (index < product?.rating) {
                                             return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
                                         } else {
                                             return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
@@ -446,11 +487,11 @@ function ProductDetail() {
                         </Nav>
                     </div>
                     <div className={`s_table_sec d-lg-flex  px-0 ${tab === 'tab-0' ? '' : 'd-none d-lg-none'}`}>
-                        {category !== 'Watch' ? <>
+                        {!category ? <>
                             <div className='s_table s_w_30'>
                                 <h4 className='s_table_head'>Metal Details</h4>
                                 <span className='d-flex justify-content-between'><p>Metal Type</p><b>{product?.metal || '--'}</b></span>
-                                <span className='d-flex justify-content-between'><p>Weight</p><b>{product?.weight || '--'} gm</b></span>
+                                <span className='d-flex justify-content-between'><p>Weight</p><b>{`${product?.weight}g` || '--'} </b></span>
                                 <span className='d-flex justify-content-between'><p>Color</p><b>{product?.metal_color || '--'}</b></span>
                             </div>
                             <div className='s_table s_w_40'>
@@ -472,21 +513,21 @@ function ProductDetail() {
                         </> : <>
                             <div className='s_table s_w_30'>
                                 <h4 className='s_table_head'>Case</h4>
-                                <span className='d-flex justify-content-between'><p>Size</p><b>29mm</b></span>
-                                <span className='d-flex justify-content-between'><p>Water Resistant</p><b>50 Meters</b></span>
-                                <span className='d-flex justify-content-between'><p>Case Material</p><b> Stainless Steel</b></span>
-                                <span className='d-flex justify-content-between'><p>Dial Color</p><b>Silver</b></span>
+                                <span className='d-flex justify-content-between'><p>Size</p><b>{product?.size ? `${product.size}mm` : '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Water Resistant</p><b>{product?.water_resistant ? `${product.water_resistant} Meter` : '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Case Material</p><b>{product?.cash_material ? `${product.cash_material}` : '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Dial Color</p><b>{product?.metal_color ? `${product.metal_color}` : '-'}</b></span>
                             </div>
                             <div className='s_table s_w_40'>
                                 <h4 className='s_table_head'>Movement</h4>
-                                <span className='d-flex justify-content-between'><p>Movement</p><b>Automatic</b></span>
-                                <span className='d-flex justify-content-between'><p>Clasp Type</p><b>Butterfly Clasp With Push Buttons</b></span>
-                                <span className='d-flex justify-content-between'><p>Occasion</p><b>Engagement</b></span>
+                                <span className='d-flex justify-content-between'><p>Movement</p><b>{product?.movement ? `${product.movement}` : '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Clasp Type</p><b>{product?.clasp_type ? `${product.clasp_type}` : '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Occasion</p><b>{product?.occasion ? `${product.occasion}` : '-'}</b></span>
                             </div>
                             <div className='s_table s_w_30'>
                                 <h4 className='s_table_head'>Warranty</h4>
-                                <span className='d-flex justify-content-between'><p>Reference Number</p><b>CBL2182.FT6235</b></span>
-                                <span className='d-flex justify-content-between'><p>Warranty</p><b> 2 Years Manufacturer Warranty</b></span>
+                                <span className='d-flex justify-content-between'><p>Reference Number</p><b>{product?.reference_number ? `${product.reference_number}` : '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Warranty</p><b>{product?.warranty ? `${product.warranty} Manufacturer Warranty` : '-'}</b></span>
                             </div>
                         </>}
 
@@ -504,31 +545,35 @@ function ProductDetail() {
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>{product?.metal || '-'}</td>
-                                    <td>₹{product?.price || '-'}</td>
-                                    <td>{product?.weight || '-'}g</td>
+                                    <td>{product?.metal ? `${product?.metal}` : '-'}</td>
+                                    <td>{product?.price ? `₹${product?.price}` : '-'}</td>
+                                    <td>{product?.weight ? `${product?.weight}g` : '-'}</td>
                                     <td>-</td>
-                                    <td>₹{parseFloat(product?.price) * parseFloat(product?.weight) || '-'}</td>
+                                    <td>₹{metal_total}</td>
                                 </tr>
                                 <tr>
                                     <td>Stone</td>
-                                    <td>₹{product?.stone_price || '-'}</td>
-                                    <td>{product?.gram || '-'}g</td>
+                                    <td>{product?.stone_price ? `₹${product?.stone_price}` : '-'}</td>
+                                    <td>{product?.gram ? `${product?.gram}g` : '-'}</td>
                                     <td>-</td>
-                                    <td>₹{parseFloat(product.stone_price) * parseFloat(product?.gram)}</td>
+                                    <td>
+                                    ₹{stone_total}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Making Charges</td>
                                     <td>-</td>
                                     <td>-</td>
                                     <td>-</td>
-                                    <td>₹{(parseFloat(product?.price) + parseFloat(product?.stone_price)) / parseFloat(product.making_charge)}</td>
+                                    <td>₹{making_charge}</td>
                                 </tr>
                                 <tr>
                                     <td>Sub Total</td>
                                     <td>-</td>
-                                    <td>{parseFloat(product?.weight) + parseFloat(product?.gram) || '-'}g</td>
-                                    <td>-</td>
+                                    <td>{product?.weight && product?.gram
+                                        ? `${(parseFloat(product.weight) + parseFloat(product.gram)).toFixed(2)}g`
+                                        : '-'}</td>
+                                    <td>{product?.discount ? `${product?.discount}%` : '-'}</td>
                                     <td>₹{sub_total}</td>
                                 </tr>
                                 <tr>
