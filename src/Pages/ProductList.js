@@ -17,8 +17,8 @@ function ProductList() {
     const [subCategoryData, setSubCategoryData] = useState([]);
     const [isRing, setIsRing] = useState(false);
     const [isWatch, setIsWatch] = useState(false);
-
     useEffect(() => {
+        console.warn('type',type);
         if(type === 'subcategory'){
             axios.get(`${Api}/subcategories/get/${id}`, {
                 headers: {
@@ -31,6 +31,23 @@ function ProductList() {
                 const checkWatch = data.name?.includes('Watch') || data.category_name?.includes('Watch');
                 setIsWatch(checkWatch);
                 setSubCategoryData(response.data.subCategory);
+                console.log('subCategory', checkRing , checkWatch)
+            });
+        }
+        if(type === 'category'){
+            axios.get(`${Api}/categories/get/${id}`,{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then((response) => {
+                console.log(response.data.category.name);
+                const data = response.data.category;
+                const checkRing = data.name?.includes('Ring');
+                setIsRing(checkRing);
+                const checkWatch = data.name?.includes('Watch');
+                setIsWatch(checkWatch);
+                setSubCategoryData(response.data.category);
+                console.log('category', checkRing , checkWatch)
             });
         }
     }, [id]);
@@ -41,11 +58,11 @@ function ProductList() {
     const [productlist, setProductList] = useState([]);
     useEffect(() => {
         let product =[]
-        if(type === 'subcatgeory'){
-            product = allProduct.filter((product) => { return product.sub_category_id === parseInt(id); })
+        if(type === 'subcategory'){
+            product = allProduct.filter((product) => { return product.sub_category_id === parseInt(id);})
         }
         if(type === 'category'){
-            product = allProduct.filter((product) => { return product.category_id === parseInt(id); })
+            product = allProduct.filter((product) => { return product.category_id === parseInt(id);})
         }
         if(type === 'search'){
             product = allProduct.filter((product) => { return product.product_name.toLowerCase().includes(id.toLowerCase()); })
@@ -870,6 +887,8 @@ function ProductList() {
                         <Row xxl={4} lg={3} md={2} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
                             {
                                 productList_detail.map((ele, id) => {
+                                    const discounted= ((parseFloat(ele.total_price)*parseFloat(ele.discount))/100).toFixed(2);
+                                    const discountPrice =(parseFloat(ele.total_price)-parseFloat(discounted)).toFixed(2);
                                     return (
                                         <Col key={id} className='py-4'>
                                             <div className='s_seller_card'>
@@ -882,11 +901,11 @@ function ProductList() {
                                                         : ''}
                                                     <div className='s_card_text'>
                                                         <h5>{ele.product_name}</h5>
-                                                        <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.discount}</strike></p>
+                                                        <p className='mb-0'><span className='mx-2'>₹{discountPrice}</span><strike className="mx-2">₹{ele.total_price}</strike></p>
                                                         <div className='s_rating'>
                                                             {
                                                                 [...Array(5)].map((_, index) => {
-                                                                    if (index < 0) {
+                                                                    if (index < ele.rating) {
                                                                         return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
                                                                     } else {
                                                                         return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
