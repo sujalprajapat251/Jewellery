@@ -21,6 +21,7 @@ import ProductList from './Pages/ProductList';
 import SubmitReview from './Pages/SubmitReview';
 import ProductDetail from './Pages/ProductDetail';
 import ReturnOrder from './Pages/ReturnOrder';
+import Demo from './Pages/demo';
 
 const App = () => {
   return (
@@ -48,6 +49,7 @@ const App = () => {
             <Route path="/trackorder" element={<TrackOrder/>}></Route>
             <Route path="/review" element={<SubmitReview/>}></Route>
             <Route path="/returnOrder" element={<ReturnOrder/>}></Route>
+            <Route path="/demo" element={<Demo/>}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

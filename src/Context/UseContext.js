@@ -112,9 +112,9 @@ const UseContext = (props) => {
           (item) => item.customer_id == store?.id
         );
         // alert(response.data);
-        // console.warn('hey',response.data);
+        console.warn('hey',response.data);
         setWishlistData(filteredData);
-        const idData = response.data.data
+        const idData = filteredData
           .filter((item) => item.product_id) // Filter items with valid product_id
           .map((item) => item.product_id);
         setWishlistID(idData);
@@ -217,8 +217,7 @@ const UseContext = (props) => {
     initialValues: newAddVal,
     validationSchema: NewAddSchema,
     onSubmit: (values, action) => {
-      axios.post(`${Api}/deliveryAddress/create`, {
-
+      axios.post(`${Api}/deliveryAddress/create`,{
         customer_id: store?.id,
         address: values.address,
         status: 'active',

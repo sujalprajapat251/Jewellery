@@ -62,6 +62,7 @@ function ProductDetail() {
             .then((response) => {
                 const array = response.data.size.split(',').map(Number);
                 setSizeArray(array);
+                setSize(array[0]);
             })
             .catch((error) => {
                 console.error("Error fetching products:", error);
@@ -193,7 +194,7 @@ function ProductDetail() {
 
     // ------------------------
     const metal_total = product?.price && product?.weight
-        ? `${(parseFloat(product.price) * parseFloat(product.weight)).toFixed(2)}`
+        ? `${((parseFloat(product.price) / parseFloat(product.weight)) * parseFloat(product.weight)).toFixed(2)}`
         : 0;
     const stone_total = product?.stone_price && product?.gram
         ? `${(parseFloat(product.stone_price) * parseFloat(product.gram)).toFixed(2)}`
@@ -347,7 +348,7 @@ function ProductDetail() {
                             <div className='s_rating'>
                                 {
                                     [...Array(5)].map((_, index) => {
-                                        if (index < product?.rating) {
+                                        if (index < product?.total_rating) {
                                             return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
                                         } else {
                                             return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
@@ -549,7 +550,7 @@ function ProductDetail() {
                             <tbody>
                                 <tr>
                                     <td>{product?.metal ? `${product?.metal}` : '-'}</td>
-                                    <td>{product?.price ? `₹ ${product?.price}/g` : '-'}</td>
+                                    <td>{product?.price ? `₹ ${(product?.price)/(product?.weight)}/g` : '-'}</td>
                                     <td>{product?.weight ? `${product?.weight}g` : '-'}</td>
                                     <td>-</td>
                                     <td>₹{metal_total}</td>
@@ -560,7 +561,7 @@ function ProductDetail() {
                                     <td>{product?.gram ? `${product?.gram}g` : '-'}</td>
                                     <td>-</td>
                                     <td>
-                                        ₹{stone_total}
+                                        ₹ {stone_total}
                                     </td>
                                 </tr>
                                 <tr>
@@ -568,7 +569,7 @@ function ProductDetail() {
                                     <td>{product?.making_charge ? `${product?.making_charge}%` : '-'}</td>
                                     <td>-</td>
                                     <td>-</td>
-                                    <td>₹{making_charge}</td>
+                                    <td>₹ {making_charge}</td>
                                 </tr>
                                 <tr>
                                     <td>Sub Total</td>
@@ -577,20 +578,20 @@ function ProductDetail() {
                                         ? `${(parseFloat(product.weight) + parseFloat(product.gram)).toFixed(2)}g`
                                         : '-'}</td>
                                     <td>{product?.discount ? `${product?.discount}%` : '-'}</td>
-                                    <td>₹{sub_total}</td>
+                                    <td>₹ {sub_total}</td>
                                 </tr>
                                 <tr>
                                     <td>GST</td>
                                     <td>3%</td>
                                     <td>-</td>
                                     <td>-</td>
-                                    <td>₹{gst_total}</td>
+                                    <td>₹ {gst_total}</td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <td colSpan='4'>Grand Total</td>
-                                    <td>₹{great_total}</td>
+                                    <td>₹ {great_total}</td>
                                 </tr>
                             </tfoot>
                         </table>
