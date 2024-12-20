@@ -13,7 +13,6 @@ function ProductDetail() {
     const navigate = useNavigate();
     const { id } = useParams();
     let [inStock, setInStock] = useState(true);
-    const [category, setCategory] = useState(false);
     // backend connnectivity code here
 
     const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler } = useContext(noteContext);
@@ -52,10 +51,7 @@ function ProductDetail() {
     const [youAlsoLike, setYouAlsoLike] = useState([]);
     const [offers, setOffers] = useState([]);
     useEffect(() => {
-        if (product?.category_name === 'watch');
-        {
-            setCategory(true);
-        }
+
         // console.log("Fetched products", product.size_id);
         // fetch size data
         axios.get(`${Api}/sizes/get/${product.size_id}`, {
@@ -201,14 +197,18 @@ function ProductDetail() {
         : 0;
     const stone_total = product?.stone_price && product?.gram
         ? `${(parseFloat(product.stone_price) * parseFloat(product.gram)).toFixed(2)}`
-        : +0 ;
-    const making_charge =product?.price && product?.stone_price && product?.making_charge
-        ? `${((parseFloat(product.price) + parseFloat(product.stone_price)) / parseFloat(product.making_charge)).toFixed(2)}`
         : 0;
-    const sub_total = (parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)).toFixed(2);
-    const gst_total = sub_total * 3 / 100;
-    const great_total = (parseFloat(sub_total) + parseFloat(gst_total)).toFixed(2);
+    const making_charge = product?.making_charge
+        ? `${((parseFloat(metal_total) + parseFloat(stone_total)) * (parseFloat(product?.making_charge) / 100)).toFixed(2)}`
+        : 0;
+    console.log('making_charge', ((parseFloat(metal_total) + parseFloat(stone_total)) * (parseFloat(product?.making_charge) / 100)));
+    const discount = (parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)) * parseFloat(product?.discount || 0) / 100;
+    console.log(discount);
+    const sub_total = ((parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)) - discount).toFixed(2);
+    const gst_total = (sub_total * 3 / 100).toFixed(2);
+    const great_total = ((parseFloat(sub_total) + parseFloat(gst_total)).toFixed(2));
     const isSelected = wishlistID.find((items) => items === product.id);
+    console.log('price', product.making_charge);
     return (
         <>
             <section className="s_prodetail_page ds_container">
@@ -357,12 +357,12 @@ function ProductDetail() {
                                 }
                             </div>
                             <div className='d-flex align-items-center'>
-                                <h2 className='s_price'>₹{great_total || product?.price}</h2>
+                                <h2 className='s_price'>₹{product?.total_price}</h2>
                                 {inStock !== true ? <div className='s_stock_status'>out of stack</div> : ''}
                             </div>
                             <p className='s_description'>{product?.description}</p>
 
-                            {category !== 'Watch' ? <>
+                            {product.category_name !== 'Watch' ? <>
                                 <div className='s_metal_option d-flex justify-content-between text-capitalize'>
                                     <div>
                                         <h5>Metal Color</h5>
@@ -487,11 +487,14 @@ function ProductDetail() {
                         </Nav>
                     </div>
                     <div className={`s_table_sec d-lg-flex  px-0 ${tab === 'tab-0' ? '' : 'd-none d-lg-none'}`}>
-                        {!category ? <>
+                        {product.category_name !== 'Watch' ? <>
+                            {console.log(product.category_name)}
                             <div className='s_table s_w_30'>
                                 <h4 className='s_table_head'>Metal Details</h4>
                                 <span className='d-flex justify-content-between'><p>Metal Type</p><b>{product?.metal || '--'}</b></span>
-                                <span className='d-flex justify-content-between'><p>Weight</p><b>{`${product?.weight}g` || '--'} </b></span>
+                                <span className='d-flex justify-content-between'><p>Weight</p><b>{product?.weight && product?.gram
+                                    ? `${(parseFloat(product.weight) + parseFloat(product.gram)).toFixed(2)}g`
+                                    : `${product.weight}g`} </b></span>
                                 <span className='d-flex justify-content-between'><p>Color</p><b>{product?.metal_color || '--'}</b></span>
                             </div>
                             <div className='s_table s_w_40'>
@@ -532,7 +535,7 @@ function ProductDetail() {
                         </>}
 
                     </div>
-                    <div className={` overflow-x-auto s_table_sec d-lg-flex ${tab === 'tab-1' ? '' : 'd-none d-lg-none'}`}>
+                    <div className={`overflow-x-auto s_table_sec d-lg-flex ${tab === 'tab-1' ? '' : 'd-none d-lg-none'}`}>
                         <table className=''>
                             <thead>
                                 <tr>
@@ -546,23 +549,23 @@ function ProductDetail() {
                             <tbody>
                                 <tr>
                                     <td>{product?.metal ? `${product?.metal}` : '-'}</td>
-                                    <td>{product?.price ? `₹${product?.price}` : '-'}</td>
+                                    <td>{product?.price ? `₹ ${product?.price}/g` : '-'}</td>
                                     <td>{product?.weight ? `${product?.weight}g` : '-'}</td>
                                     <td>-</td>
                                     <td>₹{metal_total}</td>
                                 </tr>
                                 <tr>
                                     <td>Stone</td>
-                                    <td>{product?.stone_price ? `₹${product?.stone_price}` : '-'}</td>
+                                    <td>{product?.stone_price ? `₹ ${product?.stone_price}/g` : '-'}</td>
                                     <td>{product?.gram ? `${product?.gram}g` : '-'}</td>
                                     <td>-</td>
                                     <td>
-                                    ₹{stone_total}
+                                        ₹{stone_total}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Making Charges</td>
-                                    <td>-</td>
+                                    <td>{product?.making_charge ? `${product?.making_charge}%` : '-'}</td>
                                     <td>-</td>
                                     <td>-</td>
                                     <td>₹{making_charge}</td>
