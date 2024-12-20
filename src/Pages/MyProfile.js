@@ -21,7 +21,7 @@ const MyProfile = () => {
 
      // ------ My Address ------
      addType, myAddData, newAddModal, setNewAddModal 
-     , AddFormik , handleAddType , singleNewAdd, setSingleNewAdd ,
+     , AddFormik , handleAddType , singleNewAdd, setSingleNewAdd , handleMark, hello ,
     
      // ------- Add New Single Address Popup --------
      activeCard, setActiveCard , SingleAddFormik , handleSingleNewAdd ,
@@ -67,6 +67,9 @@ const MyProfile = () => {
          setFilteredOrders(filterData);
        }
     };
+
+    const myClass = JSON.parse(localStorage.getItem("default"))
+
 
 
   // **********  Submit Review Popup  ********
@@ -371,9 +374,17 @@ useEffect(() => {
                                <div className='ds_add-box mt-4'>
                                   <div className='mb-4'>
                                      <div className="row">
-                                     {myAddData.map((item, index) => (
-                                         <div key={item.id} className="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mt-4">
-                                           <div className="ds_chan-box position-relative">
+                                     {/* {myAddData.map((item, index) => (
+                                         
+                                          ))} */}
+
+                                     { myAddData?.map((item , index)=>{
+                                         const isDefault = hello === item?.id;
+                                         console.log("hello" ,isDefault);
+                                         
+                                        return(
+                                          <div key={item.id} className="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mt-4">
+                                           <div id='ds_default' className="ds_chan-box position-relative"  style={{border: isDefault ? '0.75px solid #000000' : '0.75px solid #00000033'}}>
                                              <div className="d-flex justify-content-between align-items-center px-3">
                                                <h5 className="mb-0 ds_color">{item.type}</h5>
                                                <BsThreeDotsVertical onClick={() => toggleDropdown(index)} style={{ cursor: 'pointer' }} />
@@ -381,7 +392,7 @@ useEffect(() => {
                                                  <div className="ds_add-mini">
                                                    <p className="ds_600 ds_cursor" onClick={()=>handleSingleNewAdd(item.id)}>Edit</p>
                                                    <p className="ds_600 ds_cursor" onClick={()=>handleDeleteAdd(item.id)}>Delete</p>
-                                                   <p className="ds_600">Make as default</p>
+                                                   <p className="ds_600 ds_cursor" onClick={()=> handleMark(item.id)}>Make as default</p>
                                                  </div>
                                                )}
                                              </div>
@@ -393,7 +404,8 @@ useEffect(() => {
                                              </div>
                                            </div>
                                          </div>
-                                          ))}
+                                        )
+                                      })}
                                      </div>
                                   </div>
                                </div>

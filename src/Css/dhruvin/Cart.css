@@ -53,7 +53,12 @@
 .ds_cart-add-btn{
     border: 1px solid #2A221E;
     background-color: white;
-    padding: 6px 15px;
+    padding: 6px 25px;
+}
+.ds_cart-img{
+    height: 140px;
+    width: 140px;
+    object-fit: cover;
 }
 .ds_cart-deta{
    margin-left: 15px;
@@ -171,10 +176,17 @@
 
 
 /* {*************** Change Address Popup ************   } */
+.ds_add-width .modal-dialog {
+    --bs-modal-width: 690px !important;
+}
 .ds_chan-box{
-    border: 0.75px solid #000000;
+    border: 0.75px solid #00000033;
     padding: 10px 0px;
 }
+.ds_default-color{
+    border: 0.75px solid #000000 !important;
+}
+
 .ds_chan-line{
     border: 1px solid #72727266;
 }
@@ -182,18 +194,27 @@
     width: 30%;
     border: 1px solid #72727266;
 }
+.ds_cart-mini{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    background-color: white;
+    box-shadow: 0px 0px 24px 3px #7272721A;
+    padding: 20px;
+}
 
 /* {*************** Remove Product Popup ************   } */
 .ds_rem-btn{
     border: 1px solid #4D1F08;
-    padding: 10px 50px;
+    padding: 7px 50px;
     color:#4D1F08 ;
     background-color: white;
     outline: none;
 }
 .ds_rem-move{
     border: 1px solid #4D1F08;
-    padding: 10px 30px;
+    padding: 7px 30px;
     color:white ;
     background-color: #4D1F08;
     outline: none;  
@@ -284,8 +305,7 @@
     margin-right: 0px;
 }
 .ds_rem-move{
-    padding: 10px 20px;
-    margin-top: 10px;
+    padding: 7px 20px;
 }
 }
 
@@ -304,5 +324,16 @@
    .ds_add-modal{
     max-width: 280px !important;
     margin: auto;
- }     
+ }    
+ .ds_cart-mini{
+    width: 55%;
+ } 
+
+/* {*************** Remove Product Popup ************   } */
+ .ds_rem-btn{
+    padding: 7px 30px;
+ }
+ .ds_rem-move {
+    padding: 7px 15px;
+}
 }

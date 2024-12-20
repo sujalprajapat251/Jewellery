@@ -17,7 +17,7 @@ import noteContext from '../Context/noteContext';
 function Home() {
     // backend connection code
     const { allCategory , allProduct , addwishlistHandler , wishlistID , findWishlistID } = useContext(noteContext);
-
+    console.log(wishlistID);
     // cat slideer responsive
     const cat_sliderres = {
         0: { items: 1 },

@@ -73,7 +73,10 @@ const UseContext = (props) => {
   // add to wishlist handlerrs {} 
   const [wishlistID, setWishlistID] = useState([]);
   const addwishlistHandler = async (id) => {
-    console.log('Product id', id);
+    console.log("wishId" , wishlistID);
+    const check = wishlistID.includes(id);
+    if(!check){
+      console.log('Product id', id);
     var res = await axios.post(`${Api}/wishlists/create`, {
       customer_id: store?.id,
       product_id: id,
@@ -83,6 +86,7 @@ const UseContext = (props) => {
       }
     })
     console.log('response', res);
+    }
     fetchWishlist();
   }
   // Remove from wishlist handler {}
@@ -114,7 +118,7 @@ const UseContext = (props) => {
         // alert(response.data);
         // console.warn('hey',response.data);
         setWishlistData(filteredData);
-        const idData = response.data.data
+        const idData = filteredData
           .filter((item) => item.product_id) // Filter items with valid product_id
           .map((item) => item.product_id);
         setWishlistID(idData);
@@ -202,6 +206,10 @@ const UseContext = (props) => {
   const [myAddData, setMyAddData] = useState([])
   const [addMainNewAdd, setAddMainNewAdd] = useState(false)
   const [newAddModal, setNewAddModal] = useState(false)
+  const [hello, setHello] = useState(() => {
+    const savedDefault = localStorage.getItem("default");
+    return savedDefault ? JSON.parse(savedDefault) : "";
+  });
 
 
   const newAddVal = {
@@ -267,6 +275,12 @@ const UseContext = (props) => {
     })
 
   }, [addMainNewAdd, singleNewAdd, deleteUseEffect])
+
+  const handleMark = (id) => {
+    console.log(id);
+    setHello(id);
+    localStorage.setItem("default", JSON.stringify(id));
+  };
 
 
   // {/* ---------------- Add New Single Address Popup ------------------ */}
@@ -482,7 +496,7 @@ const handleReturnOrder = (customer) => {
 
       // ------ My Address ------
       addType, setAddType, myAddData, setMyAddData, addMainNewAdd, setAddMainNewAdd, newAddVal, newAddModal, setNewAddModal,
-      AddFormik, handleAddType, singleNewAdd, setSingleNewAdd, deleteUseEffect, setdeleteUseEffect,
+      AddFormik, handleAddType, singleNewAdd, setSingleNewAdd, deleteUseEffect, setdeleteUseEffect, handleMark ,hello ,
 
       // ------- Add New Single Address Popup --------
       singleId, setSingleId, singleAddVal, activeCard, setActiveCard, SingleAddFormik, handleSingleNewAdd,

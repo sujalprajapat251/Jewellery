@@ -7,46 +7,100 @@ import { GoHome } from 'react-icons/go'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { Modal } from 'react-bootstrap'
 import noteContext from '../Context/noteContext'
+import { useNavigate } from 'react-router-dom'
 
 const Cart = () => {
 
- const cartData = JSON.parse(localStorage.getItem("cardDetail")) || []
-  console.log(cartData);
+  const { myAddData , AddFormik  , newAddModal, setNewAddModal ,activeCard , setActiveCard ,   hello , addwishlistHandler  } = useContext(noteContext)
 
- const {AddFormik} = useContext(noteContext)
-
-  const handleRemove = (id) => {
-      console.log(id);
-  }
+  const cartData = JSON.parse(localStorage.getItem("cardDetail")) || []
+  const navigate = useNavigate()
 
   const [addAddressPopup, setAddAddressPopup] = useState(false)
   const [addType, setAddType] = useState("Home")
+  const [changeAddPopup, setChangeAddPopup] = useState(false)
+  const [removePopup, setRemovePopup] = useState(false)
+  const [removeId, setRemoveId] = useState(null)
+  const [wishId, setWishId] = useState(null)
 
   const handleAddType = (type) => {
      setAddType(type)
   }
+
+  const handleRemove = (id) => {
+      console.log(id);
+      setRemovePopup(true)
+      setRemoveId(id)
+      let wishId = cartData?.map((element)=> element?.product?.id)
+      setWishId(wishId[0]);
+      
+      
+  }
+
+  const mydefault = JSON.parse(localStorage.getItem("default"))
+  const myAddress =  myAddData.filter((element)=> element?.id === mydefault)
+  // console.log("myaddress" , myAddress);
+  
+  const handleFinalRemove = () => {    
+    let remove = cartData?.filter((element)=> element.product.id  !== removeId)
+    localStorage.setItem("cardDetail", JSON.stringify(remove));
+    setRemovePopup(false)
+  }
+
+console.log(cartData);
+
+const handleQuantityChange = (id, operation) => {
+  const updatedCart = cartData.map((item) => {
+    if (item.product.id === id) {
+      let updatedQuantity = operation === "add" ? item.quantity + 1 : item.quantity - 1;
+      if (updatedQuantity < 1) updatedQuantity = 1; // Prevent quantity from going below 1
+
+      const price = parseFloat(item.product.price);
+      const discount = parseFloat(item.product.discount);
+      const discountedPrice = price - (price * discount) / 100;
+
+      return {
+        ...item,
+        quantity: updatedQuantity,
+        totalPrice: updatedQuantity * discountedPrice,
+      };
+    }
+    return item;
+  });
+
+  console.log("upadte" , updatedCart);
+  
+
+  // Update localStorage
+  localStorage.setItem("cardDetail", JSON.stringify(updatedCart));
+};
+
   
 
   return (
     <>
 
     {/* *************** Empty Cart ************    */}
-     <section className='d-none'>
-      <div className='ds_empty-inner'>
-        <div className='d-flex justify-content-center align-items-center h-100'>
-          <div className='text-center'>
-             <img src={require("../Img/dhruvin/empty-cart.png")} alt=""  width="20%"/>
-              <h3 className='ds_color'>Your cart is empty</h3>
-              <p>You have no items in your cart</p>
-              <button className='ds_empty-btn'>Continue Shopping</button>
-          </div>
-        </div>
-      </div>
+     {
+       cartData?.length === 0 &&
+       <section >
+         <div className='ds_empty-inner'>
+           <div className='d-flex justify-content-center align-items-center h-100'>
+             <div className='text-center'>
+                <img src={require("../Img/dhruvin/empty-cart.png")} alt=""  width="20%"/>
+                 <h3 className='ds_color'>Your cart is empty</h3>
+                 <p>You have no items in your cart</p>
+                 <button className='ds_empty-btn' onClick={()=> navigate("/")}>Continue Shopping</button>
+             </div>
+           </div>
+         </div>
      </section>
+     }
   
 
     {/* *************** Cart ************    */}
-      <section className='mb-5 pb-sm-5 '>
+      { cartData?.length !== 0 &&
+        <section className='mb-5 pb-sm-5 '>
         <div className='ds_container'>
             <div>
                 <h2>Cart</h2>
@@ -55,17 +109,18 @@ const Cart = () => {
                 <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 mt-3">
 
                       {cartData?.map((element , index)=>{
+                         const quantity = element.quantity || 1;
                          const {product} = element                         
                            return(
                               <div key={product?.id} className='ds_cart-box mt-4'>
                                    <div className='text-end'>
-                                      <IoIosCloseCircle onClick={()=> handleRemove(index)} className='ds_cart-cancel ds_cursor' />
+                                      <IoIosCloseCircle onClick={()=> handleRemove(product?.id)} className='ds_cart-cancel ds_cursor' />
                                    </div>
                                   <div className='d-flex justify-content-between flex-wrap'>
                                      <div>
                                        <div className='d-flex ds_cart-flex'>
                                            <div className='mx-auto'>
-                                               <img src={require("../Img/dhruvin/ring.png")} alt="" />
+                                               <img src={product?.images[0]} alt="" className='ds_cart-img' />
                                            </div>
                                            <div className='ds_cart-deta'>
                                               <h6>{product?.product_name}</h6>
@@ -83,13 +138,13 @@ const Cart = () => {
                                         <div className='ds_cart-mul mt-auto'>
                                            <div className='d-flex justify-content-between'>
                                                <div>
-                                                 <FaMinus className='text-light ds_cart-ico' />
+                                                 <FaMinus  onClick={() => handleQuantityChange(product.id, "subtract")} className='text-light ds_cart-ico ds_cursor' />
                                                </div>
                                                <div className='text-light'>
-                                                   1
+                                                 {quantity}
                                                </div>
                                                <div>
-                                                  <FaPlus className='text-light ds_cart-ico' />
+                                                  <FaPlus onClick={() => handleQuantityChange(product.id, "add")} className='text-light ds_cart-ico ds_cursor' />
                                                </div>
                                            </div>
                                         </div>
@@ -105,12 +160,25 @@ const Cart = () => {
                 <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mt-3">
                     <div className='mt-4'>
                         <div className='ds_cart-address'>
-                            <div className='d-flex justify-content-between align-items-center'>
-                               <h5 className='mb-0'>No saved Addresses</h5>
-                               <div>
-                                 <button className='ds_cart-add-btn' data-bs-toggle="modal" data-bs-target="#exampleModal">+ Add Address</button>
-                               </div>
-                            </div>
+                            {myAddress?.map((element)=>{
+                               return(
+                                 <>
+                                 <div className='d-flex justify-content-between align-items-center'>
+                                     <div>
+                                        {
+                                          myAddData.length === 0 ? <h6 className='mb-0'>No saved Addresses</h6>  : <><h6 className='mb-'>Deliver to : {element?.contact_name}</h6> <p className='mb-0 ds_tcolor'>{element?.address}</p>
+                                       </>
+                                        }
+                                     </div>
+                                     <div>
+                                     {myAddData.length === 0 ? <button className='ds_cart-add-btn'  >+ Add Address</button>
+                                                             :  <button className='ds_cart-add-btn' onClick={()=> setChangeAddPopup(true)} >Change</button>
+                                      }
+                                     </div>
+                                </div>
+                                 </>
+                               )
+                            })}
                         </div>
 
                         <div className="ds_with-cupon mt-4" id="ds_cupon">
@@ -198,15 +266,16 @@ const Cart = () => {
             </div>
         </div>
       </section>
+      }
 
     {/* *************** Add New Address Popup ************    */}
       <section>
         <div>
-        <Modal className="modal fade" show={addAddressPopup} centered onHide={()=> setAddAddressPopup(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <Modal className="modal fade" show={newAddModal} centered onHide={()=> setNewAddModal(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog ds_add-modal modal-dialog-centered m-0">
               <div className="modal-content border-0" style={{borderRadius:'0'}}>
                 <div className="modal-header border-0 pb-0">
-                  <button type="button" className="btn-close" onClick={()=> setAddAddressPopup(false)}></button>
+                  <button type="button" className="btn-close" onClick={()=> setNewAddModal(false)}></button>
                 </div>
                 <div className="modal-body pt-0 px-4">
                    <h4 className="modal-title text-center ds_color" >Add New Address</h4>
@@ -217,7 +286,7 @@ const Cart = () => {
                              <div>
                                  <label htmlFor="" className='ds_600 mb-1'>Address (House No, Building, Street, Area)</label>
                                  <input type="text" name='address' value={AddFormik.values.address} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Address (House No, Building, Street, Area)" />
-                                 {/* { AddFormik.errors.address &&  AddFormik.touched.address ? <p className='ds_new-danger mb-0'>{AddFormik.errors.address}</p> : null} */}
+                                 { AddFormik.errors.address &&  AddFormik.touched.address ? <p className='ds_new-danger mb-0'>{AddFormik.errors.address}</p> : null}
                              </div>
                          </div>
 
@@ -225,7 +294,7 @@ const Cart = () => {
                              <div>
                                <label htmlFor="" className='ds_600 mb-1'>Pincode</label>
                                <input type="number" name='pincode' value={AddFormik.values.pincode} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Pincode" />
-                               {/* { AddFormik.errors.pincode &&  AddFormik.touched.pincode ? <p className='ds_new-danger mb-0'>{AddFormik.errors.pincode}</p> : null} */}
+                               { AddFormik.errors.pincode &&  AddFormik.touched.pincode ? <p className='ds_new-danger mb-0'>{AddFormik.errors.pincode}</p> : null}
                              </div>
                          </div>
 
@@ -233,7 +302,7 @@ const Cart = () => {
                              <div>
                                <label htmlFor="" className='ds_600 mb-1'>State</label>
                                <input type="text" name='state' value={AddFormik.values.state} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur}  className='ds_new-input' placeholder="State" />
-                               {/* { AddFormik.errors.state &&  AddFormik.touched.state ? <p className='ds_new-danger mb-0'>{AddFormik.errors.state}</p> : null} */}
+                               { AddFormik.errors.state &&  AddFormik.touched.state ? <p className='ds_new-danger mb-0'>{AddFormik.errors.state}</p> : null}
                              </div>
                          </div>
 
@@ -241,7 +310,7 @@ const Cart = () => {
                              <div>
                                <label htmlFor="" className='ds_600 mb-1'>City</label>
                                <input type="text" name='city' value={AddFormik.values.city} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="City" />
-                               {/* { AddFormik.errors.city &&  AddFormik.touched.city ? <p className='ds_new-danger mb-0'>{AddFormik.errors.city}</p> : null} */}
+                               { AddFormik.errors.city &&  AddFormik.touched.city ? <p className='ds_new-danger mb-0'>{AddFormik.errors.city}</p> : null}
                              </div>
                          </div>
 
@@ -253,14 +322,14 @@ const Cart = () => {
                              <div>
                                  <label htmlFor="" className='ds_600 mb-1'>Full Name </label>
                                  <input type="text" name='name' value={AddFormik.values.name} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Full Name" />
-                                 {/* { AddFormik.errors.name &&  AddFormik.touched.name ? <p className='ds_new-danger mb-0'>{AddFormik.errors.name}</p> : null} */}
+                                 { AddFormik.errors.name &&  AddFormik.touched.name ? <p className='ds_new-danger mb-0'>{AddFormik.errors.name}</p> : null}
                              </div>
                          </div>
                          <div className="col-xl-6 mt-3">
                              <div>
                                  <label htmlFor="" className='ds_600 mb-1'>Contact No. </label>
                                  <input type="number" name='phone' value={AddFormik.values.phone} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Contact No" />
-                                 {/* { AddFormik.errors.phone &&  AddFormik.touched.phone ? <p className='ds_new-danger mb-0'>{AddFormik.errors.phone}</p> : null} */}
+                                 { AddFormik.errors.phone &&  AddFormik.touched.phone ? <p className='ds_new-danger mb-0'>{AddFormik.errors.phone}</p> : null}
                              </div>
                          </div>
                      </div>
@@ -295,84 +364,70 @@ const Cart = () => {
         </div>
       </section>
 
-    {/* *************** Change Address Popup ************    */}
+    {/* *************** Add Address Popup  ************    */}
     <section>
       <div>
-      <div className="modal fade" id="changeAddress" aria-labelledby="exampleModalLabel" aria-hidden="true">
-         <div className="modal-dialog ds_add-modal modal-dialog-centered">
-           <div className="modal-content rounded-0">
-             <div className="modal-header border-0 px-4">
-               <h4 className="modal-title ds_color" id="exampleModalLabel">Address</h4>
-               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-             </div>
-             <div className="modal-body pt-0 px-4">
-              <div>
-                 <div className="row">
-                  <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-sm-0 mt-3">
-                    <div className='ds_chan-box'>
-                       <div className='d-flex justify-content-between align-items-center px-3'>
-                         <h5 className='mb-0 ds_color '>Home</h5>
-                         <BsThreeDotsVertical />
-                       </div>
-                       <div className='ds_chan-line mt-2'></div>
-                       <div className='px-3 mt-3'>
-                         <p className='ds_600 mb-2'>Johan Patel</p>
-                         <p className='ds_600 mb-2'>+91 8541200236</p>
-                         <p className='ds_600'>510, Shelley Street, Sydney, NSW 2000, dgdf, ruhwbd, Perth 650145, Australia</p>
-                       </div>
-                    </div>
-                  </div>
-                  <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-md-0 mt-3 ">
-                    <div className='ds_chan-box'>
-                       <div className='d-flex justify-content-between align-items-center px-3'>
-                         <h5 className='mb-0 ds_color '>Work</h5>
-                         <BsThreeDotsVertical />
-                       </div>
-                       <div className='ds_chan-line mt-2'></div>
-                       <div className='px-3 mt-3'>
-                         <p className='ds_600 mb-2'>Johan Patel</p>
-                         <p className='ds_600 mb-2'>+91 8541200236</p>
-                         <p className='ds_600'>510, Shelley Street, Sydney, NSW 2000, dgdf, ruhwbd, Perth 650145, Australia</p>
-                       </div>
-                    </div>
-                  </div>
+      <Modal  show={changeAddPopup} onHide={()=> setChangeAddPopup(false)} className='ds_add-width p-0'   aria-labelledby="contained-modal-title-vcenter" centered>
+          <Modal.Header className='border-0 pb-0' closeButton>
+          </Modal.Header>
+          <Modal.Body className='pt-0'>
+             <div>
+               <h3 className='ds_color mb-0'>Address</h3>
+               <div className="row">
+                  {
+                    myAddData?.map((element , index)=>{
+                      const isDefault = hello === element?.id;
+                      // console.log(element);
+                      
+                       return (
+                               <div  key={index} className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3 ">
+                                  <div className='ds_chan-box position-relative' style={{border: isDefault ? '0.75px solid #000000' : '0.75px solid #00000033'}}>
+                                     <div className='d-flex justify-content-between align-items-center px-3'>
+                                       <h5 className='mb-0 ds_color'>{element?.type}</h5>                                       
+                                     </div>
+                                     <div className='ds_chan-line mt-2'></div>
+                                     <div className='px-3 mt-3'>
+                                       <p className='ds_600 mb-2'>{element?.contact_name}</p>
+                                       <p className='ds_600 mb-2'>+91 {element?.contact_no}</p>
+                                       <p className='ds_600'>{element?.address}</p>
+                                     </div>
+                                  </div>
+                             </div>
+                       )
+                    })
+                  }
                   <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-4 mb-2">
                     <div>
-                      <button className='ds_new-save' data-bs-toggle="modal" data-bs-target="#removeProduct">+ Add new address</button>
+                      <button className='ds_new-save' onClick={()=>{setNewAddModal(true); setChangeAddPopup(false)}}>+ Add new address</button>
                     </div>
                   </div>
-                 </div>
+                </div>
               </div>
-             </div>
-           </div>
-           </div>
-         </div>
+          </Modal.Body>
+      </Modal>
       </div>
     </section>
+
+
  
     {/* *************** Remove Product Popup ************    */}
     <section>
       <div>
-        <div className="modal fade" id="removeProduct"  aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div className="modal-dialog ds_add-modal modal-dialog-centered">
-            <div className="modal-content rounded-0">
-              <div className="modal-header border-0">
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div className="modal-body">
-                <div className='text-center'>
+         <Modal show={removePopup} onHide={()=> setRemovePopup(false)}  aria-labelledby="contained-modal-title-vcenter" centered>
+           <Modal.Header className='pb-0 border-0' closeButton>
+           </Modal.Header>
+           <Modal.Body>
+             <div className='text-center'>
                    <img src={require("../Img/dhruvin/silver.jpg")} alt="" className='ds_rem-img'/>
                    <h4 className='ds_color mt-4 pt-1'>Move item from cart</h4>
                    <p className='ds_600'>Are you sure you want to remove this item from the cart?</p>
-                   <div className='mt-5 mb-5 d-flex flex-wrap justify-content-center '>
-                      <button className='ds_rem-btn me-sm-3 ds_600'>Remove</button>
-                      <button className='ds_rem-move ds_600'>Move to wishlist</button>
+                   <div className='mt-5 mb-5 d-flex flex-wrap justify-content-sm-center justify-content-between align-items-center'>
+                      <button className='ds_rem-btn me-sm-3 ds_600' onClick={handleFinalRemove}>Remove</button>
+                      <button className='ds_rem-move ds_600' onClick={()=>{ addwishlistHandler(wishId); setRemovePopup(false)}}>Move to wishlist</button>
                    </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
+           </Modal.Body>
+         </Modal>
       </div>
     </section>
     </>
