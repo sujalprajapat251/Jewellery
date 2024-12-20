@@ -1,15 +1,30 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import '../Css/dhruvin/Cart.css'
 import { IoIosCloseCircle } from 'react-icons/io'
 import { FaMinus, FaPlus } from 'react-icons/fa'
 import { IoBagHandleOutline } from 'react-icons/io5'
 import { GoHome } from 'react-icons/go'
 import { BsThreeDotsVertical } from 'react-icons/bs'
+import { Modal } from 'react-bootstrap'
+import noteContext from '../Context/noteContext'
 
 const Cart = () => {
 
  const cartData = JSON.parse(localStorage.getItem("cardDetail")) || []
   console.log(cartData);
+
+ const {AddFormik} = useContext(noteContext)
+
+  const handleRemove = (id) => {
+      console.log(id);
+  }
+
+  const [addAddressPopup, setAddAddressPopup] = useState(false)
+  const [addType, setAddType] = useState("Home")
+
+  const handleAddType = (type) => {
+     setAddType(type)
+  }
   
 
   return (
@@ -39,12 +54,12 @@ const Cart = () => {
             <div className="row ">
                 <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 mt-3">
 
-                      {cartData?.map((element)=>{
+                      {cartData?.map((element , index)=>{
                          const {product} = element                         
                            return(
                               <div key={product?.id} className='ds_cart-box mt-4'>
                                    <div className='text-end'>
-                                      <IoIosCloseCircle className='ds_cart-cancel' />
+                                      <IoIosCloseCircle onClick={()=> handleRemove(index)} className='ds_cart-cancel ds_cursor' />
                                    </div>
                                   <div className='d-flex justify-content-between flex-wrap'>
                                      <div>
@@ -54,17 +69,17 @@ const Cart = () => {
                                            </div>
                                            <div className='ds_cart-deta'>
                                               <h6>{product?.product_name}</h6>
-                                              <p className='ds_tcolor mb-0'>Metal : <span className='ds_color'>{product?.metal} {product?.metal}</span></p>
-                                              <p className='ds_tcolor mb-0'>Metal Color  : <span className='ds_color'> Silver</span></p>
-                                              <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'> PD00003-14-RS-FGVVSVS</span></p>
-                                              <p className='ds_tcolor mb-0'>Size : <span className='ds_color'> 5</span></p>
-                                              <p className='ds_tcolor mb-0'>Diamond Quality: <span className='ds_color'> FG / VVS-VS</span></p>
+                                              <p className='ds_tcolor mb-0'>Metal : <span className='ds_color'>{product?.metal} {product?.metal_color}</span></p>
+                                              <p className='ds_tcolor mb-0'>Metal Color  : <span className='ds_color'> {product?.metal_color}</span></p>
+                                              <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'> {product?.sku}</span></p>
+                                              <p className='ds_tcolor mb-0'>Size : <span className='ds_color'> {element?.size}</span></p>
+                                              <p className='ds_tcolor mb-0'>Diamond Quality: <span className='ds_color'> {product?.diamond_quality}</span></p>
                                            </div>
                                        </div>
                                      </div>
            
                                      <div className='d-flex ds_cart-manage'>
-                                        <h5 className='ds_color mt-2'>₹1200 <span className='ds_cart-less-price'>₹1500</span></h5>
+                                        <h5 className='ds_color mt-2'>{product?.price}<span className='ds_cart-less-price ms-2'>{parseInt(product.price * product?.discount / 100 ) + parseInt(product.price)}</span></h5>
                                         <div className='ds_cart-mul mt-auto'>
                                            <div className='d-flex justify-content-between'>
                                                <div>
@@ -83,88 +98,6 @@ const Cart = () => {
                              </div>
                            )
                          })}
-
-                    
-
-                    <div className='ds_cart-box mt-4'>
-                        <div className='text-end'>
-                           <IoIosCloseCircle className='ds_cart-cancel' />
-                        </div>
-                       <div className='d-flex justify-content-between flex-wrap'>
-                          <div>
-                            <div className='d-flex ds_cart-flex'>
-                                <div className='mx-auto'>
-                                    <img src={require("../Img/dhruvin/ring.png")} alt="" />
-                                </div>
-                                <div className='ds_cart-deta'>
-                                   <h6>Dual Tone Halo Diamond Finger Ring</h6>
-                                   <p className='ds_tcolor mb-0'>Metal : <span className='ds_color'>925 Silver</span></p>
-                                   <p className='ds_tcolor mb-0'>Metal Color  : <span className='ds_color'> Silver</span></p>
-                                   <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'> PD00003-14-RS-FGVVSVS</span></p>
-                                   <p className='ds_tcolor mb-0'>Size : <span className='ds_color'> 5</span></p>
-                                   <p className='ds_tcolor mb-0'>Diamond Quality: <span className='ds_color'> FG / VVS-VS</span></p>
-                                </div>
-                            </div>
-                          </div>
-
-                          <div className='d-flex ds_cart-manage'>
-                             <h5 className='ds_color mt-2'>₹1200 <span className='ds_cart-less-price'>₹1500</span></h5>
-                             <div className='ds_cart-mul mt-auto'>
-                                <div className='d-flex justify-content-between'>
-                                    <div>
-                                      <FaMinus className='text-light ds_cart-ico' />
-                                    </div>
-                                    <div className='text-light'>
-                                        1
-                                    </div>
-                                    <div>
-                                       <FaPlus className='text-light ds_cart-ico' />
-                                    </div>
-                                </div>
-                             </div>
-                          </div>
-                       </div>
-                    </div>
-
-                    <div className='ds_cart-box mt-4'>
-                        <div className='text-end'>
-                           <IoIosCloseCircle className='ds_cart-cancel' />
-                        </div>
-                       <div className='d-flex justify-content-between flex-wrap'>
-                          <div>
-                            <div className='d-flex ds_cart-flex'>
-                                <div className='mx-auto'>
-                                    <img src={require("../Img/dhruvin/ring.png")} alt="" />
-                                </div>
-                                <div className='ds_cart-deta'>
-                                   <h6>Dual Tone Halo Diamond Finger Ring</h6>
-                                   <p className='ds_tcolor mb-0'>Metal : <span className='ds_color'>925 Silver</span></p>
-                                   <p className='ds_tcolor mb-0'>Metal Color  : <span className='ds_color'> Silver</span></p>
-                                   <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'> PD00003-14-RS-FGVVSVS</span></p>
-                                   <p className='ds_tcolor mb-0'>Size : <span className='ds_color'> 5</span></p>
-                                   <p className='ds_tcolor mb-0'>Diamond Quality: <span className='ds_color'> FG / VVS-VS</span></p>
-                                </div>
-                            </div>
-                          </div>
-
-                          <div className='d-flex ds_cart-manage'>
-                             <h5 className='ds_color mt-2'>₹1200 <span className='ds_cart-less-price'>₹1500</span></h5>
-                             <div className='ds_cart-mul mt-auto'>
-                                <div className='d-flex justify-content-between'>
-                                    <div>
-                                      <FaMinus className='text-light ds_cart-ico' />
-                                    </div>
-                                    <div className='text-light'>
-                                        1
-                                    </div>
-                                    <div>
-                                       <FaPlus className='text-light ds_cart-ico' />
-                                    </div>
-                                </div>
-                             </div>
-                          </div>
-                       </div>
-                    </div>
 
                     <p className='ds_tcolor mt-5'>Note : Order details will be send on Whatsapp or Email.</p>
                 </div>
@@ -269,89 +202,96 @@ const Cart = () => {
     {/* *************** Add New Address Popup ************    */}
       <section>
         <div>
-         <div className="modal fade" id="exampleModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
-           <div className="modal-dialog ds_add-modal modal-dialog-centered">
-             <div className="modal-content" style={{borderRadius:'0'}}>
-               <div className="modal-header border-0 pb-0">
-                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-               </div>
-               <div className="modal-body pt-0 px-4">
-                  <h4 className="modal-title text-center ds_color" >Add New Address</h4>
-                  <div>
-                    <h6 className='ds_color mt-3'>Area Details</h6>
-                    <div className="row">
-                        <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
-                            <div>
-                                <label htmlFor="" className='ds_600 mb-1'>Address (House No, Building, Street, Area)</label>
-                                <input type="text" className='ds_new-input' placeholder="Address (House No, Building, Street, Area)" />
-                            </div>
-                        </div>
+        <Modal className="modal fade" show={addAddressPopup} centered onHide={()=> setAddAddressPopup(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog ds_add-modal modal-dialog-centered m-0">
+              <div className="modal-content border-0" style={{borderRadius:'0'}}>
+                <div className="modal-header border-0 pb-0">
+                  <button type="button" className="btn-close" onClick={()=> setAddAddressPopup(false)}></button>
+                </div>
+                <div className="modal-body pt-0 px-4">
+                   <h4 className="modal-title text-center ds_color" >Add New Address</h4>
+                   <form onSubmit={AddFormik.handleSubmit}>
+                     <h6 className='ds_color mt-3'>Area Details</h6>
+                      <div className="row">
+                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
+                             <div>
+                                 <label htmlFor="" className='ds_600 mb-1'>Address (House No, Building, Street, Area)</label>
+                                 <input type="text" name='address' value={AddFormik.values.address} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Address (House No, Building, Street, Area)" />
+                                 {/* { AddFormik.errors.address &&  AddFormik.touched.address ? <p className='ds_new-danger mb-0'>{AddFormik.errors.address}</p> : null} */}
+                             </div>
+                         </div>
 
-                        <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
-                            <div>
-                              <label htmlFor="" className='ds_600 mb-1'>Locality</label>
-                              <input type="text" className='ds_new-input' placeholder="Sector/Locality" />
-                            </div>
-                        </div>
+                         <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
+                             <div>
+                               <label htmlFor="" className='ds_600 mb-1'>Pincode</label>
+                               <input type="number" name='pincode' value={AddFormik.values.pincode} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Pincode" />
+                               {/* { AddFormik.errors.pincode &&  AddFormik.touched.pincode ? <p className='ds_new-danger mb-0'>{AddFormik.errors.pincode}</p> : null} */}
+                             </div>
+                         </div>
 
-                        <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
-                            <div>
-                              <label htmlFor="" className='ds_600 mb-1'>Pincode</label>
-                              <input type="text" className='ds_new-input' placeholder="Pincode" />
-                            </div>
-                        </div>
+                         <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
+                             <div>
+                               <label htmlFor="" className='ds_600 mb-1'>State</label>
+                               <input type="text" name='state' value={AddFormik.values.state} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur}  className='ds_new-input' placeholder="State" />
+                               {/* { AddFormik.errors.state &&  AddFormik.touched.state ? <p className='ds_new-danger mb-0'>{AddFormik.errors.state}</p> : null} */}
+                             </div>
+                         </div>
 
-                        <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
-                            <div>
-                              <label htmlFor="" className='ds_600 mb-1'>State</label>
-                              <input type="text" className='ds_new-input' placeholder="State" />
-                            </div>
-                        </div>
+                         <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
+                             <div>
+                               <label htmlFor="" className='ds_600 mb-1'>City</label>
+                               <input type="text" name='city' value={AddFormik.values.city} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="City" />
+                               {/* { AddFormik.errors.city &&  AddFormik.touched.city ? <p className='ds_new-danger mb-0'>{AddFormik.errors.city}</p> : null} */}
+                             </div>
+                         </div>
 
-                        <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
-                            <div>
-                              <label htmlFor="" className='ds_600 mb-1'>City</label>
-                              <input type="text" className='ds_new-input' placeholder="City" />
-                            </div>
-                        </div>
+                     </div>
 
-                    </div>
-
-                    <h6 className='ds_color mt-3'>Contact Details</h6>
-                    <div className="row">
-                       <div className="col-xl-6 mt-3">
-                            <div>
-                                <label htmlFor="" className='ds_600 mb-1'>Full Name </label>
-                                <input type="text" className='ds_new-input' placeholder="Full Name" />
-                            </div>
-                        </div>
+                     <h6 className='ds_color mt-3'>Contact Details</h6>
+                     <div className="row">
                         <div className="col-xl-6 mt-3">
-                            <div>
-                                <label htmlFor="" className='ds_600 mb-1'>Contact No. </label>
-                                <input type="text" className='ds_new-input' placeholder="Contact No" />
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                      <h6 className='ds_color mt-3'>Address Type</h6>
-                      <button className='ds_new-home mt-2 me-2'><GoHome className='ds_home-icon' /> Home</button>
-                      <button className='ds_new-work mt-2 me-2'><IoBagHandleOutline className="ds_home-icon" /> Work</button>
-                      <button className='ds_new-other mt-2'> Other</button>
-                    </div>
-                    <div>
-                      <div className="row justify-content-center">
-                        <div className="col-xl-6 mt-5 mb-3">
-                          <div>
-                             <button className='ds_new-save' data-bs-toggle="modal" data-bs-target="#changeAddress">Save Address</button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-               </div>
-             </div>
-           </div>
-          </div>
+                             <div>
+                                 <label htmlFor="" className='ds_600 mb-1'>Full Name </label>
+                                 <input type="text" name='name' value={AddFormik.values.name} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Full Name" />
+                                 {/* { AddFormik.errors.name &&  AddFormik.touched.name ? <p className='ds_new-danger mb-0'>{AddFormik.errors.name}</p> : null} */}
+                             </div>
+                         </div>
+                         <div className="col-xl-6 mt-3">
+                             <div>
+                                 <label htmlFor="" className='ds_600 mb-1'>Contact No. </label>
+                                 <input type="number" name='phone' value={AddFormik.values.phone} onChange={AddFormik.handleChange} onBlur={AddFormik.handleBlur} className='ds_new-input' placeholder="Contact No" />
+                                 {/* { AddFormik.errors.phone &&  AddFormik.touched.phone ? <p className='ds_new-danger mb-0'>{AddFormik.errors.phone}</p> : null} */}
+                             </div>
+                         </div>
+                     </div>
+                     <div>
+                       <h6 className='ds_color mt-3'>Address Type</h6>
+                       <div className="d-flex flex-wrap">
+                           <div className="me-2 mt-">
+                              <button type="button" className={`ds_new-home ${addType === 'Home' ? 'ds_select_type_active' : ''}  `} onClick={()=>handleAddType("Home")}><GoHome className='ds_home-icon' /> Home</button>
+                           </div>
+                           <div className="mt- me-2">
+                             <button type="button" className={`ds_new-work ${addType === 'Work' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Work")}><IoBagHandleOutline className="ds_home-icon" /> Work</button>
+                           </div>
+                           <div className="mt-">
+                               <button type="button" className={`ds_new-other ${addType === 'Other' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Other")}> Other</button>
+                           </div>
+                       </div>
+                     </div>
+                     <div>
+                       <div className="row justify-content-center">
+                         <div className="col-xl-6 mt-5 mb-3">
+                           <div>
+                              <button type='submit' className='ds_new-save'>Save Address</button>
+                           </div>
+                         </div>
+                       </div>
+                     </div>
+                   </form>
+                </div>
+              </div>
+            </div>
+           </Modal>
         </div>
       </section>
 

@@ -176,14 +176,20 @@ const handleRating = (value) => {
 const handleImageUpload = (event) => {
   const files = Array.from(event.target.files);
   const newImages = files.map((file) => ({
-    preview: URL.createObjectURL(file), // Generate a local preview URL
+    file, // Store the actual file object
+    preview: URL.createObjectURL(file), // Local preview URL
   }));
   setUploadedImages((prevImages) => [...prevImages, ...newImages]);
 };
 
 const handleRemoveImage = (index) => {
-  const updatedImages = uploadedImages.filter((_, i) => i !== index);
-  setUploadedImages(updatedImages); 
+  setUploadedImages((prevImages) => {
+    const updatedImages = prevImages.filter((_, i) => i !== index);
+    prevImages.forEach((image, i) => {
+      if (i === index) URL.revokeObjectURL(image.preview); // Clean up
+    });
+    return updatedImages;
+  });
 };
 
 const today = new Date();
@@ -198,8 +204,8 @@ const finalDate = `${year}-${month}-${day}`
 
 
 const handleReviewSubmit = () => {
-  if (uploadedImages.length === 0 || rating === 0 || feedback === "") {
-    alert("Please upload at least one image, provide a rating, and add feedback.");
+  if (!rating || !feedback || uploadedImages.length === 0) {
+    alert("Please upload an image, provide a rating, and add feedback.");
     return;
   }
 
@@ -210,39 +216,45 @@ const handleReviewSubmit = () => {
   formData.append("date", finalDate);
   formData.append("order_id", returnData[0]?.id);
 
-  prodID.forEach((element, index) => {
-    formData.append(`product_id[${index}]`, element);
-  });
-
-  // Append image URLs (not the preview, but the actual file URL or base64 encoded string)
-  uploadedImages.forEach((imageData, index) => {
-    console.log("ImageData " , imageData?.preview);
-    console.log("Index " , index);
+  // Assuming `uploadedImages` contains an array of objects with the image URL
+  uploadedImages.forEach((image, index) => {
+    // console.log(image);
     
-    console.log("Appending image URL:", formData?.append(`image[${index}]`, imageData?.preview)); // Debugging: Ensure preview URL exists
-    formData.append(`image[${index}]`, imageData?.preview); // Append the image preview URL
+ if (image.file) {
+      console.log(image.file);
+      
+      formData.append(`image[${index}]`, image?.file); // Append binary file
+    }
   });
 
-
-
-  console.log("formData " , formData);
+    prodID.forEach((element, index) => {
+    formData.append(`product_id[${index}]`, element);
+   });
   
 
   axios
     .post(`${Api}/reviews/create`, formData, {
       headers: {
         Authorization: `Bearer ${store?.access_token}`,
-        "Content-Type": "multipart/form-data", // Important for file uploads
+        "Content-Type": "multipart/form-data",
       },
     })
     .then((response) => {
+      alert("Review submitted successfully!");
       console.log(response);
     })
     .catch((error) => {
-      alert(error);
+      console.error("Error submitting review:", error);
+      alert("Failed to submit the review.");
     });
 };
 
+
+useEffect(() => {
+  return () => {
+    uploadedImages.forEach((image) => URL.revokeObjectURL(image.preview)); // Clean up on unmount
+  };
+}, [uploadedImages]);
 
 
 console.log(returnData);

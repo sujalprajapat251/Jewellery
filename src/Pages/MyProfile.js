@@ -1,4 +1,4 @@
-import React, { useContext , useState } from 'react'
+import React, { useContext , useEffect, useState } from 'react'
 import '../Css/dhruvin/MyProfile.css'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { IoBagHandleOutline } from 'react-icons/io5';
@@ -9,11 +9,12 @@ import noteContext from '../Context/noteContext';
 import { Modal } from 'react-bootstrap';
 import { FiPlus } from 'react-icons/fi';
 import { IoMdClose } from 'react-icons/io';
+import axios from 'axios';
 
 const MyProfile = () => {
 
       // ******* My Profile *******
-    const { profileData , 
+    const { profileData , store , Api,
 
      // ------ Edit User State -----
      editToggle, setEditToggle , EditFormik , handleCancel , 
@@ -70,16 +71,113 @@ const MyProfile = () => {
 
   // **********  Submit Review Popup  ********
    const [subRevToggle, setSubRevToggle] = useState(false)
+   const [rating, setRating] = useState(0);
+   const [reviewId, setReviewId] = useState(null)
+   const [customerID, setCustomerID] = useState(null)
+   const [reviewProdId, setReviewProdId] = useState([])
+   const [uploadedImages, setUploadedImages] = useState([]);
+   const [feedback, setFeedback] = useState("")
+
+
+   const handleSubmitReview = (id , customer_id , prod_id) => {
+     setSubRevToggle(true)
+     setReviewId(id)
+     setCustomerID(customer_id)
+     setReviewProdId([...new Set(prod_id)])
+   }
+
+   const handleRating = (value) => {
+    setRating(value); 
+   };
+
+   const handleImageUpload = (event) => {
+    const files = Array.from(event.target.files);
+    const newImages = files.map((file) => ({
+      file, // Store the actual file object
+      preview: URL.createObjectURL(file), // Local preview URL
+    }));
+    setUploadedImages((prevImages) => [...prevImages, ...newImages]);
+  };
+  
+  const handleRemoveImage = (index) => {
+    setUploadedImages((prevImages) => {
+      const updatedImages = prevImages.filter((_, i) => i !== index);
+      prevImages.forEach((image, i) => {
+        if (i === index) URL.revokeObjectURL(image.preview); // Clean up
+      });
+      return updatedImages;
+    });
+  };
+
+const today = new Date();
+const year = today.getFullYear();
+const month = String(today.getMonth() + 1).padStart(2, '0'); 
+const day = String(today.getDate()).padStart(2, '0');
+
+const finalDate = `${year}-${month}-${day}`
+
+const handleReviewSubmit = () => {
+  if (!rating || !feedback || uploadedImages.length === 0) {
+    alert("Please upload an image, provide a rating, and add feedback.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("customer_id", customerID);
+  formData.append("description", feedback);
+  formData.append("rating", rating);
+  formData.append("date", finalDate);
+  formData.append("order_id", reviewId);
+
+  // Assuming `uploadedImages` contains an array of objects with the image URL
+  uploadedImages.forEach((image, index) => {
+    // console.log(image);
+    
+ if (image.file) {
+      console.log(image.file);
+      
+      formData.append(`image[${index}]`, image?.file); // Append binary file
+    }
+  });
+
+  reviewProdId?.forEach((element, index) => {
+    formData.append(`product_id[${index}]`, element);
+   });
+  
+
+  axios
+    .post(`${Api}/reviews/create`, formData, {
+      headers: {
+        Authorization: `Bearer ${store?.access_token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((response) => {
+      alert("Review submitted successfully!");
+      console.log(response);
+    })
+    .catch((error) => {
+      console.error("Error submitting review:", error);
+      alert("Failed to submit the review.");
+    });
+};
+
+
+useEffect(() => {
+  return () => {
+    uploadedImages.forEach((image) => URL.revokeObjectURL(image.preview)); // Clean up on unmount
+  };
+}, [uploadedImages]);
 
 
   //  ************ LogOut Modal *********
   const [logOut, setLogOut] = useState(false)
 
-  const handleLogOut = () => {
+   const handleLogOut = () => {
       localStorage.removeItem("Login")
       setLogOut(false)
       navigate("/")
-  }
+   }
 
   return (
     <>
@@ -392,7 +490,7 @@ const MyProfile = () => {
                                                  </div>
                                                </div>
                                              </div>
-                                            </Modal>
+                                           </Modal>
                                           </div>
                                   </section>
 
@@ -788,9 +886,9 @@ const MyProfile = () => {
                                                         )
                                                    })}
                                                 {element?.order_status === "delivered" && (
-                                                      <h6 className="mt-auto ms-3 mb-1">
+                                                      <h6 className="mt-auto me-3 text-end mb-3">
                                                         
-                                                        <Link className="text-dark" onClick={()=>setSubRevToggle(true)} > 
+                                                        <Link className="text-dark" onClick={()=> handleSubmitReview(element?.id , element?.customer_id , element?.order_items?.map((element)=> element?.product_id))  } > 
                                                             Submit Review
                                                          </Link>
                                                       </h6>
@@ -830,34 +928,45 @@ const MyProfile = () => {
                <div>
                    <div className='px-4'>
                       <h6 className='ds_600 mb-0'>Overall Rating</h6>
-                      <FaStar className='me-1 ds_review-color' />
-                      <FaStar className='me-1 ds_review-color' />
-                      <FaStar className='me-1 ds_review-color' />
-                      <FaStar className='me-1 ds_review-color' />
-                      <FaStar className='me-1' />
+                       {[1, 2, 3, 4, 5].map((star) => (
+                            <FaStar
+                              key={star}
+                              className={`me-1 ${star <= rating ? 'ds_review-color' : ''}`}
+                              onClick={() => handleRating(star)} style={{cursor: 'pointer',
+                                color: star <= rating ? 'ds_review-color' : '',
+                              }}
+                            />
+                         ))}
                    </div>
                    <div className='ds_review-line mt-2'></div>
                    <div className='px-4 mt-3'>
                        <h6 className='ds_600 mb-0'>Add Photo or Video</h6>
                        <div className='d-flex mt-2'>
-                           <div className='ds_review-inner position-relative'>
-                               <img src={require("../Img/dhruvin/ring.png")} alt="" width="100%"/>
-                               <IoMdClose className='ds_review-cancel-icon' />
-                           </div>
-                           <div className='ds_review-add'>
-                              <FiPlus className='ds_review-plus' />
-                           </div>
+                       {uploadedImages.map((image, index)=> {
+                               return(
+                                <div className='ds_review-inner position-relative' key={index}>
+                                   <img src={image?.preview} alt={`Uploaded ${index}`} width="100%" className='ds_review-upload-img' />
+                                   <IoMdClose className='ds_review-cancel-icon' onClick={() => handleRemoveImage(index)}
+                                   />
+                                 </div>
+                               )
+                          })}
+
+                               <div className='ds_review-add' onClick={() => document.getElementById('imageUploadInput').click()} style={{ cursor: 'pointer' }}>
+                                    <FiPlus className='ds_review-plus' />
+                                </div>
+                                    <input type="file" id="imageUploadInput" multiple accept="image/*,video/*" style={{ display: 'none' }} onChange={handleImageUpload}/>
                        </div>
                    </div>
                    <div className='ds_review-line mt-3'></div>
                    <div className='px-4 mt-3'>
                       <h6 className='ds_600 mb-0'>Feedback</h6>
                       <div className="form-floating mt-2">
-                         <textarea className="form-control ds_review-area" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                         <textarea className="form-control ds_review-area" value={feedback} onChange={(e)=> setFeedback(e.target.value)} placeholder="Leave a comment here" id="floatingTextarea"></textarea>
                          <label htmlFor="floatingTextarea">Write your feedback</label>
                        </div>
                        <div className='mt-4 pt-2 mb-2'>
-                          <button className='ds_review-submit '>Submit</button>
+                          <button className='ds_review-submit' onClick={handleReviewSubmit}>Submit</button>
                        </div>
                    </div>
                </div>
