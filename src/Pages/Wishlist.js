@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
 function Wishlist() {
     const {wishlistData, removeWishlistHandler , allProduct} =useContext(noteContext); 
+    console.log(wishlistData);
     const [wishlistproducts,setWishlistData]= useState([]);
     useEffect(()=>{
         const productData = wishlistData.filter((wishlistItem) =>
