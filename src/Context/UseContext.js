@@ -14,15 +14,14 @@ const UseContext = (props) => {
   const [allCategory, setAllCatgegory] = useState([]);
   const [allSubCategory, setAllSubCategory] = useState([]);
   const [allProduct, setAllProduct] = useState([]);
-  const [wishlistData, setWishlistData] = useState([]);;
+  const [wishlistData, setWishlistData] = useState([]);
+  const [bestseller, setBestseller] = useState([]);
   const Api = 'https://shreekrishnaastrology.com/api'
 
 
   const token = store?.access_token;
 
-  useEffect(() => {
-
-
+  const fetchCategory = () => {
     // fetch catgory
     axios.get(`${Api}/categories/getallactive`, {
       headers: {
@@ -36,9 +35,9 @@ const UseContext = (props) => {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
+  }
 
-
-
+  const fetchSubCategory = () => {
     // fetch sub catgeory data
     axios.get(`${Api}/subcategories/getallactive`, {
       headers: {
@@ -52,7 +51,9 @@ const UseContext = (props) => {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
+  }
 
+  const fetchProduct = ()=>{
 
     // fetch product data
     axios.get(`${Api}/products/getallactive`, {
@@ -67,25 +68,38 @@ const UseContext = (props) => {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
+  }
 
-  }, []);
+  useEffect(() => {
+    fetchCategory();
+    fetchSubCategory();
+    fetchProduct();
+  }, [Api]);
+
+  // getting best selling products
+  useEffect(() => {
+      const sortedFlitter = [...allProduct]
+        .sort((a, b) => b.total_rating - a.total_rating);
+      setBestseller(sortedFlitter.slice(0,12));
+  }, [allProduct]); 
+
 
   // add to wishlist handlerrs {} 
   const [wishlistID, setWishlistID] = useState([]);
   const addwishlistHandler = async (id) => {
-    console.log("wishId" , wishlistID);
+    console.log("wishId", wishlistID);
     const check = wishlistID.includes(id);
-    if(!check){
+    if (!check) {
       console.log('Product id', id);
-    var res = await axios.post(`${Api}/wishlists/create`, {
-      customer_id: store?.id,
-      product_id: id,
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    console.log('response', res);
+      var res = await axios.post(`${Api}/wishlists/create`, {
+        customer_id: store?.id,
+        product_id: id,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      console.log('response', res);
     }
     fetchWishlist();
   }
@@ -96,13 +110,13 @@ const UseContext = (props) => {
         Authorization: `Bearer ${token}`
       }
     })
-    if(res.data){
-      console.log('Removed from wishlist',res);
+    if (res.data) {
+      console.log('Removed from wishlist', res);
       fetchWishlist();
     }
   }
-  const findWishlistID = (id)=>{
-    var data  = wishlistData.find((item)=>{ return item.product_id === id;});
+  const findWishlistID = (id) => {
+    var data = wishlistData.find((item) => { return item.product_id === id; });
     removeWishlistHandler(data.id)
   }
   // Fetch wishlist
@@ -116,7 +130,7 @@ const UseContext = (props) => {
           (item) => item.customer_id == store?.id
         );
         // alert(response.data);
-        console.warn('hey',response.data);
+        console.warn('hey', response.data);
         setWishlistData(filteredData);
         const idData = filteredData
           .filter((item) => item.product_id) // Filter items with valid product_id
@@ -225,7 +239,7 @@ const UseContext = (props) => {
     initialValues: newAddVal,
     validationSchema: NewAddSchema,
     onSubmit: (values, action) => {
-      axios.post(`${Api}/deliveryAddress/create`,{
+      axios.post(`${Api}/deliveryAddress/create`, {
         customer_id: store?.id,
         address: values.address,
         status: 'active',
@@ -424,19 +438,19 @@ const UseContext = (props) => {
   })
 
 
-// *************** Track Order Page ************
-const [trackFilter, seTrackFilter] = useState("")
-// use
+  // *************** Track Order Page ************
+  const [trackFilter, seTrackFilter] = useState("")
+  // use
 
-const handleTrackOrder = (data) => {
-  seTrackFilter(data)
-  localStorage.setItem("TrackOrderKey" , JSON.stringify(data))
-}
-
-
+  const handleTrackOrder = (data) => {
+    seTrackFilter(data)
+    localStorage.setItem("TrackOrderKey", JSON.stringify(data))
+  }
 
 
-// ************ Faq **********
+
+
+  // ************ Faq **********
 
   const [mainFaq, setMainFaq] = useState([])
   const [subFaq, setSubFaq] = useState([])
@@ -471,20 +485,20 @@ const handleTrackOrder = (data) => {
 
   // ************** Return Order *********
 
-const [returnOrderData, setReturnOrderData] = useState("")
+  const [returnOrderData, setReturnOrderData] = useState("")
 
-const handleReturnOrder = (customer) => {
+  const handleReturnOrder = (customer) => {
     setReturnOrderData(customer)
-    localStorage.setItem( "ReturnOrderKey" , JSON.stringify(customer))
-};
+    localStorage.setItem("ReturnOrderKey", JSON.stringify(customer))
+  };
 
-// useEffect(()=>{
-   
-// },[])
+  // useEffect(()=>{
+
+  // },[])
 
   return (
     <noteContext.Provider value={{
-      allCategory, allProduct, allSubCategory, token, wishlistData, addwishlistHandler, removeWishlistHandler,wishlistID,findWishlistID,
+      allCategory, allProduct, allSubCategory, token, wishlistData, addwishlistHandler, removeWishlistHandler, wishlistID, findWishlistID,bestseller,
 
       Api
       // ******* My Profile *******
@@ -495,7 +509,7 @@ const handleReturnOrder = (customer) => {
 
       // ------ My Address ------
       addType, setAddType, myAddData, setMyAddData, addMainNewAdd, setAddMainNewAdd, newAddVal, newAddModal, setNewAddModal,
-      AddFormik, handleAddType, singleNewAdd, setSingleNewAdd, deleteUseEffect, setdeleteUseEffect, handleMark ,hello ,
+      AddFormik, handleAddType, singleNewAdd, setSingleNewAdd, deleteUseEffect, setdeleteUseEffect, handleMark, hello,
 
       // ------- Add New Single Address Popup --------
       singleId, setSingleId, singleAddVal, activeCard, setActiveCard, SingleAddFormik, handleSingleNewAdd,
@@ -512,14 +526,14 @@ const handleReturnOrder = (customer) => {
       // ************ Faq **********
       mainFaq, subFaq, setSubFaq,
 
-    // *************** Track Order Page ************
-      handleTrackOrder , trackFilter,
+      // *************** Track Order Page ************
+      handleTrackOrder, trackFilter,
 
       // ************** Return Order *********
-      handleReturnOrder  , returnOrderData
- 
-      
-      }}>
+      handleReturnOrder, returnOrderData
+
+
+    }}>
 
       {props.children}
     </noteContext.Provider>
