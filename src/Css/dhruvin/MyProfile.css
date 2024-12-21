@@ -316,6 +316,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding-right: 10px;
 }
 
+/* {----------------------- Empty Card -------------------} */
+.ds_no-order-bg{
+    height: 500px;
+}
+
 
 
 
@@ -374,6 +379,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     max-width: 390px !important;
     margin: auto;
  }
+ /* {----------------------- Empty Card -------------------} */
+.ds_no-order-bg{
+    height: 400px;
+}
+
  
 }
 

@@ -1,4 +1,4 @@
-import React, { useContext , useEffect, useState } from 'react'
+import React, { useContext , useEffect, useRef, useState } from 'react'
 import '../Css/dhruvin/MyProfile.css'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { IoBagHandleOutline } from 'react-icons/io5';
@@ -68,7 +68,20 @@ const MyProfile = () => {
        }
     };
 
-    const myClass = JSON.parse(localStorage.getItem("default"))
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+          setActiveCard(null);
+        }
+      };
+  
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, []);
 
 
 
@@ -387,14 +400,16 @@ useEffect(() => {
                                            <div id='ds_default' className="ds_chan-box position-relative"  style={{border: isDefault ? '0.75px solid #000000' : '0.75px solid #00000033'}}>
                                              <div className="d-flex justify-content-between align-items-center px-3">
                                                <h5 className="mb-0 ds_color">{item.type}</h5>
-                                               <BsThreeDotsVertical onClick={() => toggleDropdown(index)} style={{ cursor: 'pointer' }} />
-                                               {activeCard === index && (
-                                                 <div className="ds_add-mini">
-                                                   <p className="ds_600 ds_cursor" onClick={()=>handleSingleNewAdd(item.id)}>Edit</p>
-                                                   <p className="ds_600 ds_cursor" onClick={()=>handleDeleteAdd(item.id)}>Delete</p>
-                                                   <p className="ds_600 ds_cursor" onClick={()=> handleMark(item.id)}>Make as default</p>
-                                                 </div>
-                                               )}
+                                               <div ref={dropdownRef}>
+                                                  <BsThreeDotsVertical onClick={() => toggleDropdown(index)} style={{ cursor: 'pointer' }} />
+                                                  {activeCard === index && (
+                                                    <div className="ds_add-mini">
+                                                      <p className="ds_600 ds_cursor" onClick={()=>handleSingleNewAdd(item.id)}>Edit</p>
+                                                      <p className="ds_600 ds_cursor" onClick={()=>handleDeleteAdd(item.id)}>Delete</p>
+                                                      <p className="ds_600 ds_cursor" onClick={()=> handleMark(item.id)}>Make as default</p>
+                                                    </div>
+                                                  )}
+                                               </div>
                                              </div>
                                              <div className="ds_chan-line mt-2"></div>
                                              <div className="px-3 mt-3">
@@ -803,20 +818,23 @@ useEffect(() => {
                               <div className='ds_order-bg mt-4'>
                                    
                                   {/* ----------------------- Empty Card ------------------- */}
-                                  <div className='d-none'>
-                                   <div className='d-flex justify-content-center align-items-center h-100'>
-                                      <div className='text-center'>
-                                          <div>
-                                            <img src={require("../Img/dhruvin/no-item.png")} alt="" width="30%" />
-                                          </div>
-                                          <div>
-                                              <h5>No orders yet</h5>
-                                              <p className='text-muted'>You have no order yet with us keep shopping </p>
-                                              <button className='ds_order-browse'>Browse Products</button>
-                                          </div>
-                                      </div>
-                                   </div>
-                                  </div>
+                                   {
+                                     filteredOrders.length === 0 && 
+                                                <div className='ds_no-order-bg'>
+                                                  <div className='d-flex justify-content-center align-items-center h-100'>
+                                                     <div className='text-center'>
+                                                         <div>
+                                                           <img src={require("../Img/dhruvin/no-item.png")} alt="" width="30%" />
+                                                         </div>
+                                                         <div>
+                                                             <h5>No orders yet</h5>
+                                                             <p className='text-muted'>You have no order yet with us keep shopping </p>
+                                                             <button className='ds_order-browse'>Browse Products</button>
+                                                         </div>
+                                                     </div>
+                                                  </div>
+                                             </div>
+                                   }
 
                                   {/* ----------------------- My Order ------------------- */}
                                   <div>

@@ -15,250 +15,27 @@ const Faq = () => {
         setOpenIndex(openIndex === index ? null : index);        
     };
 
-      const categories = [
-        'General Merchandise Quries',
-        'My Account & Registration',
-        'Delivery & Shipment',
-        'Online Purchase Related',
-        'Payments',
-        'Product Sizing',
-        'Return, Exchange & Buyback Policies',
-      ];
 
-      const accordionData = [
-        {
-            category: 'General Merchandise Quries',
-            data:[
-                {
-                   title: 'Can I reactivate my inactive account?',
-                   content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 
-            ]
-        
-        },
-        {
-            category: 'My Account & Registration',
-            data:[
-                {
-                   title: 'Can I reactivate my inactive account?',
-                   content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 
-            ]
-        },
-        {
-            category: 'Delivery & Shipment',
-            data:[
-                {
-                   title: 'Can I reactivate my inactive account?',
-                   content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 
-            ]
-        },
-        {
-            category: 'Online Purchase Related',
-            data:[
-                {
-                   title: 'Can I reactivate my inactive account?',
-                   content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 
-            ]
-        },
-        {
-            category: 'Payments',
-            data:[
-                {
-                   title: 'Can I reactivate my inactive account?',
-                   content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 
-            ]
-        },
-        {
-            category: 'Product Sizing',
-            title: 'Can I reactivate my inactive account?',
-            data:[
-                {
-                   title: 'Can I reactivate my inactive account?',
-                   content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 
-            ]
-        },
-        {
-            category: 'Return, Exchange & Buyback Policies',
-            title: 'Can I reactivate my inactive account?',
-            data:[
-                {
-                   title: 'Can I reactivate my inactive account?',
-                   content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                },
-                {
-                    title: 'Can I reactivate my inactive account?',
-                    content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 {
-                     title: 'Can I reactivate my inactive account?',
-                     content: 'Lorem ipsum dolor sit amet consectetur. Bibendum tellus quis eget gravida sit laoreet neque habitant nulla. Ligula vestibulum fames pharetra integer tincidunt. Sit massa vitae ut vitae vitae ipsum congue eros in. Vel nam morbi faucibus nullam nunc sit at bibendum orci.',
-                 },
-                 
-            ]
-        },
-      ];
-
-    //   const filteredData = accordionData.find(item => item.category === activeCategory)?.data || [];
-
-      useEffect(()=>{
+    useEffect(()=>{
        let filter = subFaq.filter((element)=> {
-        return element.faq_name === "Registration"
-        })
-        setData(filter);        
-      },[subFaq])
+           return element.faq_name === "Registration1"
+           })
+       setData(filter);   
+    },[subFaq])
 
 
-      const handleFilter = (name) => {
+    const handleFilter = (name) => {
         setActiveCategory(name)
         
         let filter = subFaq.filter((element)=> {
             return element.faq_name === name
         })
         setData(filter)
-      }
+    }
+
+
+
+    
       
 
   return (
