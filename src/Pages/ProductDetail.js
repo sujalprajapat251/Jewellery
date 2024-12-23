@@ -12,7 +12,10 @@ import noteContext from '../Context/noteContext';
 import axios from 'axios';
 function ProductDetail() {
     const { id } = useParams();
+    const user = JSON.parse(localStorage.getItem("Login"));
+    console.log('user', user.id);
     let [inStock, setInStock] = useState(true);
+
     // backend connnectivity code here
 
     const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler } = useContext(noteContext);
@@ -47,10 +50,9 @@ function ProductDetail() {
     const [reviews, setReviews] = useState([]);
     const [youAlsoLike, setYouAlsoLike] = useState([]);
     const [offers, setOffers] = useState([]);
+    const [peopleAlsoSearch, setPeopleAlsoSearch] = useState([]);
     useEffect(() => {
 
-        // console.log("Fetched products", product.size_id);
-        // // fetch size data
 
         const array = product?.size_name?.split(',').map(Number).filter((num) => !isNaN(num));
 
@@ -93,15 +95,39 @@ function ProductDetail() {
                 setOffers(offersData);
                 ;
             })
+
+        //people also search for product
+
+        for (let i = allProduct.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allProduct[i], allProduct[j]] = [allProduct[j], allProduct[i]]; // Swap
+        }
+
+        // Get 5 random products
+        const randomProducts = allProduct.slice(0, 5);
+        setPeopleAlsoSearch(randomProducts);
+        console.log(randomProducts);
     }, [product])
+
+
     // addto card handler
     const [addToCard, setAddToCard] = useState(true);
-    const addCardHandle = () => {
+    const addCardHandle = async() => {
         if (addToCard) {
-            var data = { product: product, offers: selectedOffers, size: size, }
-            const cardDetail = JSON.parse(localStorage.getItem('cardDetail')) || [];
-            localStorage.setItem('cardDetail', JSON.stringify([...cardDetail, data]));
-            console.log(data);
+            await axios.post(`${Api}/cart/create`,
+                {
+                    customer_id: user.id,
+                    product_id: product?.id,
+                    quantity: 1,
+                    unit_price: product?.total_price,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }).then((response) => {
+                    console.log("Product added to cart successfully!", response);
+                })
             // addCard = false;
             setAddToCard(false);
         }
@@ -183,10 +209,9 @@ function ProductDetail() {
     // other detail nav-tabe handller 
     const [tab, setTab] = useState('tab-0');
 
-    // you also like product
 
 
-    // ------------------------
+    // braking price calculation ------
     const metal_total = product?.price && product?.weight
         ? `${((parseFloat(product.price) / parseFloat(product.weight)) * parseFloat(product.weight)).toFixed(2)}`
         : 0;
@@ -218,7 +243,7 @@ function ProductDetail() {
                                         Your browser does not support the video tag.
                                     </video>
                                 ) : (
-                                    <img src={thumbnail} alt="thumbnail" className="w-100 object-fit-cover "  style={{aspectRatio : '1 / 1'}}/>
+                                    <img src={thumbnail} alt="thumbnail" className="w-100 object-fit-cover " style={{ aspectRatio: '1 / 1' }} />
                                 );
                             })()
                             :
@@ -506,7 +531,7 @@ function ProductDetail() {
                                 <span className='d-flex justify-content-between'><p>Gender</p><b>{product?.gender || '--'}</b></span>
                                 <span className='d-flex justify-content-between'><p>Collection</p><b>{product?.collection || '--'}</b></span>
                                 <span className='d-flex justify-content-between'><p>Occasion</p><b>{product?.occasion || '--'}</b></span>
-                                <span className='d-flex justify-content-between word-wrap'><p>Size</p><b>{sizeArray.map((item)=> item).join(', ') || '--'}</b></span>
+                                <span className='d-flex justify-content-between word-wrap'><p>Size</p><b>{sizeArray.map((item) => item).join(', ') || '--'}</b></span>
                             </div>
                         </> : <>
                             <div className='s_table s_w_30'>
@@ -645,12 +670,14 @@ function ProductDetail() {
                 <div className='s_also_like'>
                     <div className='d-flex justify-content-between'>
                         <h2>You may also like</h2>
-                        <Link to={`/productlist/${product?.sub_category_id}`}>View More</Link>
+                        <Link to={`/productlist/subcategory/${product?.sub_category_id}`}>View More</Link>
                     </div>
                     <div>
                         <Row xxl={5} lg={4} md={4} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
                             {
                                 youAlsoLike.slice(0, 5).map((ele, id) => {
+                                    const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
+                                    const discountPrice = (parseFloat(ele.total_price) - parseFloat(discounted)).toFixed(2);
                                     return (
                                         <Col key={id} className='py-4 '>
                                             <Link to={`/productdetail/${ele.id}`} className='s_seller_card'>
@@ -660,12 +687,11 @@ function ProductDetail() {
 
                                                 <div className='s_card_text'>
                                                     <h5>{ele.product_name}</h5>
-                                                    <p className='mb-0'><span className='mx-2'>₹{ele.base_price}</span><strike className="mx-2">₹{ele.discount
-                                                    }</strike></p>
+                                                    <p className='mb-0'><span className='mx-2'>₹{discountPrice}</span><strike className="mx-2">₹{ele.total_price}</strike></p>
                                                     <div className='s_rating'>
                                                         {
                                                             [...Array(5)].map((_, index) => {
-                                                                if (index < ele.rating) {
+                                                                if (index < ele.total_rating) {
                                                                     return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
                                                                 } else {
                                                                     return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
@@ -687,29 +713,27 @@ function ProductDetail() {
                 <div className='s_also_like'>
                     <div className='d-flex justify-content-between'>
                         <h2>People also search for</h2>
-                        <Link>View More</Link>
+                        <Link to={`/productlist/all/null`}>View More</Link>
                     </div>
                     <div>
-                        {/* <Row xxl={5} lg={4} md={4} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
+                        <Row xxl={5} lg={4} md={4} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
                             {
-                                detail.map((ele, id) => {
+                                peopleAlsoSearch.map((ele, id) => {
+                                    const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
+                                    const discountPrice = (parseFloat(ele.total_price) - parseFloat(discounted)).toFixed(2);
                                     return (
                                         <Col key={id} className='py-4'>
-                                            <Link to={'/productdetail'} className='s_seller_card'>
+                                            <Link to={`/productdetail/${ele.id}`} className='s_seller_card'>
                                                 <div className='s_card_img'>
-                                                    <img src={ele.img} className="w-100" alt={ele.title} key={ele.title} />
+                                                    <img src={ele?.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
                                                 </div>
-
-                                                {ele.status ?
-                                                    <div className='s_card_status'><p className='mb-0'>{ele.status}</p></div>
-                                                    : ''}
                                                 <div className='s_card_text'>
                                                     <h5>{ele.title}</h5>
-                                                    <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.old_price}</strike></p>
+                                                    <p className='mb-0'><span className='mx-2'>₹ {discountPrice}</span><strike className="mx-2">₹ {ele.total_price}</strike></p>
                                                     <div className='s_rating'>
                                                         {
                                                             [...Array(5)].map((_, index) => {
-                                                                if (index < ele.rating) {
+                                                                if (index < ele.total_rating) {
                                                                     return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
                                                                 } else {
                                                                     return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
@@ -725,7 +749,7 @@ function ProductDetail() {
                                 })
                             }
 
-                        </Row> */}
+                        </Row>
                     </div>
                 </div>
             </section>

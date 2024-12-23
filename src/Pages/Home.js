@@ -16,8 +16,8 @@ import noteContext from '../Context/noteContext';
 
 function Home() {
     // backend connection code
-    const { allCategory , allProduct , addwishlistHandler , wishlistID , findWishlistID,bestseller } = useContext(noteContext);
-    console.warn('best sale = >',bestseller);
+    const { allCategory, allProduct, addwishlistHandler, wishlistID, findWishlistID, bestseller } = useContext(noteContext);
+    console.warn('best sale = >', bestseller);
     // cat slideer responsive
     const cat_sliderres = {
         0: { items: 1 },
@@ -66,7 +66,7 @@ function Home() {
                                 <p className='s_slider_description mb-0'>Discover the timeless beauty of  jewellery</p>
                                 <br />
                                 <div className='s_slider_btn'>
-                                    <a href='#viewcollection'>View Collection</a>
+                                    <Link to={`/productlist/all/null`}>View Collection</Link>
                                 </div>
                             </div>
                         </div>
@@ -81,7 +81,7 @@ function Home() {
                                 <p className='s_slider_description mb-0'>Elevate Your Style with our collection</p>
                                 <br />
                                 <div className='s_slider_btn'>
-                                    <a href='#viewcollection'>View Collection</a>
+                                    <Link to={`/productlist/all/null`}>View Collection</Link>
                                 </div>
                             </div>
                         </div>
@@ -96,7 +96,7 @@ function Home() {
                                 <p className='s_slider_description mb-0'>Pure Elegance, Pure Diamonds</p>
                                 <br />
                                 <div className='s_slider_btn'>
-                                    <a href='#viewcollection'>View Collection</a>
+                                    <Link to={`/productlist/all/null`}>View Collection</Link>
                                 </div>
                             </div>
                         </div>
@@ -139,12 +139,12 @@ function Home() {
                                                     <img src={ele.images?.[0]} className="w-100 bg-white" alt={ele.title} key={ele.title} />
                                                 </div>
                                                 {
-                                                    isSelected ? 
-                                                    <div className='s_heart_icon active' onClick={()=>{findWishlistID(isSelected)}}>
-                                                        <GoHeartFill />
-                                                    </div> : <div className='s_heart_icon' onClick={() => { addwishlistHandler(ele.id) }}>
-                                                        <GoHeart />
-                                                    </div>
+                                                    isSelected ?
+                                                        <div className='s_heart_icon active' onClick={() => { findWishlistID(isSelected) }}>
+                                                            <GoHeartFill />
+                                                        </div> : <div className='s_heart_icon' onClick={() => { addwishlistHandler(ele.id) }}>
+                                                            <GoHeart />
+                                                        </div>
                                                 }
                                                 {ele.gender ?
                                                     <div className='s_card_status'><p className='mb-0'>{ele.metal_color}</p></div>
@@ -188,7 +188,7 @@ function Home() {
                                     <h4>Charmed By The Style</h4>
                                     <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the</p>
                                     <div className='s_elegance_btn'>
-                                        <Link>Shop Now</Link>
+                                        <Link to={`/productlist/all/null`}>Shop Now</Link>
                                     </div>
                                 </div>
                             </Col>
@@ -204,7 +204,7 @@ function Home() {
                     </div>
                     <Row className='row-cols-1 gx-0 gx-sm-4' lg={4} sm={2}>
                         <Col className='position-relative py-5' >
-                            <div className='s_es_card'>
+                            <Link to={`/productlist/occasion/Wedding Wear`} className='s_es_card text-dark'>
                                 <img src={require('../Img/Sujal/weddingwear.png')} alt='wedding wear' className='w-100 '></img>
                                 <div className='s_card_detail'>
                                     <div>
@@ -212,10 +212,10 @@ function Home() {
                                         <p>Traditional attire</p>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         </Col>
                         <Col className='position-relative py-5'>
-                            <div className='s_es_card'>
+                            <Link to={`/productlist/occasion/Party Wear`} className='s_es_card text-dark'>
                                 <img src={require('../Img/Sujal/partywear.png')} alt='party wear' className='w-100 '></img>
                                 <div className='s_card_detail'>
                                     <div>
@@ -223,10 +223,10 @@ function Home() {
                                         <p>Glamorous Look</p>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         </Col>
                         <Col className='position-relative py-5'>
-                            <div className='s_es_card'>
+                            <Link to={`/productlist/occasion/Office Wear`} className='s_es_card text-dark'>
                                 <img src={require('../Img/Sujal/officewear.png')} alt='office wear' className='w-100 '></img>
                                 <div className='s_card_detail'>
                                     <div>
@@ -234,10 +234,10 @@ function Home() {
                                         <p>Professional Look</p>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         </Col>
                         <Col className='position-relative py-5'>
-                            <div className='s_es_card'>
+                            <Link to={`/productlist/occasion/Everyday Year`} className='s_es_card text-dark'>
                                 <img src={require('../Img/Sujal/everydaywear.png')} alt='everyday wear' className='w-100 '></img>
                                 <div className='s_card_detail'>
                                     <div>
@@ -245,12 +245,12 @@ function Home() {
                                         <p>Casual Comfort</p>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         </Col>
                     </Row>
                     <Row className='py-5 gx-0 gx-sm-3' >
                         <Col lg={4} sm={12}>
-                            <div className='s_card d-flex align-items-center' >
+                            <Link to={`/productlist/search/ring`} className='s_card d-flex align-items-center' >
                                 <img src={es_card1} className='w-100' alt='card1'></img>
                                 <div>
                                     <div>
@@ -263,10 +263,10 @@ function Home() {
                                         <Link to={'#'}>Shop Now</Link>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         </Col>
                         <Col lg={4} sm={12}>
-                            <div className='s_card d-flex align-items-center' >
+                            <Link className='s_card d-flex align-items-center' >
                                 <img src={es_card2} className='w-100' alt='card2'></img>
                                 <div>
                                     <div>
@@ -279,10 +279,10 @@ function Home() {
                                         <Link to={'#'}>Shop Now</Link>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         </Col>
                         <Col lg={4} sm={12} className=''>
-                            <div className='s_card d-flex align-items-center s_card1' >
+                            <Link className='s_card d-flex align-items-center s_card1' >
                                 <img src={es_card3} className='w-100' alt='card3'></img>
                                 <div>
                                     <div>
@@ -295,7 +295,7 @@ function Home() {
                                         <Link to={'#'}>Shop Now</Link>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         </Col>
                     </Row>
                 </div>
@@ -308,8 +308,7 @@ function Home() {
                             <OwlCarousel className='owl-theme ' loop margin={20} items={4} nav={true} dots={false}
                                 responsive={
                                     feature_sliderres
-                                }
-                            >
+                                }>
                                 {allProduct.slice(0, 5).map((item, idx) => {
                                     return (
                                         <Link className='item' key={idx} to={`/productdetail/${item.id}`}>

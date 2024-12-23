@@ -60,13 +60,25 @@ function ProductList() {
     useEffect(() => {
         let product = []
         if (type === 'subcategory') {
-            product = allProduct.filter((product) => { return product.sub_category_id === parseInt(id); })
+            product = allProduct?.filter((product) => { return product.sub_category_id === parseInt(id); })
         }
         if (type === 'category') {
-            product = allProduct.filter((product) => { return product.category_id === parseInt(id); })
+            product = allProduct?.filter((product) => { return product.category_id === parseInt(id); })
         }
         if (type === 'search') {
-            product = allProduct.filter((product) => { return product.product_name.toLowerCase().includes(id.toLowerCase()); })
+            product = allProduct?.filter((product) => { return product.product_name.toLowerCase().includes(id.toLowerCase()); })
+        }
+        if (type === 'all') {
+            product = allProduct;
+        }
+        if (type === 'occasion') {
+            console.log(allProduct?.map((product) => product.occasion));
+            product = allProduct?.filter(product =>
+                product.occasion?.includes(
+                    id
+                )
+            );
+            console.log('product', product);
         }
         setproductList_detail(product);
         setProductList(product);
@@ -162,11 +174,11 @@ function ProductList() {
             (item.total_price >= minValue && item.total_price <= maxValue)
             // Check price range
         );
-        let filteredData = [];
+        // let filteredData = [];
         let sortedData = [];
 
-        filteredData = filterData.filter((item) => item.total_price >= minValue && item.total_price <= maxValue);
-        console.log(filteredData);
+        // filteredData = filterData.filter((item) => item.total_price >= minValue && item.total_price <= maxValue);
+        // console.log(filteredData);
 
         if (condition === 1) {
             sortedData = filterData.sort((a, b) => b.total_rating - a.total_rating);
@@ -183,10 +195,8 @@ function ProductList() {
         else {
             sortedData = filterData;
         }
-        // const sortedData = filterData.sort((a, b) => b.total_price - a.total_price);
         console.log('sort', sortedData)
         setproductList_detail(sortedData);
-        console.log("Updated Range: ", filteredData);
     }
     // flitering functionality over
 
