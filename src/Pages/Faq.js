@@ -23,7 +23,7 @@ const Faq = () => {
        setData(filter);   
     },[subFaq])
 
-
+    
     const handleFilter = (name) => {
         setActiveCategory(name)
         

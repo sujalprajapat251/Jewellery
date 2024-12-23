@@ -6,7 +6,7 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { FaAngleDown, FaBars } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
-import axios, { all } from 'axios';
+import axios  from 'axios';
 function ProductList() {
     const { Api, token, allProduct } = useContext(noteContext);
 
@@ -17,6 +17,7 @@ function ProductList() {
     const [subCategoryData, setSubCategoryData] = useState([]);
     const [isRing, setIsRing] = useState(false);
     const [isWatch, setIsWatch] = useState(false);
+
     useEffect(() => {
         // console.warn('type',type);
         if (type === 'subcategory') {
@@ -50,7 +51,7 @@ function ProductList() {
                 // console.log('category', checkRing , checkWatch)
             });
         }
-    }, [id, type]);
+    }, [id, type , Api, token]);
 
 
     //  fliter handling
@@ -70,7 +71,7 @@ function ProductList() {
         setproductList_detail(product);
         setProductList(product);
         // alert('');
-    }, [id, allProduct])
+    }, [id, allProduct , type])
 
 
 
@@ -126,6 +127,7 @@ function ProductList() {
     const [minValue, set_minValue] = useState();
     const [maxValue, set_maxValue] = useState();
     const [maxPrice, setMaxPrice] = useState(100000);
+
     useEffect(() => {
         if (productlist?.length > 0) {
             const prices = productlist
@@ -141,6 +143,7 @@ function ProductList() {
             }
         }
     }, [productlist]);
+    
     let condition;
     const handleInput = (e) => {
         set_minValue(e.minValue);

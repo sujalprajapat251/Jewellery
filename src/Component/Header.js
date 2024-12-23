@@ -153,10 +153,11 @@ function Header() {
                     console.log("LoginRes", value.data);
                     if (value) {
                         alert("Login SuccessFully");
-                        setShowLogin(false)
-                        navigate("/myprofile")
+                        // navigate("/myprofile")
                     }
+                    setShowLogin(false)
                     localStorage.setItem("Login", JSON.stringify(value.data.result))
+                    window.location.reload()
                 }).catch((error) => {
                     alert(error)
                 })

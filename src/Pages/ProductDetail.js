@@ -6,11 +6,11 @@ import OwlCarousel from 'react-owl-carousel';
 import { GoHeart, GoHeartFill } from 'react-icons/go';
 import { FaAngleDown, FaShareAlt } from 'react-icons/fa';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
+import { AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 import noteContext from '../Context/noteContext';
+
 import axios from 'axios';
 function ProductDetail() {
-    const navigate = useNavigate();
     const { id } = useParams();
     let [inStock, setInStock] = useState(true);
     // backend connnectivity code here

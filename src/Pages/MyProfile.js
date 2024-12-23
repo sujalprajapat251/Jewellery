@@ -68,20 +68,20 @@ const MyProfile = () => {
        }
     };
 
-    const dropdownRef = useRef(null);
+    // const dropdownRef = useRef(null);
 
-    useEffect(() => {
-      const handleClickOutside = (event) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-          setActiveCard(null);
-        }
-      };
+    // useEffect(() => {
+    //   const handleClickOutside = (event) => {
+    //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    //       setActiveCard(null);
+    //     }
+    //   };
   
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }, []);
+    //   document.addEventListener('mousedown', handleClickOutside);
+    //   return () => {
+    //     document.removeEventListener('mousedown', handleClickOutside);
+    //   };
+    // }, []);
 
 
 
@@ -193,6 +193,8 @@ useEffect(() => {
       localStorage.removeItem("Login")
       setLogOut(false)
       navigate("/")
+      window.location.reload()
+
    }
 
   return (
@@ -400,7 +402,7 @@ useEffect(() => {
                                            <div id='ds_default' className="ds_chan-box position-relative"  style={{border: isDefault ? '0.75px solid #000000' : '0.75px solid #00000033'}}>
                                              <div className="d-flex justify-content-between align-items-center px-3">
                                                <h5 className="mb-0 ds_color">{item.type}</h5>
-                                               <div ref={dropdownRef}>
+                                               <div>
                                                   <BsThreeDotsVertical onClick={() => toggleDropdown(index)} style={{ cursor: 'pointer' }} />
                                                   {activeCard === index && (
                                                     <div className="ds_add-mini">
