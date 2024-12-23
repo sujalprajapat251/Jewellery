@@ -6,13 +6,13 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { FaAngleDown, FaBars } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
-import axios  from 'axios';
+import axios from 'axios';
 function ProductList() {
     const { Api, token, allProduct } = useContext(noteContext);
 
     // backend connection code
     const { id, type } = useParams();
-
+    const { category, field, value } = useParams();
     // get subcategory data
     const [subCategoryData, setSubCategoryData] = useState([]);
     const [isRing, setIsRing] = useState(false);
@@ -35,35 +35,23 @@ function ProductList() {
                 // console.log('subCategory', checkRing , checkWatch)
             });
         }
-        if (type === 'category') {
-            axios.get(`${Api}/categories/get/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }).then((response) => {
-                console.log(response.data.category.name);
-                const data = response.data.category;
-                const checkRing = data.name?.includes('Ring');
-                setIsRing(checkRing);
-                const checkWatch = data.name?.includes('Watch');
-                setIsWatch(checkWatch);
-                setSubCategoryData(response.data.category);
-                // console.log('category', checkRing , checkWatch)
-            });
-        }
-    }, [id, type , Api, token]);
+    }, [id, type, Api, token]);
 
 
     //  fliter handling
     const [productList_detail, setproductList_detail] = useState([]);
     const [productlist, setProductList] = useState([]);
+
+
+    // useNav baar filyterin handler
     useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         let product = []
         if (type === 'subcategory') {
             product = allProduct?.filter((product) => { return product.sub_category_id === parseInt(id); })
         }
         if (type === 'category') {
-            product = allProduct?.filter((product) => { return product.category_id === parseInt(id); })
+            product = allProduct?.filter((product) => { return ((product.category_name).toLowerCase()).includes((id).toLowerCase()) })
         }
         if (type === 'search') {
             product = allProduct?.filter((product) => { return product.product_name.toLowerCase().includes(id.toLowerCase()); })
@@ -80,10 +68,82 @@ function ProductList() {
             );
             console.log('product', product);
         }
+
+
+        // other conditions
+        if (category) {
+            if (category === 'all') {
+                if (field === 'price') {
+                    let price = [];
+                    if (value.includes('>')) {
+                        price = [value.replace('>', '')]; // Handle greater-than condition
+                    } else if (value.includes('<')) {
+                        price = [value.replace('<', '')]; // Handle less-than condition
+                    } else {
+                        price = value.split('-'); // Handle range condition
+                    }
+
+                    const minPrice = parseInt(price[0], 10) * 1000;
+                    const maxPrice = price[1] ? parseInt(price[1], 10) * 1000 : null;
+
+                    product = allProduct?.filter((product) => {
+                        if (value.includes('>')) {
+                            return product.total_price >= minPrice;
+                        } else if (value.includes('<')) {
+                            return product.total_price <= minPrice;
+                        } else {
+                            return (
+                                product.total_price >= minPrice &&
+                                product.total_price <= maxPrice
+                            );
+                        }
+                    });
+                } else if (field === 'gender') {
+                    product = allProduct?.filter((product) =>
+                        product.gender?.toLowerCase() === value.toLowerCase()
+                    );
+                }
+            }
+            else {
+                const data = allProduct?.filter((product) => (product.category_name.toLowerCase()).includes(category));
+                if (field === 'price') {
+                    let price = [];
+                    if (value.includes('>')) {
+                        price = [value.replace('>', '')]; // Handle greater-than condition
+                    } else if (value.includes('<')) {
+                        price = [value.replace('<', '')]; // Handle less-than condition
+                    } else {
+                        price = value.split('-'); // Handle range condition
+                    }
+
+                    const minPrice = parseInt(price[0], 10) * 1000;
+                    const maxPrice = price[1] ? parseInt(price[1], 10) * 1000 : null;
+
+                    product = data?.filter((product) => {
+                        if (value.includes('>')) {
+                            return product.total_price >= minPrice;
+                        } else if (value.includes('<')) {
+                            return product.total_price <= minPrice;
+                        } else {
+                            return (
+                                product.total_price >= minPrice &&
+                                product.total_price <= maxPrice
+                            );
+                        }
+                    });
+                } else if (field === 'men') {
+                    product = data?.filter(product =>
+                        (product?.gender.toLowerCase() === 'men' || product?.gender.toLowerCase() === 'male') && product?.sub_category_name.includes(value)
+                    );
+                }
+                console.log('pro', data);
+            }
+        }
+
+
         setproductList_detail(product);
         setProductList(product);
-        // alert('');
-    }, [id, allProduct , type])
+    }, [id, allProduct, type, category, value, field])
 
 
 
@@ -91,42 +151,66 @@ function ProductList() {
 
 
     // flitering functionality
+    let filters = [];
+    if (isWatch) {
+        filters = {
+            gender: [...new Set(productlist?.map(item => item?.gender).filter(value => value) || [])],
+            theme: [...new Set(productlist?.map(item => item?.theme).filter(value => value) || [])],
+            clasp_type: [...new Set(productlist?.map(item => item?.clasp_type).filter(value => value) || [])],
+            metal_color: [...new Set(productlist?.map(item => item?.metal_color).filter(value => value) || [])],
+            occasion: [...new Set(productlist?.map(item => item?.occasion).filter(value => value) || [])],
+        }
+    }
+    else if (isRing) {
+        filters = {
+            gender: [...new Set(productlist?.map(item => item?.gender).filter(value => value) || [])],
+            // purity: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
+            occasion: [...new Set(productlist?.map(item => item?.occasion).filter(value => value) || [])],
+            clarity: [...new Set(productlist?.map(item => item?.clarity).filter(value => value) || [])],
+            metal: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
+            metal_color: [...new Set(productlist?.map(item => item?.metal_color).filter(value => value) || [])],
 
-    const filters = {
-        gender: [...new Set(productlist?.map(item => item?.gender).filter(value => value) || [])],
-        // purity: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
-        occasion: [...new Set(productlist?.map(item => item?.occasion).filter(value => value) || [])],
-        clarity: [...new Set(productlist?.map(item => item?.clarity).filter(value => value) || [])],
-        metal: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
-        metal_color: [...new Set(productlist?.map(item => item?.metal_color).filter(value => value) || [])],
-        size_name: [
-            ...new Set(
-                productlist
-                    ?.flatMap(item => item?.size_name?.split(',').map(Number) || []) // Split and convert to numbers
-                    .filter(value => !isNaN(value)) // Remove invalid numbers
-            ),
-        ],
-    };
+        };
+    }
+    else {
+        filters = {
+            gender: [...new Set(productlist?.map(item => item?.gender).filter(value => value) || [])],
+            // purity: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
+            occasion: [...new Set(productlist?.map(item => item?.occasion).filter(value => value) || [])],
+            clarity: [...new Set(productlist?.map(item => item?.clarity).filter(value => value) || [])],
+            metal: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
+            metal_color: [...new Set(productlist?.map(item => item?.metal_color).filter(value => value) || [])],
+            size_name: [
+                ...new Set(
+                    productlist
+                        ?.flatMap(item => item?.size_name?.split(',').map(Number) || []) // Split and convert to numbers
+                        .filter(value => !isNaN(value)) // Remove invalid numbers
+                ),
+            ],
+        };
+    }
+    const [selectedFilters, setSelectedFilters] = useState({});
 
-    const [selectedFilters, setSelectedFilters] = useState({
-        gender: [],
-        purity: [],
-        occasion: [],
-        clarity: [],
-        metal: [],
-        metal_color: [],
-        size_name: [],
-    });
+    useEffect(() => {
+        if (isWatch) {
+            setSelectedFilters({ gender: [], theme: [], clasp_type: [], metal_color: [], occasion: [] });
+        } else if (isRing) {
+            setSelectedFilters({ gender: [], purity: [], occasion: [], clarity: [], metal: [], metal_color: [], size_name: [] });
+        } else {
+            setSelectedFilters({ gender: [], purity: [], occasion: [], clarity: [], metal: [], metal_color: [] });
+        }
+    }, [isWatch, isRing]);
     const filterHandler = (type, value, index) => {
         let currentValues, updatedValues;
         setSelectedFilters((prev) => {
             currentValues = prev[type];
-            if (prev[type].includes(value) && index) {
-                console.log(typeof (type + index));
+            console.log('index', prev[type].includes(value) && index);
+            if ((prev[type].includes(value) && index) === 0) {
                 const checkboxId = `${type}-${index}`;
-                var idx = document.getElementById(checkboxId).checked;
+                console.log('selected', checkboxId);
+                var idx = document.getElementById(checkboxId);
                 console.log('id', idx);
-                if (idx) {
+                if (idx.checked === true) {
                     idx.checked = false;
                 }
             }
@@ -155,7 +239,7 @@ function ProductList() {
             }
         }
     }, [productlist]);
-    
+
     let condition;
     const handleInput = (e) => {
         set_minValue(e.minValue);
@@ -163,6 +247,7 @@ function ProductList() {
     };
     useEffect(() => {
         fliteringhandle(condition);
+        // eslint-disable-next-line
     }, [selectedFilters, minValue, maxValue]);
     const fliteringhandle = (x) => {
         condition = x;
@@ -177,8 +262,6 @@ function ProductList() {
         // let filteredData = [];
         let sortedData = [];
 
-        // filteredData = filterData.filter((item) => item.total_price >= minValue && item.total_price <= maxValue);
-        // console.log(filteredData);
 
         if (condition === 1) {
             sortedData = filterData.sort((a, b) => b.total_rating - a.total_rating);
@@ -198,7 +281,6 @@ function ProductList() {
         console.log('sort', sortedData)
         setproductList_detail(sortedData);
     }
-    // flitering functionality over
 
 
 
@@ -226,269 +308,45 @@ function ProductList() {
                                 <div className='s_fliter_head d-none d-md-block'>
                                     <h4>Filter</h4>
                                 </div>
-                                <Accordion>
+                                <Accordion >
                                     <Accordion.Item eventKey="0">
                                         <Accordion.Header>Price</Accordion.Header>
                                         <Accordion.Body>
                                             <div className="s_price_slider">
                                                 <MultiRangeSlider
                                                     min={0}
-                                                    max={400}
-                                                    step={5}
+                                                    max={maxPrice}
+                                                    step={10000}
                                                     minValue={minValue}
                                                     maxValue={maxValue}
-                                                    onInput={(e) => {
-                                                        handleInput(e);
-                                                    }}
+                                                    onInput={handleInput}
                                                 />
+                                                <div className='d-flex justify-content-between align-items-center flex-wrap s_slider_text'>
+                                                    <p>min : ₹ {minValue}</p>
+                                                    <p>max : ₹ {maxValue}</p>
+                                                </div>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="1">
-                                        <Accordion.Header>Gender</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="kids"
-                                                    name="gender" value='Kids' ></input>
-                                                <label for="kids">kids</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="men"
-                                                    name="gender" value='Men' ></input>
-                                                <label for="men">Men</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="women"
-                                                    name="gender" value='Women' ></input>
-                                                <label for="women">women</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                    <Accordion.Item eventKey="2">
-                                        <Accordion.Header>Purity</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="14"
-                                                    name="purity" value={'Purity-14'} ></input>
-                                                <label for="14"  >14</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="20"
-                                                    name="purity" value={'Purity-20'} ></input>
-                                                <label for="20" >20</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="24"
-                                                    name="purity" value={'Purity-24'} ></input>
-                                                <label for="24" >24</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="32"
-                                                    name="purity" value={'Purity-32'} ></input>
-                                                <label for="32" >32</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                    <Accordion.Item eventKey="3">
-                                        <Accordion.Header>Occasion</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Bridal Wear"
-                                                    name="occasion" value={'Bridal Wear'} ></input>
-                                                <label for="Bridal Wear">Bridal Wear</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Engagement"
-                                                    name="occasion" value={'Engagement'} ></input>
-                                                <label for="Engagement">Engagement</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Modern Wear"
-                                                    name="occasion" value={'Modern Wear'} ></input>
-                                                <label for="Modern Wear">Modern Wear</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Office Wear"
-                                                    name="occasion" value={'Office Wear'} ></input>
-                                                <label for="Office Wear">Office Wear</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Traditional & Ethnic Wear"
-                                                    name="occasion" value={'Traditional & Ethnic Wear'} ></input>
-                                                <label for="Traditional & Ethnic Wear">Traditional & Ethnic Wear</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                    <Accordion.Item eventKey="4">
-                                        <Accordion.Header>Diamond Clarity</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="FL"
-                                                    name="Diamond Clarity" value={'Clarity-FL'} ></input>
-                                                <label for="FL">FL</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="I1"
-                                                    name="Diamond Clarity" value={'Clarity-I1'} ></input>
-                                                <label for="I1">I1</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="S12"
-                                                    name="Diamond Clarity" value={'Clarity-S12'} ></input>
-                                                <label for="S12">S12</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="VS"
-                                                    name="Diamond Clarity" value={'Clarity-VS'} ></input>
-                                                <label for="VS">VS</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="VS2"
-                                                    name="Diamond Clarity" value={'Clarity-VS2'} ></input>
-                                                <label for="VS2">VS2</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="V1S1"
-                                                    name="Diamond Clarity" value={'Clarity-V1S1'} ></input>
-                                                <label for="V1S1">V1S1</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                    <Accordion.Item eventKey="5">
-                                        <Accordion.Header>Metal</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Gold"
-                                                    name="Metal" value={'Metal-Gold'} ></input>
-                                                <label for="Gold" >Gold</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Platinum"
-                                                    name="Metal" value={'Metal-Platinum'} ></input>
-                                                <label for="Platinum">Platinum</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                    <Accordion.Item eventKey="6">
-                                        <Accordion.Header>Metal Color</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Rose Gold"
-                                                    name="Metal Color" value={'Color-Rose Gold'} ></input>
-                                                <label for="Rose Gold">Rose Gold</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="White"
-                                                    name="Metal Color" value={'Color-White'} ></input>
-                                                <label for="White">White</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Yellow"
-                                                    name="Metal Color" value={'Color-Yellow'} ></input>
-                                                <label for="Yellow">Yellow</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Yellow & Rose"
-                                                    name="Metal Color" value={'Color-Yellow & Rose'} ></input>
-                                                <label for="Yellow & Rose">Yellow & Rose</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                    <Accordion.Item eventKey="7">
-                                        <Accordion.Header>Type</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Drops"
-                                                    name="Type" value={'Drops'}></input>
-                                                <label for="Drops">Drops</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Jhumka"
-                                                    name="Type" value={'Jhumka'} ></input>
-                                                <label for="Jhumka">Jhumka</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Hoops"
-                                                    name="Type" value={'Hoops'} ></input>
-                                                <label for="Hoops">Hoops</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Studs"
-                                                    name="Type" value={'Studs'} ></input>
-                                                <label for="Studs">Studs</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                    <Accordion.Item eventKey="8">
-                                        <Accordion.Header>Earrings Height</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="0.11"
-                                                    name="Height" value={'H-0.11 cm'} ></input>
-                                                <label for="0.11">0.11 cm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="0.16"
-                                                    name="Height" value={'H-0.16 cm'} ></input>
-                                                <label for="0.16">0.16 cm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="0.25"
-                                                    name="Height" value={'H-0.25 cm'} ></input>
-                                                <label for="0.25">0.25 cm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="0.26"
-                                                    name="Height" value={'H-0.26 cm'} ></input>
-                                                <label for="0.26">0.26 cm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="0.29"
-                                                    name="Height" value={'H-0.29 cm'} ></input>
-                                                <label for="0.29">0.29 cm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="0.2"
-                                                    name="Height" value={'H-0.2 cm'} ></input>
-                                                <label for="0.2">0.2 cm</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                    <Accordion.Item eventKey="9">
-                                        <Accordion.Header>Earrings Width</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="0.11cm"
-                                                    name="Earrings Width" value={'W-0.11 cm'} ></input>
-                                                <label for="0.11cm">0.11 cm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="0.16cm"
-                                                    name="Earrings Width" value={'W-0.16 cm'} ></input>
-                                                <label for="0.16cm">0.16 cm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="0.25cm"
-                                                    name="Earrings Width" value={'W-0.25 cm'}></input>
-                                                <label for="0.25cm">0.25 cm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="0.26cm"
-                                                    name="Earrings Width" value={'W-0.26 cm'} ></input>
-                                                <label for="0.26cm">0.26 cm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="0.29cm"
-                                                    name="Earrings Width" value={'W-0.2 cm'} ></input>
-                                                <label for="0.29cm">0.29 cm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="0.2cm"
-                                                    name="Earrings Width" value={'W-0.2 cm'} ></input>
-                                                <label for="0.2cm">0.2 cm</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
+                                    {Object.keys(filters).map((filterType, index) => {
+                                        const formattedWord = filterType.charAt(0).toUpperCase() + filterType.slice(1).toLowerCase();
+                                        return (
+
+                                            < Accordion.Item eventKey={index} key={filterType} >
+                                                <Accordion.Header className='text-capitalize' ><p className='mb-0'> {filterType === 'size_name' ? 'width' : formattedWord}</p> </Accordion.Header>
+                                                <Accordion.Body>
+                                                    {filters?.[filterType].map((value, index) => (
+                                                        // console.log('id123', typeof(filterType+index))
+                                                        <div key={value} className="d-flex align-items-center s_checkbox">
+                                                            <input type="checkbox" className="me-2" id={`${filterType}-${index}`}
+                                                                name={filterType} value={value} onChange={() => { filterHandler(filterType, value) }}></input>
+                                                            <label for={`${filterType}-${index}`} className='text-capitalize'> {value} </label>
+                                                        </div>
+                                                    ))}
+                                                </Accordion.Body>
+                                            </Accordion.Item>
+                                        )
+                                    })}
                                 </Accordion>
                             </div>
                         </Offcanvas.Body>
@@ -527,22 +385,26 @@ function ProductList() {
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    {Object.keys(filters).map((filterType, index) => (
-                                        <Accordion.Item eventKey={index} key={filterType}>
-                                            <Accordion.Header className='text-capitalize' ><p className='mb-0'> {`${filterType}`}</p> </Accordion.Header>
-                                            <Accordion.Body>
-                                                {filters?.[filterType].map((value, index) => (
-                                                    // console.log('id123', typeof(filterType+index))
-                                                    <div key={value} className="d-flex align-items-center s_checkbox">
-                                                        <input type="checkbox" className="me-2" id={`${filterType}-${index}`}
-                                                            name={filterType} value={value} onChange={() => { filterHandler(filterType, value) }}></input>
-                                                        <label for={`${filterType}-${index}`} className='text-capitalize'> {value} </label>
-                                                    </div>
-                                                ))}
-                                            </Accordion.Body>
-                                        </Accordion.Item>
-                                    ))}
-                                </Accordion>
+                                    {Object.keys(filters).map((filterType, index) => {
+                                        const formattedWord = filterType.charAt(0).toUpperCase() + filterType.slice(1).toLowerCase();
+                                        return (
+
+                                            < Accordion.Item eventKey={index} key={filterType} >
+                                                <Accordion.Header className='text-capitalize' ><p className='mb-0'> {filterType === 'size_name' ? 'width' : formattedWord}</p> </Accordion.Header>
+                                                <Accordion.Body>
+                                                    {filters?.[filterType].map((value, index) => (
+                                                        // console.log('id123', typeof(filterType+index))
+                                                        <div key={value} className="d-flex align-items-center s_checkbox">
+                                                            <input type="checkbox" className="me-2" id={`${filterType}-${index}`}
+                                                                name={filterType} value={value} onChange={() => { filterHandler(filterType, value) }}></input>
+                                                            <label for={`${filterType}-${index}`} className='text-capitalize'> {value} </label>
+                                                        </div>
+                                                    ))}
+                                                </Accordion.Body>
+                                            </Accordion.Item>
+                                        )
+                                    })}
+                                </Accordion >
                             </div>
                         </Offcanvas.Body>
                     </Offcanvas>
@@ -566,122 +428,38 @@ function ProductList() {
                                             <div className="s_price_slider">
                                                 <MultiRangeSlider
                                                     min={0}
-                                                    max={1000}
-                                                    step={5}
+                                                    max={maxPrice}
+                                                    step={10000}
                                                     minValue={minValue}
                                                     maxValue={maxValue}
-                                                    onInput={(e) => {
-                                                        handleInput(e);
-                                                    }}
+                                                    onInput={handleInput}
                                                 />
+                                                <div className='d-flex justify-content-between align-items-center flex-wrap s_slider_text'>
+                                                    <p>min : ₹ {minValue}</p>
+                                                    <p>max : ₹ {maxValue}</p>
+                                                </div>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
-                                    <Accordion.Item eventKey="1">
-                                        <Accordion.Header>Gender</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="kids"
-                                                    name="gender" value='Kids' ></input>
-                                                <label for="kids">kids</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="men"
-                                                    name="gender" value='Men' ></input>
-                                                <label for="men">Men</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="women"
-                                                    name="gender" value='Women' ></input>
-                                                <label for="women">women</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                    <Accordion.Item eventKey="5">
-                                        <Accordion.Header>Theme</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Classic"
-                                                    name="Metal" value='Classic'></input>
-                                                <label for="Classic">Classic</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Star"
-                                                    name="Metal" value='Star' ></input>
-                                                <label for="Star">Star</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                    <Accordion.Item eventKey="7">
-                                        <Accordion.Header>Type</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Screw"
-                                                    name="Type" value='Screw' ></input>
-                                                <label for="Screw">Screw</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Watches"
-                                                    name="Type" value='Watches' ></input>
-                                                <label for="Watches">Watches</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                    <Accordion.Item eventKey="6">
-                                        <Accordion.Header>Metal Color</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Rose Gold"
-                                                    name="Metal Color" value={'Color-Rose Gold'} ></input>
-                                                <label for="Rose Gold">Rose Gold</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="White"
-                                                    name="Metal Color" value={'Color-White'} ></input>
-                                                <label for="White">White</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Yellow"
-                                                    name="Metal Color" value={'Color-Yellow'} ></input>
-                                                <label for="Yellow">Yellow</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Yellow & Rose"
-                                                    name="Metal Color" value={'Color-Yellow & Rose'} ></input>
-                                                <label for="Yellow & Rose">Yellow & Rose</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                    <Accordion.Item eventKey="3">
-                                        <Accordion.Header>Occasion</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Bridal Wear"
-                                                    name="occasion" value={'Bridal Wear'} ></input>
-                                                <label for="Bridal Wear">Bridal Wear</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Engagement"
-                                                    name="occasion" value={'Engagement'} ></input>
-                                                <label for="Engagement">Engagement</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Modern Wear"
-                                                    name="occasion" value={'Modern Wear'} ></input>
-                                                <label for="Modern Wear">Modern Wear</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Office Wear"
-                                                    name="occasion" value={'Office Wear'} ></input>
-                                                <label for="Office Wear">Office Wear</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="Traditional & Ethnic Wear"
-                                                    name="occasion" value={'Traditional & Ethnic Wear'} ></input>
-                                                <label for="Traditional & Ethnic Wear">Traditional & Ethnic Wear</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
+                                    {Object.keys(filters).map((filterType, index) => {
+                                        const formattedWord = filterType.charAt(0).toUpperCase() + filterType.slice(1).toLowerCase();
+                                        return (
+
+                                            < Accordion.Item eventKey={index} key={filterType} >
+                                                <Accordion.Header className='text-capitalize' ><p className='mb-0'> {filterType === 'size_name' ? 'width' : formattedWord}</p> </Accordion.Header>
+                                                <Accordion.Body>
+                                                    {filters?.[filterType].map((value, index) => (
+                                                        // console.log('id123', typeof(filterType+index))
+                                                        <div key={value} className="d-flex align-items-center s_checkbox">
+                                                            <input type="checkbox" className="me-2" id={`${filterType}-${index}`}
+                                                                name={filterType} value={value} onChange={() => { filterHandler(filterType, value) }}></input>
+                                                            <label for={`${filterType}-${index}`} className='text-capitalize'> {value} </label>
+                                                        </div>
+                                                    ))}
+                                                </Accordion.Body>
+                                            </Accordion.Item>
+                                        )
+                                    })}
                                 </Accordion>
                             </div>
                         </Offcanvas.Body>
@@ -791,7 +569,7 @@ function ProductList() {
                         </Row>
                     </div>
                 </div>
-            </section>
+            </section >
         </>
     )
 }

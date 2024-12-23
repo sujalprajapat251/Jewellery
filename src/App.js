@@ -26,14 +26,13 @@ import Demo from './Pages/demo';
 const App = () => {
   return (
     <>
-    <div>
-    </div>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Layout />}>
             <Route path="/" element={<Home />}></Route>
             <Route path="/wishlist" element={<Wishlist/>}></Route>
             <Route path="/productlist/:type/:id" element={<ProductList/>}></Route>
+            <Route path="/productlist/:category/:field/:value" element={<ProductList/>}></Route>
             <Route path='/productdetail/:id' element={<ProductDetail/>}></Route>
             <Route path="/cart" element={<Cart/>}></Route>
             <Route path="/payment" element={<Payment/>}></Route>

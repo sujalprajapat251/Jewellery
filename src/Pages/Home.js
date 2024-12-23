@@ -1,5 +1,5 @@
 import '../Css/Sujal/Home.css';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
@@ -17,7 +17,6 @@ import noteContext from '../Context/noteContext';
 function Home() {
     // backend connection code
     const { allCategory, allProduct, addwishlistHandler, wishlistID, findWishlistID, bestseller } = useContext(noteContext);
-    console.warn('best sale = >', bestseller);
     // cat slideer responsive
     const cat_sliderres = {
         0: { items: 1 },
@@ -38,20 +37,6 @@ function Home() {
         1200: { items: 3 },
         1440: { items: 4 },
     }
-    // const card_detail = [
-    //     { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: seller1 },
-    //     { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: seller2 },
-    //     { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 3, img: seller3 },
-    //     { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: seller4 },
-    //     { title: 'Dimond Set', price: '1200', old_price: '1500', rating: 1, img: seller5 },
-    //     { title: 'Dimond Earring', price: '1200', old_price: '1500', rating: 5, img: seller6 },
-    //     { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, img: seller7 },
-    //     { title: 'Ankle Bracelets', price: '1200', old_price: '1500', rating: 1, img: seller8 },
-    //     { title: 'Earrings', price: '1200', old_price: '1500', rating: 4, img: seller9 },
-    //     { title: 'Dimond Set', price: '1200', old_price: '1500', rating: 5, img: seller10 },
-    //     { title: 'Dimond Earring', price: '1200', old_price: '1500', rating: 2, img: seller11 },
-    //     { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 1, img: seller12 },
-    // ]
     return (
         <>
             <section className='s_slider'>
@@ -113,7 +98,7 @@ function Home() {
                         <OwlCarousel className='owl-theme' loop margin={10} items={7} nav={true} responsive={cat_sliderres} dots={false} autoplay autoplayTimeout={3000} autoplayHoverPause>
                             {allCategory.map((ele, id) => {
                                 return (
-                                    <Link className='item' key={id} to={`/productlist/category/${ele.id}`}>
+                                    <Link className='item' key={id} to={`/productlist/category/${ele.name}`}>
                                         <img src={ele.image} alt=''></img>
                                         <h4>{ele.name}</h4>
                                     </Link>
@@ -134,14 +119,16 @@ function Home() {
                                 return (
                                     <Col key={id} className='py-4'>
                                         <div className='s_seller_card'>
+                                            
                                             <Link to={'#'}>
                                                 <div className='s_card_img bg-white'>
                                                     <img src={ele.images?.[0]} className="w-100 bg-white" alt={ele.title} key={ele.title} />
                                                 </div>
                                                 {
                                                     isSelected ?
-                                                        <div className='s_heart_icon active' onClick={() => { findWishlistID(isSelected) }}>
+                                                        <div className='s_heart_icon active' onClick={() => { findWishlistID(isSelected)}}>
                                                             <GoHeartFill />
+                                                            
                                                         </div> : <div className='s_heart_icon' onClick={() => { addwishlistHandler(ele.id) }}>
                                                             <GoHeart />
                                                         </div>
@@ -250,7 +237,7 @@ function Home() {
                     </Row>
                     <Row className='py-5 gx-0 gx-sm-3' >
                         <Col lg={4} sm={12}>
-                            <Link to={`/productlist/search/ring`} className='s_card d-flex align-items-center' >
+                            <div to={`/productlist/search/ring`} className='s_card d-flex align-items-center' >
                                 <img src={es_card1} className='w-100' alt='card1'></img>
                                 <div>
                                     <div>
@@ -260,13 +247,13 @@ function Home() {
                                     <p className='text-white'>SIMPLEM& ELEGANT</p>
                                     <small className='text-white'>Design starts from $120</small>
                                     <div className='s_card_btn'>
-                                        <Link to={'#'}>Shop Now</Link>
+                                        <Link to={'/productlist/search/Ring'}>Shop Now</Link>
                                     </div>
                                 </div>
-                            </Link>
+                            </div>
                         </Col>
                         <Col lg={4} sm={12}>
-                            <Link className='s_card d-flex align-items-center' >
+                            <div className='s_card d-flex align-items-center' >
                                 <img src={es_card2} className='w-100' alt='card2'></img>
                                 <div>
                                     <div>
@@ -276,13 +263,13 @@ function Home() {
                                     <p className='text-white'>GIRLS DIAMOND CHAINS</p>
                                     <small className='text-white'>Design starts from $120</small>
                                     <div className='s_card_btn'>
-                                        <Link to={'#'}>Shop Now</Link>
+                                        <Link to={'/productlist/search/Pendent'} >Shop Now</Link>
                                     </div>
                                 </div>
-                            </Link>
+                            </div>
                         </Col>
                         <Col lg={4} sm={12} className=''>
-                            <Link className='s_card d-flex align-items-center s_card1' >
+                            <div className='s_card d-flex align-items-center s_card1' >
                                 <img src={es_card3} className='w-100' alt='card3'></img>
                                 <div>
                                     <div>
@@ -292,10 +279,10 @@ function Home() {
                                     <p className='text-white'>GORGEOUS ROSE GOLD</p>
                                     <small className='text-white'>Design starts from $120</small>
                                     <div className='s_card_btn'>
-                                        <Link to={'#'}>Shop Now</Link>
+                                        <Link to={'/productlist/search/Bracelet'}>Shop Now</Link>
                                     </div>
                                 </div>
-                            </Link>
+                            </div>
                         </Col>
                     </Row>
                 </div>

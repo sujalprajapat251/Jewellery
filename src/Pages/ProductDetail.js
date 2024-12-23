@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import { GoHeart, GoHeartFill } from 'react-icons/go';
 import { FaAngleDown, FaShareAlt } from 'react-icons/fa';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link,  useParams } from 'react-router-dom';
 import { AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 import noteContext from '../Context/noteContext';
 
@@ -21,6 +21,7 @@ function ProductDetail() {
     const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler } = useContext(noteContext);
     const [product, setProduct] = useState([]);
     useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         axios
             .get(`${Api}/products/get/${id}`, {
                 headers: {
@@ -42,7 +43,7 @@ function ProductDetail() {
                 console.error("Error fetching products:", error);
             });
         setAddToCard(true);
-    }, [id]);
+    }, [id,token,Api]);
 
     // size haddler
     const [size, setSize] = useState('');
@@ -107,6 +108,7 @@ function ProductDetail() {
         const randomProducts = allProduct.slice(0, 5);
         setPeopleAlsoSearch(randomProducts);
         console.log(randomProducts);
+        // eslint-disable-next-line
     }, [product])
 
 
@@ -180,6 +182,7 @@ function ProductDetail() {
     useEffect(() => {
         const product_review = reviews?.filter((item) => item.product_id === parseInt(id));
         setreviewDetail(product_review);
+        // eslint-disable-next-line
     }, [reviews])
 
     //  color handdler
