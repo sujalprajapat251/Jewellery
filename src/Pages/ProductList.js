@@ -81,11 +81,18 @@ function ProductList() {
 
     const filters = {
         gender: [...new Set(productlist?.map(item => item?.gender).filter(value => value) || [])],
-        purity: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
+        // purity: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
         occasion: [...new Set(productlist?.map(item => item?.occasion).filter(value => value) || [])],
         clarity: [...new Set(productlist?.map(item => item?.clarity).filter(value => value) || [])],
         metal: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
         metal_color: [...new Set(productlist?.map(item => item?.metal_color).filter(value => value) || [])],
+        size_name: [
+            ...new Set(
+                productlist
+                    ?.flatMap(item => item?.size_name?.split(',').map(Number) || []) // Split and convert to numbers
+                    .filter(value => !isNaN(value)) // Remove invalid numbers
+            ),
+        ],
     };
 
     const [selectedFilters, setSelectedFilters] = useState({
@@ -95,6 +102,7 @@ function ProductList() {
         clarity: [],
         metal: [],
         metal_color: [],
+        size_name: [],
     });
     const filterHandler = (type, value, index) => {
         let currentValues, updatedValues;
@@ -103,9 +111,9 @@ function ProductList() {
             if (prev[type].includes(value) && index) {
                 console.log(typeof (type + index));
                 const checkboxId = `${type}-${index}`;
-                var idx = document.getElementById(checkboxId);
+                var idx = document.getElementById(checkboxId).checked;
                 console.log('id', idx);
-                if (idx.checked === true) {
+                if (idx) {
                     idx.checked = false;
                 }
             }
@@ -115,9 +123,9 @@ function ProductList() {
             return { ...prev, [type]: updatedValues };
         });
     };
-    const [minValue, set_minValue] = useState(0);
-    const [maxValue, set_maxValue] = useState(100000);
-
+    const [minValue, set_minValue] = useState();
+    const [maxValue, set_maxValue] = useState();
+    const [maxPrice, setMaxPrice] = useState(100000);
     useEffect(() => {
         if (productlist?.length > 0) {
             const prices = productlist
@@ -129,15 +137,20 @@ function ProductList() {
                 const maxPrice = Math.max(...prices);
                 set_minValue(minPrice);
                 set_maxValue(maxPrice);
+                setMaxPrice(maxPrice);
             }
         }
     }, [productlist]);
-
+    let condition;
     const handleInput = (e) => {
         set_minValue(e.minValue);
         set_maxValue(e.maxValue);
     };
     useEffect(() => {
+        fliteringhandle(condition);
+    }, [selectedFilters, minValue, maxValue]);
+    const fliteringhandle = (x) => {
+        condition = x;
         const filterData = productlist?.filter((item) =>
             // Check all selected filters
             Object.keys(selectedFilters).every(key =>
@@ -146,17 +159,32 @@ function ProductList() {
             (item.total_price >= minValue && item.total_price <= maxValue)
             // Check price range
         );
-        const filteredData = filterData.filter((item) => item.total_price >= minValue && item.total_price <= maxValue );
+        let filteredData = [];
+        let sortedData = [];
+
+        filteredData = filterData.filter((item) => item.total_price >= minValue && item.total_price <= maxValue);
         console.log(filteredData);
 
-        // const sortedData = filterData.sort((a, b) => a.total_price - b.total_price);
+        if (condition === 1) {
+            sortedData = filterData.sort((a, b) => b.total_rating - a.total_rating);
+        }
+        else if (condition === 2) {
+            sortedData = filterData.sort((a, b) => a.total_price - b.total_price);
+        }
+        else if (condition === 3) {
+            sortedData = filterData.sort((a, b) => b.total_price - a.total_price);
+        }
+        else if (condition === 4) {
+            sortedData = filterData.reverse();
+        }
+        else {
+            sortedData = filterData;
+        }
         // const sortedData = filterData.sort((a, b) => b.total_price - a.total_price);
-        // const sortedData = filterData.reverse();
-        const sortedData = filteredData;
+        console.log('sort', sortedData)
         setproductList_detail(sortedData);
-        console.log("Updated Range: ",filteredData);
-    }, [selectedFilters , minValue , maxValue]);
-
+        console.log("Updated Range: ", filteredData);
+    }
     // flitering functionality over
 
 
@@ -473,70 +501,34 @@ function ProductList() {
                                             <div className="s_price_slider">
                                                 <MultiRangeSlider
                                                     min={0}
-                                                    max={1000000}
-                                                    step={100000}
+                                                    max={maxPrice}
+                                                    step={10000}
                                                     minValue={minValue}
                                                     maxValue={maxValue}
                                                     onInput={handleInput}
                                                 />
+                                                <div className='d-flex justify-content-between align-items-center flex-wrap s_slider_text'>
+                                                    <p>min : ₹ {minValue}</p>
+                                                    <p>max : ₹ {maxValue}</p>
+                                                </div>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
                                     {Object.keys(filters).map((filterType, index) => (
                                         <Accordion.Item eventKey={index} key={filterType}>
-                                            <Accordion.Header className='text-capitalize'>{filterType}</Accordion.Header>
+                                            <Accordion.Header className='text-capitalize' ><p className='mb-0'> {`${filterType}`}</p> </Accordion.Header>
                                             <Accordion.Body>
                                                 {filters?.[filterType].map((value, index) => (
                                                     // console.log('id123', typeof(filterType+index))
                                                     <div key={value} className="d-flex align-items-center s_checkbox">
                                                         <input type="checkbox" className="me-2" id={`${filterType}-${index}`}
                                                             name={filterType} value={value} onChange={() => { filterHandler(filterType, value) }}></input>
-                                                        <label for={`${filterType}-${index}`} className='text-capitalize'>{value}</label>
+                                                        <label for={`${filterType}-${index}`} className='text-capitalize'> {value} </label>
                                                     </div>
                                                 ))}
                                             </Accordion.Body>
                                         </Accordion.Item>
                                     ))}
-                                    <Accordion.Item eventKey="7">
-                                        <Accordion.Header>Width</Accordion.Header>
-                                        <Accordion.Body>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="14"
-                                                    name="Earrings Width" value={'14'} ></input>
-                                                <label for="14">14 mm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="15"
-                                                    name="Earrings Width" value={'15'} ></input>
-                                                <label for="15">15 mm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="16"
-                                                    name="Earrings Width" value={'16'} ></input>
-                                                <label for="16">16 mm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="17"
-                                                    name="Earrings Width" value={'17'} ></input>
-                                                <label for="17">17 mm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="18"
-                                                    name="Earrings Width" value={'18'} ></input>
-                                                <label for="18">18 mm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="14"
-                                                    name="Earrings Width" value={'14'} ></input>
-                                                <label for="14">14 mm</label>
-                                            </div>
-                                            <div className="d-flex align-items-center s_checkbox">
-                                                <input type="checkbox" className="me-2" id="20"
-                                                    name="Earrings Width" value={'20'} ></input>
-                                                <label for="20">20 mm</label>
-                                            </div>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
                                 </Accordion>
                             </div>
                         </Offcanvas.Body>
@@ -723,23 +715,23 @@ function ProductList() {
                                 <div className='s_sortby_menu'>
 
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='Best Sellings'></input>
+                                        <input type='radio' name='sort_by' id='Best Sellings' onClick={() => { fliteringhandle(1) }}></input>
                                         <label for='Best Sellings' >Best Sellings</label>
                                     </div>
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='low to high'></input>
+                                        <input type='radio' name='sort_by' id='low to high' onClick={() => { fliteringhandle(2) }}></input>
                                         <label for='low to high'>Price (low to high)</label>
                                     </div>
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='high to low'></input>
+                                        <input type='radio' name='sort_by' id='high to low' onClick={() => { fliteringhandle(3) }}></input>
                                         <label for='high to low'>Price (high to low)</label>
                                     </div>
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='New Arrivals'></input>
+                                        <input type='radio' name='sort_by' id='New Arrivals' onClick={() => { fliteringhandle(4) }}></input>
                                         <label for='New Arrivals'>New Arrivals</label>
                                     </div>
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='Recommendations'></input>
+                                        <input type='radio' name='sort_by' id='Recommendations' onClick={() => { fliteringhandle(5) }}></input>
                                         <label for='Recommendations'>Recommendations</label>
                                     </div>
                                 </div>
@@ -759,7 +751,7 @@ function ProductList() {
                                                     <div className='s_card_img'>
                                                         <img src={ele.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
                                                     </div>
-                               
+
                                                     <div className='s_card_text'>
                                                         <h5>{ele.product_name}</h5>
                                                         <p className='mb-0'><span className='mx-2'>₹{discountPrice}</span><strike className="mx-2">₹{ele.total_price}</strike></p>

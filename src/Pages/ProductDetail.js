@@ -34,9 +34,6 @@ function ProductDetail() {
                 if (fetchedProducts.qty <= 0) {
                     setInStock(false);
                 }
-
-                // Filter products based on metal_color
-
             })
             .catch((error) => {
                 console.error("Error fetching products:", error);
@@ -53,20 +50,17 @@ function ProductDetail() {
     useEffect(() => {
 
         // console.log("Fetched products", product.size_id);
-        // fetch size data
-        axios.get(`${Api}/sizes/get/${product.size_id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
-            .then((response) => {
-                const array = response.data.size.split(',').map(Number);
-                setSizeArray(array);
-                setSize(array[0]);
-            })
-            .catch((error) => {
-                console.error("Error fetching products:", error);
-            });
+        // // fetch size data
+
+        const array = product?.size_name?.split(',').map(Number).filter((num) => !isNaN(num));
+
+        if (array?.length) {
+            setSizeArray(array);
+            setSize(array[0]);
+        } else {
+            setSizeArray([]);
+            setSize(null);
+        }
 
 
         // fetch review data 
@@ -224,7 +218,7 @@ function ProductDetail() {
                                         Your browser does not support the video tag.
                                     </video>
                                 ) : (
-                                    <img src={thumbnail} alt="thumbnail" className="w-100 object-fit-cover " />
+                                    <img src={thumbnail} alt="thumbnail" className="w-100 object-fit-cover "  style={{aspectRatio : '1 / 1'}}/>
                                 );
                             })()
                             :
@@ -512,7 +506,7 @@ function ProductDetail() {
                                 <span className='d-flex justify-content-between'><p>Gender</p><b>{product?.gender || '--'}</b></span>
                                 <span className='d-flex justify-content-between'><p>Collection</p><b>{product?.collection || '--'}</b></span>
                                 <span className='d-flex justify-content-between'><p>Occasion</p><b>{product?.occasion || '--'}</b></span>
-                                <span className='d-flex justify-content-between text-wrap'><p>Size</p><b>{sizeArray.join('  ') || '--'}</b></span>
+                                <span className='d-flex justify-content-between word-wrap'><p>Size</p><b>{sizeArray.map((item)=> item).join(', ') || '--'}</b></span>
                             </div>
                         </> : <>
                             <div className='s_table s_w_30'>
@@ -550,7 +544,7 @@ function ProductDetail() {
                             <tbody>
                                 <tr>
                                     <td>{product?.metal ? `${product?.metal}` : '-'}</td>
-                                    <td>{product?.price ? `₹ ${(product?.price)/(product?.weight)}/g` : '-'}</td>
+                                    <td>{product?.price ? `₹ ${(product?.price) / (product?.weight)}/g` : '-'}</td>
                                     <td>{product?.weight ? `${product?.weight}g` : '-'}</td>
                                     <td>-</td>
                                     <td>₹{metal_total}</td>

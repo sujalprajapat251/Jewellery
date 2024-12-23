@@ -16,8 +16,8 @@ import noteContext from '../Context/noteContext';
 
 function Home() {
     // backend connection code
-    const { allCategory , allProduct , addwishlistHandler , wishlistID , findWishlistID } = useContext(noteContext);
-    console.log(wishlistID);
+    const { allCategory , allProduct , addwishlistHandler , wishlistID , findWishlistID,bestseller } = useContext(noteContext);
+    console.warn('best sale = >',bestseller);
     // cat slideer responsive
     const cat_sliderres = {
         0: { items: 1 },
@@ -38,14 +38,6 @@ function Home() {
         1200: { items: 3 },
         1440: { items: 4 },
     }
-
-    // card detail slideer responsive
-    const [bestSeller, setBestSeller] = useState([])
-    useEffect(() => {
-        const data = allProduct.filter((product) => product?.collection === 'best seller')
-        // console.log(data)
-        setBestSeller(data);
-    }, [allProduct]);
     // const card_detail = [
     //     { title: 'gold ear ring', price: '1200', old_price: '1500', rating: 4, status: 'fast selling', img: seller1 },
     //     { title: 'Silver Necklace', price: '1200', old_price: '1500', rating: 2, status: 'trending', img: seller2 },
@@ -137,7 +129,7 @@ function Home() {
                     </div>
                     <Row xxl={6} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
                         {
-                            bestSeller.slice(0, 12).map((ele, id) => {
+                            bestseller.slice(0, 12).map((ele, id) => {
                                 var isSelected = wishlistID.find((items) => items === ele.id);
                                 return (
                                     <Col key={id} className='py-4'>
@@ -163,7 +155,7 @@ function Home() {
                                                     <div className='s_rating'>
                                                         {
                                                             [...Array(5)].map((_, index) => {
-                                                                if (index < 0) {
+                                                                if (index < ele?.total_rating) {
                                                                     return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
                                                                 } else {
                                                                     return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
