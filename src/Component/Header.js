@@ -319,7 +319,7 @@ function Header() {
                 <p className='ds_container mb-0'>Welcome to our Store</p></div>
             <section className='ds_container s_header_sec d-flex justify-content-between flex-wrap flex-lg-nowrap'>
                 <div className='s_header_input d-flex justify-content-between align-items-center col-lg-4 col-12 order-lg-1 order-3'>
-                    <input type='text' placeholder='Search for Jewellery and more...' onChange={(e) => { searchHandle(e.target.value); }}></input>
+                    <input type='text'  placeholder='Search for Jewellery and more...' onChange={(e) => { searchHandle(e.target.value); }}></input>
                     <IoSearch />
                 </div>
                 <Link className='s_logo text-decoration-none col-lg-4 col-4 ms-lg-auto order-lg-2 order-1 align-self-center '>
