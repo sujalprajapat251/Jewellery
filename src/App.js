@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import React  from 'react'
+import React from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from './Pages/Home';
 import Layout from './Component/Layout';
@@ -30,25 +30,25 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Layout />}>
             <Route path="/" element={<Home />}></Route>
-            <Route path="/wishlist" element={<Wishlist/>}></Route>
-            <Route path="/productlist/:type/:id" element={<ProductList/>}></Route>
-            <Route path="/productlist/:category/:field/:value" element={<ProductList/>}></Route>
-            <Route path='/productdetail/:id' element={<ProductDetail/>}></Route>
-            <Route path="/cart" element={<Cart/>}></Route>
-            <Route path="/payment" element={<Payment/>}></Route>
-            <Route path="/orderdetails" element={<OrderDetails/>}></Route>
-            <Route path="/invoice" element={<Invoice/>}></Route>
-            <Route path="/offers" element={<Offers/>}></Route>
+            <Route path="/wishlist" element={<Wishlist />}></Route>
+            <Route path="/productlist/:type/:id" element={<ProductList />}></Route>
+            <Route path="/productlist/:category/:field/:value" element={<ProductList />}></Route>
+            <Route path='/productdetail/:id' element={<ProductDetail />}></Route>
+            <Route path="/cart" element={<Cart />}></Route>
+            <Route path="/payment" element={<Payment />}></Route>
+            <Route path="/orderdetails" element={<OrderDetails />}></Route>
+            <Route path="/invoice" element={<Invoice />}></Route>
+            <Route path="/offers" element={<Offers />}></Route>
             <Route path="/about" element={<About />}></Route>
             <Route path="/contact" element={<Contact />}></Route>
-            <Route path="/faq" element={<Faq/>}></Route>
-            <Route path="/terms" element={<TermsCondition/>}></Route>
-            <Route path="/privacy" element={<Privacy/>}></Route>
-            <Route path="/myprofile" element={<MyProfile/>}></Route>
-            <Route path="/trackorder" element={<TrackOrder/>}></Route>
-            <Route path="/review" element={<SubmitReview/>}></Route>
-            <Route path="/returnOrder" element={<ReturnOrder/>}></Route>
-            <Route path="/demo" element={<Demo/>}></Route>
+            <Route path="/faq" element={<Faq />}></Route>
+            <Route path="/terms" element={<TermsCondition />}></Route>
+            <Route path="/privacy" element={<Privacy />}></Route>
+            <Route path="/myprofile" element={<MyProfile />}></Route>
+            <Route path="/trackorder" element={<TrackOrder />}></Route>
+            <Route path="/review" element={<SubmitReview />}></Route>
+            <Route path="/returnOrder" element={<ReturnOrder />}></Route>
+            <Route path="/demo" element={<Demo />}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

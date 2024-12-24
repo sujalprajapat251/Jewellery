@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import { GoHeart, GoHeartFill } from 'react-icons/go';
 import { FaAngleDown, FaShareAlt } from 'react-icons/fa';
-import { Link,  useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 import noteContext from '../Context/noteContext';
 
@@ -43,7 +43,7 @@ function ProductDetail() {
                 console.error("Error fetching products:", error);
             });
         setAddToCard(true);
-    }, [id,token,Api]);
+    }, [id, token, Api]);
 
     // size haddler
     const [size, setSize] = useState('');
@@ -114,7 +114,7 @@ function ProductDetail() {
 
     // addto card handler
     const [addToCard, setAddToCard] = useState(true);
-    const addCardHandle = async() => {
+    const addCardHandle = async () => {
         if (addToCard) {
             await axios.post(`${Api}/cart/create`,
                 {
@@ -122,6 +122,7 @@ function ProductDetail() {
                     product_id: product?.id,
                     quantity: 1,
                     unit_price: product?.total_price,
+                    size: size,
                 },
                 {
                     headers: {
@@ -144,7 +145,6 @@ function ProductDetail() {
         const parent = e.target.closest('.s_parent');
 
         const isChecking = selectedOffers.find((item) => item.id === offer.id);
-
         if (isChecking) {
             const data = selectedOffers.filter((item) => item.id !== offer.id);
             setSelectedOffers(data);
@@ -157,9 +157,6 @@ function ProductDetail() {
             parent.classList.add('s_light_brown');
         }
     }
-
-
-
     // video handdler
     const [controlsVisible, setControlsVisible] = useState(false);
     const videoRef = useRef(null);
@@ -232,6 +229,26 @@ function ProductDetail() {
     const great_total = ((parseFloat(sub_total) + parseFloat(gst_total)).toFixed(2));
     const isSelected = wishlistID.find((items) => items === product.id);
     console.log('price', product.making_charge);
+
+
+
+
+    // heart handler
+    const [loadingItems, setLoadingItems] = useState([]);
+    const handleAddToWishlist = (itemId) => {
+        setLoadingItems([...loadingItems, itemId]);
+        addwishlistHandler(itemId)
+        setTimeout(() => {
+            setLoadingItems((prev) => prev.filter((loadingItem) => loadingItem !== itemId));
+        }, 1000);
+    };
+    const handleFindWishlistID = (itemId) => {
+        setLoadingItems((prev) => [...prev, itemId]);
+        findWishlistID(itemId)
+        setTimeout(() => {
+            setLoadingItems((prev) => prev.filter((loadingItem) => loadingItem !== itemId));
+        }, 1000);
+    };
     return (
         <>
             <section className="s_prodetail_page ds_container">
@@ -350,20 +367,43 @@ function ProductDetail() {
                                         );
                                     })}
                                 </OwlCarousel>}
-
                         </div>
                     </Col>
                     <Col>
                         <div className='s_productdetail_sec'>
-                            {
+                            {loadingItems.includes(product?.id) ? (
+                                <div className="loading s_heart_icon">
+                                    <svg height="24px" width="32px"> {/* Adjusted height and width */}
+                                        <polyline
+                                            id="back"
+                                            points="0.157 11.977, 14 11.977, 21.843 24, 43 0, 50 12, 64 12"
+                                        ></polyline>
+                                        <polyline
+                                            id="front"
+                                            points="0.157 11.977, 14 11.977, 21.843 24, 43 0, 50 12, 64 12"
+                                        ></polyline>
+                                    </svg>
+                                </div>
+                            ) :
                                 isSelected ?
-                                    <div className='d-flex justify-content-end s_share_icon' onClick={() => { findWishlistID(isSelected) }}>
-                                        <GoHeartFill className='s_active' />
-                                        <FaShareAlt />
+                                    <div className="s_heart_icon active"
+                                        onClick={() => {
+                                            handleFindWishlistID(product?.id)
+                                        }}
+                                    >
+                                        <GoHeartFill />
                                     </div> :
-                                    <div className='d-flex justify-content-end s_share_icon' onClick={() => { addwishlistHandler(product.id) }}>
+
+                                    <div
+                                        className="s_heart_icon"
+                                        onClick={() => {
+                                            // Add to wishlist
+                                            handleAddToWishlist(product?.id) // Trigger the loader and toggle liked state
+                                        }}
+                                    >
                                         <GoHeart />
                                         <FaShareAlt />
+
                                     </div>
                             }
                             <h3 className='s_title text-capitalize'>{product?.product_name}</h3>
@@ -619,6 +659,7 @@ function ProductDetail() {
                         </table>
                     </div>
                     <div className={` ${tab === 'tab-2' ? '' : 'd-none d-lg-none'}`}>
+
                         <div className='s_review'>
                             {reviewDetail.slice(0, 4).map((item, index) => {
                                 return (
@@ -665,9 +706,10 @@ function ProductDetail() {
                                 )
                             })}
                         </div>
-                        <div className='s_view_all' onClick={() => setLgShow(true)}>
+                        {reviewDetail.length > 4 ? <div className='s_view_all' onClick={() => setLgShow(true)}>
                             <Link>View All</Link>
-                        </div>
+                        </div> : ''}
+
                     </div>
                 </div>
                 <div className='s_also_like'>
@@ -731,7 +773,7 @@ function ProductDetail() {
                                                     <img src={ele?.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
                                                 </div>
                                                 <div className='s_card_text'>
-                                                    <h5>{ele.title}</h5>
+                                                    <h5>{ele.product_name}</h5>
                                                     <p className='mb-0'><span className='mx-2'>₹ {discountPrice}</span><strike className="mx-2">₹ {ele.total_price}</strike></p>
                                                     <div className='s_rating'>
                                                         {

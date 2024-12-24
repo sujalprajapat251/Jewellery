@@ -7,6 +7,7 @@
     width: 50%;
     object-fit: cover;
     padding: 10px;
+    aspect-ratio: 1 / 1 ;
 }
 .s_product_img .s_product_video{
     width: 50%;

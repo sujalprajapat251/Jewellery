@@ -5,7 +5,7 @@ import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 import { FaArrowRight, FaBars } from 'react-icons/fa';
 import { useContext, useEffect, useRef, useState } from 'react';
 import noteContext from '../Context/noteContext';
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Highlighter from 'react-highlight-words';
 import axios from 'axios';
 import { useFormik } from 'formik';
@@ -17,7 +17,7 @@ import { ForgetPassSchema, LoginSchema } from '../schemas';
 
 
 function Header() {
-    const { Api, allProduct, allSubCategory, store } = useContext(noteContext);
+    const { Api, allProduct, allSubCategory, store, bestseller } = useContext(noteContext);
     // menu catgegory handller
     const [goldSubcate, setGoldSubcate] = useState([]);
     const [silverSubcate, setSilverSubcate] = useState([]);
@@ -111,14 +111,16 @@ function Header() {
 
     const [Search, setSearch] = useState('');
     const [searchData, setSearchData] = useState([]);
+    const [PopularData, setPopularData] = useState();
     const searchHandle = (x) => {
         setSearch(x);
         console.log(Search);
         const filteredSearchData = allProduct.filter(item => item.product_name.toLowerCase().includes(x));
         console.log(filteredSearchData);
         setSearchData(filteredSearchData);
+        const filteredPopularData = bestseller.filter(item => item.product_name.toLowerCase().includes(x));
+        setPopularData(filteredPopularData);
     }
-
 
 
 
@@ -371,7 +373,7 @@ function Header() {
                         </div>
                     </Nav.Item>
                     <Nav.Item className='position-relative d-flex'>
-                        <Link to="/productlist">Gold</Link>
+                        <Link to={`/productlist/category/Gold`}>Gold</Link>
                         <div className='s_submenu   '>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-0'>Category</h4>
@@ -391,22 +393,22 @@ function Header() {
                             </div>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-0'>Gold Coin</h4>
-                                <Link to="/productlist">Special Coin</Link>
-                                <Link to="/productlist">1 Gm.</Link>
-                                <Link to="/productlist">2 Gm.</Link>
-                                <Link to="/productlist">4 Gm.</Link>
-                                <Link to="/productlist">5 Gm.</Link>
-                                <Link to="/productlist">8 Gm.</Link>
-                                <Link to="/productlist">10 Gm.</Link>
-                                <Link to="/productlist">25 Gm.</Link>
-                                <Link to="/productlist">30 Gm.</Link>
-                                <Link to="/productlist">50 Gm.</Link>
-                                <Link to="/productlist">100 Gm.</Link>
+                                <Link to={`/productlist/category/Gold Coin`}>Special Coin</Link>
+                                <Link to="/productlist/gold coin/weight/1">1 Gm.</Link>
+                                <Link to="/productlist/gold coin/weight/2">2 Gm.</Link>
+                                <Link to="/productlist/gold coin/weight/4">4 Gm.</Link>
+                                <Link to="/productlist/gold coin/weight/5">5 Gm.</Link>
+                                <Link to="/productlist/gold coin/weight/8">8 Gm.</Link>
+                                <Link to="/productlist/gold coin/weight/10">10 Gm.</Link>
+                                <Link to="/productlist/gold coin/weight/25">25 Gm.</Link>
+                                <Link to="/productlist/gold coin/weight/30">30 Gm.</Link>
+                                <Link to="/productlist/gold coin/weight/50">50 Gm.</Link>
+                                <Link to="/productlist/gold coin/weight/100">100 Gm.</Link>
                             </div>
                         </div>
                     </Nav.Item>
                     <Nav.Item className='position-relative'>
-                        <Link to="/productlist">Silver</Link>
+                        <Link to={`/productlist/category/Silver`}>Silver</Link>
                         <div className='s_submenu '>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-0'>Category</h4>
@@ -434,7 +436,7 @@ function Header() {
                         </div>
                     </Nav.Item>
                     <Nav.Item className=''>
-                        <Link to="/productlist">Diamond</Link>
+                        <Link to={`/productlist/category/Diamond`}>Diamond</Link>
                         <div className='s_submenu s_pos_50 '>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-0'>Category</h4>
@@ -478,7 +480,7 @@ function Header() {
                         </div>
                     </Nav.Item>
                     <Nav.Item className=''>
-                        <Link to="/productlist">Platinum</Link>
+                        <Link to={`/productlist/category/Platinum`}>Platinum</Link>
                         <div className='s_submenu s_pos_50'>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-0'>Category</h4>
@@ -498,32 +500,28 @@ function Header() {
                         </div>
                     </Nav.Item>
                     <Nav.Item className=''>
-                        <Link to="/productlist">Gold Coins</Link>
+                        <Link to={`/productlist/category/Gold Coin`}>Gold Coins</Link>
                         <div className='s_submenu s_pos_50'>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-0'>24 Kt (995)</h4>
-                                <Link to="/productlist">0.5 Gm.</Link>
-                                <Link to="/productlist">1 Gm.</Link>
-                                <Link to="/productlist">2 Gm.</Link>
-                                <Link to="/productlist">4 Gm.</Link>
-                                <Link to="/productlist">5 Gm.</Link>
-                                <Link to="/productlist">10 Gm.</Link>
-                                <Link to="/productlist">20 Gm.</Link>
-                                <Link to="/productlist">50 Gm.</Link>
+                                <Link to="/productlist/gold coin/24/0.5">0.5 Gm.</Link>
+                                <Link to="/productlist/gold coin/24/1">1 Gm.</Link>
+                                <Link to="/productlist/gold coin/24/2">2 Gm.</Link>
+                                <Link to="/productlist/gold coin/24/4">4 Gm.</Link>
+                                <Link to="/productlist/gold coin/24/5">5 Gm.</Link>
+                                <Link to="/productlist/gold coin/24/10">10 Gm.</Link>
+                                <Link to="/productlist/gold coin/24/20">20 Gm.</Link>
+                                <Link to="/productlist/gold coin/24/50">50 Gm.</Link>
                             </div>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-0'>22 Kt (916)</h4>
-                                <Link to="/productlist">&lt;25K</Link>
-                                <Link to="/productlist">25K - 50K</Link>
-                                <Link to="/productlist">50K - 1L</Link>
-                                <Link to="/productlist">1L & Above</Link>
-                                <Link to="/productlist">1 Gm.</Link>
-                                <Link to="/productlist">2 Gm.</Link>
-                                <Link to="/productlist">4 Gm.</Link>
-                                <Link to="/productlist">5 Gm.</Link>
-                                <Link to="/productlist">10 Gm.</Link>
-                                <Link to="/productlist">20 Gm.</Link>
-                                <Link to="/productlist">50 Gm.</Link>
+                                <Link to="/productlist/gold coin/22/1">1 Gm.</Link>
+                                <Link to="/productlist/gold coin/22/2">2 Gm.</Link>
+                                <Link to="/productlist/gold coin/22/4">4 Gm.</Link>
+                                <Link to="/productlist/gold coin/22/5">5 Gm.</Link>
+                                <Link to="/productlist/gold coin/22/10">10 Gm.</Link>
+                                <Link to="/productlist/gold coin/22/20">20 Gm.</Link>
+                                <Link to="/productlist/gold coin/22/50">50 Gm.</Link>
                             </div>
                         </div>
                     </Nav.Item>
@@ -531,7 +529,7 @@ function Header() {
                         <Link to="/productlist/occassion/wedding wear">Wedding</Link>
                     </Nav.Item>
                     <Nav.Item className='position-relative'>
-                        <Link to="/productlist">Watches</Link>
+                        <Link to={`/productlist/category/Watch`}>Watches</Link>
                         <div className='s_submenu s_pos_100 '>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-0'>Brands</h4>
@@ -544,12 +542,12 @@ function Header() {
                         </div>
                     </Nav.Item>
                     <Nav.Item className='position-relative'>
-                        <Link to="#logout" className='pe-md-0'>Gifting</Link>
+                        <Link to={'/productlist/all/null'} className='pe-md-0'>Gifting</Link>
                         <div className='s_submenu s_small_submenu s_pos_100'>
                             <div className='s_submenu_list '>
-                                <Link to="/productlist">Gifting for loved ones</Link>
-                                <Link to="/productlist">Gift Cards</Link>
-                                <Link to="/productlist">Corporate Gifting</Link>
+                                <Link to="/productlist/all/gender/Women">Gifting for loved ones</Link>
+                                <Link to={'/productlist/all/null'}>Gift Cards</Link>
+                                <Link to="/productlist/all/gender/Men">Corporate Gifting</Link>
                             </div>
                         </div>
                     </Nav.Item>
@@ -587,9 +585,9 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Gender</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist">Men</Link></p>
-                                                <p><Link to="/productlist">Women</Link></p>
-                                                <p><Link to="/productlist">Kids & Teens</Link></p>
+                                                <p><Link to="/productlist/all/gender/Men">Men</Link></p>
+                                                <p><Link to="/productlist/all/gender/Women">Women</Link></p>
+                                                <p><Link to="/productlist/all/gender/Kids">Kids & Teens</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -597,9 +595,9 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price Band</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist">&lt;25K</Link></p>
-                                                <p> <Link to="/productlist">25K - 50K</Link></p>
-                                                <p> <Link to="/productlist">1L & Above</Link></p>
+                                                <p><Link to="/productlist/all/price/>25">&lt;25K</Link></p>
+                                                <p> <Link to="/productlist/all/price/25-50">25K - 50K</Link></p>
+                                                <p> <Link to="/productlist/all/price/100<">1L & Above</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -616,7 +614,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {goldSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={'#'} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -628,7 +626,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {menGold.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={'#'} key={ele.id}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link></p>
+                                                        <p><Link to={`/productlist/gold/men/${ele.sub_category_name}`} key={ele.id}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -638,17 +636,17 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Gold Coin</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist">Special Coin</Link></p>
-                                                <p><Link to="/productlist">1 Gm.</Link></p>
-                                                <p><Link to="/productlist">2 Gm.</Link></p>
-                                                <p><Link to="/productlist">4 Gm.</Link></p>
-                                                <p><Link to="/productlist">5 Gm.</Link></p>
-                                                <p><Link to="/productlist">8 Gm.</Link></p>
-                                                <p><Link to="/productlist">10 Gm.</Link></p>
-                                                <p><Link to="/productlist">25 Gm.</Link></p>
-                                                <p><Link to="/productlist">30 Gm.</Link></p>
-                                                <p><Link to="/productlist">50 Gm.</Link></p>
-                                                <p><Link to="/productlist">100 Gm.</Link></p>
+                                                <p><Link to={`/productlist/category/Gold Coin`}>Special Coin</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/1">1 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/2">2 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/4">4 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/5">5 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/8">8 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/20">10 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/25">25 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/30">30 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/50">50 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/100">100 Gm.</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -665,7 +663,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {silverSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={'#'} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -677,7 +675,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {menSilver.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={'#'} key={ele.id}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link></p>
+                                                        <p><Link to={`/productlist/silver/men/${ele.sub_category_name}`} key={ele.id}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -687,10 +685,10 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist">&lt;25K</Link></p>
-                                                <p><Link to="/productlist">25K - 50K</Link></p>
-                                                <p><Link to="/productlist">50K - 1L</Link></p>
-                                                <p><Link to="/productlist">1L & Above</Link></p>
+                                                <p><Link to="/productlist/silver/price/<25">&lt;25K</Link></p>
+                                                <p><Link to="/productlist/silver/price/25-50">25K - 50K</Link></p>
+                                                <p><Link to="/productlist/silver/price/50-100">50K - 1L</Link></p>
+                                                <p><Link to="/productlist/silver/price/>100">1L & Above</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -707,7 +705,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {diamondSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={'#'} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -719,7 +717,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {earingSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={'#'} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -731,7 +729,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {ringSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={'#'} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -743,7 +741,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {pendantsSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={'#'} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -753,10 +751,10 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist">&lt;25K</Link></p>
-                                                <p><Link to="/productlist">25K - 50K</Link></p>
-                                                <p><Link to="/productlist">50K - 1L</Link></p>
-                                                <p><Link to="/productlist">1L & Above</Link></p>
+                                                <p><Link to="/productlist/diamond/price/<25">&lt;25K</Link></p>
+                                                <p><Link to="/productlist/diamond/price/25-50">25K - 50K</Link></p>
+                                                <p><Link to="/productlist/diamond/price/50-100">50K - 1L</Link></p>
+                                                <p><Link to="/productlist/diamond/price/>100">1L & Above</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -773,7 +771,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {platiumSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={'#'} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -783,9 +781,9 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist">&lt;25K</Link></p>
-                                                <p><Link to="/productlist">25K - 50K</Link></p>
-                                                <p><Link to="/productlist">1L & Above</Link></p>
+                                                <p><Link to="/productlist/platinum/price/<25">&lt;25K</Link></p>
+                                                <p><Link to="/productlist/platinum/price/25-50">25K - 50K</Link></p>
+                                                <p><Link to="/productlist/platinum/price/>100">1L & Above</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -800,14 +798,14 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>24 Kt (995)</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist">0.5 Gm.</Link></p>
-                                                <p><Link to="/productlist">1 Gm.</Link></p>
-                                                <p><Link to="/productlist">2 Gm.</Link></p>
-                                                <p><Link to="/productlist">4 Gm.</Link></p>
-                                                <p><Link to="/productlist">5 Gm.</Link></p>
-                                                <p><Link to="/productlist">10 Gm.</Link></p>
-                                                <p><Link to="/productlist">20 Gm.</Link></p>
-                                                <p><Link to="/productlist">50 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/0.5">0.5 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/1">1 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/2">2 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/4">4 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/5">5 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/10">10 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/20">20 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/50">50 Gm.</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -815,25 +813,21 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>22 Kt (916)</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist">&lt;25K</Link></p>
-                                                <p><Link to="/productlist">25K - 50K</Link></p>
-                                                <p><Link to="/productlist">50K - 1L</Link></p>
-                                                <p><Link to="/productlist">1L & Above</Link></p>
-                                                <p><Link to="/productlist">1 Gm.</Link></p>
-                                                <p><Link to="/productlist">2 Gm.</Link></p>
-                                                <p><Link to="/productlist">4 Gm.</Link></p>
-                                                <p><Link to="/productlist">5 Gm.</Link></p>
-                                                <p><Link to="/productlist">10 Gm.</Link></p>
-                                                <p><Link to="/productlist">20 Gm.</Link></p>
-                                                <p><Link to="/productlist">50 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/1">1 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/2">2 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/4">4 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/5">5 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/10">10 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/20">20 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/50">50 Gm.</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
                                 </Accordion>
                             </Accordion.Body>
                         </Accordion.Item>
-                        <Accordion.Item eventKey="6">
-                            <Accordion.Header><h4 className='s_submenu_head px-0'>Wedding</h4></Accordion.Header>
+                        <Accordion.Item>
+                            <Link to="/productlist/occassion/wedding wear" className='s_spec_submenu_head'><h4>Wedding</h4></Link>
                         </Accordion.Item>
                         <Accordion.Item eventKey="7">
                             <Accordion.Header><h4 className='s_submenu_head px-0'>Watches</h4></Accordion.Header>
@@ -845,7 +839,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {watchSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={'#'} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -858,9 +852,9 @@ function Header() {
                             <Accordion.Header><h4 className='s_submenu_head px-0'>Gifting</h4></Accordion.Header>
                             <Accordion.Body>
                                 <div className='s_submenu_list'>
-                                <p><Link to="/productlist">Gifting for loved ones</Link></p>
-                                <p><Link to="/productlist">Gift Cards</Link></p>
-                                <p><Link to="/productlist">Corporate Gifting</Link></p>
+                                    <p><Link to="/productlist/all/gender/Women">Gifting for loved ones</Link></p>
+                                    <p><Link to={'/productlist/all/null'}>Gift Cards</Link></p>
+                                    <p><Link to="/productlist/all/gender/Men">Corporate Gifting</Link></p>
                                 </div>
                             </Accordion.Body>
                         </Accordion.Item>
@@ -1065,43 +1059,47 @@ function Header() {
                     </>
                     : <>
                         <div className='s_serach_head'><h5 className='mb-0'>Suggestions</h5><IoCloseOutline onClick={() => { setSearch(''); }} /></div>
-                        {searchData.slice(0, 10).map((el, id) => {
+                        {searchData.slice(0, 8).map((el, id) => {
                             return (
                                 <div key={id} className='s_search_item'>
-                                    {!el.popular ?
-                                        <p>
-                                            <Link to={`productdetail/${el.id}`}>
-                                                <Highlighter
-                                                    highlightClassName="text-dark bg-transparent p-0"
-                                                    searchWords={[Search]} // Replace 'Search' with the array of words you want to highlight
-                                                    autoEscape={true}   // Ensure special characters are escaped
-                                                    textToHighlight={el.product_name} // The text where you want to apply the highlight
-                                                />
-                                            </Link>
-                                        </p>
-                                        : ''}
+                                    <p>
+                                        <Link to={`productdetail/${el.id}`}>
+                                            <Highlighter
+                                                highlightClassName="text-dark bg-transparent p-0"
+                                                searchWords={[Search]} // Replace 'Search' with the array of words you want to highlight
+                                                autoEscape={true}   // Ensure special characters are escaped
+                                                textToHighlight={el.product_name} // The text where you want to apply the highlight
+                                            />
+                                        </Link>
+                                    </p>
                                 </div>
                             )
                         })}
-                        {/* <div className='s_serach_head'><h5 className='mb-0'>Popular</h5></div>
-                        {searchData.map((el, id) => {
+                        <div className='s_serach_head'><h5 className='mb-0'>Popular Products</h5></div>
+                        {PopularData.slice(0, 4).map((el, id) => {
+                            const discounted = ((parseFloat(el.total_price) * parseFloat(el.discount)) / 100).toFixed(2);
+                            let discountPrice = [];
+                            console.log(el.product_name, discounted);
+                            if (!isNaN(parseFloat(discounted))) {
+                                discountPrice = (parseFloat(el.total_price) - parseFloat(discounted)).toFixed(2);
+                            } else {
+                                discountPrice = el.total_price;
+                            }
                             return (
-                                <div key={id} className='s_search_item'>
-                                    {el.popular ?
-                                        <Link to={`#`} className='d-flex align-items-center'>
-                                            <img src={el.img} alt={el.name}></img>
-                                            <div>
-                                                <p className='mb-0'>{el.name}</p>
-                                                <span>
-                                                    <small>₹{el.price}</small>
-                                                    <strike>₹{el.oldPrice}</strike>
-                                                </span>
-                                            </div>
-                                        </Link>
-                                        : ''}
+                                <div key={id} lassName='s_search_item'>
+                                    <Link to={`productdetail/${el.id}`} className='d-flex align-items-center'>
+                                        <img src={el.images[0]} alt={el.product_name}></img>
+                                        <div>
+                                            <p className='mb-0'>{el.product_name}</p>
+                                            <span>
+                                                <small>₹{discountPrice}</small>
+                                                <strike>₹{el.total_price}</strike>
+                                            </span>
+                                        </div>
+                                    </Link>
                                 </div>
                             )
-                        })} */}
+                        })}
                     </>
                 }
                 <Link to={`/productlist/search/${Search}`} className='s_serach_head border-top border-0 mt-auto'><h5 className='mb-0'>Search for “{Search}”</h5><FaArrowRight /></Link>
