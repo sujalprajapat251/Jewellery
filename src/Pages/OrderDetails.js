@@ -1,8 +1,27 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import '../Css/dhruvin/OrderDetails.css'
 import { RiArrowDropDownLine } from 'react-icons/ri'
+import axios from 'axios'
+import noteContext from '../Context/noteContext'
 
 const OrderDetails = () => {
+
+  const {Api , store} = useContext(noteContext)
+  const Id = JSON.parse(localStorage.getItem("orderId"))
+  const [orderDeta, setOrderDeta] = useState([])
+
+  useEffect(()=>{
+     axios.get(`${Api}/order/get/${Id}`,{
+       headers: {
+         Authorization: `Bearer ${store?.access_token}`
+       }
+     }).then((value)=>{
+       console.log(value);
+     }).catch((error)=>{
+        alert(error)
+     })
+  },[])
+
   return (
     <div>
       <section className="" id="ds_order_conformation">

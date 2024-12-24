@@ -7,7 +7,7 @@ import { GoHome } from 'react-icons/go'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { Modal } from 'react-bootstrap'
 import noteContext from '../Context/noteContext'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 const Cart = () => {
@@ -95,6 +95,7 @@ const Cart = () => {
           product_id: prod_id,
           quantity: updatedItem.quantity,
           product_price: updatedItem.total_price,
+          size:updatedItem?.size ? updatedItem?.size : 2
         },
         {
           headers: {
@@ -148,6 +149,12 @@ const Cart = () => {
     toggle: false
   })
   const [appyVal, setAppyVal] = useState("")
+  const [orderData, setOrderData] = useState({
+    sub_total:'',
+    discount:'',
+    tax:'',
+    total:''
+  })
 
   const handleCupanType = (type , amount) => {
       if(type === "fixed"){
@@ -180,10 +187,32 @@ const Cart = () => {
         setCupanText({text:'Invalid coupon code.' , toggle:false})
         setAppyVal(0)
     }
-};
+  } 
 
+  useEffect(() => {
+    const discount = cupanOffer ? cupanOffer : appyVal;
+    const tax = Math.floor(price * 3 / 100);
+    const total = price + discount - tax;
+  
+    setOrderData({
+      sub_total: price,
+      discount,
+      tax,
+      total
+    });
+  
+    // Storing data in localStorage after the state update
+    localStorage.setItem("OrderDetails", JSON.stringify({
+      sub_total: price,
+      discount,
+      tax,
+      total
+    }));
+  }, [price, cupanOffer, appyVal]);
 
-
+  const handleProcessCheckout = () => {
+     navigate("/payment")
+  }
 
   return (
     <>
@@ -358,9 +387,9 @@ const Cart = () => {
                                     <div className="px-3 mt-3">
                                       <div className="d-flex justify-content-between">
                                         <h5 className="h5 mb-0 ds_color">Total Amount</h5>
-                                        <h5 className="h5 mb-0 ds_color">{}</h5>
+                                        <h5 className="h5 mb-0 ds_color">{price + (-cupanOffer ? -cupanOffer : -appyVal) - Math.floor(price * 3 / 100) }</h5>
                                       </div>
-                                      <button className=" ds_add-proccess mt-5" id="ds_proceed_btn">
+                                      <button onClick={handleProcessCheckout} className="ds_add-proccess mt-5" id="ds_proceed_btn">
                                         Proceed to checkout
                                       </button>
                                     </div>

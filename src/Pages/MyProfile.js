@@ -10,6 +10,7 @@ import { Modal } from 'react-bootstrap';
 import { FiPlus } from 'react-icons/fi';
 import { IoMdClose } from 'react-icons/io';
 import axios from 'axios';
+import { ImTab } from 'react-icons/im';
 
 const MyProfile = () => {
 
@@ -394,8 +395,10 @@ useEffect(() => {
                                           ))} */}
 
                                      { myAddData?.map((item , index)=>{
+                                        console.log("item " , item);
+                                        
                                          const isDefault = hello === item?.id;
-                                         console.log("hello" ,isDefault);
+                                        //  console.log("hello" ,isDefault);
                                          
                                         return(
                                           <div key={item.id} className="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mt-4">
