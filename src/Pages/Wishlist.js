@@ -4,7 +4,7 @@ import { Col, Row } from 'react-bootstrap';
 import { GoHeartFill } from 'react-icons/go';
 import { Link } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
-function Wishlist() {
+function Wishlist(){
     const {wishlistData, removeWishlistHandler , allProduct} =useContext(noteContext); 
     console.log(wishlistData);
     const [wishlistproducts,setWishlistData]= useState([]);
@@ -13,7 +13,7 @@ function Wishlist() {
             allProduct.some((product) => product.id === wishlistItem.product_id)
           );
           setWishlistData(productData);
-    },[wishlistData])
+    },[wishlistData,allProduct]);
     console.log(wishlistproducts);
     return (
         <>
