@@ -1,5 +1,5 @@
 import '../Css/Sujal/Home.css';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
@@ -37,6 +37,24 @@ function Home() {
         1200: { items: 3 },
         1440: { items: 4 },
     }
+
+
+    // heart handler
+    const [loadingItems, setLoadingItems] = useState([]);
+    const handleAddToWishlist = (itemId) => {
+        setLoadingItems([...loadingItems, itemId]);
+        addwishlistHandler(itemId)
+        setTimeout(() => {
+            setLoadingItems((prev) => prev.filter((loadingItem) => loadingItem !== itemId));
+        }, 1000);
+    };
+    const handleFindWishlistID = (itemId) => {
+        setLoadingItems((prev) => [...prev, itemId]);
+        findWishlistID(itemId)
+        setTimeout(() => {
+            setLoadingItems((prev) => prev.filter((loadingItem) => loadingItem !== itemId));
+        }, 1000);
+    };
     return (
         <>
             <section className='s_slider'>
@@ -119,23 +137,47 @@ function Home() {
                                 return (
                                     <Col key={id} className='py-4'>
                                         <div className='s_seller_card'>
-                                            
+
                                             <Link to={'#'}>
                                                 <div className='s_card_img bg-white'>
                                                     <img src={ele.images?.[0]} className="w-100 bg-white" alt={ele.title} key={ele.title} />
                                                 </div>
-                                                {
-                                                    isSelected ?
-                                                        <div className='s_heart_icon active' onClick={() => { findWishlistID(isSelected)}}>
-                                                            <GoHeartFill />
-                                                            
-                                                        </div> : <div className='s_heart_icon' onClick={() => { addwishlistHandler(ele.id) }}>
-                                                            <GoHeart />
-                                                        </div>
-                                                }
-                                                {ele.gender ?
+                                                {loadingItems.includes(ele.id) ? (
+                                                    <div className="loading s_heart_icon">
+                                                        <svg height="24px" width="32px"> {/* Adjusted height and width */}
+                                                            <polyline
+                                                                id="back"
+                                                                points="0.157 11.977, 14 11.977, 21.843 24, 43 0, 50 12, 64 12"
+                                                            ></polyline>
+                                                            <polyline
+                                                                id="front"
+                                                                points="0.157 11.977, 14 11.977, 21.843 24, 43 0, 50 12, 64 12"
+                                                            ></polyline>
+                                                        </svg>
+                                                    </div>
+                                                ) : isSelected ? (
+                                                    <div className="s_heart_icon active"
+                                                        onClick={() => {
+                                                            handleFindWishlistID(ele.id)
+                                                            // Pass the item's ID to findWishlistID
+                                                        }}
+                                                    >
+                                                        <GoHeartFill />
+                                                    </div>
+                                                ) : (
+                                                    <div
+                                                        className="s_heart_icon"
+                                                        onClick={() => {
+                                                            // Add to wishlist
+                                                            handleAddToWishlist(ele.id) // Trigger the loader and toggle liked state
+                                                        }}
+                                                    >
+                                                        <GoHeart />
+                                                    </div>
+                                                )}
+                                                {/* {ele.gender ?
                                                     <div className='s_card_status'><p className='mb-0'>{ele.metal_color}</p></div>
-                                                    : ''}
+                                                    : ''} */}
                                                 <Link className='s_card_text' to={`/productdetail/${ele.id}`}>
                                                     <h5>{ele.product_name}</h5>
                                                     <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.discount}</strike></p>
@@ -160,8 +202,8 @@ function Home() {
                             })
                         }
                     </Row>
-                </section>
-            </section>
+                </section >
+            </section >
             <section className='s_elegance_sec'>
                 <div className='ds_container row'>
                     <div className='s_elegance_con col-xl-10 col-12 mx-auto'>

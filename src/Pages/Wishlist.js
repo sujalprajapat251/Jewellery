@@ -47,7 +47,7 @@ function Wishlist(){
                                                 {ele.status ?
                                                     <div className='s_card_status'><p className='mb-0'>{ele.status}</p></div>
                                                     : ''}
-                                                <Link to={`/productdetail/${ele.id}`} className='s_card_text'>
+                                                <Link to={`/productdetail/${ele.product_id}`} className='s_card_text'>
                                                     <h5>{ele.product_name}</h5>
                                                     <p className='mb-0' key={'p' + id}>
                                                         <span className='mx-2' key={'price' + id}>₹{ele?.total_price || ele?.product_price}</span>

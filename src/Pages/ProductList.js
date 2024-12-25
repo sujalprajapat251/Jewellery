@@ -104,8 +104,21 @@ function ProductList() {
                     );
                 }
             }
+            else if (category === 'gold coin') {
+                const data = allProduct?.filter((product) => product?.category_name === 'Gold Coin')
+                if (field === 'weight') {
+                    product = data?.filter(product =>
+                        product?.weight === (parseFloat(value)).toFixed(2)
+                    );
+                }
+                else {
+                    product = data?.filter((product) =>
+                        product?.metal.includes(field) && product?.weight === (parseFloat(value)).toFixed(2)
+                    );
+                }
+            }
             else {
-                const data = allProduct?.filter((product) => (product.category_name.toLowerCase()).includes(category));
+                const data = allProduct?.filter((product) => (product.category_name.toLowerCase()).includes(category.toLowerCase()));
                 if (field === 'price') {
                     let price = [];
                     if (value.includes('>')) {
@@ -136,6 +149,7 @@ function ProductList() {
                         (product?.gender.toLowerCase() === 'men' || product?.gender.toLowerCase() === 'male') && product?.sub_category_name.includes(value)
                     );
                 }
+
                 console.log('pro', data);
             }
         }
@@ -533,8 +547,15 @@ function ProductList() {
                         <Row xxl={4} lg={3} md={2} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
                             {
                                 productList_detail.map((ele, id) => {
+
                                     const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
-                                    const discountPrice = (parseFloat(ele.total_price) - parseFloat(discounted)).toFixed(2);
+                                    let discountPrice = [];
+                                    console.log(ele.product_name, discounted);
+                                    if (!isNaN(parseFloat(discounted))) {
+                                        discountPrice = (parseFloat(ele.total_price) - parseFloat(discounted)).toFixed(2);
+                                    } else {
+                                        discountPrice = ele.total_price;
+                                    }
                                     return (
                                         <Col key={id} className='py-4'>
                                             <div className='s_seller_card'>
