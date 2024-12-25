@@ -6,7 +6,7 @@ import OwlCarousel from 'react-owl-carousel';
 import { GoHeart, GoHeartFill } from 'react-icons/go';
 import { FaAngleDown, FaShareAlt } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
-import { AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
+import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 import noteContext from '../Context/noteContext';
 
 import axios from 'axios';
@@ -16,25 +16,25 @@ function ProductDetail() {
     console.log('user', user.id);
     let [inStock, setInStock] = useState(true);
 
-    // backend connnectivity code here
+    // backend connnectivity code ---------------------------------------------------------------
 
+    // useContext
     const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler } = useContext(noteContext);
+
+    // get product detail using Api
     const [product, setProduct] = useState([]);
     useEffect(() => {
+        // allow scroll form top
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        axios
-            .get(`${Api}/products/get/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+
+        axios.get(`${Api}/products/get/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
             .then((response) => {
                 const fetchedProducts = response?.data?.data || [];
-
-                // Update product state
                 setProduct(fetchedProducts);
-
-                // Check stock availability
                 if (fetchedProducts.qty <= 0) {
                     setInStock(false);
                 }
@@ -45,18 +45,16 @@ function ProductDetail() {
         setAddToCard(true);
     }, [id, token, Api]);
 
-    // size haddler
-    const [size, setSize] = useState('');
+    // get size , youAlso like and people also search for Data from all products 
+    const [size, setSize] = useState(0);
     const [sizeArray, setSizeArray] = useState([]);
     const [reviews, setReviews] = useState([]);
     const [youAlsoLike, setYouAlsoLike] = useState([]);
     const [offers, setOffers] = useState([]);
     const [peopleAlsoSearch, setPeopleAlsoSearch] = useState([]);
     useEffect(() => {
-
-
+        // get size data
         const array = product?.size_name?.split(',').map(Number).filter((num) => !isNaN(num));
-
         if (array?.length) {
             setSizeArray(array);
             setSize(array[0]);
@@ -65,27 +63,15 @@ function ProductDetail() {
             setSize(null);
         }
 
-
-        // fetch review data 
-        axios.get(`${Api}/reviews/getall`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
-            .then((response) => {
-                setReviews(response.data.data);
-
-            })
-            .catch((error) => {
-                console.error("Error fetching products:", error);
-            });
-
-        // fetch you also like data
-        const youAlso = allProduct.filter((item) => item.category_id === product.category_id)
+        // fetch review data using function 
+        fetchReviewData()
+        const youAlso = allProduct.filter(
+            (item) =>
+                item.category_id === product.category_id && item.id !== product.id
+        )
         setYouAlsoLike(youAlso);
 
-
-        // offer handling code and fetch offers data
+        // fetch product offer using api 
         axios.get(`${Api}/productoffers/getall`,
             {
                 headers: {
@@ -98,21 +84,41 @@ function ProductDetail() {
             })
 
         //people also search for product
-
         for (let i = allProduct.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [allProduct[i], allProduct[j]] = [allProduct[j], allProduct[i]]; // Swap
         }
 
-        // Get 5 random products
-        const randomProducts = allProduct.slice(0, 5);
+        // Get 5 random products for people also search
+        const randomProducts = allProduct.slice(0, 10);
         setPeopleAlsoSearch(randomProducts);
         console.log(randomProducts);
         // eslint-disable-next-line
+
     }, [product])
 
+    // fetch review data  function is here
+    const fetchReviewData = async (retryCount = 0) => {
+        try {
+            const response = await axios.get(`${Api}/reviews/getall`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setReviews(response?.data?.data);
 
-    // addto card handler
+        } catch (error) {
+            if (error?.response?.status === 429 && retryCount < 5) {
+                const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+                console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+                setTimeout(() => fetchReviewData(retryCount + 1), retryAfter);
+            } else {
+                console.error("Failed to fetch data:", error.message);
+            }
+        }
+    }
+
+    // addto card data function using Api
     const [addToCard, setAddToCard] = useState(true);
     const addCardHandle = async () => {
         if (addToCard) {
@@ -122,7 +128,7 @@ function ProductDetail() {
                     product_id: product?.id,
                     quantity: 1,
                     unit_price: product?.total_price,
-                    size: size,
+                    size: size || 0,
                 },
                 {
                     headers: {
@@ -131,33 +137,15 @@ function ProductDetail() {
                 }).then((response) => {
                     console.log("Product added to cart successfully!", response);
                 })
-            // addCard = false;
             setAddToCard(false);
         }
-        // console.log(addCard);
     }
-    // backend connnectivity code oevr here ////////////////////////////////
 
-    // offer handling code 
-    const [selectedOffers, setSelectedOffers] = useState([]);
 
-    const handleOfferSelect = (offer, e) => {
-        const parent = e.target.closest('.s_parent');
+    // backend connnectivity code oevr here ----------------------------------------------------------------
 
-        const isChecking = selectedOffers.find((item) => item.id === offer.id);
-        if (isChecking) {
-            const data = selectedOffers.filter((item) => item.id !== offer.id);
-            setSelectedOffers(data);
-            console.log("Updated Offers:", data);
-            parent.classList.remove('s_light_brown');
-        } else {
-            const offers = [...selectedOffers, offer];
-            console.log("Updated Offers:", offers);
-            setSelectedOffers(offers);
-            parent.classList.add('s_light_brown');
-        }
-    }
-    // video handdler
+
+    // video handdler and image code here
     const [controlsVisible, setControlsVisible] = useState(false);
     const videoRef = useRef(null);
     const handlePlayClick = () => {
@@ -173,7 +161,7 @@ function ProductDetail() {
         }
     }
 
-    // review handller
+    // review modal code here
     const [lgShow, setLgShow] = useState(false);
     const [reviewDetail, setreviewDetail] = useState([]);
     useEffect(() => {
@@ -182,7 +170,7 @@ function ProductDetail() {
         // eslint-disable-next-line
     }, [reviews])
 
-    //  color handdler
+    //  color of metal code here
     const color = [{ name: 'rose', code: '#B76E79' }, { name: 'gold', code: '#FFD700' }, { name: 'silver', code: '#C0C0C0' }, { name: 'platinum', code: '#e5e4e2' }, { name: 'white-gold', code: '#FFFFF4' }, { name: 'yellow-gold', code: '##FFDF00' }]
     let metalColor = [];
     if (product.metal_color) {
@@ -192,11 +180,11 @@ function ProductDetail() {
     }
 
 
-    // thumbnail image handdlers {}
+    // thumbnail image handdlers code here
     const [thumbnail, setThumbnail] = useState(null);
     useEffect(() => {
         if (product?.images?.length <= 1) {
-            setThumbnail(product.images[0]); // Set the default thumbnail
+            setThumbnail(product.images[0]);
         }
         else {
             setThumbnail(null)
@@ -208,7 +196,6 @@ function ProductDetail() {
 
     // other detail nav-tabe handller 
     const [tab, setTab] = useState('tab-0');
-
 
 
     // braking price calculation ------
@@ -230,29 +217,39 @@ function ProductDetail() {
     const isSelected = wishlistID.find((items) => items === product.id);
     console.log('price', product.making_charge);
 
+    // people also like and people also search for responsive handling
+
+    const [itemsToShow, setItemsToShow] = useState(5); // Default to 5 items
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 1399) {
+                setItemsToShow(5);
+            } else if (window.innerWidth > 991) {
+                setItemsToShow(4);
+            }
+            else if(window.innerWidth > 767){
+                setItemsToShow(3);
+            } else if (window.innerWidth > 556) {
+                setItemsToShow(4);
+            } else if (window.innerWidth > 375) {
+                setItemsToShow(4);
+            }else {
+                setItemsToShow(3);
+            }
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
 
-
-    // heart handler
-    const [loadingItems, setLoadingItems] = useState([]);
-    const handleAddToWishlist = (itemId) => {
-        setLoadingItems([...loadingItems, itemId]);
-        addwishlistHandler(itemId)
-        setTimeout(() => {
-            setLoadingItems((prev) => prev.filter((loadingItem) => loadingItem !== itemId));
-        }, 1000);
-    };
-    const handleFindWishlistID = (itemId) => {
-        setLoadingItems((prev) => [...prev, itemId]);
-        findWishlistID(itemId)
-        setTimeout(() => {
-            setLoadingItems((prev) => prev.filter((loadingItem) => loadingItem !== itemId));
-        }, 1000);
-    };
     return (
         <>
             <section className="s_prodetail_page ds_container">
-                <Row lg={2} className='gx-0 gx-md-4 py-4'>
+                <Row lg={2} className='gx-0 gx-md-4 py-4 row-cols-1'>
                     <Col>
                         {thumbnail !== null ?
                             (() => {
@@ -298,7 +295,7 @@ function ProductDetail() {
 
                         <div className='s_product_slider'>
                             {product?.images?.length <= 6 ?
-                                <div className='d-flex justify-content-lg-center overflow-auto'>
+                                <div className='d-flex justify-content-sm-center overflow-auto'>
                                     {product.images?.map((item, index) => {
                                         const isVideo = /\.(mp4|webm|ogg)$/i.test(item);
                                         return (
@@ -371,59 +368,35 @@ function ProductDetail() {
                     </Col>
                     <Col>
                         <div className='s_productdetail_sec'>
-                            {loadingItems.includes(product?.id) ? (
-                                <div className="loading s_heart_icon">
-                                    <svg height="24px" width="32px"> {/* Adjusted height and width */}
-                                        <polyline
-                                            id="back"
-                                            points="0.157 11.977, 14 11.977, 21.843 24, 43 0, 50 12, 64 12"
-                                        ></polyline>
-                                        <polyline
-                                            id="front"
-                                            points="0.157 11.977, 14 11.977, 21.843 24, 43 0, 50 12, 64 12"
-                                        ></polyline>
-                                    </svg>
-                                </div>
-                            ) :
+                            {
                                 isSelected ?
-                                    <div className="s_heart_icon active"
-                                        onClick={() => {
-                                            handleFindWishlistID(product?.id)
-                                        }}
-                                    >
-                                        <GoHeartFill />
+                                    <div className='d-flex justify-content-end s_share_icon' onClick={() => { findWishlistID(product.id) }}>
+                                        <GoHeartFill className='s_active' />
+                                        <FaShareAlt />
                                     </div> :
-
-                                    <div
-                                        className="s_heart_icon"
-                                        onClick={() => {
-                                            // Add to wishlist
-                                            handleAddToWishlist(product?.id) // Trigger the loader and toggle liked state
-                                        }}
-                                    >
+                                    <div className='d-flex justify-content-end s_share_icon' onClick={() => { addwishlistHandler(product.id) }}>
                                         <GoHeart />
                                         <FaShareAlt />
-
                                     </div>
                             }
-                            <h3 className='s_title text-capitalize'>{product?.product_name}</h3>
-                            <div className='s_rating'>
+                            <h3 className='s_title text-capitalize text-center text-lg-start '>{product?.product_name}</h3>
+                            <div className='s_rating d-flex justify-content-center justify-content-lg-start'>
                                 {
                                     [...Array(5)].map((_, index) => {
                                         if (index < product?.total_rating) {
-                                            return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                            return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
                                         } else {
-                                            return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                            return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
                                             ;
                                         }
                                     })
                                 }
                             </div>
-                            <div className='d-flex align-items-center'>
-                                <h2 className='s_price'>₹{product?.total_price}</h2>
+                            <div className='d-flex align-items-center justify-content-center justify-content-lg-start'>
+                                <h2 className='s_price text-center text-lg-start'>₹{product?.total_price}</h2>
                                 {inStock !== true ? <div className='s_stock_status'>out of stack</div> : ''}
                             </div>
-                            <p className='s_description'>{product?.description}</p>
+                            <p className='s_description text-center text-lg-start'>{product?.description}</p>
 
                             {product.category_name !== 'Watch' ? <>
                                 <div className='s_metal_option d-flex justify-content-between text-capitalize'>
@@ -455,7 +428,7 @@ function ProductDetail() {
                                             <FaAngleDown className='ms-auto' />
                                             <div className='s_size_menu'>
                                                 {sizeArray.map((item) => {
-                                                    return <div className={`s_size_box ${item === size ? 'active' : ''}`} onClick={() => { setSize(item) }}>{item}</div>
+                                                    return <div key={item} className={`s_size_box ${item === size ? 'active' : ''}`} onClick={() => { setSize(item) }}>{item}</div>
                                                 })}
                                             </div>
                                         </div>
@@ -477,13 +450,13 @@ function ProductDetail() {
                                 </div>
                             </div>
                             <div className='s_offers'>
-                                <Accordion defaultActiveKey="0" flush>
+                                <Accordion flush >
                                     <Accordion.Item eventKey="0">
                                         <Accordion.Header>Trending Offers</Accordion.Header>
                                         <Accordion.Body>
                                             {offers.map((item, index) => {
                                                 return (
-                                                    <div key={index} className={`d-flex align-items-center s_parent px-2`} onClick={(e) => { handleOfferSelect(item, e) }}>
+                                                    <div key={index} className={`d-flex align-items-center s_parent px-2`} >
                                                         <img src={item.image} alt='discount' />
                                                         <div>
                                                             <p className='mb-0'>{item?.name}</p>
@@ -612,7 +585,7 @@ function ProductDetail() {
                             <tbody>
                                 <tr>
                                     <td>{product?.metal ? `${product?.metal}` : '-'}</td>
-                                    <td>{product?.price ? `₹ ${(product?.price) / (product?.weight)}/g` : '-'}</td>
+                                    <td>{product?.price ? `₹ ${((product?.price) / (product?.weight)).toFixed(2)}/g` : '-'}</td>
                                     <td>{product?.weight ? `${product?.weight}g` : '-'}</td>
                                     <td>-</td>
                                     <td>₹{metal_total}</td>
@@ -662,8 +635,9 @@ function ProductDetail() {
 
                         <div className='s_review'>
                             {reviewDetail.slice(0, 4).map((item, index) => {
+
                                 return (
-                                    <div className='d-flex s_review_div'>
+                                    <div className='d-flex s_review_div' key={index}>
                                         <div className='s_review_profile'>
                                             <p className='mb-0 text-capitalize'>{item.customer_name[0]}</p>
                                         </div>
@@ -673,9 +647,9 @@ function ProductDetail() {
                                                 {
                                                     [...Array(5)].map((_, index) => {
                                                         if (index < item.rating) {
-                                                            return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                            return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
                                                         } else {
-                                                            return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                            return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
                                                             ;
                                                         }
                                                     })
@@ -692,14 +666,35 @@ function ProductDetail() {
 
                                             </div>
                                             <div className='s_review_icon d-flex'>
-                                                <div className="d-flex align-items-center me-4">
-                                                    <AiOutlineLike />
-                                                    <span>Like</span>
-                                                </div>
-                                                <div className="d-flex align-items-center me-4">
-                                                    <AiOutlineDislike />
-                                                    <span>Dislike</span>
-                                                </div>
+                                                {item.like_or_dislike ?
+                                                    item.like_or_dislike === 0 ? <>
+                                                        <div className="d-flex align-items-center me-4">
+                                                            <AiFillLike />
+                                                            <span>Like</span>
+                                                        </div>
+                                                        <div className="d-flex align-items-center me-4">
+                                                            <AiOutlineDislike />
+                                                            <span>Dislike</span>
+                                                        </div>
+                                                    </> : <>
+                                                        <div className="d-flex align-items-center me-4">
+                                                            <AiFillLike />
+                                                            <span>Like</span>
+                                                        </div>
+                                                        <div className="d-flex align-items-center me-4">
+                                                            <AiFillDislike />
+                                                            <span>Dislike</span>
+                                                        </div>
+                                                    </> : <>
+                                                        <div className="d-flex align-items-center me-4">
+                                                            <AiOutlineLike />
+                                                            <span>Like</span>
+                                                        </div>
+                                                        <div className="d-flex align-items-center me-4">
+                                                            <AiOutlineDislike />
+                                                            <span>Dislike</span>
+                                                        </div>
+                                                    </>}
                                             </div>
                                         </div>
                                     </div>
@@ -718,35 +713,38 @@ function ProductDetail() {
                         <Link to={`/productlist/subcategory/${product?.sub_category_id}`}>View More</Link>
                     </div>
                     <div>
-                        <Row xxl={5} lg={4} md={4} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
+                        <Row xxl={5} lg={4} md={3} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                             {
-                                youAlsoLike.slice(0, 5).map((ele, id) => {
+                                youAlsoLike.slice(0, itemsToShow).map((ele, id) => {
                                     const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
                                     const discountPrice = (parseFloat(ele.total_price) - parseFloat(discounted)).toFixed(2);
                                     return (
-                                        <Col key={id} className='py-4 '>
-                                            <Link to={`/productdetail/${ele.id}`} className='s_seller_card'>
+                                        <Col key={id} className='py-4'>
+                                            <div className='s_seller_card'>
                                                 <div className='s_card_img'>
                                                     <img src={ele.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
                                                 </div>
 
                                                 <div className='s_card_text'>
-                                                    <h5>{ele.product_name}</h5>
-                                                    <p className='mb-0'><span className='mx-2'>₹{discountPrice}</span><strike className="mx-2">₹{ele.total_price}</strike></p>
-                                                    <div className='s_rating'>
-                                                        {
-                                                            [...Array(5)].map((_, index) => {
-                                                                if (index < ele.total_rating) {
-                                                                    return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                                } else {
-                                                                    return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                                    ;
-                                                                }
-                                                            })
-                                                        }
-                                                    </div>
+                                                    <Link to={`/productdetail/${ele.id}`}>
+                                                        <h5>{ele.product_name}</h5>
+                                                        <p className='mb-0'><span className='mx-2'>₹{discountPrice}</span><strike className="mx-2">₹{ele.total_price}</strike></p>
+                                                        <div className='s_rating'>
+                                                            {
+                                                                [...Array(5)].map((_, index) => {
+                                                                    if (index < ele.total_rating) {
+                                                                        return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                    } else {
+                                                                        return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                                        ;
+                                                                    }
+                                                                })
+                                                            }
+                                                        </div>
+                                                        <div className='s_card_btn'><p className=''>Buy Now</p></div>
+                                                    </Link>
                                                 </div>
-                                            </Link>
+                                            </div>
                                         </Col>
                                     )
                                 })
@@ -761,34 +759,37 @@ function ProductDetail() {
                         <Link to={`/productlist/all/null`}>View More</Link>
                     </div>
                     <div>
-                        <Row xxl={5} lg={4} md={4} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
+                        <Row xxl={5} lg={4} md={3} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                             {
-                                peopleAlsoSearch.map((ele, id) => {
+                                peopleAlsoSearch.slice(0, itemsToShow).map((ele, id) => {
                                     const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
                                     const discountPrice = (parseFloat(ele.total_price) - parseFloat(discounted)).toFixed(2);
                                     return (
                                         <Col key={id} className='py-4'>
-                                            <Link to={`/productdetail/${ele.id}`} className='s_seller_card'>
+                                            <div className='s_seller_card'>
                                                 <div className='s_card_img'>
                                                     <img src={ele?.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
                                                 </div>
                                                 <div className='s_card_text'>
-                                                    <h5>{ele.product_name}</h5>
-                                                    <p className='mb-0'><span className='mx-2'>₹ {discountPrice}</span><strike className="mx-2">₹ {ele.total_price}</strike></p>
-                                                    <div className='s_rating'>
-                                                        {
-                                                            [...Array(5)].map((_, index) => {
-                                                                if (index < ele.total_rating) {
-                                                                    return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                                } else {
-                                                                    return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                                    ;
-                                                                }
-                                                            })
-                                                        }
-                                                    </div>
+                                                    <Link to={`/productdetail/${ele.id}`}>
+                                                        <h5>{ele.product_name}</h5>
+                                                        <p className='mb-0'><span className='mx-2'>₹ {discountPrice}</span><strike className="mx-2">₹ {ele.total_price}</strike></p>
+                                                        <div className='s_rating'>
+                                                            {
+                                                                [...Array(5)].map((_, index) => {
+                                                                    if (index < ele.total_rating) {
+                                                                        return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                    } else {
+                                                                        return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                                        ;
+                                                                    }
+                                                                })
+                                                            }
+                                                        </div>
+                                                        <div className='s_card_btn'><p className=''>Buy Now</p></div>
+                                                    </Link>
                                                 </div>
-                                            </Link>
+                                            </div>
                                         </Col>
                                     )
                                 })
@@ -818,7 +819,7 @@ function ProductDetail() {
                     <div className='s_review'>
                         {reviewDetail.map((item, index) => {
                             return (
-                                <div className='d-flex s_review_div'>
+                                <div className='d-flex s_review_div' key={index}>
                                     <div className='s_review_profile'>
                                         <p className='mb-0 text-capitalize'>{item.customer_name[0]}</p>
                                     </div>
@@ -827,10 +828,10 @@ function ProductDetail() {
                                         <div className='s_rating'>
                                             {
                                                 [...Array(5)].map((_, index) => {
-                                                    if (index < item.rating) {
-                                                        return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                    if (index < item.total_rating) {
+                                                        return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
                                                     } else {
-                                                        return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                        return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
                                                         ;
                                                     }
                                                 })

@@ -1,5 +1,5 @@
 import '../Css/Sujal/Home.css';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
@@ -15,8 +15,12 @@ import es_card3 from '../Img/Sujal/jewel.png';
 import noteContext from '../Context/noteContext';
 
 function Home() {
-    // backend connection code
+    // backend connection code----------------------------------
+
+    // useContext //
     const { allCategory, allProduct, addwishlistHandler, wishlistID, findWishlistID, bestseller } = useContext(noteContext);
+
+
     // cat slideer responsive
     const cat_sliderres = {
         0: { items: 1 },
@@ -27,19 +31,20 @@ function Home() {
         1440: { items: 7 },
     }
 
+
     // feature slideer responsive
     const feature_sliderres = {
 
         0: { items: 1 },
-        376: { items: 2 },
+        376: { items: 1 },
         600: { items: 3 },
-        1024: { items: 3 },
+        1024: { items: 2 },
         1200: { items: 3 },
-        1440: { items: 4 },
+        1600: { items: 4 },
     }
 
 
-    // heart handler
+    // heart and wishlist  handler
     const [loadingItems, setLoadingItems] = useState([]);
     const handleAddToWishlist = (itemId) => {
         setLoadingItems([...loadingItems, itemId]);
@@ -55,7 +60,40 @@ function Home() {
             setLoadingItems((prev) => prev.filter((loadingItem) => loadingItem !== itemId));
         }, 1000);
     };
+
+
+    // best seller card  responsive handler 
+    const [itemsToShow, setItemsToShow] = useState(5); // Default to 5 items
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 1919) {
+                setItemsToShow(12);
+            }else if (window.innerWidth > 1399) {
+                setItemsToShow(10);
+            } else if (window.innerWidth > 991) {
+                setItemsToShow(8);
+            }else if (window.innerWidth > 767) {
+                setItemsToShow(6);
+            } else if (window.innerWidth > 556) {
+                setItemsToShow(4);
+            } else {
+                setItemsToShow(6);
+            }
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+
+
+    // backend conection code over----------------------------------------------------------------
     return (
+
+
         <>
             <section className='s_slider'>
                 <OwlCarousel className='owl-theme' items={1} margin={0} loop >
@@ -130,72 +168,72 @@ function Home() {
                         <p className='mb-2'>Explore our most loved products</p>
                         <h2>The Best Sellers</h2>
                     </div>
-                    <Row xxl={6} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
+                    <Row xxl={5} lg={4} md={3} sm={2} className='s_seller_cards s_seller_spe_cards row-cols-1 gx-2 gx-sm-3'>
                         {
-                            bestseller.slice(0, 12).map((ele, id) => {
+                            bestseller.slice(0, itemsToShow).map((ele, id) => {
                                 var isSelected = wishlistID.find((items) => items === ele.id);
                                 return (
                                     <Col key={id} className='py-4'>
                                         <div className='s_seller_card'>
 
-                                            <Link to={'#'}>
-                                                <div className='s_card_img bg-white'>
-                                                    <img src={ele.images?.[0]} className="w-100 bg-white" alt={ele.title} key={ele.title} />
+                                            <div className='s_card_img bg-white'>
+                                                <img src={ele.images?.[0]} className="w-100 bg-white" alt={ele.title} key={ele.title} />
+                                            </div>
+                                            {loadingItems.includes(ele.id) ? (
+                                                <div className="loading s_heart_icon">
+                                                    <svg height="24px" width="32px"> {/* Adjusted height and width */}
+                                                        <polyline
+                                                            id="back"
+                                                            points="0.157 11.977, 14 11.977, 21.843 24, 43 0, 50 12, 64 12"
+                                                        ></polyline>
+                                                        <polyline
+                                                            id="front"
+                                                            points="0.157 11.977, 14 11.977, 21.843 24, 43 0, 50 12, 64 12"
+                                                        ></polyline>
+                                                    </svg>
                                                 </div>
-                                                {loadingItems.includes(ele.id) ? (
-                                                    <div className="loading s_heart_icon">
-                                                        <svg height="24px" width="32px"> {/* Adjusted height and width */}
-                                                            <polyline
-                                                                id="back"
-                                                                points="0.157 11.977, 14 11.977, 21.843 24, 43 0, 50 12, 64 12"
-                                                            ></polyline>
-                                                            <polyline
-                                                                id="front"
-                                                                points="0.157 11.977, 14 11.977, 21.843 24, 43 0, 50 12, 64 12"
-                                                            ></polyline>
-                                                        </svg>
-                                                    </div>
-                                                ) : isSelected ? (
-                                                    <div className="s_heart_icon active"
-                                                        onClick={() => {
-                                                            handleFindWishlistID(ele.id)
-                                                            // Pass the item's ID to findWishlistID
-                                                        }}
-                                                    >
-                                                        <GoHeartFill />
-                                                    </div>
-                                                ) : (
-                                                    <div
-                                                        className="s_heart_icon"
-                                                        onClick={() => {
-                                                            // Add to wishlist
-                                                            handleAddToWishlist(ele.id) // Trigger the loader and toggle liked state
-                                                        }}
-                                                    >
-                                                        <GoHeart />
-                                                    </div>
-                                                )}
-                                                {/* {ele.gender ?
+                                            ) : isSelected ? (
+                                                <div className="s_heart_icon active"
+                                                    onClick={() => {
+                                                        handleFindWishlistID(ele.id)
+                                                        // Pass the item's ID to findWishlistID
+                                                    }}
+                                                >
+                                                    <GoHeartFill />
+                                                </div>
+                                            ) : (
+                                                <div
+                                                    className="s_heart_icon"
+                                                    onClick={() => {
+                                                        // Add to wishlist
+                                                        handleAddToWishlist(ele.id) // Trigger the loader and toggle liked state
+                                                    }}
+                                                >
+                                                    <GoHeart />
+                                                </div>
+                                            )}
+                                            {/* {ele.gender ?
                                                     <div className='s_card_status'><p className='mb-0'>{ele.metal_color}</p></div>
                                                     : ''} */}
-                                                <Link className='s_card_text' to={`/productdetail/${ele.id}`}>
+                                            <div className='s_card_text' >
+                                                <Link to={`/productdetail/${ele.id}`}>
                                                     <h5>{ele.product_name}</h5>
                                                     <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.discount}</strike></p>
                                                     <div className='s_rating'>
                                                         {
                                                             [...Array(5)].map((_, index) => {
                                                                 if (index < ele?.total_rating) {
-                                                                    return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                    return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
                                                                 } else {
-                                                                    return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                                    return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
                                                                     ;
                                                                 }
                                                             })
                                                         }
                                                     </div>
+                                                    <div className='s_card_btn'><p className=''>Buy Now</p></div>
                                                 </Link>
-                                            </Link>
-
+                                            </div>
                                         </div>
                                     </Col>
                                 )
@@ -340,86 +378,35 @@ function Home() {
                                 }>
                                 {allProduct.slice(0, 5).map((item, idx) => {
                                     return (
-                                        <Link className='item' key={idx} to={`/productdetail/${item.id}`}>
-                                            <img src={item.images[0]} className='w-100' alt={`image${idx}`}></img>
-                                            <div className='s_slider_text'>
-                                                <h5 className='text-capitalize'>{item.product_name}</h5>
-                                                <p className='mb-0'><span className='mx-2'>{item.price}</span><strike className="mx-2">{item.discount}</strike></p>
-                                                <div className='s_rating'>
-                                                    {
-                                                        [...Array(5)].map((_, index) => {
-                                                            if (index < item.rating) {
-                                                                return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                            } else {
-                                                                return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                                ;
+                                        <div className='item bg-white' key={idx}  >
+                                            <div className='shadow'>
+                                                <img src={item.images[0]} className='w-100' alt={`image${idx}`}></img>
+                                                <div className='s_slider_text '>
+                                                    <Link to={`/productdetail/${item.id}`}>
+                                                        <h5 className='text-capitalize'>{item.product_name}</h5>
+                                                        <p className='mb-0' >
+                                                            <span className='mx-2'>{item.price}</span>
+                                                            <strike className="mx-2">{item.discount}</strike>
+                                                        </p>
+                                                        <div className='s_rating'>
+                                                            {
+                                                                [...Array(5)].map((_, index) => {
+                                                                    if (index < item.rating) {
+                                                                        return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                    } else {
+                                                                        return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                                        ;
+                                                                    }
+                                                                })
                                                             }
-                                                        })
-                                                    }
+                                                        </div>
+                                                        <div className='s_card_btn'><p className=''>Buy Now</p></div>
+                                                    </Link>
                                                 </div>
                                             </div>
-                                        </Link>
+                                        </div>
                                     )
                                 })}
-                                {/* 
-                                <Link className='item' to={'/productlist'}>
-                                    <img src={require('../Img/Sujal/s_bracelet.png')} className='w-100' alt='Bracelet'></img>
-                                    <div className='s_slider_text'>
-                                        <h5>Bracelet</h5>
-                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike className="mx-2">₹1500</strike></p>
-                                        <div className='s_rating'>
-                                            {
-                                                [...Array(5)].map((_, index) => {
-                                                    if (index < 1) {
-                                                        return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                    } else {
-                                                        return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                        ;
-                                                    }
-                                                })
-                                            }
-                                        </div>
-                                    </div>
-                                </Link>
-                                <Link className='item' to={'/productlist'}>
-                                    <img src={require('../Img/Sujal/s_diamond_ring.png')} className='w-100' alt='Dimond Ring'></img>
-                                    <div className='s_slider_text'>
-                                        <h5>Dimond Ring</h5>
-                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike className="mx-2">₹1500</strike></p>
-                                        <div className='s_rating'>
-                                            {
-                                                [...Array(5)].map((_, index) => {
-                                                    if (index < 0) {
-                                                        return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                    } else {
-                                                        return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                        ;
-                                                    }
-                                                })
-                                            }
-                                        </div>
-                                    </div>
-                                </Link>
-                                <Link className='item' to={'/productlist'}>
-                                    <img src={require('../Img/Sujal/s_diamond_earing.png')} className='w-100' alt='Dimond Earring'></img>
-                                    <div className='s_slider_text'>
-                                        <h5>Dimond Earring</h5>
-                                        <p className='mb-0'><span className='mx-2'>₹1200</span><strike className="mx-2">₹1500</strike></p>
-                                        <div className='s_rating'>
-                                            {
-                                                [...Array(5)].map((_, index) => {
-                                                    if (index < 5) {
-                                                        return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                    } else {
-                                                        return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                        ;
-                                                    }
-                                                })
-                                            }
-                                        </div>
-                                    </div>
-                                </Link> */}
-
                             </OwlCarousel>
                         </div>
                     </div>

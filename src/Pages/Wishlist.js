@@ -4,17 +4,23 @@ import { Col, Row } from 'react-bootstrap';
 import { GoHeartFill } from 'react-icons/go';
 import { Link } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
-function Wishlist(){
-    const {wishlistData, removeWishlistHandler , allProduct} =useContext(noteContext); 
-    console.log(wishlistData);
-    const [wishlistproducts,setWishlistData]= useState([]);
-    useEffect(()=>{
+function Wishlist() {
+    // backend conection code ----------------------------------------------------------------
+
+    // useContext
+    const { wishlistData, removeWishlistHandler, allProduct } = useContext(noteContext);
+
+
+    // fliter wishlistData from product data
+    const [wishlistproducts, setWishlistData] = useState([]);
+    useEffect(() => {
         const productData = wishlistData.filter((wishlistItem) =>
             allProduct.some((product) => product.id === wishlistItem.product_id)
-          );
-          setWishlistData(productData);
-    },[wishlistData,allProduct]);
-    console.log(wishlistproducts);
+        );
+        setWishlistData(productData);
+    }, [wishlistData, allProduct]);
+
+     // backend conection code over ----------------------------------------------------------------
     return (
         <>
             {wishlistData.length === 0 ?
@@ -31,23 +37,23 @@ function Wishlist(){
                 </section>
                 :
                 <section className='s_wishlist_sec ds_container'>
-                    <Row xxl={6} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-3'>
+                    <Row xxl={5} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                         {
                             wishlistproducts.map((ele, id) => {
                                 return (
                                     <Col key={id} className='py-4'>
                                         <div className='s_seller_card'>
-                                            <Link to={'#'}>
-                                                <div className='s_card_img'>
-                                                    <img src={ele?.images || ele?.product_image[0]} className="w-100" alt={ele.title} key={ele.title} />
-                                                </div>
-                                                <div className='s_heart_icon s_heart_icons filled' onClick={()=>{removeWishlistHandler(ele.id)}}>
-                                                    <GoHeartFill />
-                                                </div>
-                                                {ele.status ?
-                                                    <div className='s_card_status'><p className='mb-0'>{ele.status}</p></div>
-                                                    : ''}
-                                                <Link to={`/productdetail/${ele.product_id}`} className='s_card_text'>
+                                            <div className='s_card_img'>
+                                                <img src={ele?.images || ele?.product_image[0]} className="w-100" alt={ele.title} key={ele.title} />
+                                            </div>
+                                            <div className='s_heart_icon s_heart_icons filled' onClick={() => { removeWishlistHandler(ele.id) }}>
+                                                <GoHeartFill />
+                                            </div>
+                                            {ele.status ?
+                                                <div className='s_card_status'><p className='mb-0'>{ele.status}</p></div>
+                                                : ''}
+                                            <div  className='s_card_text'>
+                                                <Link to={`/productdetail/${ele.product_id}`}>
                                                     <h5>{ele.product_name}</h5>
                                                     <p className='mb-0' key={'p' + id}>
                                                         <span className='mx-2' key={'price' + id}>₹{ele?.total_price || ele?.product_price}</span>
@@ -65,8 +71,9 @@ function Wishlist(){
                                                             })
                                                         }
                                                     </div>
+                                                    <div className='s_card_btn'><p className=''>Buy Now</p></div>
                                                 </Link>
-                                            </Link>
+                                            </div>
                                         </div>
                                     </Col>
                                 )
