@@ -46,7 +46,7 @@ function ProductDetail() {
     }, [id, token, Api]);
 
     // size haddler
-    const [size, setSize] = useState('');
+    const [size, setSize] = useState(0);
     const [sizeArray, setSizeArray] = useState([]);
     const [reviews, setReviews] = useState([]);
     const [youAlsoLike, setYouAlsoLike] = useState([]);
@@ -122,7 +122,7 @@ function ProductDetail() {
                     product_id: product?.id,
                     quantity: 1,
                     unit_price: product?.total_price,
-                    size: size,
+                    size: size || 0
                 },
                 {
                     headers: {

@@ -190,13 +190,13 @@ const Cart = () => {
   } 
 
   useEffect(() => {
-    const discount = cupanOffer ? cupanOffer : appyVal;
+    const discount = cupanOffer ? cupanOffer : appyVal ? appyVal : 0;
     const tax = Math.floor(price * 3 / 100);
-    const total = price + discount - tax;
+    const total = parseInt(price) - parseInt(discount) +  parseInt(tax)  
   
     setOrderData({
       sub_total: price,
-      discount,
+      discount: discount ? discount : 0,
       tax,
       total
     });
@@ -248,6 +248,8 @@ const Cart = () => {
                       {cartData?.map((element , index)=>{
                           const totalPrice = isNaN(element?.total_price) ? 0 : Math.floor(element?.total_price);
                           const discountedPrice = isNaN(element?.total_price) ? 0 : Math.floor(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price));
+                          console.log("doiscountPrice" , discountedPrice);
+                          
                            return(
                               <div key={element?.id} className='ds_cart-box mt-4'>
                                    <div className='text-end'>
@@ -387,7 +389,7 @@ const Cart = () => {
                                     <div className="px-3 mt-3">
                                       <div className="d-flex justify-content-between">
                                         <h5 className="h5 mb-0 ds_color">Total Amount</h5>
-                                        <h5 className="h5 mb-0 ds_color">{price + (-cupanOffer ? -cupanOffer : -appyVal) - Math.floor(price * 3 / 100) }</h5>
+                                        <h5 className="h5 mb-0 ds_color">{price + (-cupanOffer ? -cupanOffer : -appyVal) + Math.floor(price * 3 / 100) }</h5>
                                       </div>
                                       <button onClick={handleProcessCheckout} className="ds_add-proccess mt-5" id="ds_proceed_btn">
                                         Proceed to checkout

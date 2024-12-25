@@ -1,22 +1,67 @@
-import React from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import '../Css/dhruvin/Invoice.css'
+import noteContext from '../Context/noteContext'
+import axios from 'axios'
+import { FaPrint } from 'react-icons/fa'
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const Invoice = () => {
+
+const {Api , store} = useContext(noteContext)
+const Id = JSON.parse(localStorage.getItem("orderId"))
+const local = JSON.parse(localStorage.getItem("OrderDetails"))
+const [invoice, setInvoice] = useState({})
+const [invoiceData, setinvoiceData] = useState([]) 
+const invoiceRef = useRef(); 
+
+ useEffect(()=>{
+  axios.get(`${Api}/order/get/${Id}`,{
+    headers: {
+      Authorization: `Bearer ${store?.access_token}`
+    }
+  }).then((value)=>{
+     console.log(value?.data);
+     setInvoice(value?.data?.order)
+     setinvoiceData(value?.data?.order?.order_items)
+  }).catch((error)=>{
+     alert("invoice" ,error)
+  })
+ },[])
+
+ const handlePrint = () => {
+  const element = invoiceRef.current;
+  html2canvas(element, { scale: 2 }).then((canvas) => {
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF();
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`Invoice_${Id}.pdf`);
+  });
+};
+
+
   return (
     <div>
        <section className=" mb-5">
         <div>
-          <div className="ds_container">
+          <div ref={invoiceRef} className="ds_container">
             <div className="mt-4">
+              
+              <div className='text-end me-md-5 mb-4 me-3'>
+                <FaPrint onClick={handlePrint} className='fs-2 ds_cursor' />
+              </div>
+
               <div className="row justify-content-center">
                 <div className="col-xl-8 ">
                   <div className="ds_in-bg">
                     <h5 className="fw-bold">LOGO</h5>
                     <div className="d-flex flex-wrap justify-content-between ">
                       <div className="mt-4">
-                        <h5 className="ds_in-name">Jhon Wick</h5>
-                        <h6 className="ds_in-email">example@gmail.com</h6>
-                        <h6 className="ds_in-email">+1 565 5656 565</h6>
+                        <h5 className="ds_in-name">{invoice?.contact_name}</h5>
+                        <h6 className="ds_in-email">{invoice?.customer_email}</h6>
+                        <h6 className="ds_in-email">+91 {invoice?.contact_no}</h6>
                       </div>
                       <div className="d-flex justify-content-between mt-4 ds_in-flex-manage">
                         <div>
@@ -26,9 +71,9 @@ const Invoice = () => {
                           <p className="ds_in-text mb-0">GSTIN</p>
                         </div>
                         <div className="text-end">
-                          <p className="ds_in-text mb-0 text-dark ds_600">#123456</p>
-                          <p className="ds_in-text mb-0 text-dark ds_600">26/09/2024</p>
-                          <p className="ds_in-text mb-0 text-dark ds_600">#1123456789654</p>
+                          <p className="ds_in-text mb-0 text-dark ds_600">#{invoice?.invoice_number}</p>
+                          <p className="ds_in-text mb-0 text-dark ds_600">{invoice?.order_date}</p>
+                          <p className="ds_in-text mb-0 text-dark ds_600">#{invoice?.order_number}</p>
                           <p className="ds_in-text mb-0 text-dark ds_600">CGHCJU554451JH</p>
                         </div>
                       </div>
@@ -46,16 +91,16 @@ const Invoice = () => {
                     <div className="col-xl-4 col-lg-4 col-md-4 mt-4">
                       <div className="ds_in-border h-100">
                         <p className="ds_in-sold ds_600 mb-2">BILLED TO</p>
-                        <p className="ds_in-sold text-dark ds_600 mb-0">Alex Shroff </p>
-                        <p className="ds_in-add text-dark fw-400">Ehrenkranz 13 Washington Square S , New York , Washington Square , NY 10012 , USA</p>
+                        <p className="ds_in-sold text-dark ds_600 mb-0">{invoice?.contact_name}</p>
+                        <p className="ds_in-add text-dark fw-400">{invoice?.delivery_address}</p>
                       </div>
                     </div>
 
                     <div className="col-xl-4 col-lg-4 col-md-4 mt-4">
                       <div className="ds_in-border border-0 h-100">
                         <p className="ds_in-sold ds_600 mb-2">SHIPPED TO</p>
-                        <p className="ds_in-sold text-dark ds_600 mb-0">Alex Shroff </p>
-                        <p className="ds_in-add text-dark fw-400">Ehrenkranz 13 Washington Square S , New York , Washington Square , NY 10012 , USA</p>
+                        <p className="ds_in-sold text-dark ds_600 mb-0">{invoice?.contact_name}</p>
+                        <p className="ds_in-add text-dark fw-400">{invoice?.delivery_address}</p>
                       </div>
                     </div>
 
@@ -69,31 +114,25 @@ const Invoice = () => {
                           <tr>
                             <th className="ds_table-th">Item</th>
                             <th className="ds_table-th">Qty.</th>
-                            <th className="ds_table-th">Price</th>
-                            <th className="ds_table-th">Amount</th>
+                            <th className="ds_table-th text-center">Price</th>
+                            <th className="ds_table-th text-center">Amount</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <td>
-                              <div className="ds_table-title ds_600">Dual Tone Halo Diamond Finger Ring</div>
-                              <p className='mb-0'><span className='ds_tcolor '>Size :</span> <span className='ds_600'>5</span></p>
-                              <p className=''><span className='ds_tcolor'>Metal :</span> <span className='ds_600'>925 Silver</span></p>
-                            </td>
-                            <td className="ds_table-quantity ds_600">1</td>
-                            <td className="ds_table-price">₹1200.00</td>
-                            <td className="ds_table-price">₹1200.00</td>
-                          </tr>
-                          <tr>
-                          <td>
-                              <div className="ds_table-title ds_600">Dual Tone Halo Diamond Finger Ring</div>
-                              <p className='mb-0'><span className='ds_tcolor '>Size :</span> <span className='ds_600'>5</span></p>
-                              <p className=''><span className='ds_tcolor'>Metal :</span> <span className='ds_600'>925 Silver</span></p>
-                            </td>
-                            <td className="ds_table-quantity ds_600">1</td>
-                            <td className="ds_table-price">₹1200.00</td>
-                            <td className="ds_table-price">₹1200.00</td>
-                          </tr>
+                          {invoiceData?.map((element)=>{
+                            return(
+                                 <tr>
+                                     <td>
+                                       <div className="ds_table-title ds_600">{element?.product_name}</div>
+                                       <p className='mb-0'><span className='ds_tcolor '>Size :</span> <span className='ds_600'>{element?.size}</span></p>
+                                       <p className=''><span className='ds_tcolor'>Metal :</span> <span className='ds_600'>{element?.metal}</span></p>
+                                     </td>
+                                     <td className="ds_table-quantity  ds_600">{element?.qty}</td>
+                                     <td className="ds_table-price text-center">{Math.floor(element?.total_price)}</td>
+                                     <td className="ds_table-price text-center">{Math.floor(element?.total_price * element?.qty)}</td>
+                                 </tr>
+                            )
+                          })}
                         </tbody>
                       </table>
 
@@ -123,11 +162,11 @@ const Invoice = () => {
                               <h6 className="ds_in-total">Total Amount</h6>
                             </div>
                             <div className="ms-5">
-                              <p className="ds_in-sub ds_600 text-dark">₹2400.00</p>
-                              <p className="ds_in-sub ds_600" style={{ color: "#0F993E" }}>-₹40.00</p>
-                              <p className="ds_in-sub ds_600 text-dark">₹3.50</p>
-                              <p className="ds_in-sub ds_600 text-dark">₹6.50</p>
-                              <h6 className="ds_in-total ds_600">₹2470.00</h6>
+                              <p className="ds_in-sub ds_600 text-dark">₹{local?.sub_total}</p>
+                              <p className="ds_in-sub ds_600" style={{ color: "#0F993E" }}>-₹{local?.discount}</p>
+                              <p className="ds_in-sub ds_600 text-dark">₹{local?.tax / 2}</p>
+                              <p className="ds_in-sub ds_600 text-dark">₹{local?.tax / 2}</p>
+                              <h6 className="ds_in-total ds_600">₹{local?.total}</h6>
                             </div>
                           </div>
                         </div>
@@ -141,14 +180,14 @@ const Invoice = () => {
                       </div>
                     </div>
                   </div>
-
+                  <div className="d_invoicefooter">
+                      <p className="mb-0">If you have any questions, feel free to call customer care at +1 565 5656 565 or use Contact Us section.</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="d_invoicefooter">
-            <p className="mb-0">If you have any questions, feel free to call customer care at +1 565 5656 565 or use Contact Us section.</p>
-          </div>
+          
         </div>
       </section>
     </div>

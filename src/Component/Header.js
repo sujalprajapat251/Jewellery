@@ -144,27 +144,37 @@ function Header() {
     const LoginFormik = useFormik({
         initialValues: loginVal,
         validationSchema: LoginSchema,
-        onSubmit: (values, action) => {
-
-            axios.post(`${Api}/auth/login`, {
-                email: values.email,
-                password: values.password,
-            })
-                .then((value) => {
-                    console.log("LoginRes", value.data);
-                    if (value) {
-                        alert("Login SuccessFully");
-                        // navigate("/myprofile")
-                    }
-                    setShowLogin(false)
-                    localStorage.setItem("Login", JSON.stringify(value.data.result))
-                    window.location.reload()
-                }).catch((error) => {
-                    alert(error)
-                })
-            action.resetForm()
-        }
-    })
+        onSubmit: async (values, action) => {
+          try {
+            const response = await axios.post(`${Api}/auth/login`, {
+              email: values.email,
+              password: values.password,
+            });
+      
+            console.log("LoginRes", response.data);
+      
+            if (response?.data?.result) {
+              alert("Login Successful");
+              localStorage.setItem("Login", JSON.stringify(response.data.result));
+      
+              setShowLogin(false);
+              window.location.reload();
+            } else {
+              alert("Unexpected login response. Please try again.");
+            }
+      
+            action.resetForm(); 
+          } catch (error) {
+            console.error("Error during login:", error);
+      
+            alert(
+              error.response?.data?.message ||
+              "Failed to login. Please check your credentials and try again."
+            );
+          }
+        },
+      });
+      
 
 
     // forgot password Model
@@ -180,23 +190,29 @@ function Header() {
     const ForgetPassFormik = useFormik({
         initialValues: ForgetPassVal,
         validationSchema: ForgetPassSchema,
-        onSubmit: (values, action) => {
-
-            axios.post(`${Api}/password/email`, {
-                email: values.email,
-            })
-                .then((value) => {
-                    console.log("ForgetRes", value.data);
-                    handleForPassClose()
-                    handleOTPShow()
-                }).catch((error) => {
-                    alert(error)
-                })
-
-            action.resetForm()
-        }
-    })
-
+        onSubmit: async (values, action) => {
+          try {
+            const response = await axios.post(`${Api}/password/email`, {
+              email: values.email,
+            });
+      
+            console.log("ForgetRes", response.data);
+      
+            alert("A reset password email has been sent to your email address.");
+            handleForPassClose(); 
+            handleOTPShow(); 
+            
+            action.resetForm();
+          } catch (error) {
+            console.error("Error during forgot password request:", error);
+            alert(
+              error.response?.data?.message ||
+              "Failed to send reset password email. Please try again."
+            );
+          }
+        },
+      });
+      
 
 
     // Verify Otp Model
@@ -216,24 +232,31 @@ function Header() {
 
     const OtpFormik = useFormik({
         initialValues: OtpVal,
-        onSubmit: (values, action) => {
-
-            axios.post(`${Api}/password/otp`, {
-                otp: parseInt(values.otp1 + values.otp2 + values.otp3 + values.otp4),
-
-            }).then((value) => {
-                console.log("OtpRes", value.data);
-                handleOTPClose()
-                handleResetPassShow()
-                setStoreOtp(parseInt(values.otp1 + values.otp2 + values.otp3 + values.otp4))
-
-            }).catch((error) => {
-                alert(error)
-            })
-
-            action.resetForm()
-        }
-    })
+        onSubmit: async (values, action) => {
+          try {
+            const otpValue = parseInt(values.otp1 + values.otp2 + values.otp3 + values.otp4);
+      
+            const response = await axios.post(`${Api}/password/otp`, {
+              otp: otpValue,
+            });
+      
+            console.log("OtpRes", response.data);
+            handleOTPClose(); 
+            handleResetPassShow(); 
+            setStoreOtp(otpValue);
+            action.resetForm();
+            
+          } catch (error) {
+            console.error("Error during OTP verification:", error);
+      
+            alert(
+              error.response?.data?.message ||
+              "Failed to verify OTP. Please check the OTP and try again."
+            );
+          }
+        },
+    });
+      
 
     const otp1Ref = useRef(null);
     const otp2Ref = useRef(null);
@@ -299,6 +322,7 @@ function Header() {
         })
             .then((value) => {
                 console.log("Res", value);
+                setShowRegister(false)
             }).catch((error) => {
                 alert(error)
             })

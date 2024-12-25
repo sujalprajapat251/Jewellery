@@ -3,6 +3,7 @@ import noteContext from './noteContext'
 import axios from 'axios';
 import { ChangePass, EditProfileSchema, NewAddSchema } from '../schemas';
 import { useFormik } from 'formik';
+import { cache } from 'react';
 
 
 const UseContext = (props) => {
@@ -145,6 +146,8 @@ const UseContext = (props) => {
     fetchWishlist();
   }, [])
 
+
+
   // ************ My Profile **********
   // let store = JSON.parse(localStorage.getItem("Login"))
 
@@ -152,17 +155,28 @@ const UseContext = (props) => {
   const [editToggle, setEditToggle] = useState(false)
 
   useEffect(() => {
-    axios.get(`${Api}/user/get/${store?.id}`, {
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`
+
+    const myProfileData = async (retryCount = 0) => {
+      try {
+        const response = await axios.get(`${Api}/user/get/${store?.id}`, {
+          headers: {
+            Authorization: `Bearer ${store?.access_token}`,
+          },
+        });
+        setProfileData(response?.data?.user);
+      } catch (error) {
+        if (error?.response?.status === 429 && retryCount < 5) {
+          // Retry logic with exponential backoff
+          const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+          console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+          setTimeout(() => myProfileData(retryCount + 1), retryAfter);
+        } else {
+          console.error("Failed to fetch profile data:", error.message);
+        }
       }
-    })
-      .then((value) => {
-        // console.log(value?.data);
-        setProfileData(value?.data?.user)
-      }).catch((error) => {
-        alert(error)
-      })
+    } 
+
+    myProfileData()
 
   }, [editToggle])
 
@@ -238,37 +252,37 @@ const UseContext = (props) => {
   const AddFormik = useFormik({
     initialValues: newAddVal,
     validationSchema: NewAddSchema,
-    onSubmit: (values, action) => {
-      axios.post(`${Api}/deliveryAddress/create`, {
-        customer_id: store?.id,
-        address: values.address,
-        status: 'active',
-        state: values.state,
-        city: values.city,
-        pincode: values.pincode,
-        contact_name: values.name,
-        contact_no: values.phone,
-        type: addType,
-
-      },
-        {
-          headers: {
-            Authorization: `Bearer ${store?.access_token}`,
+    onSubmit: async (values, action) => {
+      try {
+        const response = await axios.post(`${Api}/deliveryAddress/create`,
+          {
+            customer_id: store?.id,
+            address: values.address,
+            status: 'active',
+            state: values.state,
+            city: values.city,
+            pincode: values.pincode,
+            contact_name: values.name,
+            contact_no: values.phone,
+            type: addType,
           },
-        }
-      )
-        .then((value) => {
-          console.log("NewAdd", value);
-          setNewAddModal(false)
-          setAddMainNewAdd(true)
-        })
-        .catch((error) => {
-          console.error("Error submitting address:", error);
-          alert("Failed to submit address.");
-        });
-      action.resetForm()
-    }
-  })
+          {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`,
+            },
+          }
+        );
+         console.log("NewAdd", response);
+         setNewAddModal(false);
+         setAddMainNewAdd(true);
+         action.resetForm();
+      } catch (error) {
+        console.error("Error submitting address:", error);
+        alert("Failed to submit address. Please try again.");
+      }
+    },
+  });
+  
 
   const handleAddType = (type) => {
     setAddType(type)
@@ -278,19 +292,33 @@ const UseContext = (props) => {
   const [deleteUseEffect, setdeleteUseEffect] = useState(0)
 
   useEffect(() => {
-    axios.get(`${Api}/deliveryAddress/getall`, {
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`
-      }
 
-    }).then((value) => {
-      setMyAddData(value?.data?.deliveryAddress)
-    })
+  const addressMyData = async(retryCount = 0) => {
+      try{
+         const response = await axios.get(`${Api}/deliveryAddress/getall`, {
+                headers: {
+                  Authorization: `Bearer ${store?.access_token}`
+                }
+          })
+         setMyAddData(response?.data?.deliveryAddress)
+      }
+      catch(error){
+          if (error?.response?.status === 429 && retryCount < 5) {
+            // Retry logic with exponential backoff
+            const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+            console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+            setTimeout(() => addressMyData(retryCount + 1), retryAfter);
+          } else {
+            console.error("Failed to fetch profile data:", error.message);
+        }
+      }
+  }
+
+  addressMyData()
 
   }, [addMainNewAdd, singleNewAdd, deleteUseEffect])
 
   const handleMark = (id) => {
-    console.log(id);
     setHello(id);
     localStorage.setItem("default", JSON.stringify(id));
   };
@@ -313,37 +341,41 @@ const UseContext = (props) => {
   const SingleAddFormik = useFormik({
     initialValues: singleAddVal,
     validationSchema: NewAddSchema,
-    onSubmit: (values, action) => {
-      axios.post(`${Api}/deliveryAddress/update/${singleId}`, {
-        customer_id: store?.id,
-        address: values.address,
-        status: 'active',
-        state: values.state,
-        city: values.city,
-        pincode: values.pincode,
-        contact_name: values.name,
-        contact_no: values.phone,
-        type: addType,
-      },
-        {
-          headers: {
-            Authorization: `Bearer ${store?.access_token}`,
+    onSubmit: async (values, action) => {
+      try {
+        const response = await axios.post(`${Api}/deliveryAddress/update/${singleId}`,
+          {
+            customer_id: `${store?.id}`,
+            address: values.address,
+            status: 'active',
+            state: values.state,
+            city: values.city,
+            pincode: `${values.pincode}`,
+            contact_name: values.name,
+            contact_no: `${values.phone}`,
+            type: addType,
           },
-        }
-      )
-        .then((value) => {
-          console.log("UpdateAdd", value);
-          setSingleNewAdd(false)
-          setActiveCard(!null)
-
-        })
-        .catch((error) => {
-          alert(error);
-        });
-
-      action.resetForm()
-    }
-  })
+          {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`,
+            },
+          }
+        );
+        console.log("UpdateAdd", response);
+        setSingleNewAdd(false); 
+        setActiveCard(true); 
+        action.resetForm(); 
+      } catch (error) {
+        console.error("Error Edtitng address:", error);
+  
+        alert(
+          error.response?.data?.message ||
+          "Failed to update address. Please try again."
+        );
+      }
+    },
+  });
+  
 
   const handleSingleNewAdd = (id) => {
     setSingleNewAdd(true)
@@ -360,44 +392,61 @@ const UseContext = (props) => {
     setDeleteId(id)
   }
 
-  const handleDeleteYes = () => {
-    axios.delete(`${Api}/deliveryAddress/delete/${deleteId}`, {
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`
-      }
-    })
-      .then((value) => {
-        console.log("DeleteAdd ", value);
-        setDeleteAdd(false)
-        setdeleteUseEffect(deleteUseEffect + 1)
-        setActiveCard(!null)
-      }).catch((error) => {
-        alert(error)
-      })
-  }
-
+  const handleDeleteYes = async () => {
+    try {
+      const response = await axios.delete(`${Api}/deliveryAddress/delete/${deleteId}`, {
+        headers: {
+          Authorization: `Bearer ${store?.access_token}`,
+        },
+      });
+      console.log("DeleteAdd", response);
+      setDeleteAdd(false); 
+      setdeleteUseEffect(deleteUseEffect + 1); 
+      setActiveCard(true); 
+    } catch (error) {
+      console.error("Error deleting address:", error);
+      alert(
+        error.response?.data?.message ||
+        "Failed to delete the address. Please try again."
+      );
+    }
+  };
+  
 
   // ********** My Order **********
   const [orderMain, setOrderMain] = useState({})
   const [filteredOrders, setFilteredOrders] = useState([]);
 
   useEffect(() => {
-    axios.post(`${Api}/order/getbyuserid`,
-      {
-        customer_id: 1
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${store?.access_token}`
-        }
-      }).then((value) => {
-        // console.log("Order " ,value.data.orders);
-        setOrderMain(value?.data?.orders)
-        setFilteredOrders(value?.data?.orders);
 
-      }).catch((error) => {
-        alert(error)
-      })
+    const myOrderData = async (retryCount = 0) => {      
+       try{
+            const response = await axios.post(`${Api}/order/getbyuserid`,
+               {
+                 customer_id: 1
+               },
+               {
+                 headers: {
+                   Authorization: `Bearer ${store?.access_token}`
+                 }
+            })            
+            setOrderMain(response?.data?.orders)
+            setFilteredOrders(response?.data?.orders);
+          }
+          catch(error){
+             if (error?.response?.status === 429 && retryCount < 5) {
+               // Retry logic with exponential backoff
+               const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+               console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+               setTimeout(() => myOrderData(retryCount + 1), retryAfter);
+             } else {
+               console.error("Failed to fetch profile data:", error.message);
+             }
+          }
+    }
+
+    myOrderData()
+    
   }, [])
 
 
@@ -413,30 +462,38 @@ const UseContext = (props) => {
   const ChangePassFormik = useFormik({
     initialValues: changePassVal,
     validationSchema: ChangePass,
-    onSubmit: (values, action) => {
-      console.log(values);
-      axios.post(`${Api}/password/change`, {
-        current_password: values.Old_Pass,
-        new_password: values.New_Pass,
-        confirm_password: values.Con_Pass
-
-      },
-        {
-          headers: {
-            Authorization: `Bearer ${store?.access_token}`,
+    onSubmit: async (values, action) => {
+      try {
+  
+        const response = await axios.post(`${Api}/password/change`,
+          {
+            current_password: values.Old_Pass,
+            new_password: values.New_Pass,
+            confirm_password: values.Con_Pass,
           },
-        }
-      ).then((value) => {
-        console.log("Change Pass ", value);
-        setChangePassToggle(false)
-      }).catch((error) => {
-        alert(error)
-      })
+          {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`,
+            },
+          }
+        );
+  
+        console.log("Change Password Response:", response);
+        setChangePassToggle(false); 
+        alert("Password changed successfully.");
+        
+        action.resetForm(); 
+      } catch (error) {
+        console.error("Error changing password:", error);
 
-      action.resetForm()
-    }
-  })
-
+        alert(
+          error.response?.data?.message ||
+          "Failed to change the password. Please try again."
+        );
+      }
+    },
+  });
+  
 
   // *************** Track Order Page ************
   const [trackFilter, seTrackFilter] = useState("")
@@ -448,8 +505,6 @@ const UseContext = (props) => {
   }
 
 
-
-
   // ************ Faq **********
 
   const [mainFaq, setMainFaq] = useState([])
@@ -457,30 +512,57 @@ const UseContext = (props) => {
 
   useEffect(() => {
 
-    axios.get(`${Api}/faqs/getall`, {
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`
-      }
-    }).then((value) => {
-      // console.log("Faq " , value.data.faqs);
-      setMainFaq(value?.data?.faqs)
-    })
+    const faqData = async (retryCount = 0) => {
+       try{
+         const response = await axios.get(`${Api}/faqs/getall`, {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`
+            }
+          })
+           setMainFaq(response?.data?.faqs)
+        }
+        catch(error){
+          if (error?.response?.status === 429 && retryCount < 5) {
+            // Retry logic with exponential backoff
+            const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+            console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+            setTimeout(() => faqData(retryCount + 1), retryAfter);
+          } else {
+            console.error("Failed to fetch profile data:", error.message);
+        }
+        }
+    }
+
+    faqData ()
 
   }, [])
 
   useEffect(() => {
 
-    axios.get(`${Api}/subfaqs/getall`, {
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`
-      }
-    }).then((value) => {
-      // console.log("SubFaq " , value.data.subfaqs);
-      setSubFaq(value?.data?.subfaqs)
-    })
+    const subFaqData = async (retryCount = 0) => {
+       try {
+          const response = await axios.get(`${Api}/subfaqs/getall`, {
+             headers: {
+               Authorization: `Bearer ${store?.access_token}`
+             }
+          })
+          setSubFaq(response?.data?.subfaqs)
+       }
+       catch (error){
+          if (error?.response?.status === 429 && retryCount < 5) {
+            // Retry logic with exponential backoff
+            const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+            console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+            setTimeout(() => subFaqData(retryCount + 1), retryAfter);
+          } else {
+            console.error("Failed to fetch profile data:", error.message);
+          }
+       }
+    }
+
+    subFaqData()
 
   }, [])
-
 
 
   // ************** Return Order *********
@@ -492,9 +574,7 @@ const UseContext = (props) => {
     localStorage.setItem("ReturnOrderKey", JSON.stringify(customer))
   };
 
-  // useEffect(()=>{
 
-  // },[])
 
   return (
     <noteContext.Provider value={{

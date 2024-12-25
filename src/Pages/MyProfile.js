@@ -53,20 +53,23 @@ const MyProfile = () => {
 
     const toggleDropdown = (index) => {
       setActiveCard(activeCard === index ? null : index);
-      console.log(activeCard);
     };
 
     const handleFilter = (data) => {
        setActiveBtn(data);
      
-       if (data === "All") {
-         setFilteredOrders(orderMain); // Reset to all orders
-       } else {
-         const filterData = orderMain.filter((element)=>{
-           return element?.order_status === data
-         })  
-         setFilteredOrders(filterData);
+       if(Array.isArray(filteredOrders)){
+          if (data === "All") {
+            setFilteredOrders(orderMain); 
+          } else {
+            const filterData = orderMain?.filter((element)=>{
+              return element?.order_status === data
+            })  
+            
+            setFilteredOrders(filterData);
+          }
        }
+       
     };
 
     // const dropdownRef = useRef(null);
@@ -390,16 +393,8 @@ useEffect(() => {
                                <div className='ds_add-box mt-4'>
                                   <div className='mb-4'>
                                      <div className="row">
-                                     {/* {myAddData.map((item, index) => (
-                                         
-                                          ))} */}
-
                                      { myAddData?.map((item , index)=>{
-                                        console.log("item " , item);
-                                        
                                          const isDefault = hello === item?.id;
-                                        //  console.log("hello" ,isDefault);
-                                         
                                         return(
                                           <div key={item.id} className="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mt-4">
                                            <div id='ds_default' className="ds_chan-box position-relative"  style={{border: isDefault ? '0.75px solid #000000' : '0.75px solid #00000033'}}>
@@ -433,16 +428,14 @@ useEffect(() => {
                                {/* ---------------- Add New Address Popup ------------------ */}
                                   <section>
                                           <div>
-                                           <Modal className="modal fade" show={newAddModal} centered onHide={()=> setNewAddModal(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                             <div className="modal-dialog ds_add-modal modal-dialog-centered m-0">
-                                               <div className="modal-content border-0" style={{borderRadius:'0'}}>
-                                                 <div className="modal-header border-0 pb-0">
-                                                   <button type="button" className="btn-close" onClick={()=> setNewAddModal(false)}></button>
-                                                 </div>
+                                           <Modal className="modal fade" show={newAddModal} centered onHide={()=> setNewAddModal(false)} id="addressModal" >
+                                           <Modal.Header className='border-0 pb-0' closeButton>
+                                               </Modal.Header>
+                                               <Modal.Body className='px-4 pt-0'>
                                                  <div className="modal-body pt-0 px-4">
                                                     <h4 className="modal-title text-center ds_color" >Add New Address</h4>
                                                     <form onSubmit={AddFormik.handleSubmit}>
-                                                      <h6 className='ds_color mt-3'>Area Details</h6>
+                                                      <h6 className='ds_color mt-3 mb-0'>Area Details</h6>
                                                        <div className="row">
                                                           <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                                                               <div>
@@ -520,8 +513,7 @@ useEffect(() => {
                                                       </div>
                                                     </form>
                                                  </div>
-                                               </div>
-                                             </div>
+                                               </Modal.Body>
                                            </Modal>
                                           </div>
                                   </section>
@@ -530,13 +522,10 @@ useEffect(() => {
                                  {/* ---------------- Add New Single Address Popup ------------------ */}
                                  <section>
                                           <div>
-                                           <Modal className="modal fade" centered show={singleNewAdd} onHide={()=> setSingleNewAdd(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                             <div className="modal-dialog ds_add-modal modal-dialog-centered m-0">
-                                               <div className="modal-content border-0" style={{borderRadius:'0'}}>
-                                                 <div className="modal-header border-0 pb-0">
-                                                   <button type="button" className="btn-close" onClick={()=> setSingleNewAdd(false)}></button>
-                                                 </div>
-                                                 <div className="modal-body pt-0 px-4">
+                                           <Modal className="modal fade" centered show={singleNewAdd} onHide={()=> setSingleNewAdd(false)} id="addressModal" >
+                                               <Modal.Header className='border-0 pb-0' closeButton>
+                                               </Modal.Header>
+                                               <Modal.Body className='px-4 pt-0'>
                                                     <h4 className="modal-title text-center ds_color" >Add New Address</h4>
                                                     <form onSubmit={SingleAddFormik.handleSubmit}>
                                                       <h6 className='ds_color mt-3'>Area Details</h6>
@@ -616,9 +605,7 @@ useEffect(() => {
                                                         </div>
                                                       </div>
                                                     </form>
-                                                 </div>
-                                               </div>
-                                             </div>
+                                               </Modal.Body>
                                             </Modal>
                                           </div>
                                 </section> 
@@ -824,7 +811,7 @@ useEffect(() => {
                                    
                                   {/* ----------------------- Empty Card ------------------- */}
                                    {
-                                     filteredOrders.length === 0 && 
+                                     filteredOrders?.length === 0 && 
                                                 <div className='ds_no-order-bg'>
                                                   <div className='d-flex justify-content-center align-items-center h-100'>
                                                      <div className='text-center'>
@@ -845,11 +832,9 @@ useEffect(() => {
                                   <div>
                                     <div className=' px-4 pb-4'>
                                       <div className="row">
-                                           {filteredOrders?.map((element , index)=>{ 
-                                                  console.log("element " ,element);
-
+                                           { filteredOrders && filteredOrders?.map((element , index)=>{ 
                                              return(
-                                              <div className="col-xl-12 mt-4" key={index}>
+                                              <div className="col-xl-12 mt-4" key={element?.id}>
                                                <div className="ds_order-inner">
                                                 <div className="d-flex flex-wrap ds_order-flex align-items-center">
                                                   <div className="d-flex flex-wrap px-3 pt-2">

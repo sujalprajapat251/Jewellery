@@ -3,12 +3,16 @@ import '../Css/dhruvin/OrderDetails.css'
 import { RiArrowDropDownLine } from 'react-icons/ri'
 import axios from 'axios'
 import noteContext from '../Context/noteContext'
+import { useNavigate } from 'react-router-dom'
 
 const OrderDetails = () => {
 
   const {Api , store} = useContext(noteContext)
+  const mydata = JSON.parse(localStorage.getItem("OrderDetails"))
   const Id = JSON.parse(localStorage.getItem("orderId"))
-  const [orderDeta, setOrderDeta] = useState([])
+  const navigate = useNavigate()
+  const [orderData, setOrderData] = useState({})
+  const [orderItem, setOrderItem] = useState([])
 
   useEffect(()=>{
      axios.get(`${Api}/order/get/${Id}`,{
@@ -16,11 +20,17 @@ const OrderDetails = () => {
          Authorization: `Bearer ${store?.access_token}`
        }
      }).then((value)=>{
-       console.log(value);
+        console.log(value?.data);
+        setOrderData(value?.data?.order)
+        setOrderItem(value?.data?.order?.order_items)
      }).catch((error)=>{
-        alert(error)
+        alert("orderDetails" ,error)
      })
   },[])
+
+  const handleView = () => {
+     navigate("/invoice")
+  }
 
   return (
     <div>
@@ -45,12 +55,12 @@ const OrderDetails = () => {
                         <div className="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-12 mt-3">
                           <div>
                             <div className="d-flex ">
-                              <p className="ds_con-bill-txt ">Order ID:</p>
-                              <p className="ds_con-bill-deta text-dark ds_600 text-start" >#123456</p>
+                              <p className="ds_con-bill-txt ">Order ID:  </p>
+                              <p className="ds_con-bill-deta text-dark ds_600 text-start" >#{orderData?.order_number}</p>
                             </div>
                             <div className="d-flex ">
                               <p className="ds_con-bill-txt">Order Date:</p>
-                              <p className="ds_con-bill-deta text-dark ds_600" >21/09/2024</p>
+                              <p className="ds_con-bill-deta text-dark ds_600" >{orderData?.order_date}</p>
                             </div>
                             <div className="d-flex ">
                               <p className="ds_con-bill-txt">Payment Method:</p>
@@ -74,19 +84,18 @@ const OrderDetails = () => {
                         <div className="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12  mt-3">
                           <div>
                             <p className="ds_con-bill-txt">Billing Address</p>
-                            <p className="ds_con-font text-dark ds_600 " >Jhon Wick</p>
-                            <p className="ds_con-font text-dark ds_600">Ehrenkranz 13 Washington Square S, New York,Washington Square, NY 10012, USA</p>
-                            <p className="ds_con-font text-dark ds_600">+1 565 5656 565</p>
+                            <p className="ds_con-font text-dark ds_600 " > {orderData?.contact_name} </p>
+                            <p className="ds_con-font text-dark ds_600">{orderData?.delivery_address}</p>
+                            <p className="ds_con-font text-dark ds_600">+91 {orderData?.contact_no}</p>
                           </div>
                         </div>
 
                         <div className="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12  mt-3 mb-3">
                           <div>
-                            <p className="ds_con-bill-txt">Shipping Address</p>
-                            <p className="ds_con-font text-dark ds_600 " >Jhon Wick</p>
-                            <p className="ds_con-font text-dark ds_600">Ehrenkranz 13 Washington Square S, New York,Washington Square, NY 10012, USA</p>
-                            <p className="ds_con-font text-dark ds_600">+1 565 5656 565</p>
-                            <button className=" ds_con-btn" >View Invoice</button>
+                            <p className="ds_con-font text-dark ds_600 " > {orderData?.contact_name} </p>
+                            <p className="ds_con-font text-dark ds_600">{orderData?.delivery_address}</p>
+                            <p className="ds_con-font text-dark ds_600">+91 {orderData?.contact_no}</p>
+                            <button className=" ds_con-btn" onClick={handleView} >View Invoice</button>
                           </div>
                         </div>
                       </div>
@@ -97,7 +106,31 @@ const OrderDetails = () => {
 
               <div className="col-xl-4 col-lg-4 mt-lg-0 mt-4">
                 <div className="ds_con-buy">
-                  <div className="d-flex justify-content-between px-3">
+                  {orderItem?.map((element)=>{
+                    return (
+                         <div className="d-flex justify-content-between px-3">
+                            <div>
+                              <div className="d-flex">
+                                <div>
+                                  <img src={element?.image[0]} alt="" className='ds_con-img' />
+                                </div>
+                                <div className="ms-2">
+                                  <p className="ds_600 mb-0 ds_con-trade ds_lh">{element?.product_name}</p>
+                                   <div className='d-flex'>
+                                     <p className="ds_qantity me-3 mb-1" style={{ color: '#6A6A6ABF' }}>Qty : <span className="ds_600 text-dark">{element?.qty}</span></p>
+                                     <p className="ds_qantity mb-0" style={{ color: '#6A6A6ABF' }}>Size : <span className="ds_600 text-dark">{element?.size}</span></p>
+                                   </div>
+                                   <p className="ds_qantity" style={{ color: '#6A6A6ABF' }}>Metal :  <span className="ds_600 text-dark">{element?.metal}</span></p>
+                                </div>
+                              </div>
+                            </div>
+                            <p className="ds_con-price ds_600">₹ {Math.floor(element?.total_price * element?.qty)}</p>
+                        </div>
+                    )
+                  })}
+                  
+
+                  {/* <div className="d-flex justify-content-between mt-3 px-3">
                     <div>
                       <div className="d-flex">
                         <div>
@@ -133,32 +166,14 @@ const OrderDetails = () => {
                       </div>
                     </div>
                     <p className="ds_con-price ds_600">₹1200</p>
-                  </div>
+                  </div> */}
 
-                  <div className="d-flex justify-content-between mt-3 px-3">
-                    <div>
-                      <div className="d-flex">
-                        <div>
-                          <img src={require("../Img/dhruvin/hello.png")} alt="" />
-                        </div>
-                        <div className="ms-2">
-                          <p className="ds_600 mb-0 ds_con-trade ds_lh">Dual Tone Halo Diamond Finger Ring</p>
-                           <div className='d-flex'>
-                             <p className="ds_qantity me-3 mb-1" style={{ color: '#6A6A6ABF' }}>Qty : <span className="ds_600 text-dark">01</span></p>
-                             <p className="ds_qantity mb-0" style={{ color: '#6A6A6ABF' }}>Size : <span className="ds_600 text-dark">5</span></p>
-                           </div>
-                           <p className="ds_qantity" style={{ color: '#6A6A6ABF' }}>Metal :  <span className="ds_600 text-dark">925 Silver</span></p>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="ds_con-price ds_600">₹1200</p>
-                  </div>
                   <div className="ds_con-line mt-3"></div>
 
                   <div>
                     <div className="d-flex px-3 mt-3 justify-content-between">
                       <h6 className="ds_con-total">Sub Total</h6>
-                      <h6 className="ds_con-total-price text-dark ds_600">₹1200</h6>
+                      <h6 className="ds_con-total-price text-dark ds_600">₹{mydata?.sub_total}</h6>
                     </div>
                     <div className="d-flex px-3 mt-3 justify-content-between">
                       <h6 className="ds_con-total">Delivery Charge</h6>
@@ -169,7 +184,7 @@ const OrderDetails = () => {
 
                   <div className="d-flex justify-content-between px-3 mt-3">
                     <h4 className="ds_con-amount">Total Amount</h4>
-                    <h4 className="ds_con-amount">₹1200</h4>
+                    <h4 className="ds_con-amount">₹{mydata?.total}</h4>
                   </div>
                 </div>
               </div>

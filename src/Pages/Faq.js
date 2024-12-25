@@ -17,8 +17,8 @@ const Faq = () => {
 
 
     useEffect(()=>{
-       let filter = subFaq.filter((element)=> {
-           return element.faq_name === "Registration1"
+       let filter = subFaq?.filter((element)=> {
+           return element?.faq_name === "Registration1"
            })
        setData(filter);   
     },[subFaq])
