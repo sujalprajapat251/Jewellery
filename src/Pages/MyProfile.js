@@ -526,7 +526,7 @@ useEffect(() => {
                                                <Modal.Header className='border-0 pb-0' closeButton>
                                                </Modal.Header>
                                                <Modal.Body className='px-4 pt-0'>
-                                                    <h4 className="modal-title text-center ds_color" >Add New Address</h4>
+                                                    <h4 className="modal-title text-center ds_color" >edit Address</h4>
                                                     <form onSubmit={SingleAddFormik.handleSubmit}>
                                                       <h6 className='ds_color mt-3'>Area Details</h6>
                                                       <div className="row">
@@ -827,7 +827,6 @@ useEffect(() => {
                                                   </div>
                                              </div>
                                    }
-
                                   {/* ----------------------- My Order ------------------- */}
                                   <div>
                                     <div className=' px-4 pb-4'>
@@ -869,7 +868,6 @@ useEffect(() => {
                                                 </div>
                                                 <div className="ds_order-line mt-2"></div>
                                                 {element?.order_items?.map((item)=>{
-                                                  
                                                    return (
                                                          <div className="px-3 my-4" key={item?.id} style={{borderBottom:'1px solid #dcdedc'}}>
                                                           <div className="d-flex justify-content-between flex-wrap">

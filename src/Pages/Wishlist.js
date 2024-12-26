@@ -8,18 +8,19 @@ function Wishlist() {
     // backend conection code ----------------------------------------------------------------
 
     // useContext
-    const { wishlistData, removeWishlistHandler, allProduct } = useContext(noteContext);
+    const { wishlistData, findWishlistID, allProduct } = useContext(noteContext);
 
 
     // fliter wishlistData from product data
     const [wishlistproducts, setWishlistData] = useState([]);
     useEffect(() => {
-        const productData = wishlistData.filter((wishlistItem) =>
-            allProduct.some((product) => product.id === wishlistItem.product_id)
+        const productData = allProduct.filter((wishlistItem) =>
+            wishlistData.some((product) => product.product_id === wishlistItem.id)
         );
+        console.log('data',productData);
         setWishlistData(productData);
     }, [wishlistData, allProduct]);
-
+    // console.log('hellloo',wishlistproducts);
      // backend conection code over ----------------------------------------------------------------
     return (
         <>
@@ -40,29 +41,36 @@ function Wishlist() {
                     <Row xxl={5} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                         {
                             wishlistproducts.map((ele, id) => {
+                                const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
+                                let discountPrice = [];
+                                if (!isNaN(parseFloat(discounted))) {
+                                    discountPrice = (parseFloat(ele.total_price) + parseFloat(discounted)).toFixed(2);
+                                } else {
+                                    discountPrice = ele.total_price;
+                                }
                                 return (
                                     <Col key={id} className='py-4'>
                                         <div className='s_seller_card'>
                                             <div className='s_card_img'>
-                                                <img src={ele?.images || ele?.product_image[0]} className="w-100" alt={ele.title} key={ele.title} />
+                                                <img src={ele?.images[0] || ele?.product_image[0]} className="w-100" alt={ele.title} key={ele.title} />
                                             </div>
-                                            <div className='s_heart_icon s_heart_icons filled' onClick={() => { removeWishlistHandler(ele.id) }}>
+                                            <div className='s_heart_icon s_heart_icons filled' onClick={() => { findWishlistID(ele.id) }}>
                                                 <GoHeartFill />
                                             </div>
                                             {ele.status ?
                                                 <div className='s_card_status'><p className='mb-0'>{ele.status}</p></div>
                                                 : ''}
                                             <div  className='s_card_text'>
-                                                <Link to={`/productdetail/${ele.product_id}`}>
+                                                <Link to={`/productdetail/${ele.product_id || ele.id}`}>
                                                     <h5>{ele.product_name}</h5>
                                                     <p className='mb-0' key={'p' + id}>
-                                                        <span className='mx-2' key={'price' + id}>₹{ele?.total_price || ele?.product_price}</span>
-                                                        <strike className="mx-2" key={id}>₹{ele?.discount || 0.00}</strike>
+                                                        <span className='mx-2' key={'price' + id}>₹{discountPrice}</span>
+                                                        <strike className="mx-2" key={id}>₹{ele.total_price}</strike>
                                                     </p>
                                                     <div className='s_rating'>
                                                         {
                                                             [...Array(5)].map((_, index) => {
-                                                                if (index < ele.rating) {
+                                                                if (index < ele.total_rating) {
                                                                     return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
                                                                 } else {
                                                                     return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;

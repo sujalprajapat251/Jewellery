@@ -35,10 +35,7 @@ const Layout = () => {
           <Footer />
         </div> :
         <Loader></Loader>
-
       }
-
-
     </>
   )
 }

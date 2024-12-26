@@ -13,7 +13,7 @@ import axios from 'axios';
 function ProductDetail() {
     const { id } = useParams();
     const user = JSON.parse(localStorage.getItem("Login"));
-    console.log('user', user.id);
+    console.log('user', user?.id);
     let [inStock, setInStock] = useState(true);
 
     // backend connnectivity code ---------------------------------------------------------------
@@ -124,7 +124,7 @@ function ProductDetail() {
         if (addToCard) {
             await axios.post(`${Api}/cart/create`,
                 {
-                    customer_id: user.id,
+                    customer_id: user?.id,
                     product_id: product?.id,
                     quantity: 1,
                     unit_price: product?.total_price,
@@ -228,13 +228,13 @@ function ProductDetail() {
             } else if (window.innerWidth > 991) {
                 setItemsToShow(4);
             }
-            else if(window.innerWidth > 767){
+            else if (window.innerWidth > 767) {
                 setItemsToShow(3);
             } else if (window.innerWidth > 556) {
                 setItemsToShow(4);
             } else if (window.innerWidth > 375) {
                 setItemsToShow(4);
-            }else {
+            } else {
                 setItemsToShow(3);
             }
         };
@@ -275,7 +275,7 @@ function ProductDetail() {
                                             onMouseLeave={handleStopclick}>
                                             <video ref={videoRef}
                                                 controls={controlsVisible} muted>
-                                                <source src={video} type="video/mp4" />
+                                                <source src={media} type="video/mp4" />
                                                 Your browser does not support the video tag.
                                             </video>
                                             {!controlsVisible && (
@@ -305,10 +305,10 @@ function ProductDetail() {
                                                         <div className='s_product_video'
                                                             onMouseLeave={handleStopclick}
                                                             style={{ width: '100px', height: '100px' }}>
-                                                            <video ref={videoRef}
+                                                            <video 
                                                                 className=''
-                                                                controls={controlsVisible} muted>
-                                                                <source src={video} type="video/mp4" />
+                                                                 muted>
+                                                                <source src={item} type="video/mp4" />
                                                                 Your browser does not support the video tag.
                                                             </video>
                                                             <img
@@ -346,9 +346,9 @@ function ProductDetail() {
                                                     {isVideo ?
                                                         <div className='s_product_video w-100'
                                                             onMouseLeave={handleStopclick}>
-                                                            <video ref={videoRef}
+                                                            <video
                                                                 className=''
-                                                                controls={controlsVisible} muted>
+                                                                 muted>
                                                                 <source src={video} type="video/mp4" />
                                                                 Your browser does not support the video tag.
                                                             </video>
@@ -588,7 +588,7 @@ function ProductDetail() {
                                     <td>{product?.price ? `₹ ${((product?.price) / (product?.weight)).toFixed(2)}/g` : '-'}</td>
                                     <td>{product?.weight ? `${product?.weight}g` : '-'}</td>
                                     <td>-</td>
-                                    <td>₹{metal_total}</td>
+                                    <td>₹ {metal_total}</td>
                                 </tr>
                                 <tr>
                                     <td>Stone</td>
@@ -763,7 +763,12 @@ function ProductDetail() {
                             {
                                 peopleAlsoSearch.slice(0, itemsToShow).map((ele, id) => {
                                     const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
-                                    const discountPrice = (parseFloat(ele.total_price) - parseFloat(discounted)).toFixed(2);
+                                    let discountPrice = [];
+                                    if (!isNaN(parseFloat(discounted))) {
+                                        discountPrice = (parseFloat(ele.total_price) + parseFloat(discounted)).toFixed(2);
+                                    } else {
+                                        discountPrice = ele.total_price;
+                                    }
                                     return (
                                         <Col key={id} className='py-4'>
                                             <div className='s_seller_card'>
