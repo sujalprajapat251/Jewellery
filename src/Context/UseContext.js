@@ -21,71 +21,86 @@ const UseContext = (props) => {
 
 
   const token = store?.access_token;
-
-  const fetchCategory = () => {
+  const fetchCategory = async (retryCount = 0) => {
     // fetch catgory
-    axios.get(`${Api}/categories/getallactive`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        setAllCatgegory(response?.data?.categories);
-        // console.log(response.data.categories);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
+    try {
+      const response = await axios.get(`${Api}/categories/getallactive`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+      setAllCatgegory(response?.data?.categories);
+    } catch (error) {
+      if (error?.response?.status === 429 && retryCount < 5) {
+        // Retry logic with exponential backoff
+        const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+        console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+        setTimeout(() => fetchCategory(retryCount + 1), retryAfter);
+      } else {
+        console.error("Failed to fetch  data:", error.message);
+      }
+    }
+  }
+  const fetchSubCategory = async (retryCount = 0) => {
+    // fetch catgory
+    try {
+      const response = await axios.get(`${Api}/subcategories/getallactive`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setAllSubCategory(response?.data?.subCategories);
+    } catch (error) {
+      if (error?.response?.status === 429 && retryCount < 5) {
+        // Retry logic with exponential backoff
+        const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+        console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+        setTimeout(() => fetchSubCategory(retryCount + 1), retryAfter);
+      } else {
+        console.error("Failed to fetch data:", error.message);
+      }
+    }
   }
 
-  const fetchSubCategory = () => {
-    // fetch sub catgeory data
-    axios.get(`${Api}/subcategories/getallactive`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        setAllSubCategory(response.data.subCategories);
-        // console.log(response.data.subCategories);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
+  const fetchProduct = async (retryCount = 0) => {
+    // fetch catgory
+    try {
+      const response = await axios.get(`${Api}/products/getallactive`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-  }
+      setAllProduct(response?.data?.data);
+    } catch (error) {
+      if (error?.response?.status === 429 && retryCount < 5) {
+        // Retry logic with exponential backoff
+        const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+        console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+        setTimeout(() => fetchProduct(retryCount + 1), retryAfter);
+      } else {
+        console.error("Failed to fetch data:", error.message);
+      }
+    }
+  } 
 
-  const fetchProduct = ()=>{
-
-    // fetch product data
-    axios.get(`${Api}/products/getallactive`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        setAllProduct(response.data.data);
-        // console.log(response.data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }
 
   useEffect(() => {
     fetchCategory();
     fetchSubCategory();
     fetchProduct();
+    // eslint-disable-next-line
   }, [Api]);
 
   // getting best selling products
   useEffect(() => {
-      const sortedFlitter = [...allProduct]
-        .sort((a, b) => b.total_rating - a.total_rating);
-      setBestseller(sortedFlitter.slice(0,12));
-  }, [allProduct]); 
+    const sortedFlitter = [...allProduct]
+      .sort((a, b) => b.total_rating - a.total_rating);
+    setBestseller(sortedFlitter.slice(0, 12));
+  }, [allProduct]);
 
 
   // add to wishlist handlerrs {} 
+
   const [wishlistID, setWishlistID] = useState([]);
   const addwishlistHandler = async (id) => {
     console.log("wishId", wishlistID);
@@ -128,7 +143,7 @@ const UseContext = (props) => {
       });
       if (response.data.data.length >= 0) {
         const filteredData = response.data.data.filter(
-          (item) => item.customer_id == store?.id
+          (item) => item.customer_id === store?.id
         );
         // alert(response.data);
         console.warn('hey', response.data);
@@ -144,6 +159,7 @@ const UseContext = (props) => {
   };
   useEffect(() => {
     fetchWishlist();
+    // eslint-disable-next-line
   }, [])
 
 
@@ -578,7 +594,7 @@ const UseContext = (props) => {
 
   return (
     <noteContext.Provider value={{
-      allCategory, allProduct, allSubCategory, token, wishlistData, addwishlistHandler, removeWishlistHandler, wishlistID, findWishlistID,bestseller,
+      allCategory, allProduct, allSubCategory, token, wishlistData, addwishlistHandler, removeWishlistHandler, wishlistID, findWishlistID, bestseller,
 
       Api
       // ******* My Profile *******

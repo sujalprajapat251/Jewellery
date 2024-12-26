@@ -99,11 +99,30 @@ function Header() {
     const [menSilver, setMenSilver] = useState([]);
     useEffect(() => {
         // filter product by category
-        const goldProducts = allProduct.filter((ele) => ele.category_name === "Gold" && ele.gender === 'male');
-        setMenGold(goldProducts);
+        //   for gold
+        const goldProducts = allProduct.filter(
+            (ele) => ele.category_name === "Gold" && ele.gender === "male"
+          );
+          
+          
+          const uniqueGoldProducts = goldProducts.filter(
+            (ele, index, self) =>
+              index === self.findIndex((item) => item.category_name === ele.category_name)
+          );
+          
+          setMenGold(uniqueGoldProducts);
 
-        const silverProducts = allProduct.filter((ele) => ele.category_name === "Silver" && ele.gender === 'male');
-        setMenSilver(silverProducts);
+
+        //   for silver
+          const silverProducts = allProduct.filter(
+            (ele) => ele.category_name === "Silver" && ele.gender === "male"
+          );
+          const uniqueSilverProducts = silverProducts.filter(
+            (ele, index, self) =>
+              index === self.findIndex((item) => item.category_name === ele.category_name)
+          );
+          
+          setMenSilver(uniqueSilverProducts);
     }, [allProduct]);
     // menu catgegory handller over ---------------
 
@@ -599,7 +618,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {allSubCategory.slice(0, 9).map((ele, id) => {
                                                     return (
-                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -638,7 +657,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {goldSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -650,7 +669,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {menGold.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={`/productlist/gold/men/${ele.sub_category_name}`} key={ele.id}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/gold/men/${ele.sub_category_name}`} ><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -687,7 +706,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {silverSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -699,7 +718,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {menSilver.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={`/productlist/silver/men/${ele.sub_category_name}`} key={ele.id}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/silver/men/${ele.sub_category_name}`} ><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -729,7 +748,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {diamondSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -741,7 +760,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {earingSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -753,7 +772,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {ringSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -765,7 +784,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {pendantsSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -795,7 +814,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {platiumSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -863,7 +882,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {watchSubcate.map((ele, id) => {
                                                     return (
-                                                        <p><Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
