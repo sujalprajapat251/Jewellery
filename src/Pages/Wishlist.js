@@ -57,9 +57,6 @@ function Wishlist() {
                                             <div className='s_heart_icon s_heart_icons filled' onClick={() => { findWishlistID(ele.id) }}>
                                                 <GoHeartFill />
                                             </div>
-                                            {ele.status ?
-                                                <div className='s_card_status'><p className='mb-0'>{ele.status}</p></div>
-                                                : ''}
                                             <div  className='s_card_text'>
                                                 <Link to={`/productdetail/${ele.product_id || ele.id}`}>
                                                     <h5>{ele.product_name}</h5>

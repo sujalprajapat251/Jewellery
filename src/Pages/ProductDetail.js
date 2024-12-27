@@ -10,6 +10,7 @@ import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'reac
 import noteContext from '../Context/noteContext';
 
 import axios from 'axios';
+import Login from '../Component/Login';
 function ProductDetail() {
     const { id } = useParams();
     const user = JSON.parse(localStorage.getItem("Login"));
@@ -19,7 +20,7 @@ function ProductDetail() {
     // backend connnectivity code ---------------------------------------------------------------
 
     // useContext
-    const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler } = useContext(noteContext);
+    const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler, store,addToCardhandle } = useContext(noteContext);
 
     // get product detail using Api
     const [product, setProduct] = useState([]);
@@ -119,27 +120,20 @@ function ProductDetail() {
     }
 
     // addto card data function using Api
+
+    const [showLogin, setShowLogin] = useState(false);
+    const handleLoginClose = () => setShowLogin(false);
+    const handleLoginShow = () => setShowLogin(true);
     const [addToCard, setAddToCard] = useState(true);
     const addCardHandle = async () => {
-        if (addToCard) {
-            await axios.post(`${Api}/cart/create`,
-                {
-                    customer_id: user?.id,
-                    product_id: product?.id,
-                    quantity: 1,
-                    unit_price: product?.total_price,
-                    size: size || 0,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }).then((response) => {
-                    console.log("Product added to cart successfully!", response);
-                })
+        if (!store) {
+            setShowLogin(true);
+        } else {
+            addToCardhandle(product , size);
             setAddToCard(false);
         }
     }
+
 
 
     // backend connnectivity code oevr here ----------------------------------------------------------------
@@ -220,7 +214,6 @@ function ProductDetail() {
     // people also like and people also search for responsive handling
 
     const [itemsToShow, setItemsToShow] = useState(5); // Default to 5 items
-
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth > 1399) {
@@ -244,6 +237,8 @@ function ProductDetail() {
             window.removeEventListener('resize', handleResize);
         };
     }, []);
+
+
 
 
     return (
@@ -305,9 +300,9 @@ function ProductDetail() {
                                                         <div className='s_product_video'
                                                             onMouseLeave={handleStopclick}
                                                             style={{ width: '100px', height: '100px' }}>
-                                                            <video 
+                                                            <video
                                                                 className=''
-                                                                 muted>
+                                                                muted>
                                                                 <source src={item} type="video/mp4" />
                                                                 Your browser does not support the video tag.
                                                             </video>
@@ -348,7 +343,7 @@ function ProductDetail() {
                                                             onMouseLeave={handleStopclick}>
                                                             <video
                                                                 className=''
-                                                                 muted>
+                                                                muted>
                                                                 <source src={video} type="video/mp4" />
                                                                 Your browser does not support the video tag.
                                                             </video>
@@ -869,6 +864,9 @@ function ProductDetail() {
                     </div>
                 </Modal.Body>
             </Modal>
+            {/* login modal component */}
+            <Login isOpen={showLogin} onClose={() => handleLoginClose()} onOpen={() => handleLoginShow()}>
+            </Login>
         </>
     )
 }
