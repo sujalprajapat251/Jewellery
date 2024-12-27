@@ -51,14 +51,14 @@ function Home() {
         addwishlistHandler(itemId)
         setTimeout(() => {
             setLoadingItems((prev) => prev.filter((loadingItem) => loadingItem !== itemId));
-        }, 1000);
+        }, 2000);
     };
     const handleFindWishlistID = (itemId) => {
         setLoadingItems((prev) => [...prev, itemId]);
         findWishlistID(itemId)
         setTimeout(() => {
             setLoadingItems((prev) => prev.filter((loadingItem) => loadingItem !== itemId));
-        }, 1000);
+        }, 2000);
     };
 
 

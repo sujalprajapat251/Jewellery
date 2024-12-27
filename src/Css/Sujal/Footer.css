@@ -1,26 +1,29 @@
-
 .s_footer_sec {
     background-image: url('/src/Img/Sujal/footer_bg.png');
     background-repeat: no-repeat;
     background-size: cover;
 }
+
 .s_footer_main {
     align-self: center;
     padding: 60px 0px;
 }
+
 .s_footer_main .s_logo {
     font-size: 28px;
     color: var(--brown);
     font-weight: 600;
     margin-bottom: 0px;
 }
+
 .s_footer_main .s_logo_des {
     font-size: 20px;
     line-height: 28px;
     font-weight: 400px;
     width: 380px;
-    margin-top:16px ;
+    margin-top: 16px;
 }
+
 .s_footer_main .s_footer_icon {
     margin-right: 20px;
     width: 40px;
@@ -34,27 +37,32 @@
     align-items: center;
     cursor: pointer;
 }
+
 .s_footer_main .s_footer_icon:hover {
     color: white;
     background-color: var(--brown);
 }
+
 .s_footer_main .s_footer_right {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    }
+}
+
 .s_footer_main .s_footer_right ul {
     list-style: none;
     padding-left: 0px;
 }
-.s_footer_main .s_footer_right ul h4{
+
+.s_footer_main .s_footer_right ul h4 {
     font-size: 20px;
     font-weight: 600;
     color: var(--brown);
     margin-bottom: 16px;
 }
+
 .s_footer_main .s_footer_right ul li {
-    margin-bottom:10px;
+    margin-bottom: 10px;
 }
 
 .s_footer_main .s_footer_right ul a {
@@ -62,38 +70,43 @@
     color: black;
     font-weight: 500;
 }
+
 .s_footer_main .s_footer_right ul a:hover {
     color: var(--brown);
 }
 
-.s_footer_last p{
+.s_footer_last p {
     text-align: center;
     font-size: 18px;
     font-weight: 400;
     padding: 10px;
     margin-bottom: 0px;
 }
-@media (max-width: 991px){
+
+@media (max-width: 991px) {
     .s_footer_main .s_logo {
         text-align: center;
     }
+
     .s_footer_main .s_logo_des {
         width: 100%;
         text-align: center;
     }
-    .s_footer_main .s_footer_icon{
+
+    .s_footer_main .s_footer_icon {
         justify-content: center;
-    }  
+    }
 }
 
 @media (max-width: 576px) {
-    .s_footer_main .s_footer_right ul{
+    .s_footer_main .s_footer_right ul {
         width: 50%;
         padding: 10px;
     }
+
     .s_footer_main .s_logo_des {
         padding: 10px;
         text-align: center;
-    } 
+    }
 
 }

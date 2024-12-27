@@ -5,7 +5,7 @@ import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 import { FaArrowRight, FaBars } from 'react-icons/fa';
 import { useContext, useEffect, useRef, useState } from 'react';
 import noteContext from '../Context/noteContext';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Highlighter from 'react-highlight-words';
 import axios from 'axios';
 import { useFormik } from 'formik';
@@ -103,27 +103,27 @@ function Header() {
         //   for gold
         const goldProducts = allProduct.filter(
             (ele) => ele.category_name === "Gold" && ele.gender === "male"
-          );
-          
-          
-          const uniqueGoldProducts = goldProducts.filter(
+        );
+
+
+        const uniqueGoldProducts = goldProducts.filter(
             (ele, index, self) =>
-              index === self.findIndex((item) => item.category_name === ele.category_name)
-          );
-          
-          setMenGold(uniqueGoldProducts);
+                index === self.findIndex((item) => item.category_name === ele.category_name)
+        );
+
+        setMenGold(uniqueGoldProducts);
 
 
         //   for silver
-          const silverProducts = allProduct.filter(
+        const silverProducts = allProduct.filter(
             (ele) => ele.category_name === "Silver" && ele.gender === "male"
-          );
-          const uniqueSilverProducts = silverProducts.filter(
+        );
+        const uniqueSilverProducts = silverProducts.filter(
             (ele, index, self) =>
-              index === self.findIndex((item) => item.category_name === ele.category_name)
-          );
-          
-          setMenSilver(uniqueSilverProducts);
+                index === self.findIndex((item) => item.category_name === ele.category_name)
+        );
+
+        setMenSilver(uniqueSilverProducts);
     }, [allProduct]);
     // menu catgegory handller over ---------------
 
@@ -206,19 +206,11 @@ function Header() {
                 iconColor: "green"
               });
             }
-      
-            action.resetForm(); 
-          } catch (error) {
-            console.error("Error during login:", error);
-      
-            alert(
-              error.response?.data?.message ||
-              "Failed to login. Please check your credentials and try again."
-            );
-          }
-        },
-      });
-      
+        }catch (e) {
+
+        }
+    }})
+
 
 
     // forgot password Model
@@ -235,28 +227,28 @@ function Header() {
         initialValues: ForgetPassVal,
         validationSchema: ForgetPassSchema,
         onSubmit: async (values, action) => {
-          try {
-            const response = await axios.post(`${Api}/password/email`, {
-              email: values.email,
-            });
-      
-            console.log("ForgetRes", response.data);
-      
-            alert("A reset password email has been sent to your email address.");
-            handleForPassClose(); 
-            handleOTPShow(); 
-            
-            action.resetForm();
-          } catch (error) {
-            console.error("Error during forgot password request:", error);
-            alert(
-              error.response?.data?.message ||
-              "Failed to send reset password email. Please try again."
-            );
-          }
+            try {
+                const response = await axios.post(`${Api}/password/email`, {
+                    email: values.email,
+                });
+
+                console.log("ForgetRes", response.data);
+
+                alert("A reset password email has been sent to your email address.");
+                handleForPassClose();
+                handleOTPShow();
+
+                action.resetForm();
+            } catch (error) {
+                console.error("Error during forgot password request:", error);
+                alert(
+                    error.response?.data?.message ||
+                    "Failed to send reset password email. Please try again."
+                );
+            }
         },
-      });
-      
+    });
+
 
 
     // Verify Otp Model
@@ -277,30 +269,30 @@ function Header() {
     const OtpFormik = useFormik({
         initialValues: OtpVal,
         onSubmit: async (values, action) => {
-          try {
-            const otpValue = parseInt(values.otp1 + values.otp2 + values.otp3 + values.otp4);
-      
-            const response = await axios.post(`${Api}/password/otp`, {
-              otp: otpValue,
-            });
-      
-            console.log("OtpRes", response.data);
-            handleOTPClose(); 
-            handleResetPassShow(); 
-            setStoreOtp(otpValue);
-            action.resetForm();
-            
-          } catch (error) {
-            console.error("Error during OTP verification:", error);
-      
-            alert(
-              error.response?.data?.message ||
-              "Failed to verify OTP. Please check the OTP and try again."
-            );
-          }
+            try {
+                const otpValue = parseInt(values.otp1 + values.otp2 + values.otp3 + values.otp4);
+
+                const response = await axios.post(`${Api}/password/otp`, {
+                    otp: otpValue,
+                });
+
+                console.log("OtpRes", response.data);
+                handleOTPClose();
+                handleResetPassShow();
+                setStoreOtp(otpValue);
+                action.resetForm();
+
+            } catch (error) {
+                console.error("Error during OTP verification:", error);
+
+                alert(
+                    error.response?.data?.message ||
+                    "Failed to verify OTP. Please check the OTP and try again."
+                );
+            }
         },
     });
-      
+
 
     const otp1Ref = useRef(null);
     const otp2Ref = useRef(null);
@@ -386,8 +378,20 @@ function Header() {
         }
       };
 
+
+
     const [isFilled, setIsFilled] = useState(false);
-    
+    const location = useLocation(); // React Router hook to get the current location
+
+    useEffect(() => {
+        if (location.pathname === '/wishlist') {
+            setIsFilled(true);
+        } else {
+            setIsFilled(false);
+        }
+    }, [location.pathname]); // Dependency array listens to changes in pathname
+
+
     return (
         <>
             <div className="text-center s_header_top">
@@ -401,7 +405,7 @@ function Header() {
                     <h2 className='text-lg-center mb-0'>LOGO</h2>
                 </Link>
                 <div className='col-lg-4 col-4 d-flex justify-content-end align-items-center order-lg-3 order-2'>
-                    <Link to={'/wishlist'} className={`s_header_icon s_heart_icons ${isFilled ? "filled" : "empty"}`} onClick={() => setIsFilled(!isFilled)} >
+                    <Link to={'/wishlist'} className={`s_header_icon s_heart_icons ${isFilled ? "filled" : "empty"}`}>
                         {isFilled ? <IoMdHeart /> : <IoMdHeartEmpty />}
                         <p className='mb-0'>Wishlist</p>
                     </Link>
@@ -606,7 +610,7 @@ function Header() {
                         </div>
                     </Nav.Item>
                     <Nav.Item className='position-relative'>
-                        <Link to="/productlist/occassion/wedding wear">Wedding</Link>
+                        <Link to="/productlist/occasion/wedding wear">Wedding</Link>
                     </Nav.Item>
                     <Nav.Item className='position-relative'>
                         <Link to={`/productlist/category/Watch`}>Watches</Link>
@@ -625,9 +629,9 @@ function Header() {
                         <Link to={'/productlist/all/null'} className='pe-md-0'>Gifting</Link>
                         <div className='s_submenu s_small_submenu s_pos_100'>
                             <div className='s_submenu_list '>
-                                <Link to="/productlist/all/gender/Women">Gifting for loved ones</Link>
-                                <Link to={'/productlist/all/null'}>Gift Cards</Link>
-                                <Link to="/productlist/all/gender/Men">Corporate Gifting</Link>
+                                <Link to="/productlist/gift/Gifting for loved ones/Women">Gifting for loved ones</Link>
+                                <Link to={'/productlist/gift/Gifting for loved ones/all'}>Gift Cards</Link>
+                                <Link to="/productlist/gift/Gifting for loved ones/Men">Corporate Gifting</Link>
                             </div>
                         </div>
                     </Nav.Item>
@@ -907,7 +911,7 @@ function Header() {
                             </Accordion.Body>
                         </Accordion.Item>
                         <Accordion.Item>
-                            <Link to="/productlist/occassion/wedding wear" className='s_spec_submenu_head'><h4>Wedding</h4></Link>
+                            <Link to="/productlist/occasion/wedding wear" className='s_spec_submenu_head'><h4>Wedding</h4></Link>
                         </Accordion.Item>
                         <Accordion.Item eventKey="7">
                             <Accordion.Header><h4 className='s_submenu_head px-0'>Watches</h4></Accordion.Header>

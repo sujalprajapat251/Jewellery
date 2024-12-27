@@ -8,18 +8,21 @@ import { Link, useParams } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
 import axios from 'axios';
 function ProductList() {
+
+    // backend connection code ----------------------------------------------------------------
+
+    // useContext 
     const { Api, token, allProduct } = useContext(noteContext);
 
-    // backend connection code
+    // useParams
     const { id, type } = useParams();
     const { category, field, value } = useParams();
-    // get subcategory data
-    const [subCategoryData, setSubCategoryData] = useState([]);
+
+    // get subcategory data and find isWatch , isRing
     const [isRing, setIsRing] = useState(false);
     const [isWatch, setIsWatch] = useState(false);
-
+    const [Heading, setHeading] = useState('');
     useEffect(() => {
-        // console.warn('type',type);
         if (type === 'subcategory') {
             axios.get(`${Api}/subcategories/get/${id}`, {
                 headers: {
@@ -31,33 +34,36 @@ function ProductList() {
                 setIsRing(checkRing);
                 const checkWatch = data.name?.includes('Watch') || data.category_name?.includes('Watch');
                 setIsWatch(checkWatch);
-                setSubCategoryData(response.data.subCategory);
-                // console.log('subCategory', checkRing , checkWatch)
+                setHeading(response.data.subCategory.name);
             });
         }
     }, [id, type, Api, token]);
 
 
-    //  fliter handling
+    //  show data according useParam infrormations
     const [productList_detail, setproductList_detail] = useState([]);
     const [productlist, setProductList] = useState([]);
 
 
-    // useNav baar filyterin handler
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         let product = []
+
+        // main condition
         if (type === 'subcategory') {
             product = allProduct?.filter((product) => { return product.sub_category_id === parseInt(id); })
         }
         if (type === 'category') {
             product = allProduct?.filter((product) => { return ((product.category_name).toLowerCase()).includes((id).toLowerCase()) })
+            setHeading(id);
         }
         if (type === 'search') {
             product = allProduct?.filter((product) => { return product.product_name.toLowerCase().includes(id.toLowerCase()); })
+            setHeading(id);
         }
         if (type === 'all') {
             product = allProduct;
+            setHeading('');
         }
         if (type === 'occasion') {
             console.log(allProduct?.map((product) => product.occasion));
@@ -67,8 +73,8 @@ function ProductList() {
                 )
             );
             console.log('product', product);
+            setHeading(id);
         }
-
 
         // other conditions
         if (category) {
@@ -98,10 +104,12 @@ function ProductList() {
                             );
                         }
                     });
+                    setHeading(category);
                 } else if (field === 'gender') {
                     product = allProduct?.filter((product) =>
                         product.gender?.toLowerCase() === value.toLowerCase()
                     );
+                    setHeading(category + '  ' + value);
                 }
             }
             else if (category === 'gold coin') {
@@ -110,12 +118,26 @@ function ProductList() {
                     product = data?.filter(product =>
                         product?.weight === (parseFloat(value)).toFixed(2)
                     );
+                    setHeading(category + ' ' + field + ' ' + value + 'gm');
                 }
                 else {
                     product = data?.filter((product) =>
                         product?.metal.includes(field) && product?.weight === (parseFloat(value)).toFixed(2)
                     );
+                    setHeading(field + 'kt ' + value + 'gm ' + category);
                 }
+            }
+            else if (category === 'gift') {
+                if (value === 'all') {
+                    product = allProduct;
+                }
+                else {
+                    product = allProduct?.filter((product) =>
+                        product.gender?.toLowerCase() === value.toLowerCase()
+                    );
+                }
+
+                setHeading(field);
             }
             else {
                 const data = allProduct?.filter((product) => (product.category_name.toLowerCase()).includes(category.toLowerCase()));
@@ -144,17 +166,17 @@ function ProductList() {
                             );
                         }
                     });
+                    setHeading(category);
                 } else if (field === 'men') {
                     product = data?.filter(product =>
                         (product?.gender.toLowerCase() === 'men' || product?.gender.toLowerCase() === 'male') && product?.sub_category_name.includes(value)
                     );
+                    setHeading(category + ' ' + value + ' for men');
                 }
 
                 console.log('pro', data);
             }
         }
-
-
         setproductList_detail(product);
         setProductList(product);
     }, [id, allProduct, type, category, value, field])
@@ -164,7 +186,9 @@ function ProductList() {
 
 
 
-    // flitering functionality
+    // flitering functionality is here
+
+    // showing fliter option dynamically form backend
     let filters = [];
     if (isWatch) {
         filters = {
@@ -178,7 +202,6 @@ function ProductList() {
     else if (isRing) {
         filters = {
             gender: [...new Set(productlist?.map(item => item?.gender).filter(value => value) || [])],
-            // purity: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
             occasion: [...new Set(productlist?.map(item => item?.occasion).filter(value => value) || [])],
             clarity: [...new Set(productlist?.map(item => item?.clarity).filter(value => value) || [])],
             metal: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
@@ -189,7 +212,6 @@ function ProductList() {
     else {
         filters = {
             gender: [...new Set(productlist?.map(item => item?.gender).filter(value => value) || [])],
-            // purity: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
             occasion: [...new Set(productlist?.map(item => item?.occasion).filter(value => value) || [])],
             clarity: [...new Set(productlist?.map(item => item?.clarity).filter(value => value) || [])],
             metal: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
@@ -197,14 +219,15 @@ function ProductList() {
             size_name: [
                 ...new Set(
                     productlist
-                        ?.flatMap(item => item?.size_name?.split(',').map(Number) || []) // Split and convert to numbers
-                        .filter(value => !isNaN(value)) // Remove invalid numbers
+                        ?.flatMap(item => item?.size_name?.split(',').map(Number) || [])
+                        .filter(value => !isNaN(value))
                 ),
             ],
         };
     }
-    const [selectedFilters, setSelectedFilters] = useState({});
 
+    // define a array for fliter funtionality
+    const [selectedFilters, setSelectedFilters] = useState({});
     useEffect(() => {
         if (isWatch) {
             setSelectedFilters({ gender: [], theme: [], clasp_type: [], metal_color: [], occasion: [] });
@@ -215,33 +238,22 @@ function ProductList() {
         }
     }, [isWatch, isRing]);
 
-    const filterHandler = (type, value, index) => {
-        // alert('')
-        console.error(selectedFilters);
-        let currentValues, updatedValues;
+    //filter funtionally function is here 
+    const filterHandler = (type, value) => {
         setSelectedFilters((prev) => {
-            currentValues = prev[type];
-            console.warn('index', prev[type].includes(value));
-            if ((prev[type].includes(value) && index) === 0) {
-                const checkboxId = `${type}-${index}`;
-                console.log('selected', checkboxId);
-                var idx = document.getElementById(checkboxId);
-                console.log('id', idx);
-                if (idx.checked === true) {
-                    idx.checked = false;
-                }
-            }
-            updatedValues = currentValues.includes(value)
-                ? currentValues.filter(v => v !== value)
-                : [...currentValues, value];
+            const currentValues = prev[type] || [];
+            const updatedValues = currentValues.includes(value)
+                ? currentValues.filter((v) => v !== value) // Remove the value if it exists
+                : [...currentValues, value]; // Add the value if it doesn't exist
+
             return { ...prev, [type]: updatedValues };
         });
     };
 
+    // min and max price showing dynamically when page loaded
     const [minValue, set_minValue] = useState();
     const [maxValue, set_maxValue] = useState();
     const [maxPrice, setMaxPrice] = useState(100000);
-
     useEffect(() => {
         if (productlist?.length > 0) {
             const prices = productlist
@@ -258,29 +270,36 @@ function ProductList() {
         }
     }, [productlist]);
 
+    // min and max price handling when user when value
     let condition;
     const handleInput = (e) => {
         set_minValue(e.minValue);
         set_maxValue(e.maxValue);
     };
+
+    // flieter data handling when use applay any fliter on the products
     useEffect(() => {
-        fliteringhandle(condition);
+        fliterDatahandle(condition);
         // eslint-disable-next-line
     }, [selectedFilters, minValue, maxValue]);
-    const fliteringhandle = (x) => {
+
+    // sorting functionality is here
+    const fliterDatahandle = (x) => {
         condition = x;
         const filterData = productlist?.filter((item) =>
+
             // Check all selected filters
             Object.keys(selectedFilters).every(key =>
                 selectedFilters[key].length === 0 || selectedFilters[key].includes(item[key])
             ) &&
-            (item.total_price >= minValue && item.total_price <= maxValue)
+
             // Check price range
+            (item.total_price >= minValue && item.total_price <= maxValue)
+
         );
-        // let filteredData = [];
+
+        // Sorting data based on selected sort option
         let sortedData = [];
-
-
         if (condition === 1) {
             sortedData = filterData.sort((a, b) => b.total_rating - a.total_rating);
         }
@@ -302,10 +321,7 @@ function ProductList() {
 
 
 
-
-
-
-    // offcanvas handdler   
+    //fliter offcanvas handdler   
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -313,8 +329,6 @@ function ProductList() {
     return (
         <>
             <section className="d-md-flex ds_container">
-
-
                 {/* default fliter */}
                 {isRing === false && isWatch === false ?
                     <Offcanvas show={show} onHide={handleClose} responsive="md" className="s_fliter_offcanvas">
@@ -353,14 +367,18 @@ function ProductList() {
                                             < Accordion.Item eventKey={index} key={filterType} >
                                                 <Accordion.Header className='text-capitalize' ><p className='mb-0'> {filterType === 'size_name' ? 'width' : formattedWord}</p> </Accordion.Header>
                                                 <Accordion.Body>
-                                                    {filters?.[filterType].map((value, index) => (
-                                                        // console.log('id123', typeof(filterType+index))
-                                                        <div key={value} className="d-flex align-items-center s_checkbox">
-                                                            <input type="checkbox" className="me-2" id={`${filterType}-${index}`}
-                                                                name={filterType} value={value} onChange={() => { filterHandler(filterType, value) }}></input>
-                                                            <label htmlFor={`${filterType}-${index}`} className='text-capitalize'> {value} </label>
-                                                        </div>
-                                                    ))}
+                                                    {filters?.[filterType].map((value, index) => {
+                                                        const isChecked = selectedFilters?.[filterType]?.includes(value) ?? false;
+                                                        return (
+                                                            // console.log('id123', typeof(filterType+index))
+                                                            <div key={value} className="d-flex align-items-center s_checkbox">
+                                                                <input type="checkbox" className="me-2" id={`${filterType}-${index}`}
+                                                                    checked={isChecked}
+                                                                    name={filterType} value={value} onChange={() => { filterHandler(filterType, value) }}></input>
+                                                                <label htmlFor={`${filterType}-${index}`} className='text-capitalize'> {value} </label>
+                                                            </div>
+                                                        )
+                                                    })}
                                                 </Accordion.Body>
                                             </Accordion.Item>
                                         )
@@ -410,14 +428,19 @@ function ProductList() {
                                             < Accordion.Item eventKey={index} key={filterType} >
                                                 <Accordion.Header className='text-capitalize' ><p className='mb-0'> {filterType === 'size_name' ? 'width' : formattedWord}</p> </Accordion.Header>
                                                 <Accordion.Body>
-                                                    {filters?.[filterType].map((value, index) => (
-                                                        // console.log('id123', typeof(filterType+index))
-                                                        <div key={value} className="d-flex align-items-center s_checkbox">
-                                                            <input type="checkbox" className="me-2" id={`${filterType}-${index}`}
-                                                                name={filterType} value={value} onChange={() => { filterHandler(filterType, value) }}></input>
-                                                            <label htmlFor={`${filterType}-${index}`} className='text-capitalize'> {value} </label>
-                                                        </div>
-                                                    ))}
+                                                    {filters?.[filterType].map((value, index) => {
+                                                        const isChecked = selectedFilters?.[filterType]?.includes(value) ?? false;
+                                                        return (
+                                                            // console.log('id123', typeof(filterType+index))
+
+                                                            <div key={value} className="d-flex align-items-center s_checkbox">
+                                                                <input type="checkbox" className="me-2" id={`${filterType}-${index}`}
+                                                                    checked={isChecked}
+                                                                    name={filterType} value={value} onChange={() => { filterHandler(filterType, value) }}></input>
+                                                                <label htmlFor={`${filterType}-${index}`} className='text-capitalize'> {value} </label>
+                                                            </div>
+                                                        )
+                                                    })}
                                                 </Accordion.Body>
                                             </Accordion.Item>
                                         )
@@ -466,14 +489,20 @@ function ProductList() {
                                             < Accordion.Item eventKey={index} key={filterType} >
                                                 <Accordion.Header className='text-capitalize' ><p className='mb-0'> {filterType === 'size_name' ? 'width' : formattedWord}</p> </Accordion.Header>
                                                 <Accordion.Body>
-                                                    {filters?.[filterType].map((value, index) => (
-                                                        // console.log('id123', typeof(filterType+index))
-                                                        <div key={value} className="d-flex align-items-center s_checkbox">
-                                                            <input type="checkbox" className="me-2" id={`${filterType}-${index}`}
-                                                                name={filterType} value={value} onChange={() => { filterHandler(filterType, value) }}></input>
-                                                            <label htmlFor={`${filterType}-${index}`} className='text-capitalize'> {value} </label>
-                                                        </div>
-                                                    ))}
+                                                    {filters?.[filterType].map((value, index) => {
+                                                        const isChecked = selectedFilters?.[filterType]?.includes(value) && false;
+                                                        console.log('isChecked', filterType, value, isChecked);
+                                                        return (
+                                                            // console.log('id123', typeof(filterType+index))
+                                                            <div key={value} className="d-flex align-items-center s_checkbox">
+                                                                <input type="checkbox" className="me-2" id={`${filterType}-${index}`}
+                                                                    name={filterType} value={value} onChange={() => { filterHandler(filterType, value) }}
+                                                                    checked={isChecked}
+                                                                ></input>
+                                                                <label htmlFor={`${filterType}-${index}`} className='text-capitalize'> {value} </label>
+                                                            </div>
+                                                        )
+                                                    })}
                                                 </Accordion.Body>
                                             </Accordion.Item>
                                         )
@@ -494,29 +523,22 @@ function ProductList() {
                 </div>
                 <div className='s_product_list flex-fill'>
                     <div className='s_top d-sm-flex justify-content-between'>
-                        <h4 className='text-nowrap align-self-center'>{subCategoryData.name}</h4>
+                        <h4 className='text-nowrap align-self-center text-capitalize'>{Heading}</h4>
                         <div className='d-lg-flex '>
                             <div className='d-flex flex-wrap'>
-                                {   
+                                {
                                     Object.entries(selectedFilters).map(([key, values]) => (
                                         values.length > 0 ? (
                                             values.map((value, index) => (
                                                 <div key={index} className='s_fliter_option'>
-                                                    <p>{value}</p>
-                                                    <IoCloseOutline onClick={() => filterHandler(key, value, index)} />
+                                                    <p className='text-capitalize'>{value}</p>
+                                                    <IoCloseOutline onClick={() => filterHandler(key, value)} />
                                                 </div>
                                             ))
                                         ) : null
                                     ))
                                 }
-                                {/* {selectedFilters.map((ele, ind) => {
-                                    return (
-                                        <div className='s_fliter_option' key={ind}>
-                                            <p>{ele.name}</p>
-                                            <IoCloseOutline  />
-                                        </div>
-                                    );
-                                })} */}
+
                             </div>
                             <div className='s_fliter_select w-auto'>
                                 <p className='mb-0 text-nowrap'>Sort by</p>
@@ -524,23 +546,23 @@ function ProductList() {
                                 <div className='s_sortby_menu'>
 
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='Best Sellings' onClick={() => { fliteringhandle(1) }}></input>
+                                        <input type='radio' name='sort_by' id='Best Sellings' onClick={() => { fliterDatahandle(1) }}></input>
                                         <label htmlFor='Best Sellings' >Best Sellings</label>
                                     </div>
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='low to high' onClick={() => { fliteringhandle(2) }}></input>
+                                        <input type='radio' name='sort_by' id='low to high' onClick={() => { fliterDatahandle(2) }}></input>
                                         <label htmlFor='low to high'>Price (low to high)</label>
                                     </div>
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='high to low' onClick={() => { fliteringhandle(3) }}></input>
+                                        <input type='radio' name='sort_by' id='high to low' onClick={() => { fliterDatahandle(3) }}></input>
                                         <label htmlFor='high to low'>Price (high to low)</label>
                                     </div>
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='New Arrivals' onClick={() => { fliteringhandle(4) }}></input>
+                                        <input type='radio' name='sort_by' id='New Arrivals' onClick={() => { fliterDatahandle(4) }}></input>
                                         <label htmlFor='New Arrivals'>New Arrivals</label>
                                     </div>
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='Recommendations' onClick={() => { fliteringhandle(5) }}></input>
+                                        <input type='radio' name='sort_by' id='Recommendations' onClick={() => { fliterDatahandle(5) }}></input>
                                         <label htmlFor='Recommendations'>Recommendations</label>
                                     </div>
                                 </div>
@@ -554,9 +576,8 @@ function ProductList() {
 
                                     const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
                                     let discountPrice = [];
-                                    console.log(ele.product_name, discounted);
                                     if (!isNaN(parseFloat(discounted))) {
-                                        discountPrice = (parseFloat(ele.total_price) - parseFloat(discounted)).toFixed(2);
+                                        discountPrice = (parseFloat(ele.total_price) + parseFloat(discounted)).toFixed(2);
                                     } else {
                                         discountPrice = ele.total_price;
                                     }
@@ -568,10 +589,10 @@ function ProductList() {
                                                         <img src={ele.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
                                                     </div>
 
-                                                    <div  className='s_card_text'>
+                                                    <div className='s_card_text'>
                                                         <Link to={`/productdetail/${ele.id}`}>
                                                             <h5>{ele.product_name}</h5>
-                                                            <p className='mb-0'><span className='mx-2'>₹{discountPrice}</span><strike className="mx-2">₹{ele.total_price}</strike></p>
+                                                            <p className='mb-0'><span className='mx-2'>₹{ele.total_price}</span><strike className="mx-2">₹{discountPrice}</strike></p>
                                                             <div className='s_rating'>
                                                                 {
                                                                     [...Array(5)].map((_, index) => {
