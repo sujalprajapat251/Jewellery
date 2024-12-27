@@ -12,10 +12,10 @@ function ProductList() {
     // backend connection code ----------------------------------------------------------------
 
     // useContext 
-    const { Api, token, allProduct } = useContext(noteContext);
+    const { Api, token, allProduct, allSubCategory } = useContext(noteContext);
 
     // useParams
-    const { id, type } = useParams();
+    const { type, id } = useParams();
     const { category, field, value } = useParams();
 
     // get subcategory data and find isWatch , isRing
@@ -24,18 +24,14 @@ function ProductList() {
     const [Heading, setHeading] = useState('');
     useEffect(() => {
         if (type === 'subcategory') {
-            axios.get(`${Api}/subcategories/get/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }).then((response) => {
-                const data = response.data.subCategory;
-                const checkRing = data.name?.includes('Ring') || data.category_name?.includes('Ring');
-                setIsRing(checkRing);
-                const checkWatch = data.name?.includes('Watch') || data.category_name?.includes('Watch');
-                setIsWatch(checkWatch);
-                setHeading(response.data.subCategory.name);
-            });
+            // fliter sub category data form allsubcatgeories data
+            const data = allSubCategory?.filter((item) =>  item.id === parseInt(id) )
+            console.log(data);
+            const checkRing = data?.[0].name?.includes('Ring') || data?.[0].category_name?.includes('Ring');
+            setIsRing(checkRing);
+            const checkWatch = data?.[0].name?.includes('Watch') || data?.[0].category_name?.includes('Watch');
+            setIsWatch(checkWatch);
+            setHeading(data?.[0]?.name);
         }
     }, [id, type, Api, token]);
 

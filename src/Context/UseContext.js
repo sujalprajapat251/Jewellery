@@ -81,7 +81,7 @@ const UseContext = (props) => {
         console.error("Failed to fetch data:", error.message);
       }
     }
-  } 
+  }
 
 
   useEffect(() => {
@@ -135,30 +135,107 @@ const UseContext = (props) => {
     var data = wishlistData.find((item) => { return item.product_id === id; });
     removeWishlistHandler(data.id)
   }
-  // Fetch wishlist
-  const fetchWishlist = async () => {
+
+  const fetchWishlist = async (retryCount = 0) => {
+    // fetch catgory
     try {
       const response = await axios.get(`${Api}/wishlists/getall`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (response.data.data.length >= 0) {
-        const filteredData = response.data.data.filter(
-          (item) => item.customer_id === store?.id
-        );
         // alert(response.data);
-        console.warn('hey', response.data);
-        setWishlistData(filteredData);
-        const idData = filteredData
-          .filter((item) => item.product_id) // Filter items with valid product_id
+        setWishlistData(response.data.data);
+        const idData = response.data.data
+          .filter((item) => item.product_id)
           .map((item) => item.product_id);
         setWishlistID(idData);
       }
     } catch (error) {
-      console.error("Failed to fetch wishlist:", error.message);
+      if (error?.response?.status === 429 && retryCount < 5) {
+        // Retry logic with exponential backoff
+        const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+        console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+        setTimeout(() => fetchWishlist(retryCount + 1), retryAfter);
+      } else {
+        console.error("Failed to fetch data:", error.message);
+      }
     }
-  };
+  }
+
+  // fetchcartsData
+  const [cartData, setCardData] = useState([]);
+
+  const addToCardhandle = async (product, size) => {
+    console.warn("Cart", cartData);
+    let CheckQty = cartData.filter((cart) => {
+      return cart.product_id === product?.id
+    });
+    console.warn("Check Qty", CheckQty);
+    if (CheckQty.length > 0) {
+      // update cart logic here
+      await axios.post(`${Api}/cart/update/${CheckQty?.[0]?.id}`,
+        {
+          customer_id: store?.id,
+          product_id: product?.id,
+          size: size || 0,
+          quantity: CheckQty?.[0]?.quantity + 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).then((response) => {
+          console.log("Product added to cart successfully!", response);
+          fetchCardData();
+        })
+    } else {
+      // addtocart logic
+      await axios.post(`${Api}/cart/create`,
+        {
+          customer_id: store?.id,
+          product_id: product?.id,
+          quantity: CheckQty.length || 1,
+          unit_price: product?.total_price,
+          size: size || 0,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).then((response) => {
+          console.log("Product added to cart successfully!", response);
+          fetchCardData();
+        })
+    }
+  }
+
+  // funtion called item aaded or removed
+  const fetchCardData = async (retryCount = 0) => {
+    try {
+      const response = await axios.get(`${Api}/cart/getall`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.cart) {
+        console.warn('cartData', response);
+        setCardData(response.data.cart);
+      }
+    } catch (error) {
+      if (error?.response?.status === 429 && retryCount < 5) {
+        const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+        console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+        setTimeout(() => fetchCardData(retryCount + 1), retryAfter);
+      } else {
+        console.error("Failed to fetch data:", error.message);
+      }
+    }
+  }
   useEffect(() => {
     fetchWishlist();
+    fetchCardData();
     // eslint-disable-next-line
   }, [])
 
@@ -181,7 +258,7 @@ const UseContext = (props) => {
         });
         setProfileData(response?.data?.user);
         console.log(response?.data?.user);
-        
+
       } catch (error) {
         if (error?.response?.status === 429 && retryCount < 5) {
           // Retry logic with exponential backoff
@@ -192,13 +269,15 @@ const UseContext = (props) => {
           console.error("Failed to fetch profile data:", error.message);
         }
       }
-    } 
+    }
 
     myProfileData()
 
   }, [editToggle])
 
   
+  console.log("pro ", profileData);
+
 
   // ******* Edit User State *******
   const [editVal, setEditVal] = useState({
@@ -225,7 +304,7 @@ const UseContext = (props) => {
 
   const EditFormik = useFormik({
     initialValues: editVal,
-    enableReinitialize: true, 
+    enableReinitialize: true,
     validationSchema: EditProfileSchema,
     onSubmit: (values, action) => {
       axios
@@ -307,17 +386,17 @@ const UseContext = (props) => {
             },
           }
         );
-         console.log("NewAdd", response);
-         setNewAddModal(false);
-         setAddMainNewAdd(true);
-         action.resetForm();
+        console.log("NewAdd", response);
+        setNewAddModal(false);
+        setAddMainNewAdd(true);
+        action.resetForm();
       } catch (error) {
         console.error("Error submitting address:", error);
         alert("Failed to submit address. Please try again.");
       }
     },
   });
-  
+
 
   const handleAddType = (type) => {
     setAddType(type)
@@ -328,28 +407,28 @@ const UseContext = (props) => {
 
   useEffect(() => {
 
-  const addressMyData = async(retryCount = 0) => {
-      try{
-         const response = await axios.get(`${Api}/deliveryAddress/getall`, {
-                headers: {
-                  Authorization: `Bearer ${store?.access_token}`
-                }
-          })
-         setMyAddData(response?.data?.deliveryAddress)
+    const addressMyData = async (retryCount = 0) => {
+      try {
+        const response = await axios.get(`${Api}/deliveryAddress/getall`, {
+          headers: {
+            Authorization: `Bearer ${store?.access_token}`
+          }
+        })
+        setMyAddData(response?.data?.deliveryAddress)
       }
-      catch(error){
-          if (error?.response?.status === 429 && retryCount < 5) {
-            // Retry logic with exponential backoff
-            const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-            console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
-            setTimeout(() => addressMyData(retryCount + 1), retryAfter);
-          } else {
-            console.error("Failed to fetch profile data:", error.message);
+      catch (error) {
+        if (error?.response?.status === 429 && retryCount < 5) {
+          // Retry logic with exponential backoff
+          const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+          console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+          setTimeout(() => addressMyData(retryCount + 1), retryAfter);
+        } else {
+          console.error("Failed to fetch profile data:", error.message);
         }
       }
-  }
+    }
 
-  addressMyData()
+    addressMyData()
 
   }, [addMainNewAdd, singleNewAdd, deleteUseEffect])
 
@@ -397,12 +476,12 @@ const UseContext = (props) => {
           }
         );
         console.log("UpdateAdd", response);
-        setSingleNewAdd(false); 
-        setActiveCard(true); 
-        action.resetForm(); 
+        setSingleNewAdd(false);
+        setActiveCard(true);
+        action.resetForm();
       } catch (error) {
         console.error("Error Edtitng address:", error);
-  
+
         alert(
           error.response?.data?.message ||
           "Failed to update address. Please try again."
@@ -410,7 +489,7 @@ const UseContext = (props) => {
       }
     },
   });
-  
+
 
   const handleSingleNewAdd = (id) => {
     const selectedAddress = myAddData.find((item) => item.id === id);
@@ -447,9 +526,9 @@ const UseContext = (props) => {
         },
       });
       console.log("DeleteAdd", response);
-      setDeleteAdd(false); 
-      setdeleteUseEffect(deleteUseEffect + 1); 
-      setActiveCard(true); 
+      setDeleteAdd(false);
+      setdeleteUseEffect(deleteUseEffect + 1);
+      setActiveCard(true);
     } catch (error) {
       console.error("Error deleting address:", error);
       alert(
@@ -458,7 +537,7 @@ const UseContext = (props) => {
       );
     }
   };
-  
+
 
   // ********** My Order **********
   const [orderMain, setOrderMain] = useState({})
@@ -493,7 +572,7 @@ const UseContext = (props) => {
     }
 
     myOrderData()
-    
+
   }, [])
 
 
@@ -511,7 +590,7 @@ const UseContext = (props) => {
     validationSchema: ChangePass,
     onSubmit: async (values, action) => {
       try {
-  
+
         const response = await axios.post(`${Api}/password/change`,
           {
             current_password: values.Old_Pass,
@@ -524,12 +603,12 @@ const UseContext = (props) => {
             },
           }
         );
-  
+
         console.log("Change Password Response:", response);
-        setChangePassToggle(false); 
+        setChangePassToggle(false);
         alert("Password changed successfully.");
-        
-        action.resetForm(); 
+
+        action.resetForm();
       } catch (error) {
         console.error("Error changing password:", error);
 
@@ -540,7 +619,7 @@ const UseContext = (props) => {
       }
     },
   });
-  
+
 
   // *************** Track Order Page ************
   const [trackFilter, seTrackFilter] = useState("")
@@ -560,51 +639,51 @@ const UseContext = (props) => {
   useEffect(() => {
 
     const faqData = async (retryCount = 0) => {
-       try{
-         const response = await axios.get(`${Api}/faqs/getall`, {
-            headers: {
-              Authorization: `Bearer ${store?.access_token}`
-            }
-          })
-           setMainFaq(response?.data?.faqs)
+      try {
+        const response = await axios.get(`${Api}/faqs/getall`, {
+          headers: {
+            Authorization: `Bearer ${store?.access_token}`
+          }
+        })
+        setMainFaq(response?.data?.faqs)
+      }
+      catch (error) {
+        if (error?.response?.status === 429 && retryCount < 5) {
+          // Retry logic with exponential backoff
+          const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+          console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+          setTimeout(() => faqData(retryCount + 1), retryAfter);
+        } else {
+          console.error("Failed to fetch profile data:", error.message);
         }
-        catch(error){
-          if (error?.response?.status === 429 && retryCount < 5) {
-            // Retry logic with exponential backoff
-            const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-            console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
-            setTimeout(() => faqData(retryCount + 1), retryAfter);
-          } else {
-            console.error("Failed to fetch profile data:", error.message);
-        }
-        }
+      }
     }
 
-    faqData ()
+    faqData()
 
   }, [])
 
   useEffect(() => {
 
     const subFaqData = async (retryCount = 0) => {
-       try {
-          const response = await axios.get(`${Api}/subfaqs/getall`, {
-             headers: {
-               Authorization: `Bearer ${store?.access_token}`
-             }
-          })
-          setSubFaq(response?.data?.subfaqs)
-       }
-       catch (error){
-          if (error?.response?.status === 429 && retryCount < 5) {
-            // Retry logic with exponential backoff
-            const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-            console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
-            setTimeout(() => subFaqData(retryCount + 1), retryAfter);
-          } else {
-            console.error("Failed to fetch profile data:", error.message);
+      try {
+        const response = await axios.get(`${Api}/subfaqs/getall`, {
+          headers: {
+            Authorization: `Bearer ${store?.access_token}`
           }
-       }
+        })
+        setSubFaq(response?.data?.subfaqs)
+      }
+      catch (error) {
+        if (error?.response?.status === 429 && retryCount < 5) {
+          // Retry logic with exponential backoff
+          const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+          console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+          setTimeout(() => subFaqData(retryCount + 1), retryAfter);
+        } else {
+          console.error("Failed to fetch profile data:", error.message);
+        }
+      }
     }
 
     subFaqData()
@@ -627,12 +706,12 @@ const UseContext = (props) => {
     <noteContext.Provider value={{
       allCategory, allProduct, allSubCategory, token, wishlistData, addwishlistHandler, removeWishlistHandler, wishlistID, findWishlistID, bestseller,
 
-      Api
+      Api, cartData, addToCardhandle
       // ******* My Profile *******
       , store, profileData, setProfileData,
 
       // ------ Edit User State -----
-      editToggle, setEditToggle, editVal, EditFormik, handleCancel, handleEditToggle ,
+      editToggle, setEditToggle, editVal, EditFormik, handleCancel, handleEditToggle,
 
       // ------ My Address ------
       addType, setAddType, myAddData, setMyAddData, addMainNewAdd, setAddMainNewAdd, newAddVal, newAddModal, setNewAddModal,
