@@ -18,7 +18,7 @@ const MyProfile = () => {
     const { profileData , store , Api,
 
      // ------ Edit User State -----
-     editToggle, setEditToggle , EditFormik , handleCancel , 
+     editToggle, setEditToggle , EditFormik , handleCancel , handleEditToggle,
 
      // ------ My Address ------
      addType, myAddData, newAddModal, setNewAddModal 
@@ -261,7 +261,7 @@ useEffect(() => {
                             <div className={`${editToggle ? 'd-none' : 'd-block'}`}>
                                <div className='d-flex justify-content-between align-items-center'>
                                    <h3>My Profile</h3>
-                                   <button className='ds_edit-btn' onClick={()=> setEditToggle(!editToggle)}>Edit Profile</button>
+                                   <button className='ds_edit-btn' onClick={handleEditToggle}>Edit Profile</button>
                                </div>
                                <div className='ds_profile-inner mt-4'>
                                   <div className="row">
@@ -293,11 +293,11 @@ useEffect(() => {
                                     </div>
                                     <div className="col-xl-9 col-lg-9 col-md-9 col-sm-8 col-7">
                                         <div className='ms-3'>
-                                            <p className='ds_600'>{profileData.name}</p>
-                                            <p className='ds_600'>{profileData.dob ?  profileData.dob : '1/1/2002'}</p>
-                                            <p className='ds_600'>{profileData.phone}</p>
-                                            <p className='ds_600 text-break'>{profileData.email}</p>
-                                            <p className='ds_600'>{profileData.gender}</p>
+                                            <p className='ds_600'>{profileData?.name}</p>
+                                            <p className='ds_600'>{profileData?.dob ?  profileData?.dob : '1/1/2002'}</p>
+                                            <p className='ds_600'>{profileData?.phone}</p>
+                                            <p className='ds_600 text-break'>{profileData?.email}</p>
+                                            <p className='ds_600'>{profileData?.gender}</p>
                                             <p className='ds_600'>596921</p>
                                         </div>
                                     </div>

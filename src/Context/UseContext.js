@@ -180,6 +180,8 @@ const UseContext = (props) => {
           },
         });
         setProfileData(response?.data?.user);
+        console.log(response?.data?.user);
+        
       } catch (error) {
         if (error?.response?.status === 429 && retryCount < 5) {
           // Retry logic with exponential backoff
@@ -196,49 +198,65 @@ const UseContext = (props) => {
 
   }, [editToggle])
 
+  console.log("pro " , profileData);
+  
 
   // ******* Edit User State *******
-  let editVal = {
-    name: '',
-    email: '',
-    phone: '',
-    gender: '',
-    dob: '',
-    pin: ''
-  }
+  const [editVal, setEditVal] = useState({
+    name: profileData?.name || "",
+    email: profileData?.email || "",
+    phone: profileData?.phone || "",
+    gender: profileData?.gender || "",
+    dob: profileData?.dob || "",
+    pin: profileData?.pin || "",
+  });
+
+  const handleEditToggle = () => {
+    setEditVal({
+      name: profileData?.name || "",
+      email: profileData?.email || "",
+      phone: profileData?.phone || "",
+      gender: profileData?.gender || "",
+      dob: profileData?.dob || "",
+      pin: profileData?.pin || "",
+    });
+    setEditToggle(true);
+  };
+
 
   const EditFormik = useFormik({
     initialValues: editVal,
+    enableReinitialize: true, 
     validationSchema: EditProfileSchema,
     onSubmit: (values, action) => {
-      // console.log(values);
-
-      axios.post(`${Api}/user/updateprofile/${store?.id}`, {
-        name: values.name,
-        email: values.email,
-        role_id: 2,
-        phone: values.phone,
-        gender: values.gender,
-        dob: values.dob,
-        pin: values.pin,
-      },
-        {
-          headers: {
-            Authorization: `Bearer ${store?.access_token}`,
+      axios
+        .post(`${Api}/user/updateprofile/${store?.id}`,
+          {
+            name: values.name,
+            email: values.email,
+            role_id: 2,
+            phone: values.phone,
+            gender: values.gender,
+            dob: values.dob,
+            pin: values.pin,
           },
-        }
-      ).then((value) => {
-        //  console.log(value);
-        setEditToggle(false)
+          {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`,
+            },
+          }
+        )
+        .then((response) => {
+          alert("Profile updated successfully!");
+          setEditToggle(false);
+        })
+        .catch((error) => {
+          alert("Error updating profile: " + error.message);
+        });
 
-
-      }).catch((error) => {
-        alert(error)
-      })
-
-      action.resetForm()
-    }
-  })
+      action.resetForm();
+    },
+  });
 
   const handleCancel = () => {
     setEditToggle(false)
@@ -601,7 +619,7 @@ const UseContext = (props) => {
       , store, profileData, setProfileData,
 
       // ------ Edit User State -----
-      editToggle, setEditToggle, editVal, EditFormik, handleCancel,
+      editToggle, setEditToggle, editVal, EditFormik, handleCancel, handleEditToggle ,
 
       // ------ My Address ------
       addType, setAddType, myAddData, setMyAddData, addMainNewAdd, setAddMainNewAdd, newAddVal, newAddModal, setNewAddModal,

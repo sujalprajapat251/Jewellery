@@ -10,6 +10,7 @@ import Highlighter from 'react-highlight-words';
 import axios from 'axios';
 import { useFormik } from 'formik';
 import { ForgetPassSchema, LoginSchema } from '../schemas';
+import Swal from 'sweetalert2';
 
 
 
@@ -173,13 +174,37 @@ function Header() {
             console.log("LoginRes", response.data);
       
             if (response?.data?.result) {
-              alert("Login Successful");
               localStorage.setItem("Login", JSON.stringify(response.data.result));
-      
               setShowLogin(false);
-              window.location.reload();
+              Swal.fire({
+                position: "top-end",
+                toast: true,
+                title: "Login Successfully",
+                showConfirmButton: false,
+                timer: 3000,
+                showCloseButton: true,
+                background: "green",
+                color: "white",
+                iconColor: "white"
+              });
+             setTimeout(()=>{
+                window.location.reload();
+             },1000)
+              
             } else {
               alert("Unexpected login response. Please try again.");
+              Swal.fire({
+                position: "top-end",
+                toast: true,
+                icon: "error",
+                title: "Login Successfully",
+                showConfirmButton: false,
+                timer: 3000,
+                showCloseButton: true,
+                background: "black",
+                color: "white",
+                iconColor: "green"
+              });
             }
       
             action.resetForm(); 
@@ -297,22 +322,27 @@ function Header() {
 
     const ReserPassFormik = useFormik({
         initialValues: ResetPassVal,
-        onSubmit: (values, action) => {
-            axios.post(`${Api}/password/reset/${storeOtp}`, {
-                new_password: values.newPass,
-                confirm_password: values.conPass
-
-            }).then((value) => {
-                console.log("ResetPassRes", value.data);
-                handleResetPassClose()
-                handleLoginShow();
-            }).catch((error) => {
-                alert(error)
-            })
-
-            action.resetForm();
-        }
-    })
+        onSubmit: async (values, action) => {
+          try {
+            const response = await axios.post(`${Api}/password/reset/${storeOtp}`, {
+              new_password: values.newPass,
+              confirm_password: values.conPass,
+            });
+            console.log("ResetPassRes", response.data);
+            alert("Your password has been reset successfully. Please log in with your new password.");
+            handleResetPassClose(); 
+            handleLoginShow();
+            action.resetForm(); 
+          } catch (error) {
+            console.error("Error resetting password:", error);
+            alert(
+              error.response?.data?.message ||
+              "Failed to reset the password. Please try again."
+            );
+          }
+        },
+    });
+      
 
 
 
@@ -329,28 +359,35 @@ function Header() {
         password: '',
     })
 
-    const handleSignUp = (e) => {
+    const handleSignUp = async (e) => {
         e.preventDefault();
-        axios.post(`${Api}/user/create`, {
+        try {
+          const response = await axios.post(`${Api}/user/create`, {
             name: signUpVal.name,
             phone: signUpVal.phone,
             email: signUpVal.email,
             password: signUpVal.password,
-            role_id: 2,
-            dob: "2001-01-01",
-        })
-            .then((value) => {
-                console.log("Res", value);
-                setShowRegister(false)
-            }).catch((error) => {
-                alert(error)
-            })
-    }
+            role_id: 2, 
+            dob: "2001-01-01", 
+          });
+      
+          console.log("SignUp Response:", response);
+      
+          alert("Registration successful! Please log in.");
+          
+          setShowRegister(false);
+        } catch (error) {
+          console.error("Error during registration:", error);
+      
+          alert(
+            error.response?.data?.message ||
+            "Failed to register. Please check your details and try again."
+          );
+        }
+      };
 
-
-
-    // heart icon handller
     const [isFilled, setIsFilled] = useState(false);
+    
     return (
         <>
             <div className="text-center s_header_top">

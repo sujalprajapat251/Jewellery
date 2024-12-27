@@ -13,7 +13,7 @@ import axios from 'axios';
 function ProductDetail() {
     const { id } = useParams();
     const user = JSON.parse(localStorage.getItem("Login"));
-    console.log('user', user.id);
+    console.log('user', user?.id);
     let [inStock, setInStock] = useState(true);
 
     // backend connnectivity code ---------------------------------------------------------------
@@ -124,7 +124,7 @@ function ProductDetail() {
         if (addToCard) {
             await axios.post(`${Api}/cart/create`,
                 {
-                    customer_id: user.id,
+                    customer_id: user?.id,
                     product_id: product?.id,
                     quantity: 1,
                     unit_price: product?.total_price,
