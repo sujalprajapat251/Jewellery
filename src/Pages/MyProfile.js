@@ -1,4 +1,4 @@
-import React, { useContext , useEffect, useRef, useState } from 'react'
+import React, { useContext , useEffect,  useState } from 'react'
 import '../Css/dhruvin/MyProfile.css'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { IoBagHandleOutline } from 'react-icons/io5';
@@ -10,7 +10,6 @@ import { Modal } from 'react-bootstrap';
 import { FiPlus } from 'react-icons/fi';
 import { IoMdClose } from 'react-icons/io';
 import axios from 'axios';
-import { ImTab } from 'react-icons/im';
 
 const MyProfile = () => {
 
@@ -18,7 +17,7 @@ const MyProfile = () => {
     const { profileData , store , Api,
 
      // ------ Edit User State -----
-     editToggle, setEditToggle , EditFormik , handleCancel , handleEditToggle,
+     editToggle , EditFormik , handleCancel , handleEditToggle,
 
      // ------ My Address ------
      addType, myAddData, newAddModal, setNewAddModal 
@@ -72,21 +71,9 @@ const MyProfile = () => {
        
     };
 
-    // const dropdownRef = useRef(null);
 
-    // useEffect(() => {
-    //   const handleClickOutside = (event) => {
-    //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-    //       setActiveCard(null);
-    //     }
-    //   };
+  console.log(profileData);
   
-    //   document.addEventListener('mousedown', handleClickOutside);
-    //   return () => {
-    //     document.removeEventListener('mousedown', handleClickOutside);
-    //   };
-    // }, []);
-
 
 
   // **********  Submit Review Popup  ********
@@ -113,19 +100,19 @@ const MyProfile = () => {
    const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
     const newImages = files.map((file) => ({
-      file, // Store the actual file object
-      preview: URL.createObjectURL(file), // Local preview URL
+      file, 
+      preview: URL.createObjectURL(file), 
     }));
     setUploadedImages((prevImages) => [...prevImages, ...newImages]);
   };
   
   const handleRemoveImage = (index) => {
-    setUploadedImages((prevImages) => {
-      const updatedImages = prevImages.filter((_, i) => i !== index);
-      prevImages.forEach((image, i) => {
-        if (i === index) URL.revokeObjectURL(image.preview); // Clean up
+    setUploadedImages((prevMedia) => {
+      const updatedMedia = prevMedia.filter((_, i) => i !== index);
+      prevMedia.forEach((media, i) => {
+        if (i === index) URL.revokeObjectURL(media.preview); 
       });
-      return updatedImages;
+      return updatedMedia;
     });
   };
 
@@ -136,9 +123,9 @@ const day = String(today.getDate()).padStart(2, '0');
 
 const finalDate = `${year}-${month}-${day}`
 
-const handleReviewSubmit = () => {
+const handleReviewSubmit = async () => {
   if (!rating || !feedback || uploadedImages.length === 0) {
-    alert("Please upload an image, provide a rating, and add feedback.");
+    alert("Please upload an image or video, provide a rating, and add feedback.");
     return;
   }
 
@@ -149,43 +136,54 @@ const handleReviewSubmit = () => {
   formData.append("date", finalDate);
   formData.append("order_id", reviewId);
 
-  // Assuming `uploadedImages` contains an array of objects with the image URL
-  uploadedImages.forEach((image, index) => {
-    // console.log(image);
-    
- if (image.file) {
-      console.log(image.file);
-      
-      formData.append(`image[${index}]`, image?.file); // Append binary file
+  uploadedImages.forEach((media, index) => {
+    if (media.file) {
+      console.log(media?.file);
+      formData.append(`image[${index}]`, media.file);
     }
   });
 
   reviewProdId?.forEach((element, index) => {
     formData.append(`product_id[${index}]`, element);
-   });
-  
+  });
 
-  axios
-    .post(`${Api}/reviews/create`, formData, {
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`,
-        "Content-Type": "multipart/form-data",
-      },
-    })
-    .then((response) => {
+  let retryCount = 0;
+  const maxRetries = 3; 
+  const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; 
+
+  const attemptSubmit = async () => {
+    try {
+      const response = await axios.post(`${Api}/reviews/create`, formData, {
+        headers: {
+          Authorization: `Bearer ${store?.access_token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       alert("Review submitted successfully!");
       console.log(response);
-    })
-    .catch((error) => {
-      console.error("Error submitting review:", error);
-      alert("Failed to submit the review.");
-    });
-};
+    } catch (error) {
+      if (error.response?.status === 429 && retryCount < maxRetries) {
+        retryCount++;
+        const delay = retryDelay(retryCount);
+        console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
+        await new Promise((resolve) => setTimeout(resolve, delay)); 
+        await attemptSubmit();
+      } else {
+        console.error("Error submitting review:", error);
+        alert("Failed to submit the review. Please try again later.");
+      }
+    }
+  };
 
+  await attemptSubmit();
+};
 
 useEffect(() => {
   return () => {
-    uploadedImages.forEach((image) => URL.revokeObjectURL(image.preview)); // Clean up on unmount
+    uploadedImages.forEach((media) => {
+      URL.revokeObjectURL(media.preview); 
+    });
   };
 }, [uploadedImages]);
 
@@ -294,11 +292,11 @@ useEffect(() => {
                                     <div className="col-xl-9 col-lg-9 col-md-9 col-sm-8 col-7">
                                         <div className='ms-3'>
                                             <p className='ds_600'>{profileData?.name}</p>
-                                            <p className='ds_600'>{profileData?.dob ?  profileData?.dob : '1/1/2002'}</p>
+                                            <p className='ds_600'>{profileData?.dob }</p>
                                             <p className='ds_600'>{profileData?.phone}</p>
-                                            <p className='ds_600 text-break'>{profileData?.email}</p>
+                                            <p className='ds_600 ds_myprofile-scroll overflow-x-auto'>{profileData?.email}</p>
                                             <p className='ds_600'>{profileData?.gender}</p>
-                                            <p className='ds_600'>596921</p>
+                                            <p className='ds_600'>{profileData.pincode}</p>
                                         </div>
                                     </div>
                                   </div>
@@ -367,9 +365,9 @@ useEffect(() => {
                                              </div>
                                          </div>
                                          <div>
-                                             <div className='text-center mt-5 mb-3'>
-                                                 <a className='ds_edit-cencel ds_cursor ds_600 me-sm-4'onClick={handleCancel}>Cancel</a>
-                                                 <button type='submit' className='ds_edit-save ds_600'>Save</button>
+                                             <div className='text-center mt-5 mb-3 d-flex'>
+                                                 <div><button className='ds_edit-cencel ds_cursor ds_600 me-sm-4'onClick={handleCancel}>Cancel</button></div>
+                                                 <div><button type='submit' className='ds_edit-save ds_600'>Save</button></div>
                                              </div>
                                          </div>
                                     </form>
@@ -431,8 +429,8 @@ useEffect(() => {
                                            <Modal className="modal fade" show={newAddModal} centered onHide={()=> setNewAddModal(false)} id="addressModal" >
                                            <Modal.Header className='border-0 pb-0' closeButton>
                                                </Modal.Header>
-                                               <Modal.Body className='px-4 pt-0'>
-                                                 <div className="modal-body pt-0 px-4">
+                                               <Modal.Body className='px-sm-4 pt-0'>
+                                                 <div className="modal-body pt-0 px-sm-4">
                                                     <h4 className="modal-title text-center ds_color" >Add New Address</h4>
                                                     <form onSubmit={AddFormik.handleSubmit}>
                                                       <h6 className='ds_color mt-3 mb-0'>Area Details</h6>
@@ -489,15 +487,15 @@ useEffect(() => {
                                                           </div>
                                                       </div>
                                                       <div>
-                                                        <h6 className='ds_color mt-3'>Address Type</h6>
-                                                        <div className="d-flex flex-wrap">
-                                                            <div className="me-2 mt-">
+                                                        <h6 className='ds_color mt-3 mb-0'>Address Type</h6>
+                                                        <div className="d-flex flex-wrap ju">
+                                                            <div className="me-2 mt-2">
                                                                <button type="button" className={`ds_new-home ${addType === 'Home' ? 'ds_select_type_active' : ''}  `} onClick={()=>handleAddType("Home")}><GoHome className='ds_home-icon' /> Home</button>
                                                             </div>
-                                                            <div className="mt- me-2">
+                                                            <div className="mt-2 me-2">
                                                               <button type="button" className={`ds_new-work ${addType === 'Work' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Work")}><IoBagHandleOutline className="ds_home-icon" /> Work</button>
                                                             </div>
-                                                            <div className="mt-">
+                                                            <div className="mt-2">
                                                                 <button type="button" className={`ds_new-other ${addType === 'Other' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Other")}> Other</button>
                                                             </div>
                                                         </div>
@@ -832,6 +830,8 @@ useEffect(() => {
                                     <div className=' px-4 pb-4'>
                                       <div className="row">
                                            { filteredOrders && filteredOrders?.map((element , index)=>{ 
+                                            // console.log("FilterOrders " , filteredOrders);
+                                            
                                              return(
                                               <div className="col-xl-12 mt-4" key={element?.id}>
                                                <div className="ds_order-inner">
@@ -960,15 +960,16 @@ useEffect(() => {
                    <div className='px-4 mt-3'>
                        <h6 className='ds_600 mb-0'>Add Photo or Video</h6>
                        <div className='d-flex mt-2'>
-                       {uploadedImages.map((image, index)=> {
-                               return(
-                                <div className='ds_review-inner position-relative' key={index}>
-                                   <img src={image?.preview} alt={`Uploaded ${index}`} width="100%" className='ds_review-upload-img' />
-                                   <IoMdClose className='ds_review-cancel-icon' onClick={() => handleRemoveImage(index)}
-                                   />
-                                 </div>
-                               )
-                          })}
+                       {uploadedImages?.map((media, index) => (
+                             <div className="ds_review-inner position-relative" key={index}>
+                               {media.type === "image" ? (
+                                 <img src={media?.preview} alt={`Uploaded ${index}`} width="100%" className="ds_review-upload-img" />
+                               ) : (
+                                 <video src={media?.preview} controls width="100%" className="ds_review-upload-video" />
+                               )}
+                               <IoMdClose className="ds_review-cancel-icon" onClick={() => handleRemoveImage(index)} />
+                             </div>
+                                       ))} 
 
                                <div className='ds_review-add' onClick={() => document.getElementById('imageUploadInput').click()} style={{ cursor: 'pointer' }}>
                                     <FiPlus className='ds_review-plus' />

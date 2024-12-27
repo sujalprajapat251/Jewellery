@@ -36,13 +36,26 @@ const Faq = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     },[])
 
+    const handle = () => {
+        Swal.fire({
+            position: "top-end",
+            toast: true,
+            title: "Login Successful",
+            showConfirmButton: false,
+            timer: 3000,
+            showCloseButton: true,
+            background: "#a1a09f",
+            color: "white",
+            iconColor: "white",
+          });
+    }
 
       
 
   return (
     <>
       <section>
-        <button className='btn btn-primary'>Check</button>
+        <button onClick={handle} className='btn btn-primary'>Check</button>
         <div className='mb-5'>
             <div className='ds_faq-bg'>
                 <div className="ds_container">

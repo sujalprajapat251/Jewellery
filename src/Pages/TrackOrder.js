@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../Css/dhruvin/TrackOrder.css'
-import ReviewFeedback from './ReviewFeedback'
 import { Link, useNavigate } from 'react-router-dom'
 import noteContext from '../Context/noteContext'
-import { Button, Modal } from 'react-bootstrap'
+import {  Modal } from 'react-bootstrap'
 import axios from 'axios'
 
 const TrackOrder = () => {
@@ -15,32 +14,63 @@ const navigate = useNavigate()
 const [trackOrderData, setTrackOrderData] = useState([])
 
 const trackKey = JSON.parse(localStorage.getItem("TrackOrderKey")) || null
+const cusId = JSON.parse(localStorage.getItem("Login")) || null
+// console.log(trackKey);
 
-// console.log("TrackData ", data);
 
 const handleCancelOrder = (id) => {
      setTrackPopup(true)
      setTrackId(id)     
 }
 
+useEffect(() => {
+  const fetchOrderData = async () => {
+    let retryCount = 0;
+    const maxRetries = 3;
+    const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; 
 
-useEffect(()=>{
-  axios.post(`${Api}/order/getbyuserid`,
-    {
-       customer_id:1
-    },
-    {
-    headers: {
-      Authorization: `Bearer ${store?.access_token}`
-    }
-   }).then((value)=>{
-      console.log("TrackOrder " ,value?.data?.orders?.filter((element)=> element?.order_number === trackKey));  
-      setTrackOrderData(value?.data?.orders?.filter((element)=> element?.order_number === trackKey))
-      
-   }).catch((error)=>{
-      alert(error)
-   })
-},[trackFilter])
+    const attemptFetch = async () => {
+      try {
+        const response = await axios.post(
+          `${Api}/order/getbyuserid`,
+          { customer_id:cusId?.id  },
+          {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`,
+            },
+          }
+        );
+        console.log("res" , response);
+        
+        console.log(
+          "TrackOrder",
+          response?.data?.orders?.filter((element) => element?.order_number === trackKey)
+        );
+        setTrackOrderData(
+          response?.data?.orders?.filter((element) => element?.order_number === trackKey)
+        );
+      } catch (error) {
+        if (error.response?.status === 429 && retryCount < maxRetries) {
+          retryCount++;
+          const delay = retryDelay(retryCount);
+          console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
+          await new Promise((resolve) => setTimeout(resolve, delay)); 
+          await attemptFetch(); 
+        } else {
+          console.error("Error Fetching Order Data:", error);
+          alert("Failed to fetch order data. Please try again later.");
+        }
+      }
+    };
+
+    await attemptFetch();
+  };
+
+  fetchOrderData();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [trackFilter]);
+
 
 
 // ********** Reason For Cencellation Popup **********
@@ -48,16 +78,50 @@ useEffect(()=>{
 const [reasonPopData, setReasonPopData] = useState([])
 const [checkData, setCheckData] = useState("")
 
-useEffect(()=>{
-  axios.get(`${Api}/reasonCancellation/getall`,{
-    headers: {
-      Authorization: `Bearer ${store?.access_token}`
-    }
-  }).then((value)=>{
-    // console.log("Reason " , value?.data?.reasonCancellation.filter((element)=> element.status === 'active'));
-    setReasonPopData(value?.data?.reasonCancellation.filter((element)=> element.status === 'active'))
-  })
-},[])
+useEffect(() => {
+  const fetchCancellationReasons = async () => {
+    let retryCount = 0;
+    const maxRetries = 3;
+    const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; 
+
+    const attemptFetch = async () => {
+      try {
+        const response = await axios.get(`${Api}/reasonCancellation/getall`, {
+          headers: {
+            Authorization: `Bearer ${store?.access_token}`,
+          },
+        });
+
+        // console.log(
+        //   "Reason",
+        //   response?.data?.reasonCancellation?.filter((element) => element.status === "active")
+        // );
+
+        setReasonPopData(
+          response?.data?.reasonCancellation?.filter((element) => element.status === "active")
+        );
+      } catch (error) {
+        if (error.response?.status === 429 && retryCount < maxRetries) {
+          retryCount++;
+          const delay = retryDelay(retryCount);
+          console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
+          await new Promise((resolve) => setTimeout(resolve, delay)); 
+          await attemptFetch(); 
+        } else {
+          console.error("Error Fetching Cancellation Reasons:", error);
+          alert("Failed to fetch cancellation reasons. Please try again later.");
+        }
+      }
+    };
+
+    await attemptFetch();
+  };
+
+  fetchCancellationReasons();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
+
 
 
 // ************* Order cancelled Popup ************ 

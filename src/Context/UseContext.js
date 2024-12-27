@@ -198,7 +198,6 @@ const UseContext = (props) => {
 
   }, [editToggle])
 
-  console.log("pro " , profileData);
   
 
   // ******* Edit User State *******
@@ -232,13 +231,13 @@ const UseContext = (props) => {
       axios
         .post(`${Api}/user/updateprofile/${store?.id}`,
           {
-            name: values.name,
-            email: values.email,
+            name: values?.name,
+            email: values?.email,
             role_id: 2,
-            phone: values.phone,
-            gender: values.gender,
-            dob: values.dob,
-            pin: values.pin,
+            phone: values?.phone,
+            gender: values?.gender,
+            dob: values?.dob,
+            pincode: values?.pin,
           },
           {
             headers: {
@@ -247,6 +246,8 @@ const UseContext = (props) => {
           }
         )
         .then((response) => {
+          console.log("gnrjghwgkwnfgek " , response);
+          
           alert("Profile updated successfully!");
           setEditToggle(false);
         })
@@ -412,9 +413,21 @@ const UseContext = (props) => {
   
 
   const handleSingleNewAdd = (id) => {
-    setSingleNewAdd(true)
-    setSingleId(id)
-  }
+    const selectedAddress = myAddData.find((item) => item.id === id);
+    if (selectedAddress) {
+      SingleAddFormik.setValues({
+        address: selectedAddress?.address || '',
+        pincode: selectedAddress?.pincode || '',
+        state: selectedAddress?.state || '',
+        city: selectedAddress?.city || '',
+        name: selectedAddress?.contact_name || '',
+        phone: selectedAddress?.contact_no || '',
+      });
+    }
+    setSingleNewAdd(true);
+    setSingleId(id);
+  };
+  
 
   //--------------- Delete Item Popup --------------
   const [deleteId, setDeleteId] = useState(null)
@@ -457,7 +470,7 @@ const UseContext = (props) => {
        try{
             const response = await axios.post(`${Api}/order/getbyuserid`,
                {
-                 customer_id: 1
+                 customer_id: parseInt(`${store?.id}`)
                },
                {
                  headers: {

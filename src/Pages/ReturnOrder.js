@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import '../Css/dhruvin/ReturnOrder.css'
+import '../Css/dhruvin/ReviewFeedback.css'
 import { FaStar } from 'react-icons/fa'
 import { FiPlus } from 'react-icons/fi'
 import { IoMdClose } from 'react-icons/io'
@@ -7,47 +8,63 @@ import { Link } from 'react-router-dom'
 import noteContext from '../Context/noteContext'
 import axios from 'axios'
 import { Modal } from 'react-bootstrap'
-import { useFormik } from 'formik'
 
 const ReturnOrder = () => {
   
 
 const {Api , store , returnOrderData} = useContext(noteContext)
 
-const returnMainData = JSON.parse(localStorage.getItem("ReturnOrder")) || []
-// console.log(returnMainData);
-
 const ReturnOrderKey = JSON.parse(localStorage.getItem("ReturnOrderKey")) || null
 
 const [returnData, setReturnData] = useState([])
 const [prodID, setProdID] = useState([])
 
-useEffect(()=>{
-  axios.post(`${Api}/order/getbyuserid`,
-    {
-       customer_id:1
-    },
-    {
-    headers: {
-      Authorization: `Bearer ${store?.access_token}`
-    }
-   }) .then((value) => {
-    const data = value?.data?.orders?.filter(
-      (element) => element?.order_number === ReturnOrderKey
-    );    
-    const First = data?.map((element)=> element?.order_items)
-    const Second = First[0]?.map((element)=> element?.product_id)
-    // console.log("Fliter" , new Set(Second) );
-    setProdID([...new Set(Second)]);
-    setReturnData(data)
-    
-  }).catch((error)=>{
-      alert(error)
-   })
-},[returnOrderData])
+useEffect(() => {
+  const fetchOrderData = async () => {
+    let retryCount = 0;
+    const maxRetries = 3; 
+    const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; 
 
+    const attemptFetch = async () => {
+      try {
+        const response = await axios.post( `${Api}/order/getbyuserid`,
+          { customer_id: 1 },
+          {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`,
+            },
+          }
+        );
 
-// console.log("Hello ", prodID);
+        const data = response?.data?.orders?.filter(
+          (element) => element?.order_number === ReturnOrderKey
+        );
+        const First = data?.map((element) => element?.order_items);
+        const Second = First[0]?.map((element) => element?.product_id);
+        setProdID([...new Set(Second)]);
+        setReturnData(data);
+      } catch (error) {
+        if (error.response?.status === 429 && retryCount < maxRetries) {
+          retryCount++;
+          const delay = retryDelay(retryCount);
+          console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
+          await new Promise((resolve) => setTimeout(resolve, delay)); 
+          await attemptFetch(); 
+        } else {
+          console.error("Error Fetching Order Data:", error);
+          alert("Failed to fetch order data. Please try again later.");
+        }
+      }
+    };
+
+    await attemptFetch();
+  };
+
+  fetchOrderData();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [returnOrderData]);
+
 
 
 // --------------- Return Order Popup -------------
@@ -89,7 +106,6 @@ const handleRequestOtp = (e) => {
 
 
 // ---------------  Return Order With OTP Popup  ------------------- }
-const [returnOtp, setReturnOtp] = useState(false)
 
 const [returnOtpVal, setReturnOtpVal] = useState({
     otp1:'',
@@ -122,44 +138,60 @@ const handleBackspace = (e, index) => {
   }
 };
 
-const returnOtpFormik = useFormik({
-  initialValues: returnOtpVal,
-  onSubmit: (values, action) => {
-    console.log("Otp Data", values);
-  },
-});
 
+const handleConfirmReturn = async (e) => {
+  e.preventDefault();
 
-const handleConfirmReturn = (e) => {
-   e.preventDefault();
-   if(returnPopup.order_id === "" || returnPopup.reason === "" || returnPopup.phone.length !== 10 || !/^\d{10}$/.test(returnPopup.phone || returnOtpVal.otp1 === "" || returnOtpVal.otp2 === "" || returnOtpVal.otp3 === "" || returnOtpVal.otp4 === "" || returnOtpVal.otp5 === "" || returnOtpVal.otp6 === "")){
-      alert("Please All Field The Proper Fill")
-   }
-   else{
-     axios.post(`${Api}/returnorder/create`,{
-       order_id:returnPopup.order_id,
-       stock_id: null,
-       product_id: null,
-       customer_id:store?.id,
-       return_date:finalDate,
-       return_status:"pending",
-       price:returnData[0]?.total_amount,
-       phone:returnPopup.phone,
-       otp:MergeOtp,
-     },
-     {
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`
+  // Validate form fields
+  if ( returnPopup.order_id === "" || returnPopup.reason === "" || returnPopup.phone.length !== 10 || !/^\d{10}$/.test(returnPopup.phone) || returnOtpVal.otp1 === "" || returnOtpVal.otp2 === "" || returnOtpVal.otp3 === "" || returnOtpVal.otp4 === "" || returnOtpVal.otp5 === "" || returnOtpVal.otp6 === "") {
+    alert("Please fill all fields properly");
+    return;
+  }
+
+  let retryCount = 0;
+  const maxRetries = 3; // Maximum number of retries
+  const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; // Exponential backoff delay
+
+  const attemptSubmit = async () => {
+    try {
+      const response = await axios.post(
+        `${Api}/returnorder/create`,
+        {
+          order_id: returnPopup.order_id,
+          stock_id: null,
+          product_id: null,
+          customer_id: store?.id,
+          return_date: finalDate,
+          return_status: "pending",
+          price: returnData[0]?.total_amount,
+          phone: returnPopup.phone,
+          otp: MergeOtp,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${store?.access_token}`,
+          },
+        }
+      );
+
+      console.log("Final Response: ", response);
+      setReturnToggle(false);
+    } catch (error) {
+      if (error.response?.status === 429 && retryCount < maxRetries) {
+        retryCount++;
+        const delay = retryDelay(retryCount);
+        console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
+        await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before retrying
+        await attemptSubmit(); // Retry the request
+      } else {
+        console.error("Error in Return Order Submission:", error);
+        alert("Failed to submit return order. Please try again later.");
       }
-     }
-    ).then((value)=>{
-         console.log("Final Val " , value);
-         setReturnToggle(false)
-     }).catch((error)=>{
-       alert(error)
-     })
-   }
-}
+    }
+  };
+
+  await attemptSubmit();
+};
 
 
 
@@ -170,25 +202,29 @@ const [uploadedImages, setUploadedImages] = useState([]);
 const [feedback, setFeedback] = useState("")
 
 const handleRating = (value) => {
-  setRating(value); // Update the rating state
+  setRating(value); 
 };
 
 const handleImageUpload = (event) => {
   const files = Array.from(event.target.files);
-  const newImages = files.map((file) => ({
-    file, // Store the actual file object
-    preview: URL.createObjectURL(file), // Local preview URL
-  }));
-  setUploadedImages((prevImages) => [...prevImages, ...newImages]);
+  const newMedia = files.map((file) => {
+    const fileType = file.type.startsWith("video") ? "video" : "image";
+    return {
+      file, 
+      type: fileType, 
+      preview: URL.createObjectURL(file), 
+    };
+  });
+  setUploadedImages((prevMedia) => [...prevMedia, ...newMedia]);
 };
 
 const handleRemoveImage = (index) => {
-  setUploadedImages((prevImages) => {
-    const updatedImages = prevImages.filter((_, i) => i !== index);
-    prevImages.forEach((image, i) => {
-      if (i === index) URL.revokeObjectURL(image.preview); // Clean up
+  setUploadedImages((prevMedia) => {
+    const updatedMedia = prevMedia.filter((_, i) => i !== index);
+    prevMedia.forEach((media, i) => {
+      if (i === index) URL.revokeObjectURL(media.preview); 
     });
-    return updatedImages;
+    return updatedMedia;
   });
 };
 
@@ -199,13 +235,9 @@ const day = String(today.getDate()).padStart(2, '0');
 
 const finalDate = `${year}-${month}-${day}`
 
-// console.log("data " , returnData[0]?.customer_id);
-// console.log("Pro " , prodID);
-
-
-const handleReviewSubmit = () => {
+const handleReviewSubmit = async () => {
   if (!rating || !feedback || uploadedImages.length === 0) {
-    alert("Please upload an image, provide a rating, and add feedback.");
+    alert("Please upload an image or video, provide a rating, and add feedback.");
     return;
   }
 
@@ -216,49 +248,59 @@ const handleReviewSubmit = () => {
   formData.append("date", finalDate);
   formData.append("order_id", returnData[0]?.id);
 
-  // Assuming `uploadedImages` contains an array of objects with the image URL
-  uploadedImages.forEach((image, index) => {
-    // console.log(image);
-    
- if (image.file) {
-      console.log(image.file);
-      
-      formData.append(`image[${index}]`, image?.file); // Append binary file
+  uploadedImages.forEach((media, index) => {
+    if (media.file) {
+      console.log(media?.file);
+      formData.append(`image[${index}]`, media.file);
     }
   });
 
-    prodID.forEach((element, index) => {
+  prodID.forEach((element, index) => {
     formData.append(`product_id[${index}]`, element);
-   });
-  
+  });
 
-  axios
-    .post(`${Api}/reviews/create`, formData, {
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`,
-        "Content-Type": "multipart/form-data",
-      },
-    })
-    .then((response) => {
+  let retryCount = 0;
+  const maxRetries = 3; 
+  const retryDelay = (attempt) => Math.pow(2, attempt) * 1000;
+  const attemptSubmit = async () => {
+    try {
+      const response = await axios.post(`${Api}/reviews/create`, formData, {
+        headers: {
+          Authorization: `Bearer ${store?.access_token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       alert("Review submitted successfully!");
       console.log(response);
-    })
-    .catch((error) => {
-      console.error("Error submitting review:", error);
-      alert("Failed to submit the review.");
-    });
+    } catch (error) {
+      if (error.response?.status === 429 && retryCount < maxRetries) {
+        retryCount++;
+        const delay = retryDelay(retryCount);
+        console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
+        await new Promise((resolve) => setTimeout(resolve, delay)); 
+        await attemptSubmit(); 
+      } else {
+        console.error("Error submitting review:", error);
+        alert("Failed to submit the review.");
+      }
+    }
+  };
+
+  await attemptSubmit();
 };
 
 
 useEffect(() => {
   return () => {
-    uploadedImages.forEach((image) => URL.revokeObjectURL(image.preview)); // Clean up on unmount
+    uploadedImages.forEach((media) => {
+      URL.revokeObjectURL(media.preview); 
+    });
   };
 }, [uploadedImages]);
 
 
-console.log(returnData);
-console.log(prodID);
+
+
 
 
 
@@ -439,19 +481,16 @@ console.log(prodID);
                                 <div className='px-4 mt-3'>
                                     <h6 className='ds_600 mb-0'>Add Photo or Video</h6>
                                     <div className='d-flex mt-2'>
-                                    {uploadedImages.map((image, index)=> {
-                                         return(
-                                          <div className='ds_review-inner position-relative' key={index}>
-                                             <img src={image?.preview} alt={`Uploaded ${index}`} width="100%" className='ds_review-upload-img' />
-                                             <IoMdClose className='ds_review-cancel-icon' onClick={() => handleRemoveImage(index)}
-
-                                             />
-                                           </div>
-                                         )
-                                      })}
-                                           
-                                          
-                                        
+                                    {uploadedImages.map((media, index) => (
+                                          <div className="ds_review-inner position-relative" key={index}>
+                                            {media.type === "image" ? (
+                                              <img src={media?.preview} alt={`Uploaded ${index}`} width="100%" className="ds_review-upload-img" />
+                                            ) : (
+                                              <video src={media?.preview} controls width="100%" className="ds_review-upload-video" />
+                                            )}
+                                            <IoMdClose className="ds_review-cancel-icon" onClick={() => handleRemoveImage(index)} />
+                                          </div>
+                                       ))} 
                                         <div className='ds_review-add' onClick={() => document.getElementById('imageUploadInput').click()} style={{ cursor: 'pointer' }}>
                                            <FiPlus className='ds_review-plus' />
                                          </div>
@@ -466,7 +505,7 @@ console.log(prodID);
                               <label htmlFor="floatingTextarea">Write your feedback</label>
                             </div>
                             <div className='mt-4 pt-2 mb-2'>
-                               <button className='ds_review-submit ' onClick={handleReviewSubmit} >Submit</button>
+                               <button className='ds_review-submit' onClick={handleReviewSubmit} >Submit</button>
                             </div>
                                 </div>
                            </div>

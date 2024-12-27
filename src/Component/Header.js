@@ -171,7 +171,7 @@ function Header() {
               password: values.password,
             });
       
-            console.log("LoginRes", response.data);
+            console.log("Login Response:", response.data);
       
             if (response?.data?.result) {
               localStorage.setItem("Login", JSON.stringify(response.data.result));
@@ -179,37 +179,41 @@ function Header() {
               Swal.fire({
                 position: "top-end",
                 toast: true,
-                title: "Login Successfully",
+                title: "Login Successful",
                 showConfirmButton: false,
                 timer: 3000,
                 showCloseButton: true,
-                background: "green",
+                background: "#a1a09f",
                 color: "white",
-                iconColor: "white"
+                iconColor: "white",
               });
-             setTimeout(()=>{
+      
+              // Optionally reload or redirect
+              setTimeout(() => {
                 window.location.reload();
-             },1000)
-              
+              }, 1000);
             } else {
-              alert("Unexpected login response. Please try again.");
-              Swal.fire({
-                position: "top-end",
-                toast: true,
-                icon: "error",
-                title: "Login Successfully",
-                showConfirmButton: false,
-                timer: 3000,
-                showCloseButton: true,
-                background: "black",
-                color: "white",
-                iconColor: "green"
-              });
+              throw new Error("Invalid login response");
             }
-        }catch (e) {
-
-        }
-    }})
+          } catch (error) {
+            console.error("Login Error:", error);
+            Swal.fire({
+              position: "top-end",
+              toast: true,
+              icon: "error",
+              title: "Login Failed",
+              text: error?.response?.data?.message || "Something went wrong. Please try again.",
+              showConfirmButton: false,
+              timer: 3000,
+              showCloseButton: true,
+              background: "black",
+              color: "white",
+              iconColor: "red",
+            });
+          }
+        },
+      });
+      
 
 
 

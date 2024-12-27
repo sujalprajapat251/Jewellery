@@ -4,6 +4,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     -webkit-appearance: none;
 }
 
+.ds_myprofile-scroll::-webkit-scrollbar {
+    display: none;
+}
 
 .ds_cursor{
     cursor: pointer;
@@ -411,10 +414,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
      margin-top: 20px;
      margin-left: 0px;
   }
+  .ds_edit-cencel{
+     /* margin-right: 10px; */
+  }
   /* {*************  My Address **************} */
     .ds_add-mini{
         width: 50%;
     }  
+    
 
     /* {---------------- Delete Item Modal ------------------} */
    .ds_delete-modal .modal-dialog  .modal-content{
@@ -429,10 +436,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 
 /* {*************** Add New Address Popup ************   } */
-/* .ds_new-other{
-    display: block;
-    margin-top: 10px;
-} */
+.ds_new-home{
+    padding: 10px 16px;
+}
 
 /* {*************** Remove Product Popup ************   } */
 .ds_order-all{

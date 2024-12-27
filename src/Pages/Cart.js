@@ -23,7 +23,7 @@ const Cart = () => {
   const [removePopup, setRemovePopup] = useState(false)
   const [removeId, setRemoveId] = useState(null)
   const [wishId, setWishId] = useState(null)
-  const [deleteToggle, setDeleteToggle] = useState(false)
+  const [deleteToggle, setDeleteToggle] = useState(0)
   const [priceToggle, setPriceToggle] = useState(0)
 
   const [cartData, setCartData] = useState([])
@@ -38,6 +38,10 @@ const Cart = () => {
       }
     }).then((value)=>{
        console.log("CartData " , value?.data?.cart);
+       let jem = value?.data?.cart.map((element)=> element?.product_id);
+
+       console.log("jem" , jem);
+       
        setCartData(value?.data?.cart)
        let hello = value?.data?.cart.map((element) => parseFloat(element?.total_price));
        let totalPrice = hello.reduce((sum, price) => sum + price, 0);
@@ -112,21 +116,40 @@ const Cart = () => {
     setPriceToggle((prev) => prev + 1);
   };
   
-  const handleFinalRemove = () => {    
-    axios.delete(`${Api}/cart/delete/${removeId}`,{
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`
+  const handleFinalRemove = async () => {
+    let retryCount = 0;
+    const maxRetries = 3; // Maximum retry attempts
+    const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; // Exponential backoff
+    
+    const attemptDelete = async () => {
+      try {
+        const response = await axios.delete(`${Api}/cart/delete/${removeId}`, {
+          headers: {
+            Authorization: `Bearer ${store?.access_token}`,
+          },
+        });
+        console.log("Delete Response:", response);
+        setDeleteToggle((prev) => prev + 1); 
+        setRemovePopup(false); 
+      } catch (error) {
+        if (error.response?.status === 429 && retryCount < maxRetries) {
+          retryCount++;
+          const delay = retryDelay(retryCount);
+          console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
+          await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before retrying
+          await attemptDelete(); // Retry the request
+        } else {
+          console.error("Error Deleting Cart Item:", error);
+          alert("Failed to delete item from cart. Please try again later.");
+          setRemovePopup(false); 
+        }
       }
-    }).then((value)=>{
-      console.log("Delete" , value);
-      setDeleteToggle(true)
-    }).catch((error)=>{
-       alert("Delete in Cart" , error)
-    })
-    // let remove = cartData?.filter((element)=> element.product.id  !== removeId)
-    // localStorage.setItem("cardDetail", JSON.stringify(remove));
-    setRemovePopup(false)
-  }
+    };
+  
+    await attemptDelete();
+  };
+  
+  
 
   useEffect(()=>{
     axios.get(`${Api}/coupons/getall`,{
@@ -248,7 +271,7 @@ const Cart = () => {
                       {cartData?.map((element , index)=>{
                           const totalPrice = isNaN(element?.total_price) ? 0 : Math.floor(element?.total_price);
                           const discountedPrice = isNaN(element?.total_price) ? 0 : Math.floor(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price));
-                          console.log("doiscountPrice" , discountedPrice);
+                          // console.log("doiscountPrice" , Math.floor(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price)))
                           
                            return(
                               <div key={element?.id} className='ds_cart-box mt-4'>
