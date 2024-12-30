@@ -157,7 +157,7 @@ const handleReviewSubmit = async () => {
         headers: {
           Authorization: `Bearer ${store?.access_token}`,
           "Content-Type": "multipart/form-data",
-        },
+        },   
       });
 
       alert("Review submitted successfully!");
