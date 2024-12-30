@@ -15,19 +15,37 @@ const [invoice, setInvoice] = useState({})
 const [invoiceData, setinvoiceData] = useState([]) 
 const invoiceRef = useRef(); 
 
- useEffect(()=>{
-  axios.get(`${Api}/order/get/${Id}`,{
-    headers: {
-      Authorization: `Bearer ${store?.access_token}`
+useEffect(() => {
+  const fetchInvoice = async (retryCount = 0) => {
+    const maxRetries = 3; 
+    const retryDelay = (retryCount) => Math.pow(2, retryCount) * 1000; 
+
+    try {
+      const response = await axios.get(`${Api}/order/get/${Id}`, {
+        headers: {
+          Authorization: `Bearer ${store?.access_token}`,
+        },
+      });
+
+      console.log(response?.data);
+      setInvoice(response?.data?.order);
+      setinvoiceData(response?.data?.order?.order_items);
+    } catch (error) {
+      if (error.response?.status === 429 && retryCount < maxRetries) {
+       
+        console.warn(`Retrying invoice fetch in ${retryDelay(retryCount)}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay(retryCount)));
+        return fetchInvoice(retryCount + 1);
+      }
+
+      console.error("Error fetching invoice:", error);
+      alert(`Error: ${error.response?.data?.message || error.message}`);
     }
-  }).then((value)=>{
-     console.log(value?.data);
-     setInvoice(value?.data?.order)
-     setinvoiceData(value?.data?.order?.order_items)
-  }).catch((error)=>{
-     alert("invoice" ,error)
-  })
- },[])
+  };
+
+  fetchInvoice();
+}, []); 
+
 
  const handlePrint = () => {
   const element = invoiceRef.current;
@@ -73,7 +91,7 @@ const invoiceRef = useRef();
                         <div className="text-end">
                           <p className="ds_in-text mb-0 text-dark ds_600">#{invoice?.invoice_number}</p>
                           <p className="ds_in-text mb-0 text-dark ds_600">{invoice?.order_date}</p>
-                          <p className="ds_in-text mb-0 text-dark ds_600">#{invoice?.order_number}</p>
+                          <p className="ds_in-text mb-0 text-dark ds_600">#{Id}</p>
                           <p className="ds_in-text mb-0 text-dark ds_600">CGHCJU554451JH</p>
                         </div>
                       </div>

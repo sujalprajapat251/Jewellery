@@ -30,29 +30,43 @@ const Cart = () => {
   const [cupon, setCupon] = useState([])
   const [price, setPrice] = useState("")
 
-  useEffect(()=>{
-    // alert('')
-    axios.get(`${Api}/cart/getall`,{
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`
+  useEffect(() => {
+    const fetchCartData = async () => {
+      try {
+        const response = await axios.get(`${Api}/cart/getall`, {
+          headers: {
+            Authorization: `Bearer ${store?.access_token}`,
+          },
+        });
+  
+        console.log("CartData:", response?.data?.cart);
+  
+        const cart = response?.data?.cart || [];
+        const jem = cart.map((element) => element?.product_id);
+  
+        console.log("jem:", jem);
+  
+        setCartData(cart);
+  
+        const hello = cart.map((element) => parseFloat(element?.total_price || 0));
+        const totalPrice = hello.reduce((sum, price) => sum + price, 0);
+  
+        setPrice(Math.floor(totalPrice));
+      } catch (error) {
+        console.error("Error fetching cart data:", error);
+        alert("Failed to fetch cart data.");
       }
-    }).then((value)=>{
-       console.log("CartData " , value?.data?.cart);
-       let jem = value?.data?.cart.map((element)=> element?.product_id);
+    };
+  
+    fetchCartData();
+  
+    console.log("Fetching cart data...");
+  
+    // Dependencies
+  }, [deleteToggle, priceToggle]);
+  
 
-       console.log("jem" , jem);
-       
-       setCartData(value?.data?.cart)
-       let hello = value?.data?.cart.map((element) => parseFloat(element?.total_price));
-       let totalPrice = hello.reduce((sum, price) => sum + price, 0);
-       setPrice(Math.floor(totalPrice));
 
-    }).catch((error)=>{
-      //  alert("Cart Error" , error)
-    })
-
-    console.log("I AM Useeffect");
-  },[deleteToggle , priceToggle])
   // console.log('card',cartData);
   const handleAddType = (type) => {
      setAddType(type)
@@ -68,7 +82,6 @@ const Cart = () => {
 
   const mydefault = JSON.parse(localStorage.getItem("default"))
   const myAddress =  myAddData.filter((element)=> element?.id === mydefault)
-  // console.log("myaddress" , myAddress);
 
   const handleQuantityChange = async (id, action, cusId, prod_id) => {
     // Calculate the updated cart directly
@@ -118,8 +131,8 @@ const Cart = () => {
   
   const handleFinalRemove = async () => {
     let retryCount = 0;
-    const maxRetries = 3; // Maximum retry attempts
-    const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; // Exponential backoff
+    const maxRetries = 3; 
+    const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; 
     
     const attemptDelete = async () => {
       try {
@@ -136,8 +149,8 @@ const Cart = () => {
           retryCount++;
           const delay = retryDelay(retryCount);
           console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
-          await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before retrying
-          await attemptDelete(); // Retry the request
+          await new Promise((resolve) => setTimeout(resolve, delay)); 
+          await attemptDelete(); 
         } else {
           console.error("Error Deleting Cart Item:", error);
           alert("Failed to delete item from cart. Please try again later.");
@@ -363,7 +376,7 @@ const Cart = () => {
                                </div>
                              </div>
                              <div className="px-3 mt-3 fw-500">
-                               <p className="ds_add-special" style={{fontWeight:'600'}}>Special offers</p>
+                               <p className="ds_add-special ds_600" >Coupon List</p>
                                 {
                                   cupon?.map((element)=>{
                                      return(
@@ -374,7 +387,7 @@ const Cart = () => {
                                              <p className="text-muted ds_tcolor mb-0 mt-1" style={{ lineHeight: "18px" }}>
                                                {element?.description}
                                              </p>
-                                             <label className="form-check-label  ds_color mt-1" style={{fontWeight:'600'}} htmlFor="flexRadioDefault1">Save {element?.price}</label>
+                                             <label className="form-check-label  ds_color mt-1 ds_600" htmlFor="flexRadioDefault1">Save {element?.price}</label>
                                            </div>
                                         </div>
                                      )
@@ -429,13 +442,13 @@ const Cart = () => {
     {/* *************** Add New Address Popup ************    */}
       <section>
         <div>
-        <Modal className="modal fade" show={newAddModal} centered onHide={()=> setNewAddModal(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <Modal className="modal fade px-0" show={newAddModal} centered onHide={()=> setNewAddModal(false)} id="addressModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog ds_add-modal modal-dialog-centered m-0">
               <div className="modal-content border-0" style={{borderRadius:'0'}}>
                 <div className="modal-header border-0 pb-0">
                   <button type="button" className="btn-close" onClick={()=> setNewAddModal(false)}></button>
                 </div>
-                <div className="modal-body pt-0 px-4">
+                <div className="modal-body pt-0 px-sm-4 px-3">
                    <h4 className="modal-title text-center ds_color" >Add New Address</h4>
                    <form onSubmit={AddFormik.handleSubmit}>
                      <h6 className='ds_color mt-3'>Area Details</h6>
@@ -493,17 +506,17 @@ const Cart = () => {
                      </div>
                      <div>
                        <h6 className='ds_color mt-3'>Address Type</h6>
-                       <div className="d-flex flex-wrap">
-                           <div className="me-2 mt-">
-                              <button type="button" className={`ds_new-home ${addType === 'Home' ? 'ds_select_type_active' : ''}  `} onClick={()=>handleAddType("Home")}><GoHome className='ds_home-icon' /> Home</button>
-                           </div>
-                           <div className="mt- me-2">
-                             <button type="button" className={`ds_new-work ${addType === 'Work' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Work")}><IoBagHandleOutline className="ds_home-icon" /> Work</button>
-                           </div>
-                           <div className="mt-">
-                               <button type="button" className={`ds_new-other ${addType === 'Other' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Other")}> Other</button>
-                           </div>
-                       </div>
+                       <div className="d-flex flex-wrap ju">
+                          <div className="me-2 mt-2">
+                             <button type="button" className={`ds_new-home ${addType === 'Home' ? 'ds_select_type_active' : ''}  `} onClick={()=>handleAddType("Home")}><GoHome className='ds_home-icon' /> Home</button>
+                          </div>
+                          <div className="mt-2 me-2">
+                            <button type="button" className={`ds_new-work ${addType === 'Work' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Work")}><IoBagHandleOutline className="ds_home-icon" /> Work</button>
+                          </div>
+                          <div className="mt-2">
+                              <button type="button" className={`ds_new-other ${addType === 'Other' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Other")}> Other</button>
+                          </div>
+                      </div>
                      </div>
                      <div>
                        <div className="row justify-content-center">

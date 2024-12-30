@@ -20,6 +20,8 @@ function Wishlist() {
         console.log('data',productData);
         setWishlistData(productData);
     }, [wishlistData, allProduct]);
+
+    
     // console.log('hellloo',wishlistproducts);
      // backend conection code over ----------------------------------------------------------------
     return (

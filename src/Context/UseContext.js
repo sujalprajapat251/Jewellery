@@ -549,7 +549,8 @@ const UseContext = (props) => {
        try{
             const response = await axios.post(`${Api}/order/getbyuserid`,
                {
-                 customer_id: parseInt(`${store?.id}`)
+                //  customer_id: parseInt(`${store?.id}`)
+                  customer_id: 1
                },
                {
                  headers: {

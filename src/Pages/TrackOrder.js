@@ -127,31 +127,59 @@ useEffect(() => {
 // ************* Order cancelled Popup ************ 
 const [orderCancel, setOrderCancel] = useState(false)
 
-const handleContinue = () => {
-     if(checkData){
-        
-        setTrackPopup(false)
-        setOrderCancel(true)
-   
-        axios.post(`${Api}/order/updatestatus/${trackId}`,{
-         order_status:'cancelled',
-         reason:checkData
-        } ,
+const handleContinue = async () => {
+  if (!checkData) {
+    alert("Please check all at once");
+    return;
+  }
+
+  setTrackPopup(false);
+  setOrderCancel(true);
+
+  const maxRetries = 5; 
+  const initialDelay = 2000; 
+
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const makeRequestWithRetry = async (retries, delayTime) => {
+    try {
+      const response = await axios.post(
+        `${Api}/order/updatestatus/${trackId}`,
         {
-         headers: {
-           Authorization: `Bearer ${store?.access_token}`
-         }
+          order_status: 'cancelled',
+          reason: checkData
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${store?.access_token}`
+          }
         }
-        ).then((value)=>{
-          console.log("Response " , value);
-        }).catch((error)=>{
-          alert(error)
-        })  
-     }
-     else{
-      alert("Please check all at once")
-     }
-}
+      );
+      console.log("Order Cancel Response", response);
+      return response;
+    } catch (error) {
+      if (error.response?.status === 429 && retries > 0) {
+        console.warn(`429 error: Retrying in ${delayTime}ms... (${retries} attempts left)`);
+        await delay(delayTime);
+        return makeRequestWithRetry(retries - 1, delayTime * 2); 
+      } else {
+        console.error("Error:", error);
+        alert(
+          error.response?.data?.message || 
+          "An error occurred while updating the order status."
+        );
+        throw error;
+      }
+    }
+  };
+
+  try {
+    await makeRequestWithRetry(maxRetries, initialDelay);
+  } catch (finalError) {
+    console.error("Final error after retries:", finalError);
+  }
+};
+
 
   return (
     <>
@@ -294,7 +322,7 @@ const handleContinue = () => {
                                                 </div>
                                                    )
                                                  })}
-                                           <div className='d-flex flex-column h-100'>
+                                           <div className='d-flex flex-column '>
                                               <div className='text-end ds_track-margin mb-2'>
                                                   <button className='ds_track-cancel' onClick={()=> handleCancelOrder(element?.id)}>Cancel Order</button>
                                               </div>

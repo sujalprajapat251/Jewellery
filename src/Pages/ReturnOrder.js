@@ -18,6 +18,7 @@ const ReturnOrderKey = JSON.parse(localStorage.getItem("ReturnOrderKey")) || nul
 
 const [returnData, setReturnData] = useState([])
 const [prodID, setProdID] = useState([])
+const [orderID, setOrderID] = useState(null)
 
 useEffect(() => {
   const fetchOrderData = async () => {
@@ -35,14 +36,20 @@ useEffect(() => {
             },
           }
         );
-
+        
         const data = response?.data?.orders?.filter(
           (element) => element?.order_number === ReturnOrderKey
         );
         const First = data?.map((element) => element?.order_items);
         const Second = First[0]?.map((element) => element?.product_id);
+        const ID = data.map((element)=> element?.id)
+        // const reviewID = data
+        // console.log("Review " , response?.data?.orders[0]?.customer_id);  
+        setCustomerID(response?.data?.orders[0]?.customer_id)
+        setOrderID(ID[0])
         setProdID([...new Set(Second)]);
         setReturnData(data);
+
       } catch (error) {
         if (error.response?.status === 429 && retryCount < maxRetries) {
           retryCount++;
@@ -66,11 +73,19 @@ useEffect(() => {
 }, [returnOrderData]);
 
 
+useEffect(() => {
+  setReturnPopup((prev) => ({
+    ...prev,
+    order_id: orderID,
+  }));
+}, [orderID]);
+
+
 
 // --------------- Return Order Popup -------------
 const [returnToggle, setReturnToggle] = useState(false)
 const [returnPopup, setReturnPopup] = useState({
-     order_id:'',
+     order_id:null,
      phone:'',
      reason:''
 })
@@ -78,30 +93,44 @@ const [returnPopup, setReturnPopup] = useState({
 const [returnOtpToggle, setReturnOtpToggle] = useState(false)
 
 
-const handleRequestOtp = (e) => {
-    e.preventDefault();
+const handleRequestOtp = async (e) => {
+  e.preventDefault();
 
-    axios.post(`${Api}/verifyMobileNumber`,{
-      order_id:returnPopup?.order_id,
-      phone:`${returnPopup?.phone}`,
-      reason:returnPopup?.reason,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`
+  const maxRetries = 3; 
+  const retryDelay = (retryCount) => Math.pow(2, retryCount) * 1000; 
+
+  const requestOtp = async (retryCount = 0) => {
+    try {
+      const response = await axios.post(
+        `${Api}/verifyMobileNumber`,
+        {
+          order_id: orderID,
+          phone: `${returnPopup?.phone}`,
+          reason: returnPopup?.reason,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${store?.access_token}`,
+          },
+        }
+      );
+
+      console.log(response);
+      setReturnOtpToggle(true); 
+    } catch (error) {
+      if (error.response?.status === 429 && retryCount < maxRetries) {
+        console.warn(`Retrying request in ${retryDelay(retryCount)}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay(retryCount)));
+        return requestOtp(retryCount + 1);
       }
+
+      console.error("Error during OTP request:", error);
+      alert(`Error: ${error.response?.data?.message || error.message}`);
     }
-    ).then((value)=>{
-      console.log(value);
-      // setReturnToggle(false)
-      // setReturnOtp(true)
-      setReturnOtpToggle(true)
-    }).catch((error)=>{
-      alert(error)
-    })  
-}
+  };
 
-
+  await requestOtp();
+};
 
 
 
@@ -173,7 +202,7 @@ const handleConfirmReturn = async (e) => {
           },
         }
       );
-
+      alert("Return Order SuccessFully")
       console.log("Final Response: ", response);
       setReturnToggle(false);
     } catch (error) {
@@ -197,35 +226,38 @@ const handleConfirmReturn = async (e) => {
 
 
 // ********** Review & Feedback **********
+const [subRevToggle, setSubRevToggle] = useState(false)
 const [rating, setRating] = useState(0);
+const [reviewId, setReviewId] = useState(null)
+const [customerID, setCustomerID] = useState(null)
+const [reviewProdId, setReviewProdId] = useState([])
 const [uploadedImages, setUploadedImages] = useState([]);
 const [feedback, setFeedback] = useState("")
 
+
+
+
 const handleRating = (value) => {
-  setRating(value); 
+ setRating(value); 
 };
 
 const handleImageUpload = (event) => {
-  const files = Array.from(event.target.files);
-  const newMedia = files.map((file) => {
-    const fileType = file.type.startsWith("video") ? "video" : "image";
-    return {
-      file, 
-      type: fileType, 
-      preview: URL.createObjectURL(file), 
-    };
-  });
-  setUploadedImages((prevMedia) => [...prevMedia, ...newMedia]);
+ const files = Array.from(event.target.files);
+ const newImages = files.map((file) => ({
+   file, 
+   preview: URL.createObjectURL(file), 
+ }));
+ setUploadedImages((prevImages) => [...prevImages, ...newImages]);
 };
 
 const handleRemoveImage = (index) => {
-  setUploadedImages((prevMedia) => {
-    const updatedMedia = prevMedia.filter((_, i) => i !== index);
-    prevMedia.forEach((media, i) => {
-      if (i === index) URL.revokeObjectURL(media.preview); 
-    });
-    return updatedMedia;
-  });
+ setUploadedImages((prevMedia) => {
+   const updatedMedia = prevMedia.filter((_, i) => i !== index);
+   prevMedia.forEach((media, i) => {
+     if (i === index) URL.revokeObjectURL(media.preview); 
+   });
+   return updatedMedia;
+ });
 };
 
 const today = new Date();
@@ -236,68 +268,69 @@ const day = String(today.getDate()).padStart(2, '0');
 const finalDate = `${year}-${month}-${day}`
 
 const handleReviewSubmit = async () => {
-  if (!rating || !feedback || uploadedImages.length === 0) {
-    alert("Please upload an image or video, provide a rating, and add feedback.");
-    return;
-  }
+if (!rating || !feedback || uploadedImages.length === 0) {
+ alert("Please upload an image or video, provide a rating, and add feedback.");
+ return;
+}
 
-  const formData = new FormData();
-  formData.append("customer_id", returnData[0]?.customer_id);
-  formData.append("description", feedback);
-  formData.append("rating", rating);
-  formData.append("date", finalDate);
-  formData.append("order_id", returnData[0]?.id);
+const formData = new FormData();
+formData.append("customer_id", customerID);
+formData.append("description", feedback);
+formData.append("rating", rating);
+formData.append("date", finalDate);
+formData.append("order_id", orderID);
 
-  uploadedImages.forEach((media, index) => {
-    if (media.file) {
-      console.log(media?.file);
-      formData.append(`image[${index}]`, media.file);
-    }
-  });
+uploadedImages.forEach((media, index) => {
+ if (media.file) {
+   console.log(media?.file);
+   formData.append(`image[${index}]`, media.file);
+ }
+});
 
-  prodID.forEach((element, index) => {
-    formData.append(`product_id[${index}]`, element);
-  });
+prodID?.forEach((element, index) => {
+ formData.append(`product_id[${index}]`, element);
+});
 
-  let retryCount = 0;
-  const maxRetries = 3; 
-  const retryDelay = (attempt) => Math.pow(2, attempt) * 1000;
-  const attemptSubmit = async () => {
-    try {
-      const response = await axios.post(`${Api}/reviews/create`, formData, {
-        headers: {
-          Authorization: `Bearer ${store?.access_token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      alert("Review submitted successfully!");
-      console.log(response);
-    } catch (error) {
-      if (error.response?.status === 429 && retryCount < maxRetries) {
-        retryCount++;
-        const delay = retryDelay(retryCount);
-        console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
-        await new Promise((resolve) => setTimeout(resolve, delay)); 
-        await attemptSubmit(); 
-      } else {
-        console.error("Error submitting review:", error);
-        alert("Failed to submit the review.");
-      }
-    }
-  };
+let retryCount = 0;
+const maxRetries = 3; 
+const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; 
 
-  await attemptSubmit();
+const attemptSubmit = async () => {
+ try {
+   const response = await axios.post(`${Api}/reviews/create`, formData, {
+     headers: {
+       Authorization: `Bearer ${store?.access_token}`,
+       "Content-Type": "multipart/form-data",
+     },   
+   });
+
+   alert("Review submitted successfully!");
+   console.log(response);
+   setSubRevToggle(false)
+ } catch (error) {
+   if (error.response?.status === 429 && retryCount < maxRetries) {
+     retryCount++;
+     const delay = retryDelay(retryCount);
+     console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
+     await new Promise((resolve) => setTimeout(resolve, delay)); 
+     await attemptSubmit();
+   } else {
+     console.error("Error submitting review:", error);
+     alert("Failed to submit the review. Please try again later.");
+   }
+ }
 };
 
+await attemptSubmit();
+};
 
 useEffect(() => {
-  return () => {
-    uploadedImages.forEach((media) => {
-      URL.revokeObjectURL(media.preview); 
-    });
-  };
+return () => {
+ uploadedImages.forEach((media) => {
+   URL.revokeObjectURL(media.preview); 
+ });
+};
 }, [uploadedImages]);
-
 
 
 
@@ -468,29 +501,29 @@ useEffect(() => {
                                 <div className='px-4'>
                                    <h6 className='ds_600 mb-0'>Overall Rating</h6>
                                    {[1, 2, 3, 4, 5].map((star) => (
-                                        <FaStar
-                                          key={star}
-                                          className={`me-1 ${star <= rating ? 'ds_review-color' : ''}`}
-                                          onClick={() => handleRating(star)} style={{cursor: 'pointer',
-                                            color: star <= rating ? 'ds_review-color' : '',
-                                          }}
-                                        />
-                                      ))}
+                                      <FaStar
+                                        key={star}
+                                        className={`me-1 ${star <= rating ? 'ds_review-color' : ''}`}
+                                        onClick={() => handleRating(star)} style={{cursor: 'pointer',
+                                          color: star <= rating ? 'ds_review-color' : '',
+                                        }}
+                                       />
+                                     ))}
                                  </div>
                                 <div className='ds_review-line mt-2'></div>
                                 <div className='px-4 mt-3'>
                                     <h6 className='ds_600 mb-0'>Add Photo or Video</h6>
                                     <div className='d-flex mt-2'>
-                                    {uploadedImages.map((media, index) => (
-                                          <div className="ds_review-inner position-relative" key={index}>
-                                            {media.type === "image" ? (
-                                              <img src={media?.preview} alt={`Uploaded ${index}`} width="100%" className="ds_review-upload-img" />
-                                            ) : (
-                                              <video src={media?.preview} controls width="100%" className="ds_review-upload-video" />
-                                            )}
-                                            <IoMdClose className="ds_review-cancel-icon" onClick={() => handleRemoveImage(index)} />
-                                          </div>
-                                       ))} 
+                                    {uploadedImages?.map((media, index) => (
+                                           <div className="ds_review-inner position-relative" key={index}>
+                                             {media.type === "image" ? (
+                                               <img src={media?.preview} alt={`Uploaded ${index}`} width="100%" className="ds_review-upload-img" />
+                                             ) : (
+                                               <video src={media?.preview} controls width="100%" className="ds_review-upload-video" />
+                                             )}
+                                             <IoMdClose className="ds_review-cancel-icon" onClick={() => handleRemoveImage(index)} />
+                                           </div>
+                                      ))} 
                                         <div className='ds_review-add' onClick={() => document.getElementById('imageUploadInput').click()} style={{ cursor: 'pointer' }}>
                                            <FiPlus className='ds_review-plus' />
                                          </div>

@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../Css/dhruvin/Faq.css'
 import noteContext from '../Context/noteContext';
-import Swal from 'sweetalert2';
 
 const Faq = () => {
 
     const {mainFaq , subFaq } = useContext(noteContext)
-    const [activeCategory, setActiveCategory] = useState('Registration');
+    const [activeCategory, setActiveCategory] = useState('Registration1');
     const [openIndex, setOpenIndex] = useState(null);
     const [data, setData] = useState([])
     
@@ -36,26 +35,12 @@ const Faq = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     },[])
 
-    const handle = () => {
-        Swal.fire({
-            position: "top-end",
-            toast: true,
-            title: "Login Successful",
-            showConfirmButton: false,
-            timer: 3000,
-            showCloseButton: true,
-            background: "#a1a09f",
-            color: "white",
-            iconColor: "white",
-          });
-    }
 
       
 
   return (
     <>
       <section>
-        <button onClick={handle} className='btn btn-primary'>Check</button>
         <div className='mb-5'>
             <div className='ds_faq-bg'>
                 <div className="ds_container">

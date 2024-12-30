@@ -2,11 +2,11 @@ import React, { useContext , useEffect,  useState } from 'react'
 import '../Css/dhruvin/MyProfile.css'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { IoBagHandleOutline } from 'react-icons/io5';
-import { GoHome } from 'react-icons/go';
+import { GoHeartFill, GoHome } from 'react-icons/go';
 import { FaRegTrashAlt, FaStar } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
-import { Modal } from 'react-bootstrap';
+import { Col, Modal, Row } from 'react-bootstrap';
 import { FiPlus } from 'react-icons/fi';
 import { IoMdClose } from 'react-icons/io';
 import axios from 'axios';
@@ -32,6 +32,8 @@ const MyProfile = () => {
      // ********** My Order **********
      orderMain,filteredOrders, setFilteredOrders,handleTrackOrder,
 
+     // ********** My Wishlist *********
+     wishlistData, findWishlistID, allProduct ,
     //  ******** Change Password **********
     changePassToggle, setChangePassToggle ,ChangePassFormik ,
 
@@ -71,12 +73,11 @@ const MyProfile = () => {
        
     };
 
-
-  console.log(profileData);
+  console.log("Zzz" , filteredOrders);
   
 
 
-  // **********  Submit Review Popup  ********
+  // **********  Submit Revie   ********
    const [subRevToggle, setSubRevToggle] = useState(false)
    const [rating, setRating] = useState(0);
    const [reviewId, setReviewId] = useState(null)
@@ -162,6 +163,7 @@ const handleReviewSubmit = async () => {
 
       alert("Review submitted successfully!");
       console.log(response);
+      setSubRevToggle(false)
     } catch (error) {
       if (error.response?.status === 429 && retryCount < maxRetries) {
         retryCount++;
@@ -186,6 +188,17 @@ useEffect(() => {
     });
   };
 }, [uploadedImages]);
+
+
+// ************** My  WishList ***********
+const [wishlistproducts, setWishlistData] = useState([]);
+useEffect(() => {
+    const productData = allProduct.filter((wishlistItem) =>
+        wishlistData.some((product) => product.product_id === wishlistItem.id)
+    );
+    // console.log('data',productData);
+    setWishlistData(productData);
+}, [wishlistData, allProduct]);
 
 
   //  ************ LogOut Modal *********
@@ -365,9 +378,9 @@ useEffect(() => {
                                              </div>
                                          </div>
                                          <div>
-                                             <div className='text-center mt-5 mb-3 d-flex'>
-                                                 <div><button className='ds_edit-cencel ds_cursor ds_600 me-sm-4'onClick={handleCancel}>Cancel</button></div>
-                                                 <div><button type='submit' className='ds_edit-save ds_600'>Save</button></div>
+                                             <div className='text-center mt-5 mb-3 d-flex flex-wrap justify-content-center'>
+                                                 <div className='me-sm-0 me-3'><button className='ds_edit-cencel ds_cursor ds_600 me-sm-4'onClick={handleCancel}>Cancel</button></div>
+                                                 <div className='me-sm-0 me-3'><button type='submit' className='ds_edit-save ds_600'>Save</button></div>
                                              </div>
                                          </div>
                                     </form>
@@ -426,10 +439,10 @@ useEffect(() => {
                                {/* ---------------- Add New Address Popup ------------------ */}
                                   <section>
                                           <div>
-                                           <Modal className="modal fade" show={newAddModal} centered onHide={()=> setNewAddModal(false)} id="addressModal" >
+                                           <Modal className="modal fade p-0" show={newAddModal} centered onHide={()=> setNewAddModal(false)} id="addressModal" >
                                            <Modal.Header className='border-0 pb-0' closeButton>
                                                </Modal.Header>
-                                               <Modal.Body className='px-sm-4 pt-0'>
+                                               <Modal.Body className='px-sm-4 pt-0 px-0'>
                                                  <div className="modal-body pt-0 px-sm-4">
                                                     <h4 className="modal-title text-center ds_color" >Add New Address</h4>
                                                     <form onSubmit={AddFormik.handleSubmit}>
@@ -520,11 +533,11 @@ useEffect(() => {
                                  {/* ---------------- Add New Single Address Popup ------------------ */}
                                  <section>
                                           <div>
-                                           <Modal className="modal fade" centered show={singleNewAdd} onHide={()=> setSingleNewAdd(false)} id="addressModal" >
+                                           <Modal className="modal fade p-0" centered show={singleNewAdd} onHide={()=> setSingleNewAdd(false)} id="addressModal" >
                                                <Modal.Header className='border-0 pb-0' closeButton>
                                                </Modal.Header>
                                                <Modal.Body className='px-4 pt-0'>
-                                                    <h4 className="modal-title text-center ds_color" >edit Address</h4>
+                                                    <h4 className="modal-title text-center ds_color" >Edit Address</h4>
                                                     <form onSubmit={SingleAddFormik.handleSubmit}>
                                                       <h6 className='ds_color mt-3'>Area Details</h6>
                                                       <div className="row">
@@ -581,14 +594,14 @@ useEffect(() => {
                                                       </div>
                                                       <div>
                                                         <h6 className='ds_color mt-3'>Address Type</h6>
-                                                        <div className="d-flex flex-wrap">
-                                                            <div className="me-2 mt-">
+                                                        <div className="d-flex flex-wrap ">
+                                                            <div className="me-2 mt-2">
                                                                <button type="button" className={`ds_new-home ${addType === 'Home' ? 'ds_select_type_active' : ''}  `} onClick={()=>handleAddType("Home")}><GoHome className='ds_home-icon' /> Home</button>
                                                             </div>
-                                                            <div className="mt- me-2">
+                                                            <div className="mt-2 me-2">
                                                               <button type="button" className={`ds_new-work ${addType === 'Work' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Work")}><IoBagHandleOutline className="ds_home-icon" /> Work</button>
                                                             </div>
-                                                            <div className="mt-">
+                                                            <div className="mt-2">
                                                                 <button type="button" className={`ds_new-other ${addType === 'Other' ? 'ds_select_type_active' : ''} `} onClick={()=>handleAddType("Other")}> Other</button>
                                                             </div>
                                                         </div>
@@ -827,10 +840,9 @@ useEffect(() => {
                                    }
                                   {/* ----------------------- My Order ------------------- */}
                                   <div>
-                                    <div className=' px-4 pb-4'>
+                                    <div className=' px-sm-4 pb-4 px-3'>
                                       <div className="row">
                                            { filteredOrders && filteredOrders?.map((element , index)=>{ 
-                                            // console.log("FilterOrders " , filteredOrders);
                                             
                                              return(
                                               <div className="col-xl-12 mt-4" key={element?.id}>
@@ -923,8 +935,75 @@ useEffect(() => {
                           </div>
                         </section>
                          ) : ("") }
-                          
 
+                          
+                         {/* ************* My WishList ************** */}
+                         {
+                           mainActive === "My Wishlist" ? (
+                            wishlistData.length === 0 ?
+                            <section>
+                                <div className='ds_empty-inner'>
+                                    <div className='d-flex justify-content-center align-items-center h-100'>
+                                        <div className='text-center'>
+                                            <img src={require("../Img/Sujal/empty_wishlist.png")} alt="" width="20%" />
+                                            <h3 className='ds_color'>Empty Wishlist</h3>
+                                            <p className='mb-0'>Your wishlist is empty please add</p><p> your favourite items to wishlist</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            :
+                            <section className=''>
+                                <Row xxl={3} lg={3} md={2} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
+                                    {
+                                        wishlistproducts?.map((ele, id) => {
+                                            const discounted = ((parseFloat(ele?.total_price) * parseFloat(ele?.discount)) / 100).toFixed(2);
+                                            let discountPrice = [];
+                                            if (!isNaN(parseFloat(discounted))) {
+                                                discountPrice = (parseFloat(ele?.total_price) + parseFloat(discounted)).toFixed(2);
+                                            } else {
+                                                discountPrice = ele?.total_price;
+                                            }
+                                            return (
+                                                <Col key={id} className='py-4'>
+                                                    <div className='s_seller_card'>
+                                                        <div className='s_card_img'>
+                                                            <img src={ele?.images[0] || ele?.product_image[0]} className="w-100" alt={ele.title} key={ele.title} />
+                                                        </div>
+                                                        <div className='s_heart_icon s_heart_icons filled' onClick={() => { findWishlistID(ele.id) }}>
+                                                            <GoHeartFill />
+                                                        </div>
+                                                        <div  className='s_card_text'>
+                                                            <Link to={`/productdetail/${ele.product_id || ele.id}`}>
+                                                                <h5>{ele.product_name}</h5>
+                                                                <p className='mb-0' key={'p' + id}>
+                                                                    <span className='mx-2' key={'price' + id}>₹{discountPrice}</span>
+                                                                    <strike className="mx-2" key={id}>₹{ele.total_price}</strike>
+                                                                </p>
+                                                                <div className='s_rating'>
+                                                                    {
+                                                                        [...Array(5)].map((_, index) => {
+                                                                            if (index < ele.total_rating) {
+                                                                                return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                            } else {
+                                                                                return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                                                ;
+                                                                            }
+                                                                        })
+                                                                    }
+                                                                </div>
+                                                                <div className='s_card_btn'><p className=''>Buy Now</p></div>
+                                                            </Link>
+                                                        </div>
+                                                    </div>
+                                                </Col>
+                                            )
+                                        })
+                                    }
+                                </Row>
+                            </section>
+                           ) : ("")
+                         }
 
 
                         </div>
@@ -969,7 +1048,7 @@ useEffect(() => {
                                )}
                                <IoMdClose className="ds_review-cancel-icon" onClick={() => handleRemoveImage(index)} />
                              </div>
-                                       ))} 
+                        ))} 
 
                                <div className='ds_review-add' onClick={() => document.getElementById('imageUploadInput').click()} style={{ cursor: 'pointer' }}>
                                     <FiPlus className='ds_review-plus' />
