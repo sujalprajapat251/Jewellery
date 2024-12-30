@@ -160,29 +160,43 @@ const MyProfile = () => {
       }
     });
 
-    const handleReviewSubmit = () => {
+    const handleReviewSubmit = async () => {
       if (!rating || !feedback || uploadedImages.length === 0) {
-        alert("Please upload an image, provide a rating, and add feedback.");
+        alert("Please upload an image or video, provide a rating, and add feedback.");
         return;
       }
-
+    
+      const formData = new FormData();
+      formData.append("customer_id", customerID);
+      formData.append("description", feedback);
+      formData.append("rating", rating);
+      formData.append("date", finalDate);
+      formData.append("order_id", reviewId);
+    
+      uploadedImages.forEach((media, index) => {
+        if (media.file) {
+          console.log(media?.file);
+          formData.append(`image[${index}]`, media.file);
+        }
+      });
+    
       reviewProdId?.forEach((element, index) => {
         formData.append(`product_id[${index}]`, element);
       });
-
+    
       let retryCount = 0;
-      const maxRetries = 3;
-      const retryDelay = (attempt) => Math.pow(2, attempt) * 1000;
-
+      const maxRetries = 3; 
+      const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; 
+    
       const attemptSubmit = async () => {
         try {
           const response = await axios.post(`${Api}/reviews/create`, formData, {
             headers: {
               Authorization: `Bearer ${store?.access_token}`,
               "Content-Type": "multipart/form-data",
-            },
+            },   
           });
-
+    
           alert("Review submitted successfully!");
           console.log(response);
         } catch (error) {
@@ -190,7 +204,7 @@ const MyProfile = () => {
             retryCount++;
             const delay = retryDelay(retryCount);
             console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
-            await new Promise((resolve) => setTimeout(resolve, delay));
+            await new Promise((resolve) => setTimeout(resolve, delay)); 
             await attemptSubmit();
           } else {
             console.error("Error submitting review:", error);
@@ -198,30 +212,9 @@ const MyProfile = () => {
           }
         }
       };
-      const formData = new FormData();
-      formData.append("customer_id", customerID);
-      formData.append("description", feedback);
-      formData.append("rating", rating);
-      formData.append("date", finalDate);
-      formData.append("order_id", reviewId);
-    }
-    // Assuming `uploadedImages` contains an array of objects with the image URL
-    uploadedImages.forEach((image, index) => {
-      // console.log(image);
-
-      if (image.file) {
-        console.log(image.file);
-
-        formData.append(`image[${index}]`, image?.file); // Append binary file
-      }
-    });
-
-    reviewProdId?.forEach((element, index) => {
-      formData.append(`product_id[${index}]`, element);
-    });
-
-    // attemptSubmit();
-
+    
+      await attemptSubmit();
+    };
     useEffect(() => {
       return () => {
         uploadedImages.forEach((media) => {
