@@ -97,10 +97,10 @@
     /* padding-bottom: 20px; */
 }
 
-.s_header_menu .nav-item a:hover {
+.s_header_menu .nav-item  a:hover {
     color: var(--brown);
+    transform: scale(105%);
 }
-
 /* submenu*/
 .s_header_menu {
     position: relative;
@@ -641,18 +641,31 @@
 
 
 
-.my-facebook-button-class {
+.s_facebook_btn {
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 10px;
-    background-color: #4267B2; /* Facebook blue */
-    color: white;
+    background-color: transparent; /* Facebook blue */
+    color: black;
     border: none;
+    font-size: 16px;
+    font-weight: 500;
     border-radius: 5px;
     cursor: pointer;
+    font-family: "EB Garamond", serif;
 }
-
+.s_modal_btn2 i {
+    width: 25px;
+    height: 25px;
+    background-color: #1877F2;
+    border-radius: 50%;
+    color: white;
+    border: 1px solid #1877F2;
+    padding: 5px;
+    /* padding-bottom: 0px; */
+    margin: 5px;
+}
 .facebook-login-content {
     display: flex;
     align-items: center;
@@ -662,4 +675,24 @@
 .facebook-login-img {
     width: 24px; /* Adjust the size as needed */
     height: auto;
+}
+
+
+.S9gUrf-YoZ4jf {
+
+}
+.nsm7Bb-HzV7m-LgbsSe{
+    border: none !important;
+    background-color: transparent !important;
+    font-family: "EB Garamond", serif;
+}
+.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-BPrWId {
+    font-size: 16px;
+    color: black !important;
+    font-weight: 500 !important;
+    font-family: "EB Garamond", serif !important; 
+}
+.nsm7Bb-HzV7m-LgbsSe:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe {
+    background-color: white !important;
+
 }

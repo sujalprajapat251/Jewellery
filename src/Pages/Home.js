@@ -69,11 +69,11 @@ function Home() {
         const handleResize = () => {
             if (window.innerWidth > 1919) {
                 setItemsToShow(12);
-            }else if (window.innerWidth > 1399) {
+            } else if (window.innerWidth > 1399) {
                 setItemsToShow(10);
             } else if (window.innerWidth > 991) {
                 setItemsToShow(8);
-            }else if (window.innerWidth > 767) {
+            } else if (window.innerWidth > 767) {
                 setItemsToShow(6);
             } else if (window.innerWidth > 556) {
                 setItemsToShow(4);
@@ -172,6 +172,13 @@ function Home() {
                         {
                             bestseller.slice(0, itemsToShow).map((ele, id) => {
                                 var isSelected = wishlistID.find((items) => items === ele.id);
+                                const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
+                                let discountPrice = [];
+                                if (!isNaN(parseFloat(discounted))) {
+                                    discountPrice = (parseFloat(ele.total_price) + parseFloat(discounted)).toFixed(2);
+                                } else {
+                                    discountPrice = ele.total_price;
+                                }
                                 return (
                                     <Col key={id} className='py-4'>
                                         <div className='s_seller_card'>
@@ -218,7 +225,7 @@ function Home() {
                                             <div className='s_card_text' >
                                                 <Link to={`/productdetail/${ele.id}`}>
                                                     <h5>{ele.product_name}</h5>
-                                                    <p className='mb-0'><span className='mx-2'>₹{ele.price}</span><strike className="mx-2">₹{ele.discount}</strike></p>
+                                                    <p className='mb-0'><span className='mx-2'>₹{ele.total_price}</span><strike className="mx-2">₹{discountPrice}</strike></p>
                                                     <div className='s_rating'>
                                                         {
                                                             [...Array(5)].map((_, index) => {
@@ -377,6 +384,13 @@ function Home() {
                                     feature_sliderres
                                 }>
                                 {allProduct.slice(0, 5).map((item, idx) => {
+                                    const discounted = ((parseFloat(item.total_price) * parseFloat(item.discount)) / 100).toFixed(2);
+                                    let discountPrice = [];
+                                    if (!isNaN(parseFloat(discounted))) {
+                                        discountPrice = (parseFloat(item.total_price) + parseFloat(discounted)).toFixed(2);
+                                    } else {
+                                        discountPrice = item.total_price;
+                                    }
                                     return (
                                         <div className='item bg-white' key={idx}  >
                                             <div className='shadow'>
@@ -384,14 +398,11 @@ function Home() {
                                                 <div className='s_slider_text '>
                                                     <Link to={`/productdetail/${item.id}`}>
                                                         <h5 className='text-capitalize'>{item.product_name}</h5>
-                                                        <p className='mb-0' >
-                                                            <span className='mx-2'>{item.price}</span>
-                                                            <strike className="mx-2">{item.discount}</strike>
-                                                        </p>
+                                                        <p className='mb-0'><span className='mx-2'>₹{item.total_price}</span><strike className="mx-2">₹{discountPrice}</strike></p>
                                                         <div className='s_rating'>
                                                             {
                                                                 [...Array(5)].map((_, index) => {
-                                                                    if (index < item.rating) {
+                                                                    if (index < item.total_rating) {
                                                                         return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
                                                                     } else {
                                                                         return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;

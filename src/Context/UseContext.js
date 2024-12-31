@@ -8,8 +8,19 @@ import { cache } from 'react';
 
 const UseContext = (props) => {
   // acces token form localstores
-  let store = JSON.parse(localStorage.getItem("Login"))
-
+  let [store , setStore]= useState('')
+  
+  const userHandling = (user)=>{
+    if(store?.id){
+      localStorage.removeItem("login");
+      setStore('');
+    }
+    else {
+      localStorage.setItem("Login", JSON.stringify(user));
+      console.log("userData",user);
+      setStore(JSON.parse(localStorage.getItem("Login")));
+    }
+  }
 
 
   const [allCategory, setAllCatgegory] = useState([]);
@@ -707,7 +718,7 @@ const UseContext = (props) => {
     <noteContext.Provider value={{
       allCategory, allProduct, allSubCategory, token, wishlistData, addwishlistHandler, removeWishlistHandler, wishlistID, findWishlistID, bestseller,
 
-      Api, cartData, addToCardhandle
+      Api, cartData, addToCardhandle,userHandling
       // ******* My Profile *******
       , store, profileData, setProfileData,
 

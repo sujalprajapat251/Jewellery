@@ -2,11 +2,11 @@ import React, { useContext , useEffect,  useState } from 'react'
 import '../Css/dhruvin/MyProfile.css'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { IoBagHandleOutline } from 'react-icons/io5';
-import { GoHome } from 'react-icons/go';
+import { GoHeartFill, GoHome } from 'react-icons/go';
 import { FaRegTrashAlt, FaStar } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
-import { Modal } from 'react-bootstrap';
+import { Col, Modal, Row } from 'react-bootstrap';
 import { FiPlus } from 'react-icons/fi';
 import { IoMdClose } from 'react-icons/io';
 import axios from 'axios';
@@ -38,8 +38,10 @@ const MyProfile = () => {
     changePassToggle, setChangePassToggle ,ChangePassFormik ,
 
     // ************ Return Order ***********
-    handleReturnOrder
+    handleReturnOrder,
 
+    // logout 
+    userHandling
     } = useContext(noteContext) 
 
     const navigate = useNavigate()
@@ -207,10 +209,9 @@ useEffect(() => {
   const [logOut, setLogOut] = useState(false)
 
    const handleLogOut = () => {
-      localStorage.removeItem("Login")
-      setLogOut(false)
+    userHandling();
       navigate("/")
-      window.location.reload()
+      // window.location.reload()
 
    }
 
