@@ -33,12 +33,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     width: 100%;
     text-align: left;
 }
+.ds_profile-btn:hover{
+    background-color:#ecebeb ;
+}
 .ds_edit-btn{
     background-color: #4D1F08;
     color: white ;
     padding: 8px 50px;
     outline: none;
     border: none;
+}
+.ds_edit-btn:hover{
+    background-color: #949290;
 }
 .ds_profile-inner{
     box-shadow: 0px 0px 24px 3px #7272721A;
@@ -80,13 +86,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     background-color: white;
     text-decoration: none;
 }
+.ds_edit-cencel:hover{
+   color: white;
+   background-color: #4D1F08;
+}
 .ds_edit-save{
     padding: 7px 65px;
     border: 1px solid #4D1F08;
     color: white;
     background-color: #4D1F08;
 }
-
+.ds_edit-save:hover{
+    background-color: #949290;
+    border: 1px solid #949290;
+}
 
 /* {*************  My Address **************} */
 .ds_add-btn{
@@ -95,6 +108,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding: 8px 20px;
     outline: none;
     border: none; 
+}
+.ds_add-btn:hover{
+    background-color: #949290;
+
 }
 .ds_add-box{
     box-shadow: 0px 0px 24px 3px #7272721A;
@@ -133,7 +150,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     border: 1px solid #4D1F08 !important; 
     text-decoration: none;
     cursor: pointer;
-
+ }
+ .ds_new-home:hover{
+    background-color: #e0dfde;
  }
  .ds_select_type_active{
     background: #4D1F08 !important;
@@ -152,6 +171,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     text-decoration: none;
     cursor: pointer;
  }
+ .ds_new-work:hover{
+    background-color: #e0dfde;
+ }
 .ds_new-other{
     padding: 10px 30px;
     border: 1px solid #4D1F08 !important; 
@@ -162,6 +184,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     text-decoration: none;
     cursor: pointer;
 }
+.ds_new-other:hover{
+    background-color: #e0dfde;
+ }
 .ds_new-save{
     padding: 10px 10px;
     background: #4D1F08;
@@ -170,7 +195,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     border: none;
     outline: none;
 }
+.ds_new-save:hover{
+    background-color: #949290;
 
+}
 
 
 /* {---------------- Delete Item Modal ------------------} */
@@ -184,13 +212,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding: 5px 45px;
     margin-right: 20px;
 }
+.ds_delete-no:hover{
+    background-color: #4D1F08;
+    color: white;
+}
 .ds_delete-yes{
     border: 1px solid #4D1F08;
     color: white;
     background-color: #4D1F08;
     padding: 5px 47px; 
 }
-
+.ds_delete-yes:hover{
+    background-color: #727272;
+}
 
 /* {************* Saved Cards **************} */
 .ds_save-box{
@@ -254,6 +288,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding: 6px 30px;
     background-color: white;
 }
+.ds_order-all:hover{
+   background-color: #dbdad9;
+}
 .ds_order-active-btn{
     background-color: #4D1F08 !important;
     color: white !important;
@@ -263,6 +300,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     color: #4D1F08;
     padding: 6px 15px;
     background-color: white; 
+}
+.ds_order-prog:hover{
+    background-color: #dbdad9;
+
 }
 .ds_order-bg{
     box-shadow: 0px 0px 24px 3px #7272721A;
@@ -318,7 +359,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     border-right: 1px solid #727272;
     padding-right: 10px;
 }
-
+.ds_order-hover:hover{
+    color: #007D0D !important;
+}
+.ds_order-pending:hover{
+    color: #FF5900 !important;
+}
 /* {----------------------- Empty Card -------------------} */
 .ds_no-order-bg{
     height: 500px;

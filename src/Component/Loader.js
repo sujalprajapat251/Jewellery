@@ -1,5 +1,6 @@
 import React from 'react';
 import ringLoader from "../Img/Sujal/ringLoader.mp4";
+
 const Loader = () => {
   return (
     <div className='s_loader'>

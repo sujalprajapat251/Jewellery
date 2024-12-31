@@ -58,3 +58,6 @@
     border: 1px solid #4D1F08;
     padding: 7px 60px;
 }
+.ds_review-submit:hover{
+    background-color: #727272;
+}

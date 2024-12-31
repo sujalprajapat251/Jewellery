@@ -230,7 +230,6 @@ const [subRevToggle, setSubRevToggle] = useState(false)
 const [rating, setRating] = useState(0);
 const [reviewId, setReviewId] = useState(null)
 const [customerID, setCustomerID] = useState(null)
-const [reviewProdId, setReviewProdId] = useState([])
 const [uploadedImages, setUploadedImages] = useState([]);
 const [feedback, setFeedback] = useState("")
 
@@ -268,61 +267,65 @@ const day = String(today.getDate()).padStart(2, '0');
 const finalDate = `${year}-${month}-${day}`
 
 const handleReviewSubmit = async () => {
-if (!rating || !feedback || uploadedImages.length === 0) {
- alert("Please upload an image or video, provide a rating, and add feedback.");
- return;
-}
+  if (!rating || !feedback || uploadedImages.length === 0) {
+    alert("Please upload an image or video, provide a rating, and add feedback.");
+    return;
+  }
+    const formData = new FormData();
+    formData.append("customer_id", customerID);
+    formData.append("description", feedback);
+    formData.append("rating", rating);
+    formData.append("date", finalDate);
+    formData.append("order_id", orderID);
+  
+    uploadedImages.forEach((media, index) => {
+      if (media.file) {
+        formData.append(`image[${index}]`, media.file);
+      }
+    });
 
-const formData = new FormData();
-formData.append("customer_id", customerID);
-formData.append("description", feedback);
-formData.append("rating", rating);
-formData.append("date", finalDate);
-formData.append("order_id", orderID);
+    prodID?.forEach((element, index) => {
+      formData.append(`product_id[${index}]`, element);
+    });
 
-uploadedImages.forEach((media, index) => {
- if (media.file) {
-   console.log(media?.file);
-   formData.append(`image[${index}]`, media.file);
- }
-});
+  let retryCount = 0;
+  const maxRetries = 3;
+  const retryDelay = (attempt) => Math.pow(2, attempt) * 1000;
 
-prodID?.forEach((element, index) => {
- formData.append(`product_id[${index}]`, element);
-});
+  const attemptSubmit = async () => {
+    try {
+      const response = await axios.post(`${Api}/reviews/create`, formData, {
+        headers: {
+          Authorization: `Bearer ${store?.access_token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-let retryCount = 0;
-const maxRetries = 3; 
-const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; 
+      alert("Review submitted successfully!");
+      console.log(response);
 
-const attemptSubmit = async () => {
- try {
-   const response = await axios.post(`${Api}/reviews/create`, formData, {
-     headers: {
-       Authorization: `Bearer ${store?.access_token}`,
-       "Content-Type": "multipart/form-data",
-     },   
-   });
+      setRating(0);
+      setFeedback("");
+      setUploadedImages([]);
+      setCustomerID(null); 
+      setSubRevToggle(false);
+    } catch (error) {
+      if (error.response?.status === 429 && retryCount < maxRetries) {
+        retryCount++;
+        const delay = retryDelay(retryCount);
+        console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        await attemptSubmit();
+      } else {
+        console.error("Error submitting review:", error);
+        alert("Failed to submit the review. Please try again later.");
+      }
+    }
+  };
 
-   alert("Review submitted successfully!");
-   console.log(response);
-   setSubRevToggle(false)
- } catch (error) {
-   if (error.response?.status === 429 && retryCount < maxRetries) {
-     retryCount++;
-     const delay = retryDelay(retryCount);
-     console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
-     await new Promise((resolve) => setTimeout(resolve, delay)); 
-     await attemptSubmit();
-   } else {
-     console.error("Error submitting review:", error);
-     alert("Failed to submit the review. Please try again later.");
-   }
- }
+  await attemptSubmit();
 };
 
-await attemptSubmit();
-};
 
 useEffect(() => {
 return () => {

@@ -2,11 +2,11 @@ import React, { useContext , useEffect,  useState } from 'react'
 import '../Css/dhruvin/MyProfile.css'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { IoBagHandleOutline } from 'react-icons/io5';
-import { GoHome } from 'react-icons/go';
+import { GoHeartFill, GoHome } from 'react-icons/go';
 import { FaRegTrashAlt, FaStar } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
-import { Modal } from 'react-bootstrap';
+import { Col, Modal, Offcanvas, Row } from 'react-bootstrap';
 import { FiPlus } from 'react-icons/fi';
 import { IoMdClose } from 'react-icons/io';
 import axios from 'axios';
@@ -43,6 +43,7 @@ const MyProfile = () => {
     } = useContext(noteContext) 
 
     const navigate = useNavigate()
+    const [offcanvasToggle, setOffcanvasToggle] = useState(false)
 
     
     function capitalizeFirstLetter(val) {
@@ -142,7 +143,6 @@ const handleReviewSubmit = async () => {
 
   uploadedImages.forEach((media, index) => {
     if (media.file) {
-      console.log(media?.file);
       formData.append(`image[${index}]`, media.file);
     }
   });
@@ -152,8 +152,8 @@ const handleReviewSubmit = async () => {
   });
 
   let retryCount = 0;
-  const maxRetries = 3; 
-  const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; 
+  const maxRetries = 3;
+  const retryDelay = (attempt) => Math.pow(2, attempt) * 1000;
 
   const attemptSubmit = async () => {
     try {
@@ -161,17 +161,25 @@ const handleReviewSubmit = async () => {
         headers: {
           Authorization: `Bearer ${store?.access_token}`,
           "Content-Type": "multipart/form-data",
-        },   
+        },
       });
 
       alert("Review submitted successfully!");
       console.log(response);
+
+      setRating(0);
+      setFeedback("");
+      setUploadedImages([]);
+      setCustomerID(null);
+      setReviewProdId([]);
+      setReviewId(null);
+      setSubRevToggle(false); 
     } catch (error) {
       if (error.response?.status === 429 && retryCount < maxRetries) {
         retryCount++;
         const delay = retryDelay(retryCount);
         console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
-        await new Promise((resolve) => setTimeout(resolve, delay)); 
+        await new Promise((resolve) => setTimeout(resolve, delay));
         await attemptSubmit();
       } else {
         console.error("Error submitting review:", error);
@@ -182,6 +190,7 @@ const handleReviewSubmit = async () => {
 
   await attemptSubmit();
 };
+
 
 useEffect(() => {
   return () => {
@@ -239,28 +248,28 @@ useEffect(() => {
                                <div className='ds_off-box'>
                                   <div className='d-flex justify-content-between'>
                                     <h2 className='ds_color mb-0'>Account</h2>
-                                    <button className="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                                    <button className="btn" type="button" onClick={()=> setOffcanvasToggle(true)} >
                                       <i className="fa-solid fa-bars fs-3"></i>
                                     </button>
                                   </div>
                                </div>
-                             <div className="offcanvas ds_offcanvas-inner offcanvas-end"  id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-                              <div className="offcanvas-header">
-                                <h4 className="offcanvas-title" id="offcanvasExampleLabel">Account</h4>
-                                <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                              </div>
-                              <div className="offcanvas-body">
-                                <div>
-                                <button onClick={()=>setMainActive("My Profile")} className={`ds_profile-btn ${mainActive === "My Profile" ? 'ds_active-color ' : ''}  ds_600 mt-3`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "My Profile" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/profile.png")} alt="" width="7%" /> <span className='ms-2'>My Profile</span></button>
-                                <button onClick={()=>setMainActive("My Address")} className={`ds_profile-btn ${mainActive === "My Address" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "My Address" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/location.png")} alt="" width="7%" /> <span className='ms-2'>My Address</span></button>
-                                <button onClick={()=>setMainActive("Saved Cards")} className={`ds_profile-btn ${mainActive === "Saved Cards" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "Saved Cards" ? 'ds_profile_img_color ' : ''} `}  src={require("../Img/dhruvin/card.png")} alt="" width="7%" /> <span className='ms-2'>Saved Cards</span></button>
-                                <button onClick={()=>setMainActive("My Order")} className={`ds_profile-btn ${mainActive === "My Order" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "My Order" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/order.png")} alt="" width="7%" /> <span className='ms-2'> My Order</span></button>
-                                <button onClick={()=>setMainActive("My Wishlist")} className={`ds_profile-btn ${mainActive === "My Wishlist" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close">  <img className={`${mainActive === "My Wishlist" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/heart.png")} alt="" width="7%" /> <span className='ms-2'>My Wishlist</span></button>
-                                <button onClick={()=>{setMainActive("Change Password"); setChangePassToggle(true);}} className={`ds_profile-btn ${mainActive === "Change Password" ? 'ds_active-color' : ''} ds_600`} > <img className={`${mainActive === "Change Password" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/lock.png")} alt="" width="7%" /> <span className='ms-2'>Change Password</span></button>
-                                <button onClick={() =>{setMainActive("Logout"); setLogOut(true)}} className={`ds_profile-btn ${mainActive === "Logout" ? 'ds_active-color' : ''} ds_600`}  > <img className={`${mainActive === "Logout" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/logout.png")} alt="" width="7%" /> <span className='ms-2'>Logout</span></button>
-                                </div>
-                              </div>
-                             </div>
+                                  <Offcanvas className="ds_offcanvas-inner" show={offcanvasToggle} onHide={()=> setOffcanvasToggle(false)} placement={'end'}>
+                                      <Offcanvas.Header closeButton>
+                                        <Offcanvas.Title className='ds_color'>Account</Offcanvas.Title>
+                                           {/* <button type="button" className="btn-close text-reset" onClick={()=> setOffcanvasToggle(true)}></button> */}
+                                      </Offcanvas.Header>
+                                      <Offcanvas.Body>
+                                         <div>
+                                             <button onClick={()=>{setMainActive("My Profile"); setOffcanvasToggle(false)}} className={`ds_profile-btn ${mainActive === "My Profile" ? 'ds_active-color ' : ''}  ds_600 mt-3`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "My Profile" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/profile.png")} alt="" width="7%" /> <span className='ms-2'>My Profile</span></button>
+                                             <button onClick={()=>{setMainActive("My Address"); setOffcanvasToggle(false) }} className={`ds_profile-btn ${mainActive === "My Address" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "My Address" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/location.png")} alt="" width="7%" /> <span className='ms-2'>My Address</span></button>
+                                             <button onClick={()=>{setMainActive("Saved Cards"); setOffcanvasToggle(false) }} className={`ds_profile-btn ${mainActive === "Saved Cards" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "Saved Cards" ? 'ds_profile_img_color ' : ''} `}  src={require("../Img/dhruvin/card.png")} alt="" width="7%" /> <span className='ms-2'>Saved Cards</span></button>
+                                             <button onClick={()=>{setMainActive("My Order"); setOffcanvasToggle(false) }} className={`ds_profile-btn ${mainActive === "My Order" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close"> <img className={`${mainActive === "My Order" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/order.png")} alt="" width="7%" /> <span className='ms-2'> My Order</span></button>
+                                             <button onClick={()=>{setMainActive("My Wishlist"); setOffcanvasToggle(false) }} className={`ds_profile-btn ${mainActive === "My Wishlist" ? 'ds_active-color' : ''} ds_600`} data-bs-dismiss="offcanvas" aria-label="Close">  <img className={`${mainActive === "My Wishlist" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/heart.png")} alt="" width="7%" /> <span className='ms-2'>My Wishlist</span></button>
+                                             <button onClick={()=>{setMainActive("Change Password"); setChangePassToggle(true); setOffcanvasToggle(false)}} className={`ds_profile-btn ${mainActive === "Change Password" ? 'ds_active-color' : ''} ds_600`} > <img className={`${mainActive === "Change Password" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/lock.png")} alt="" width="7%" /> <span className='ms-2'>Change Password</span></button>
+                                             <button onClick={() =>{setMainActive("Logout"); setLogOut(true); setOffcanvasToggle(false)}} className={`ds_profile-btn ${mainActive === "Logout" ? 'ds_active-color' : ''} ds_600`}  > <img className={`${mainActive === "Logout" ? 'ds_profile_img_color ' : ''} `} src={require("../Img/dhruvin/logout.png")} alt="" width="7%" /> <span className='ms-2'>Logout</span></button>
+                                          </div>
+                                      </Offcanvas.Body>
+                                   </Offcanvas>
                            </div>
                         </div>
                     </div>
@@ -311,7 +320,7 @@ useEffect(() => {
                                             <p className='ds_600'>{profileData?.phone}</p>
                                             <p className='ds_600 ds_myprofile-scroll overflow-x-auto'>{profileData?.email}</p>
                                             <p className='ds_600'>{profileData?.gender}</p>
-                                            <p className='ds_600'>{profileData.pincode}</p>
+                                            <p className='ds_600'>{profileData?.pincode}</p>
                                         </div>
                                     </div>
                                   </div>
@@ -864,7 +873,7 @@ useEffect(() => {
                                                   </h5>
                                                   {
                                                     element?.order_status === "pending" ? (
-                                                         <Link onClick={()=> handleTrackOrder(element?.order_number)} to='/TrackOrder'  className="text-dark ds_600 pe-3 ms-lg-0 ms-3" >
+                                                         <Link onClick={()=> handleTrackOrder(element?.order_number)} to='/TrackOrder'  className="ds_order-pending text-dark ds_600 pe-3 ms-lg-0 ms-3" >
                                                             Track Order
                                                         </Link>
                                                     ) : ("")
@@ -872,7 +881,7 @@ useEffect(() => {
 
                                                   {
                                                     element?.order_status === "delivered" ? (
-                                                        <Link  to='/returnOrder'  onClick={() => handleReturnOrder(element?.order_number)} className="text-dark ds_600 pe-3 ms-lg-0 ms-3" >
+                                                        <Link  to='/returnOrder'  onClick={() => handleReturnOrder(element?.order_number)} className="ds_order-hover text-dark ds_600 pe-3 ms-lg-0 ms-3" >
                                                             Return Order
                                                         </Link>
                                                     ) : ("")

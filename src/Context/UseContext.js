@@ -286,7 +286,7 @@ const UseContext = (props) => {
     phone: profileData?.phone || "",
     gender: profileData?.gender || "",
     dob: profileData?.dob || "",
-    pin: profileData?.pin || "",
+    pin: profileData?.pincode || "",
   });
 
   const handleEditToggle = () => {
@@ -296,7 +296,7 @@ const UseContext = (props) => {
       phone: profileData?.phone || "",
       gender: profileData?.gender || "",
       dob: profileData?.dob || "",
-      pin: profileData?.pin || "",
+      pin: profileData?.pincode || "",
     });
     setEditToggle(true);
   };
@@ -387,6 +387,7 @@ const UseContext = (props) => {
           }
         );
         console.log("NewAdd", response);
+        alert("Address Add SuccessFully")
         setNewAddModal(false);
         setAddMainNewAdd(true);
         action.resetForm();
@@ -526,6 +527,7 @@ const UseContext = (props) => {
         },
       });
       console.log("DeleteAdd", response);
+      alert("Address Delete SuccessFully")
       setDeleteAdd(false);
       setdeleteUseEffect(deleteUseEffect + 1);
       setActiveCard(true);
