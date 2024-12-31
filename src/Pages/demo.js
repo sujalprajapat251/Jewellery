@@ -1,28 +1,32 @@
 import React from "react";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
+import FacebookLogin from "react-facebook-login";
 
 const Demo = () => {
-    const handleSuccess = (response) => {
-        const token = response.credential; // Get the Google JWT
-        const user = jwtDecode(token); // Decode the JWT to get user details
-        console.warn("User Info:", user);
-        // Example: { email, name, sub (Google UID), picture, etc. }
+    const handleResponse = (response) => {
+        console.log("Facebook Login Response:", response);
+        if (response.accessToken) {
+            console.log("Access Token:", response.accessToken);
+            console.log("User Info:", response.name, response.email || "Email not provided", response.picture?.data?.url);
+            // Send the access token to your backend
+        } else {
+            console.error("Facebook login failed", response);
+        }
     };
 
-    const handleFailure = (error) => {
-        console.error("Login Failed:", error);
-    };
     return (
-        <div style={{ margin: "50px" }}>
-            <h1>Sign in with Google</h1>
-            <GoogleLogin
-                onSuccess={handleSuccess}
-                onError={handleFailure}
-                text="signin_with"
+        <div>
+            <h1>Sign In with Facebook</h1>
+            <FacebookLogin
+                appId="3443333199307811" // Replace with your Facebook App ID
+                autoLoad={false}
+                fields="name,email,picture"
+                scope="" // Use the 'email' scope only
+                callback={handleResponse}
+                icon="fa-facebook"
             />
         </div>
     );
 };
 
 export default Demo;
+

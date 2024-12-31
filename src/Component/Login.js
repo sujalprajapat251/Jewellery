@@ -7,10 +7,28 @@ import noteContext from '../Context/noteContext';
 import { Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
+import FacebookLogin from "react-facebook-login";
 function Login({ isOpen, onClose, onOpen }) {
-    const { Api, token } = useContext(noteContext);
+    const { Api, } = useContext(noteContext);
+    // login and register with facebook
 
+    const handleResponse = async (response) => {
+        console.log("Facebook Login Response:", response);
+        if (response.email) {
+            console.log("Access Token:", response.email);
+            var data = await axios.post(`${Api}/social-api`, {
+                name: response.name,
+                email: response.email,
+            },
+            )
+            console.log('faceboookkkkk done', data);
+        } else {
+            console.error("Facebook login failed", response);
+        }
+    };
+
+    // login or register by google
     const handleSuccess = async (response) => {
         const token = response.credential; // Get the Google JWT
         const user = jwtDecode(token); // Decode the JWT to get user details
@@ -305,9 +323,16 @@ function Login({ isOpen, onClose, onOpen }) {
                             text="signin_with"
                         />
                     </div>
-                    <div className='s_modal_btn2'>
-                        <img src={require('../Img/Sujal/facebook.png')} alt='facebook'></img>
-                        <p className='mb-0'>Sign in with Facebook</p>
+                    <div className='s_modal_btn2' >
+                        <FacebookLogin
+                            appId="3443333199307811" // Replace with your Facebook App ID
+                            autoLoad={false}
+                            fields="name,email,picture"
+                            scope="" // Use the 'email' scope only
+                            callback={handleResponse}
+                            text=''
+                        ><img src={require('../Img/Sujal/facebook.png')} alt='facebook'></img>
+                            <p className='mb-0'>Sign in with Facebook</p></FacebookLogin>
                     </div>
                 </Modal.Body>
                 <Modal.Footer className='justify-content-center'>
@@ -450,8 +475,15 @@ function Login({ isOpen, onClose, onOpen }) {
                         />
                     </div>
                     <div className='s_modal_btn2'>
-                        <img src={require('../Img/Sujal/facebook.png')} alt='facebook'></img>
-                        <p className='mb-0'>Sign in with Facebook</p>
+                        <FacebookLogin
+                            appId="3443333199307811" // Replace with your Facebook App ID
+                            autoLoad={false}
+                            fields="name,email,picture"
+                            scope="" // Use the 'email' scope only
+                            callback={handleResponse}
+                            text=''
+                        ><img src={require('../Img/Sujal/facebook.png')} alt='facebook'></img>
+                            <p className='mb-0'>Sign in with Facebook</p></FacebookLogin>
                     </div>
                 </Modal.Body>
                 <Modal.Footer className='justify-content-center' onClick={() => {

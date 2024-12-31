@@ -638,3 +638,28 @@
         --bs-offcanvas-width: 290px !important;
     }
 }
+
+
+
+.my-facebook-button-class {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: #4267B2; /* Facebook blue */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.facebook-login-content {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Spacing between the image and text */
+}
+
+.facebook-login-img {
+    width: 24px; /* Adjust the size as needed */
+    height: auto;
+}

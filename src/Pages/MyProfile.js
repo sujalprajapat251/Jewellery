@@ -2,11 +2,11 @@ import React, { useContext , useEffect,  useState } from 'react'
 import '../Css/dhruvin/MyProfile.css'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { IoBagHandleOutline } from 'react-icons/io5';
-import { GoHeartFill, GoHome } from 'react-icons/go';
+import { GoHome } from 'react-icons/go';
 import { FaRegTrashAlt, FaStar } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
-import { Col, Modal, Row } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { FiPlus } from 'react-icons/fi';
 import { IoMdClose } from 'react-icons/io';
 import axios from 'axios';
@@ -73,11 +73,14 @@ const MyProfile = () => {
        
     };
 
-  console.log("Zzz" , filteredOrders);
+  // console.log("Zzz" , filteredOrders);
+  
+
+  console.log(profileData);
   
 
 
-  // **********  Submit Revie   ********
+  // **********  Submit Review Popup  ********
    const [subRevToggle, setSubRevToggle] = useState(false)
    const [rating, setRating] = useState(0);
    const [reviewId, setReviewId] = useState(null)
@@ -163,7 +166,6 @@ const handleReviewSubmit = async () => {
 
       alert("Review submitted successfully!");
       console.log(response);
-      setSubRevToggle(false)
     } catch (error) {
       if (error.response?.status === 429 && retryCount < maxRetries) {
         retryCount++;
