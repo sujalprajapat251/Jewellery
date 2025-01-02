@@ -38,8 +38,10 @@ const MyProfile = () => {
     changePassToggle, setChangePassToggle ,ChangePassFormik ,
 
     // ************ Return Order ***********
-    handleReturnOrder
+    handleReturnOrder,
 
+    // logout 
+    userHandling
     } = useContext(noteContext) 
 
     const navigate = useNavigate()
@@ -216,10 +218,9 @@ useEffect(() => {
   const [logOut, setLogOut] = useState(false)
 
    const handleLogOut = () => {
-      localStorage.removeItem("Login")
-      setLogOut(false)
+    userHandling();
       navigate("/")
-      window.location.reload()
+      // window.location.reload()
 
    }
 

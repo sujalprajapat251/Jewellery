@@ -10,7 +10,7 @@ import { jwtDecode } from 'jwt-decode';
 import { GoogleLogin } from '@react-oauth/google';
 import FacebookLogin from "react-facebook-login";
 function Login({ isOpen, onClose, onOpen }) {
-    const { Api, } = useContext(noteContext);
+    const { Api,userHandling } = useContext(noteContext);
     // login and register with facebook
 
     const handleResponse = async (response) => {
@@ -22,7 +22,10 @@ function Login({ isOpen, onClose, onOpen }) {
                 email: response.email,
             },
             )
-            console.log('faceboookkkkk done', data);
+            console.log('faceboookkkkk done', data.data.result);
+            // localStorage.setItem("Login", JSON.stringify(data.data.result));
+            userHandling(data.data.result);
+            onClose();
         } else {
             console.error("Facebook login failed", response);
         }
@@ -40,6 +43,9 @@ function Login({ isOpen, onClose, onOpen }) {
             },
             )
             console.log(data);
+            // localStorage.setItem("Login", JSON.stringify(data.data.result));
+            userHandling(data.data.result);
+            onClose();
         }
         // Example: { email, name, sub (Google UID), picture, etc. }
     };
@@ -68,8 +74,7 @@ function Login({ isOpen, onClose, onOpen }) {
                 console.log("LoginRes", response.data);
 
                 if (response?.data?.result) {
-                    localStorage.setItem("Login", JSON.stringify(response.data.result));
-                    onClose()
+
                     Swal.fire({
                         position: "top-end",
                         toast: true,
@@ -81,10 +86,8 @@ function Login({ isOpen, onClose, onOpen }) {
                         color: "white",
                         iconColor: "white"
                     });
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000)
-
+                    userHandling(response?.data?.result);
+                    onClose();
                 } else {
                     alert("Unexpected login response. Please try again.");
                     Swal.fire({
@@ -315,12 +318,11 @@ function Login({ isOpen, onClose, onOpen }) {
                         <div className='s_modal_line'></div>
                     </div>
                     <div className='s_modal_btn2' >
-                        <img src={require('../Img/Sujal/google.png')} alt='google'></img>
-                        <p className='mb-0'>Sign in with Google</p>
                         <GoogleLogin
                             onSuccess={handleSuccess}
                             onError={handleFailure}
                             text="signin_with"
+                            className='s_modal_btn2'
                         />
                     </div>
                     <div className='s_modal_btn2' >
@@ -330,7 +332,10 @@ function Login({ isOpen, onClose, onOpen }) {
                             fields="name,email,picture"
                             scope="" // Use the 'email' scope only
                             callback={handleResponse}
-                            text=''
+                            text='signin_with'
+                            icon='fa-facebook'
+                            cssClass='s_facebook_btn'
+                            textButton='Sign in with Facebook'
                         ><img src={require('../Img/Sujal/facebook.png')} alt='facebook'></img>
                             <p className='mb-0'>Sign in with Facebook</p></FacebookLogin>
                     </div>
@@ -466,12 +471,11 @@ function Login({ isOpen, onClose, onOpen }) {
                         <div className='s_modal_line'></div>
                     </div>
                     <div className='s_modal_btn2'>
-                        <img src={require('../Img/Sujal/google.png')} alt='google'></img>
-                        <p className='mb-0'>Sign in with Google</p>
                         <GoogleLogin
                             onSuccess={handleSuccess}
                             onError={handleFailure}
-                            text="signin_with"
+                            text="signup_with"
+                            className='s_modal_btn2'
                         />
                     </div>
                     <div className='s_modal_btn2'>
@@ -481,7 +485,10 @@ function Login({ isOpen, onClose, onOpen }) {
                             fields="name,email,picture"
                             scope="" // Use the 'email' scope only
                             callback={handleResponse}
-                            text=''
+                            text='signin_with'
+                            icon='fa-facebook'
+                            cssClass='s_facebook_btn'
+                            textButton='Sign up with Facebook'
                         ><img src={require('../Img/Sujal/facebook.png')} alt='facebook'></img>
                             <p className='mb-0'>Sign in with Facebook</p></FacebookLogin>
                     </div>

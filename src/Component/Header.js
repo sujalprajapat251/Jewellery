@@ -15,7 +15,7 @@ import Login from './Login';
 
 
 function Header() {
-    const { allProduct, allSubCategory, store, bestseller, wishlistData, cartData } = useContext(noteContext);
+    const { allProduct, allSubCategory, bestseller, wishlistData, cartData,store } = useContext(noteContext);
     // menu catgegory handller
     const [goldSubcate, setGoldSubcate] = useState([]);
     const [silverSubcate, setSilverSubcate] = useState([]);
@@ -25,7 +25,14 @@ function Header() {
     const [pendantsSubcate, setPendantSubcate] = useState([]);
     const [platiumSubcate, setPlatiumSubcate] = useState([]);
     const [watchSubcate, setWatchSubcate] = useState([]);
+    // const [storedata, setstoredata] = useState(() => JSON.parse(localStorage.getItem("Login"))); // Initialize directly
+    // const [store, setStore] = useState('');
 
+    useEffect(() => {
+        // Update `store` when `storedata` changes
+        // setStore(storedata);
+        console.log("Data",  wishlistData.length);
+    }, [wishlistData]); // Runs only when `storedata` changes
     useEffect(() => {
         const goldCategories = [];
         allSubCategory.map((ele) => {
@@ -182,13 +189,13 @@ function Header() {
                     {store ? <Link to={'/wishlist'} className={`s_header_icon s_heart_icons ${isFilled ? "filled" : "empty"}`}>
                         <div class="position-relative">
                             {isFilled ? <IoMdHeart /> : <IoMdHeartEmpty />}
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style={{ background: 'var(--brown)' }}>
+                            <span class="position-absolute  translate-middle badge rounded-pill" style={{ background: 'var(--brown)', top: '5px' }}>
                                 {wishlistData.length}
                             </span>
                         </div>
                         <p className='mb-0'>Wishlist</p>
                     </Link> :
-                        <Link to={'#'} onClick={handleLoginShow} className={`s_header_icon s_heart_icons ${isFilled ? "filled" : "empty"}`}>
+                        <Link to={'#'} onClick={handleLoginShow} className={`s_header_icon s_heart_icons ${isFilled ? "filled" : "empty"}`} >
                             {isFilled ? <IoMdHeart /> : <IoMdHeartEmpty />}
 
                             <p className='mb-0'>Wishlist</p>
@@ -196,7 +203,7 @@ function Header() {
                     {store ? <Link to={'/cart'} className='s_header_icon'>
                         <div class="position-relative">
                             <IoCartOutline />
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style={{ background: 'var(--brown)' }}>
+                            <span class="position-absolute   translate-middle badge rounded-pill" style={{ background: 'var(--brown)', top: '5px' }}>
                                 {cartData.length}
                             </span>
                         </div>
