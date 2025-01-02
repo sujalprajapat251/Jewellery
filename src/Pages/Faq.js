@@ -14,6 +14,7 @@ const Faq = () => {
     const [footerMain, setFooterMain] = useState(location?.state?.faq)
     
     
+
     const toggleAccordion = (index) => {
         setOpenIndex(openIndex === index ? null : index);        
     };
