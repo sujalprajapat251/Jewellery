@@ -26,7 +26,9 @@
     max-width: 400px;
     border-bottom: 2px solid rgba(77, 31, 8, .1);
 }
-
+.s_header_input:hover {
+    border-bottom: 2px solid rgba(77, 31, 8, .5);
+}
 .s_header_input input {
     border: none;
     background-color: transparent;
@@ -38,8 +40,11 @@
     fill: var(--brown);
     height: 24px;
     width: 24px;
+    cursor: pointer;
 }
-
+.s_header_input svg:hover {
+    transform: scale(105%);
+}
 .s_header_input ::placeholder {
     color: var(--brown);
     font-weight: 500;
@@ -74,7 +79,9 @@
     width: 28px;
     margin: 2px auto;
 }
-
+.s_header_icon:hover svg{
+    transform: scale(110%);
+}
 .s_bar_icon svg {
     /* color: var(--brown) !important; */
     stroke: var(--brown) !important;
@@ -99,7 +106,8 @@
 
 .s_header_menu .nav-item  a:hover {
     color: var(--brown);
-    transform: scale(105%);
+    transform: scale(105%) !important;
+    transition: .1s;
 }
 /* submenu*/
 .s_header_menu {
@@ -226,6 +234,11 @@
 .sp_header_offcanvas .s_submenu_list  a {
     text-decoration: none;
     color: #000000;
+    transition: .2s;
+}
+.sp_header_offcanvas .s_submenu_list  a:hover {
+    color: var(--brown);
+    padding-left: 20px;
 }
 .sp_header_offcanvas .s_submenu_list img {
     width: 27px;
@@ -248,10 +261,13 @@
     text-decoration: none;
     color: var(--brown);
 }
+.sp_header_offcanvas .accordion-item:hover{
+    background-color: rgba(77, 31, 8, .1);
+
+}
 .sp_header_offcanvas .s_spec_submenu_head  h4 {
     padding-left: 20px;
     font-weight: 600;
-
     padding-bottom: 10px;
 }
 .sp_header_offcanvas .show .accordion-body {
@@ -677,10 +693,6 @@
     height: auto;
 }
 
-
-.S9gUrf-YoZ4jf {
-
-}
 .nsm7Bb-HzV7m-LgbsSe{
     border: none !important;
     background-color: transparent !important;
@@ -694,5 +706,4 @@
 }
 .nsm7Bb-HzV7m-LgbsSe:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe {
     background-color: white !important;
-
 }

@@ -5,14 +5,12 @@ import { ChangePass, EditProfileSchema, NewAddSchema } from '../schemas';
 import { useFormik } from 'formik';
 import { cache } from 'react';
 
-
 const UseContext = (props) => {
   // acces token form localstores
-  let [store , setStore]= useState('')
-  
+  let [store , setStore]= useState(JSON.parse(localStorage.getItem("Login")))
   const userHandling = (user)=>{
     if(store?.id){
-      localStorage.removeItem("login");
+      localStorage.removeItem("Login");
       setStore('');
     }
     else {

@@ -16,11 +16,10 @@ function ProductDetail() {
     const user = JSON.parse(localStorage.getItem("Login"));
     console.log('user', user?.id);
     let [inStock, setInStock] = useState(true);
-
     // backend connnectivity code ---------------------------------------------------------------
 
     // useContext
-    const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler, store,addToCardhandle } = useContext(noteContext);
+    const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler, store, addToCardhandle } = useContext(noteContext);
 
     // get product detail using Api
     const [product, setProduct] = useState([]);
@@ -36,9 +35,6 @@ function ProductDetail() {
             .then((response) => {
                 const fetchedProducts = response?.data?.data || [];
                 setProduct(fetchedProducts);
-                if (fetchedProducts.qty <= 0) {
-                    setInStock(false);
-                }
             })
             .catch((error) => {
                 console.error("Error fetching products:", error);
@@ -54,6 +50,9 @@ function ProductDetail() {
     const [offers, setOffers] = useState([]);
     const [peopleAlsoSearch, setPeopleAlsoSearch] = useState([]);
     useEffect(() => {
+
+
+
         // get size data
         const array = product?.size_name?.split(',').map(Number).filter((num) => !isNaN(num));
         if (array?.length) {
@@ -64,8 +63,12 @@ function ProductDetail() {
             setSize(null);
         }
 
+        // outof stock handling 
+        fetchStockData();
+
         // fetch review data using function 
         fetchReviewData()
+
         const youAlso = allProduct.filter(
             (item) =>
                 item.category_id === product.category_id && item.id !== product.id
@@ -97,6 +100,35 @@ function ProductDetail() {
         // eslint-disable-next-line
 
     }, [product])
+    // fetch stock data 
+    const fetchStockData = async (retryCount = 0) => {
+        try {
+            const response = await axios.get(`${Api}/stocks/getall`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response.data.data) {
+                var data = response.data.data.filter(data => data?.product_id === product?.id);
+                console.warn('data', data);
+                if (data.length === 0) {
+                    setInStock(false);
+                }
+                else {
+                    
+                }
+            }
+        } catch (error) {
+            if (error?.response?.status === 429 && retryCount < 5) {
+                const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+                console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+                setTimeout(() => fetchStockData(retryCount + 1), retryAfter);
+            } else {
+                console.error("Failed to fetch data:", error.message);
+            }
+        }
+    }
+
 
     // fetch review data  function is here
     const fetchReviewData = async (retryCount = 0) => {
@@ -107,7 +139,6 @@ function ProductDetail() {
                 },
             });
             setReviews(response?.data?.data);
-
         } catch (error) {
             if (error?.response?.status === 429 && retryCount < 5) {
                 const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
@@ -129,7 +160,7 @@ function ProductDetail() {
         if (!store) {
             setShowLogin(true);
         } else {
-            addToCardhandle(product , size);
+            addToCardhandle(product, size);
             setAddToCard(false);
         }
     }
@@ -239,8 +270,20 @@ function ProductDetail() {
     }, []);
 
 
-
-
+    // like dislike handling
+    const handleLike = async (id, x) => {
+        console.warn(id, x);
+        const response = await axios.post(`${Api}/reviews/${id}/like-dislike`, {
+            like_or_dislike: `${x}`,
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        if (response) {
+            fetchReviewData();
+        }
+    }
     return (
         <>
             <section className="s_prodetail_page ds_container">
@@ -388,7 +431,7 @@ function ProductDetail() {
                                 }
                             </div>
                             <div className='d-flex align-items-center justify-content-center justify-content-lg-start'>
-                                <h2 className='s_price text-center text-lg-start'>₹{product?.total_price}</h2>
+                                <h2 className='s_price text-center text-lg-start'>₹{great_total}</h2>
                                 {inStock !== true ? <div className='s_stock_status'>out of stack</div> : ''}
                             </div>
                             <p className='s_description text-center text-lg-start'>{product?.description}</p>
@@ -658,38 +701,39 @@ function ProductDetail() {
                                                         })}
                                                     </div>
                                                     : ''}
-
                                             </div>
                                             <div className='s_review_icon d-flex'>
-                                                {item.like_or_dislike ?
-                                                    item.like_or_dislike === 0 ? <>
+                                                {console.warn(item.like_or_dislike)}
+                                                {item.like_or_dislike === 0 ? <>
+                                                    <div className="d-flex align-items-center me-4">
+                                                        <AiOutlineLike onClick={() => { handleLike(item.id, 1) }} />
+                                                        <span>Like</span>
+                                                    </div>
+                                                    <div className="d-flex align-items-center me-4">
+                                                        <AiOutlineDislike onClick={() => { handleLike(item.id, 2) }} />
+                                                        <span>Dislike</span>
+                                                    </div>
+                                                </> : ''}{
+                                                    item.like_or_dislike === 1 ? <>
                                                         <div className="d-flex align-items-center me-4">
-                                                            <AiFillLike />
+                                                            <AiFillLike onClick={() => { handleLike(item.id, 1) }} />
                                                             <span>Like</span>
                                                         </div>
                                                         <div className="d-flex align-items-center me-4">
-                                                            <AiOutlineDislike />
+                                                            <AiOutlineDislike onClick={() => { handleLike(item.id, 2) }} />
                                                             <span>Dislike</span>
                                                         </div>
-                                                    </> : <>
-                                                        <div className="d-flex align-items-center me-4">
-                                                            <AiFillLike />
-                                                            <span>Like</span>
-                                                        </div>
-                                                        <div className="d-flex align-items-center me-4">
-                                                            <AiFillDislike />
-                                                            <span>Dislike</span>
-                                                        </div>
-                                                    </> : <>
-                                                        <div className="d-flex align-items-center me-4">
-                                                            <AiOutlineLike />
-                                                            <span>Like</span>
-                                                        </div>
-                                                        <div className="d-flex align-items-center me-4">
-                                                            <AiOutlineDislike />
-                                                            <span>Dislike</span>
-                                                        </div>
-                                                    </>}
+                                                    </> : ''}
+                                                {item.like_or_dislike === 2 ? <>
+                                                    <div className="d-flex align-items-center me-4">
+                                                        <AiOutlineLike onClick={() => { handleLike(item.id, 1) }} />
+                                                        <span>Like</span>
+                                                    </div>
+                                                    <div className="d-flex align-items-center me-4">
+                                                        <AiFillDislike onClick={() => { handleLike(item.id, 2) }} />
+                                                        <span>Dislike</span>
+                                                    </div>
+                                                </> : ''}
                                             </div>
                                         </div>
                                     </div>
@@ -705,7 +749,7 @@ function ProductDetail() {
                 <div className='s_also_like'>
                     <div className='d-flex justify-content-between'>
                         <h2>You may also like</h2>
-                        <Link to={`/productlist/subcategory/${product?.sub_category_id}`}>View More</Link>
+                        <Link to={`/productlist/category/${product?.category_name}`}>View More</Link>
                     </div>
                     <div>
                         <Row xxl={5} lg={4} md={3} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
@@ -799,8 +843,6 @@ function ProductDetail() {
                     </div>
                 </div>
             </section>
-
-
             {/* reveiw and feedback modal  */}
             <Modal
                 className='s_review_modal'
@@ -848,14 +890,36 @@ function ProductDetail() {
 
                                         </div>
                                         <div className='s_review_icon d-flex'>
-                                            <div className="d-flex align-items-center me-4">
-                                                <AiOutlineLike />
-                                                <span>Like</span>
-                                            </div>
-                                            <div className="d-flex align-items-center me-4">
-                                                <AiOutlineDislike />
-                                                <span>Dislike</span>
-                                            </div>
+                                            {item.like_or_dislike === 0 ? <>
+                                                <div className="d-flex align-items-center me-4">
+                                                    <AiOutlineLike onClick={() => { handleLike(item.id, 1) }} />
+                                                    <span>Like</span>
+                                                </div>
+                                                <div className="d-flex align-items-center me-4">
+                                                    <AiOutlineDislike onClick={() => { handleLike(item.id, 2) }} />
+                                                    <span>Dislike</span>
+                                                </div>
+                                            </> : ''}{
+                                                item.like_or_dislike === 1 ? <>
+                                                    <div className="d-flex align-items-center me-4">
+                                                        <AiFillLike onClick={() => { handleLike(item.id, 1) }} />
+                                                        <span>Like</span>
+                                                    </div>
+                                                    <div className="d-flex align-items-center me-4">
+                                                        <AiOutlineDislike onClick={() => { handleLike(item.id, 2) }} />
+                                                        <span>Dislike</span>
+                                                    </div>
+                                                </> : ''}
+                                            {item.like_or_dislike === 2 ? <>
+                                                <div className="d-flex align-items-center me-4">
+                                                    <AiOutlineLike onClick={() => { handleLike(item.id, 1) }} />
+                                                    <span>Like</span>
+                                                </div>
+                                                <div className="d-flex align-items-center me-4">
+                                                    <AiFillDislike onClick={() => { handleLike(item.id, 2) }} />
+                                                    <span>Dislike</span>
+                                                </div>
+                                            </> : ''}
                                         </div>
                                     </div>
                                 </div>
