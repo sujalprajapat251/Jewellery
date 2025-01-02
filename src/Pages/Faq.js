@@ -1,26 +1,38 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../Css/dhruvin/Faq.css'
 import noteContext from '../Context/noteContext';
+import { useLocation } from 'react-router-dom';
 
 const Faq = () => {
 
-    const {mainFaq , subFaq } = useContext(noteContext)
+    const {mainFaq , subFaq , footMain} = useContext(noteContext)
     const [activeCategory, setActiveCategory] = useState('Registration1');
     const [openIndex, setOpenIndex] = useState(null);
     const [data, setData] = useState([])
+    const footer = JSON.parse(localStorage.getItem("Faq")) || ""
+    const location = useLocation()
+    const [footerMain, setFooterMain] = useState(location?.state?.faq)
     
-
+    
     const toggleAccordion = (index) => {
         setOpenIndex(openIndex === index ? null : index);        
     };
-
-
-    useEffect(()=>{
-       let filter = subFaq?.filter((element)=> {
-           return element?.faq_name === "Registration1"
-           })
-       setData(filter);   
-    },[subFaq])
+  
+    useEffect(() => {
+        let filter = subFaq?.filter((element) => {
+            if (footerMain === "shipping") {
+                setActiveCategory("Delivery")
+                return element?.faq_name === "Delivery";
+            } else {
+                return element?.faq_name === "Registration1";
+            }
+        });
+    
+        setData(filter);
+        console.log("Filter " , filter);
+        
+    }, [subFaq, footer , footMain]);
+    
 
     const handleFilter = (name) => {
         setActiveCategory(name)

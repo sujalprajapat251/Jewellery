@@ -8,13 +8,16 @@ import { useContext, useState } from 'react';
 import noteContext from '../Context/noteContext';
 import Login from './Login';
 function Footer() {
-    const { store } = useContext(noteContext);
+    const { store , handleMyFaq } = useContext(noteContext);
 
     // LoginModal handing
     const [showLogin, setShowLogin] = useState(false);
 
     const handleLoginClose = () => setShowLogin(false);
     const handleLoginShow = () => setShowLogin(true);
+
+
+
     return (
         <>
             <section className="s_footer_sec">
@@ -44,7 +47,8 @@ function Footer() {
                                     <h4>Customer Services</h4>
                                     <li><Link to='/offers'>Offers</Link></li>
                                     {store ? <li><Link to='/trackorder'>Track your order</Link></li> : <li><Link to='#' onClick={handleLoginShow}>Track your order</Link></li>}
-                                    <li><Link to='#'>Shipping & Returns</Link></li>
+                                    <li><Link state={{faq : 'shipping'}} to='/faq'>Shipping </Link></li>
+                                    <li><Link  to='/faq'>Returns</Link></li>
                                 </ul>
                                 <ul>
                                     <h4>Support</h4>

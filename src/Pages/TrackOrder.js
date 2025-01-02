@@ -33,7 +33,7 @@ useEffect(() => {
       try {
         const response = await axios.post(
           `${Api}/order/getbyuserid`,
-          { customer_id:cusId?.id  },
+          { customer_id:1  },
           {
             headers: {
               Authorization: `Bearer ${store?.access_token}`,
@@ -41,7 +41,11 @@ useEffect(() => {
           }
         );
         console.log("res" , response);
+
+        const data = response?.data?.orders?.filter((element) => element?.order_number === trackKey)
+        console.log("uvchhvuwhvu " , data);
         
+
         console.log(
           "TrackOrder",
           response?.data?.orders?.filter((element) => element?.order_number === trackKey)

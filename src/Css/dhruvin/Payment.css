@@ -64,10 +64,13 @@
     padding: 10px 0px;
     background: #4D1F08;
     color: white;
+    border: 1px solid #4D1F08;
+
 }
 .ds_cod-pay:hover{
-    background: #2B221E;
-    color: white; 
+    color: #2B221E;
+    background-color: white; 
+    border: 1px solid #4D1F08;
 }
 .ds_cod-pay:focus{
     box-shadow: none;
