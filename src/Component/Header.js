@@ -15,7 +15,7 @@ import Login from './Login';
 
 
 function Header() {
-    const { allProduct, allSubCategory, bestseller, wishlistData, cartData,store } = useContext(noteContext);
+    const { allProduct, allSubCategory, bestseller, wishlistData, cartData, store } = useContext(noteContext);
     // menu catgegory handller
     const [goldSubcate, setGoldSubcate] = useState([]);
     const [silverSubcate, setSilverSubcate] = useState([]);
@@ -31,7 +31,7 @@ function Header() {
     useEffect(() => {
         // Update `store` when `storedata` changes
         // setStore(storedata);
-        console.log("Data",  wishlistData.length);
+        console.log("Data", wishlistData.length);
     }, [wishlistData]); // Runs only when `storedata` changes
     useEffect(() => {
         const goldCategories = [];
@@ -136,14 +136,22 @@ function Header() {
     const [Search, setSearch] = useState('');
     const [searchData, setSearchData] = useState([]);
     const [PopularData, setPopularData] = useState();
-    const searchHandle = (x) => {
-        setSearch(x);
-        console.log(Search);
-        const filteredSearchData = allProduct.filter(item => item.product_name.toLowerCase().includes(x));
+    const [SearchModal, setSearchModal] = useState(false);
+    const searchHandle = () => {
+        var data = document.getElementById('searchData').value;
+        const filteredSearchData = allProduct.filter(item => item.product_name.toLowerCase().includes(data));
         console.log(filteredSearchData);
         setSearchData(filteredSearchData);
-        const filteredPopularData = bestseller.filter(item => item.product_name.toLowerCase().includes(x));
+        const filteredPopularData = bestseller.filter(item => item.product_name.toLowerCase().includes(data));
         setPopularData(filteredPopularData);
+        console.warn(data);
+        if (data.length > 0) {
+            setSearchModal(true);
+        }
+        else {
+            setSearchModal(false);
+        }
+        setSearch(data);
     }
 
 
@@ -179,8 +187,8 @@ function Header() {
                 <p className='ds_container mb-0'>Welcome to our Store</p></div>
             <section className='ds_container s_header_sec d-flex justify-content-between flex-wrap flex-lg-nowrap'>
                 <div className='s_header_input d-flex justify-content-between align-items-center col-lg-4 col-12 order-lg-1 order-3'>
-                    <input type='text' placeholder='Search for Jewellery and more...' onChange={(e) => { searchHandle(e.target.value); }}></input>
-                    <IoSearch />
+                    <input type='text' id='searchData' placeholder='Search for Jewellery and more...' onChange={(e) => { searchHandle(); }}></input>
+                    <IoSearch onClick={(e) => { searchHandle(null); }} />
                 </div>
                 <Link className='s_logo text-decoration-none col-lg-4 col-4 ms-lg-auto order-lg-2 order-1 align-self-center '>
                     <h2 className='text-lg-center mb-0'>LOGO</h2>
@@ -204,7 +212,7 @@ function Header() {
                         <div class="position-relative">
                             <IoCartOutline />
                             <span class="position-absolute   translate-middle badge rounded-pill" style={{ background: 'var(--brown)', top: '5px' }}>
-                                {cartData.length}
+                                {cartData?.length}
                             </span>
                         </div>
                         <p className='mb-0'>Cart</p>
@@ -216,7 +224,7 @@ function Header() {
                     {
                         store ? (<Link to={'/myprofile'} className='s_header_icon'>
                             <IoPersonOutline />
-                            <p className='mb-0'>My Pofile</p>
+                            <p className='mb-0 text-capitalize'>{store?.name}</p>
                         </Link>) :
                             (<Link to={'#'} className='s_header_icon' onClick={handleLoginShow}>
                                 <IoPersonOutline />
@@ -231,7 +239,7 @@ function Header() {
             </section>
             <section className='s_header_menu  d-none d-lg-block'>
                 <Nav className='justify-content-between ds_container  flex-nowrap px-0 text-nowrap'>
-                    <Nav.Item className='position-relative'>
+                    <Nav.Item className='position-relative d-flex'>
                         <Link to={'/productlist/all/null'} className='ps-md-0'>All Jewellery</Link>
                         <div className='s_submenu'>
                             <div className='s_submenu_list'>
@@ -250,9 +258,9 @@ function Header() {
                             </div>
                             <div className='s_submenu_list'>
                                 <h4 className='s_submenu_head ps-0'>Price Band</h4>
-                                <Link to="/productlist/all/price/>25">&lt;25K</Link>
+                                <Link to="/productlist/all/price/<25">&lt;25K</Link>
                                 <Link to="/productlist/all/price/25-50">25K - 50K</Link>
-                                <Link to="/productlist/all/price/100<">1L & Above</Link>
+                                <Link to="/productlist/all/price/100>">1L & Above</Link>
                             </div>
                         </div>
                     </Nav.Item>
@@ -291,7 +299,7 @@ function Header() {
                             </div>
                         </div>
                     </Nav.Item>
-                    <Nav.Item className='position-relative'>
+                    <Nav.Item className='position-relative d-flex'>
                         <Link to={`/productlist/category/Silver`}>Silver</Link>
                         <div className='s_submenu '>
                             <div className='s_submenu_list'>
@@ -319,7 +327,7 @@ function Header() {
                             </div>
                         </div>
                     </Nav.Item>
-                    <Nav.Item className=''>
+                    <Nav.Item className='d-flex'>
                         <Link to={`/productlist/category/Diamond`}>Diamond</Link>
                         <div className='s_submenu s_pos_50 '>
                             <div className='s_submenu_list'>
@@ -330,7 +338,7 @@ function Header() {
                                     )
                                 })}
                             </div>
-                            <div className='s_submenu_list'>
+                            <div className='s_submenu_list '>
                                 <h4 className='s_submenu_head ps-0'>Earrings</h4>
                                 {earingSubcate.map((ele, id) => {
                                     return (
@@ -363,7 +371,7 @@ function Header() {
                             </div>
                         </div>
                     </Nav.Item>
-                    <Nav.Item className=''>
+                    <Nav.Item className='d-flex'>
                         <Link to={`/productlist/category/Platinum`}>Platinum</Link>
                         <div className='s_submenu s_pos_50'>
                             <div className='s_submenu_list'>
@@ -383,7 +391,7 @@ function Header() {
                             </div>
                         </div>
                     </Nav.Item>
-                    <Nav.Item className=''>
+                    <Nav.Item className='d-flex'>
                         <Link to={`/productlist/category/Gold Coin`}>Gold Coins</Link>
                         <div className='s_submenu s_pos_50'>
                             <div className='s_submenu_list'>
@@ -409,10 +417,10 @@ function Header() {
                             </div>
                         </div>
                     </Nav.Item>
-                    <Nav.Item className='position-relative'>
+                    <Nav.Item className='position-relative d-flex'>
                         <Link to="/productlist/occasion/wedding wear">Wedding</Link>
                     </Nav.Item>
-                    <Nav.Item className='position-relative'>
+                    <Nav.Item className='position-relative d-flex'>
                         <Link to={`/productlist/category/Watch`}>Watches</Link>
                         <div className='s_submenu s_pos_100 '>
                             <div className='s_submenu_list'>
@@ -425,7 +433,7 @@ function Header() {
                             </div>
                         </div>
                     </Nav.Item>
-                    <Nav.Item className='position-relative'>
+                    <Nav.Item className='position-relative d-flex'>
                         <Link to={'/productlist/all/null'} className='pe-md-0'>Gifting</Link>
                         <div className='s_submenu s_small_submenu s_pos_100'>
                             <div className='s_submenu_list '>
@@ -710,7 +718,7 @@ function Header() {
                                 </Accordion>
                             </Accordion.Body>
                         </Accordion.Item>
-                        <Accordion.Item>
+                        <Accordion.Item className='sp_spacial_accitem'>
                             <Link to="/productlist/occasion/wedding wear" className='s_spec_submenu_head'><h4>Wedding</h4></Link>
                         </Accordion.Item>
                         <Accordion.Item eventKey="7">
@@ -752,15 +760,15 @@ function Header() {
 
 
             {/* search section */}
-            <section className={`s_search_sec ${Search === '' ? '' : 'show'}`}>
+            <section className={`s_search_sec ${SearchModal ? 'show' : ''}`}>
                 {searchData.length === 0 ?
                     <>
-                        <div className='s_serach_head  border-0'><IoCloseOutline className='ms-auto ' onClick={() => { setSearch(''); }} /></div>
+                        <div className='s_serach_head  border-0'><IoCloseOutline className='ms-auto ' onClick={() => { setSearchModal(false) }} /></div>
                         <div className='s_search_not'>
                             <h2>No result found.</h2></div>
                     </>
                     : <>
-                        <div className='s_serach_head'><h5 className='mb-0'>Suggestions</h5><IoCloseOutline onClick={() => { setSearch(''); }} /></div>
+                        <div className='s_serach_head'><h5 className='mb-0'>Suggestions</h5><IoCloseOutline onClick={() => { setSearchModal(false) }} /></div>
                         {searchData.slice(0, 8).map((el, id) => {
                             return (
                                 <div key={id} className='s_search_item'>

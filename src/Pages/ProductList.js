@@ -267,13 +267,13 @@ function ProductList() {
     }, [productlist]);
 
     // min and max price handling when user when value
-    let condition;
+    var [condition,setCondition] =useState(1);
     const handleInput = (e) => {
         set_minValue(e.minValue);
         set_maxValue(e.maxValue);
     };
 
-    // flieter data handling when use applay any fliter on the products
+    // fliter data handling when use applay any fliter on the products
     useEffect(() => {
         fliterDatahandle(condition);
         // eslint-disable-next-line
@@ -281,17 +281,15 @@ function ProductList() {
 
     // sorting functionality is here
     const fliterDatahandle = (x) => {
-        condition = x;
+        setCondition(x);
+        console.warn('condition', condition)
         const filterData = productlist?.filter((item) =>
-
             // Check all selected filters
             Object.keys(selectedFilters).every(key =>
                 selectedFilters[key].length === 0 || selectedFilters[key].includes(item[key])
             ) &&
-
             // Check price range
             (item.total_price >= minValue && item.total_price <= maxValue)
-
         );
 
         // Sorting data based on selected sort option
@@ -542,23 +540,23 @@ function ProductList() {
                                 <div className='s_sortby_menu'>
 
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='Best Sellings' onClick={() => { fliterDatahandle(1) }}></input>
+                                        <input type='radio' name='sort_by' id='Best Sellings' onClick={() => { fliterDatahandle(1) }} checked={condition === 1}></input>
                                         <label htmlFor='Best Sellings' >Best Sellings</label>
                                     </div>
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='low to high' onClick={() => { fliterDatahandle(2) }}></input>
+                                        <input type='radio' name='sort_by' id='low to high' onClick={() => { fliterDatahandle(2) }} checked={condition === 2}></input>
                                         <label htmlFor='low to high'>Price (low to high)</label>
                                     </div>
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='high to low' onClick={() => { fliterDatahandle(3) }}></input>
+                                        <input type='radio' name='sort_by' id='high to low' onClick={() => { fliterDatahandle(3) }} checked={condition === 3}></input>
                                         <label htmlFor='high to low'>Price (high to low)</label>
                                     </div>
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='New Arrivals' onClick={() => { fliterDatahandle(4) }}></input>
+                                        <input type='radio' name='sort_by' id='New Arrivals' onClick={() => { fliterDatahandle(4) }} checked={condition === 4}></input>
                                         <label htmlFor='New Arrivals'>New Arrivals</label>
                                     </div>
                                     <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='Recommendations' onClick={() => { fliterDatahandle(5) }}></input>
+                                        <input type='radio' name='sort_by' id='Recommendations' onClick={() => { fliterDatahandle(5) }} checked={condition === 5}></input>
                                         <label htmlFor='Recommendations'>Recommendations</label>
                                     </div>
                                 </div>
