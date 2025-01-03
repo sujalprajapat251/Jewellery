@@ -48,7 +48,7 @@ function Footer() {
                                     <li><Link to='/offers'>Offers</Link></li>
                                     {store ? <li><Link to='/trackorder'>Track your order</Link></li> : <li><Link to='#' onClick={handleLoginShow}>Track your order</Link></li>}
                                     <li><Link state={{faq : 'shipping'}} to='/faq'>Shipping </Link></li>
-                                    <li><Link  to='/faq'>Returns</Link></li>
+                                    <li><Link state={{return : 'returns'}}  to='/faq'>Returns</Link></li>
                                 </ul>
                                 <ul>
                                     <h4>Support</h4>

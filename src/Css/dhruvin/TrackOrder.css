@@ -42,7 +42,9 @@
     padding: 7px 40px;
 }
 .ds_track-cancel:hover{
-    background-color: #727272;
+    background-color: white;
+    color: #4D1F08;
+    border: 1px solid #4D1F08;
 }
 .ds_TrackOrder-img{
     height: 125px;
@@ -70,7 +72,11 @@
    text-align: center;
    width: 100%;
 }
-
+.ds_cancel-btn:hover{
+    background-color: white;
+    color: #4D1F08;
+    border: 1px solid #4D1F08;
+}
 
 @media (max-width:1441px) {
    .ds_track-cancel{
@@ -86,7 +92,7 @@
        flex-wrap: wrap;
     }
     .ds_track-center{
-        margin: auto;
+        /* margin: auto; */
     }
     .ds_track-overflow{
         overflow-x: auto;

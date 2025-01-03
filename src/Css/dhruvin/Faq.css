@@ -146,3 +146,10 @@
         left: 0;
     }
 }
+
+@media (max-width:426px) {
+/* *********** Accordian ************ */
+.ds_faq-drop-box{
+  padding: 0px 0px;
+}
+}

@@ -35,13 +35,14 @@
     line-height: 18px;
 }
 .ds_con-btn{
-    padding: 10px 30px;
+    padding: 10px 29px;
     background: #4D1F08;
     color: white;
     font-size: 14px;
     border: none;
     border-radius: 4px;
     border: 1px solid #4D1F08;
+    border-radius: 0%;
 }
 .ds_con-btn:hover{
     background-color: white;
@@ -65,4 +66,12 @@
 }
 .ds_con-dash{
     border: 0.5px dashed #6A6A6A
+}
+
+
+
+@media (max-width:768px) {
+    .ds_con-btn{
+        padding: 10px 20px;
+    }
 }

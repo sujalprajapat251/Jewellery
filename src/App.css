@@ -51,3 +51,9 @@ html, body {
       max-width: 750px;
   }
 }
+
+@media (max-width: 426px){
+  .ds_container {
+      max-width: 700px;
+  }
+}

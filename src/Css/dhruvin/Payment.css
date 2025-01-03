@@ -65,6 +65,7 @@
     background: #4D1F08;
     color: white;
     border: 1px solid #4D1F08;
+    border-radius: 0%;
 
 }
 .ds_cod-pay:hover{

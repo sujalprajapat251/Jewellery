@@ -137,9 +137,9 @@ useEffect(() => {
                           </tr>
                         </thead>
                         <tbody>
-                          {invoiceData?.map((element)=>{
+                          {invoiceData?.map((element , index)=>{
                             return(
-                                 <tr>
+                                 <tr key={index}>
                                      <td>
                                        <div className="ds_table-title ds_600">{element?.product_name}</div>
                                        <p className='mb-0'><span className='ds_tcolor '>Size :</span> <span className='ds_600'>{element?.size}</span></p>

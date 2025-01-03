@@ -427,9 +427,9 @@ useEffect(() => {
                                                   <BsThreeDotsVertical onClick={() => toggleDropdown(index)} style={{ cursor: 'pointer' }} />
                                                   {activeCard === index && (
                                                     <div className="ds_add-mini">
-                                                      <p className="ds_600 ds_cursor" onClick={()=>handleSingleNewAdd(item.id)}>Edit</p>
-                                                      <p className="ds_600 ds_cursor" onClick={()=>handleDeleteAdd(item.id)}>Delete</p>
-                                                      <p className="ds_600 ds_cursor" onClick={()=> handleMark(item.id)}>Make as default</p>
+                                                      <p className="ds_add-mini-box ds_600 ds_cursor mb-0" onClick={()=>handleSingleNewAdd(item.id)}>Edit</p>
+                                                      <p className="ds_add-mini-box ds_600 ds_cursor mb-0" onClick={()=>handleDeleteAdd(item.id)}>Delete</p>
+                                                      <p className="ds_add-mini-box ds_600 ds_cursor mb-0" onClick={()=> handleMark(item.id)}>Make as default</p>
                                                     </div>
                                                   )}
                                                </div>
@@ -869,7 +869,7 @@ useEffect(() => {
                                                     </p>
                                                   </div>
                                                   <h5 className='text-end me-4 mt-2'>
-                                                      <span className="ds_color">{  parseInt(element?.total_amount) - (element?.total_amount * 20 / 100) }</span>
+                                                      <span className="ms-lg-0 ms-md-3 ms-0 ds_order-padding ds_color">{  parseInt(element?.total_amount) - (element?.total_amount * 20 / 100) }</span>
                                                       <span className="ms-2 ds_order-line-txt">{element?.total_amount}</span>
                                                   </h5>
                                                   {
@@ -893,7 +893,7 @@ useEffect(() => {
                                                 <div className="ds_order-line mt-2"></div>
                                                 {element?.order_items?.map((item)=>{
                                                    return (
-                                                         <div className="px-3 my-4" key={item?.id} style={{borderBottom:'1px solid #dcdedc'}}>
+                                                         <div className="px-3 my-3 ds_order-main" key={item?.id} >
                                                           <div className="d-flex justify-content-between flex-wrap">
                                                            <div>
                                                              <div className="d-flex ds_cart-flex">

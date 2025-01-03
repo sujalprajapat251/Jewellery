@@ -135,7 +135,7 @@ const Payment = () => {
 
   return (
     <>
-      <section className='mb-5 pb-4'>
+      <section className='mb-5 pb-4 ds_cart-main'>
         <div className='ds_container'>
           <h2>Cart</h2>
            <div className="row">

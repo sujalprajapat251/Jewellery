@@ -44,6 +44,32 @@ export const ResetPassSchema = Yup.object({
       .oneOf([Yup.ref('newPass'), null], 'Passwords must match'),
 });
 
+export const SignUpSchema = Yup.object({
+  name: Yup.string()
+    .required('Name is required')
+    .min(2, 'Name should be at least 2 characters')
+    .max(50, 'Name should not exceed 50 characters'),
+  
+  phone: Yup.string()
+    .required('Mobile number is required')
+    .matches(
+      /^[0-9]{10}$/,
+      'Phone number must be exactly 10 digits'
+    ),
+  
+  email: Yup.string()
+    .required('Email is required')
+    .email('Please enter a valid email'),
+  
+  password: Yup.string()
+    .required('Password is required')
+    .min(6, 'Password must be at least 8 characters')
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/,
+      'Password must contain at least one letter, one number, and be 8 characters long'
+    ),
+});
+
 export const EditProfileSchema = Yup.object({
     name: Yup.string()
       .required('Name is required')

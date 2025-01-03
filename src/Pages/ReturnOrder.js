@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom'
 import noteContext from '../Context/noteContext'
 import axios from 'axios'
 import { Modal } from 'react-bootstrap'
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
 
 const ReturnOrder = () => {
   
@@ -233,9 +235,6 @@ const [customerID, setCustomerID] = useState(null)
 const [uploadedImages, setUploadedImages] = useState([]);
 const [feedback, setFeedback] = useState("")
 
-
-
-
 const handleRating = (value) => {
  setRating(value); 
 };
@@ -336,6 +335,39 @@ return () => {
 }, [uploadedImages]);
 
 
+// -------------- Doanload Invoice -------------
+
+const invoiceRef = useRef(); 
+
+const handlePrint = () => {
+  const element = invoiceRef.current;
+
+  // Wait for all images to load
+  const images = Array.from(element.querySelectorAll('.ds_TrackOrder-img'));
+  const loadImages = images.map((img) => {
+    if (img.complete) {
+      return Promise.resolve();
+    }
+    return new Promise((resolve) => {
+      img.onload = resolve;
+      img.onerror = resolve; // Resolve even if there’s an error
+    });
+  });
+
+  Promise.all(loadImages).then(() => {
+    html2canvas(element, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF();
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('Return_Order_Details.pdf');
+      alert('Invoice has been downloaded successfully!');
+    });
+  });
+};
+
+
 
 
 
@@ -402,7 +434,7 @@ return () => {
                     </div>
                     <div>
                     <div className='ds_track-overflow mt-4'>
-                        <div className='ds_track-box '>
+                        <div className='ds_track-box ' ref={invoiceRef}>
                            
                              
                                      <div> 
@@ -432,7 +464,7 @@ return () => {
                                        </div>
                                        <div className='ds_track-line mt-1'></div>
                                             <h6 className='fw-bold text-end ds_track-margin mt-2'>
-                                                <Link to="" className='text-dark'>Download Invoice</Link>
+                                                <Link to="#" onClick={handlePrint} className='text-dark'>Download Invoice</Link>
                                             </h6>
                                        {
                                          returnData[0]?.order_items?.map((item , index)=>{
@@ -443,7 +475,7 @@ return () => {
                                                   <div>
                                                       <div className='d-flex ds_track-manage'>
                                                         <div className='ds_track-center'>
-                                                            <img className='ds_TrackOrder-img' src={item?.image[0]} alt="" />
+                                                            <img className='ds_TrackOrder-img' src={item?.image[0]} alt=""  />
                                                             <p className='ds_tcolor mb-0 ds_track-mini text-center'>Order Id : <span className='ds_color'>{returnData[0]?.order_number}</span></p>
                                                         </div>
                                                         <div className='ds_cart-deta mt-xl-0 mt-2'>

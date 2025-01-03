@@ -45,6 +45,12 @@
     color: #727272;
     text-decoration: line-through;
 }
+.ds_cart-count{
+    transition: all 0.3s linear;
+}
+.ds_cart-count:hover{
+    transform: scale(1.2);
+}
 .ds_cart-mul{
     width: 110px;
     background: #4D1F08;
@@ -77,6 +83,7 @@
 .ds_with-cupon{
     box-shadow: 0px 4px 14px 0px #8F8F8F40;
     padding: 20px 0px;
+    height: 360px;
   }
   .ds_with-border{
       border: 0.5px solid #c9c7c7
@@ -312,6 +319,13 @@
 }
 
 @media (max-width:450px) {
+/* *********** Cart *************** */
+.ds_cart-main{
+    padding-top: 20px;
+}
+.ds_cart-mul{
+    padding: 7px 5px;
+}
   /* {*************** Add New Address Popup ************   } */
   .ds_add-modal{
     max-width: 330px !important;

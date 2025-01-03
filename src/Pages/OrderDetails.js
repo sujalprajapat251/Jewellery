@@ -1,9 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import '../Css/dhruvin/OrderDetails.css'
 import { RiArrowDropDownLine } from 'react-icons/ri'
 import axios from 'axios'
 import noteContext from '../Context/noteContext'
 import { useNavigate } from 'react-router-dom'
+import Invoice from './Invoice'
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
 
 const OrderDetails = () => {
 
@@ -30,10 +33,12 @@ const OrderDetails = () => {
 
   console.log("OrderData" ,orderData);
   
-
   const handleView = () => {
      navigate("/invoice")
   }
+
+
+
 
   return (
     <div>
@@ -84,18 +89,18 @@ const OrderDetails = () => {
                           </div>
                         </div>
 
-                        <div className="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12  mt-3">
+                        <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6  mt-3">
                           <div>
-                            <p className="ds_con-bill-txt">Billing Address</p>
+                            <p className="">Billing Address</p>
                             <p className="ds_con-font text-dark ds_600 " > {orderData?.contact_name} </p>
                             <p className="ds_con-font text-dark ds_600">{orderData?.delivery_address}</p>
                             <p className="ds_con-font text-dark ds_600">+91 {orderData?.contact_no}</p>
                           </div>
                         </div>
 
-                        <div className="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12  mt-3 mb-3">
+                        <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6  mt-3 mb-3">
                           <div>
-                            <p className="ds_con-bill-txt">Shipping Address</p>
+                            <p className="">Shipping Address</p>
                             <p className="ds_con-font text-dark ds_600 " > {orderData?.contact_name} </p>
                             <p className="ds_con-font text-dark ds_600">{orderData?.delivery_address}</p>
                             <p className="ds_con-font text-dark ds_600">+91 {orderData?.contact_no}</p>

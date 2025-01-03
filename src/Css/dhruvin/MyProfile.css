@@ -130,8 +130,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     right: 40px;
     background-color:white;
     width: 28%;
-    padding: 20px;
+    padding: 0px 0px;
     box-shadow: 0px 0px 24px 3px #7272721A;
+}
+.ds_add-mini-box{
+    padding: 11px 20px 10px 20px;
+}
+.ds_add-mini-box:hover{
+    background-color: rgb(241, 237, 237);
 }
 
 /* {*************** Add New Address Popup ************   } */
@@ -356,6 +362,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .ds_order-line{
     border-bottom: 1px solid #727272;
 }
+.ds_order-main{
+    border-bottom: 1px solid #dcdedc;
+    padding-bottom: 20px;
+}
 .ds_oder-img{
     height: 125px;
     object-fit: cover;
@@ -474,19 +484,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .ds_offcanvas-inner{
     --bs-offcanvas-width: 320px !important;
 }
+.ds_edit-btn{
+    padding: 8px 30px;
+}
 /* {*************  Edit Profile **************} */
+.ds_edit-box{
+    padding: 10px 20px;
+}
   .ds_edit-save{
      margin-top: 20px;
      margin-left: 0px;
-  }
-  .ds_edit-cencel{
-     /* margin-right: 10px; */
+     padding: 7px 70px;
   }
   /* {*************  My Address **************} */
     .ds_add-mini{
         width: 50%;
     }  
-    
+    .ds_add-btn{
+        padding: 8px 10px;
+    } 
+    .ds_add-box{
+        padding: 0px 20px 1px 20px;
+    }
 
     /* {---------------- Delete Item Modal ------------------} */
    .ds_delete-modal .modal-dialog  .modal-content{
@@ -514,10 +533,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 }
 /* {----------------------- My Order -------------------} */
-.ds_order-flex{
-    justify-content: end;
- }
-
+.ds_order-padding{
+    padding-left: 16px;
+}
+.ds_cart-flex{
+    justify-content: center;
+}
+.ds_oder-img{
+    width: 150px;
+}
 /* {************* My Profile **************} */
 .ds_offcanvas-inner{
     --bs-offcanvas-width: 320px !important;
@@ -526,11 +550,31 @@ input[type="date"]::-webkit-calendar-picker-indicator {
  
 }
 
+@media (max-width:376px) {
+ /* --------------- My Order ---------------    */
+    .ds_order-order{
+        padding-left: 5px;
+    }
+    .ds_cart-flex{
+        flex-wrap: wrap;
+    }
+    .ds_oder-img{
+        width: 230px;
+    }
+    .ds_cart-deta{
+        margin-top: 10px;
+    }
+}
+
 @media (max-width:350px) {
 /* {************* My Profile **************} */
 .ds_offcanvas-inner{
     --bs-offcanvas-width: 270px !important;
 }
+/* {*************  Edit Profile **************} */
+.ds_edit-save{
+    padding: 7px 68px;
+ }
  /* {*************  My Address **************} */
  .ds_add-mini{
     width: 65%;
@@ -554,6 +598,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     flex-direction: column;
  }
 
+ /* ************** My Order **************** */
+ .ds_order-order{
+    padding-left: 0px;
+}
+
  /* {********************  Return Order Popup  *********} */
  .ds_return-popup{
     max-width: 290px !important;
@@ -563,7 +612,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   /* ************ LogOut Modal ********* */
  .ds_delete-no{
     padding: 5px 30px;
-    margin-right: 15px;
+    /* margin-right: 15px; */
  }
  .ds_delete-yes{
     padding: 5px 35px;

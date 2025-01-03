@@ -520,11 +520,11 @@ const UseContext = (props) => {
             customer_id: `${store?.id}`,
             address: values.address,
             status: 'active',
-            state: values.state,
-            city: values.city,
-            pincode: `${values.pincode}`,
-            contact_name: values.name,
-            contact_no: `${values.phone}`,
+            state: values?.state,
+            city: values?.city,
+            pincode: `${values?.pincode}`,
+            contact_name: values?.name,
+            contact_no: `${values?.phone}`,
             type: addType,
           },
           {
@@ -608,8 +608,8 @@ const UseContext = (props) => {
        try{
             const response = await axios.post(`${Api}/order/getbyuserid`,
                {
-                //  customer_id: parseInt(`${store?.id}`)
-                  customer_id: 1
+                 customer_id: parseInt(`${store?.id}`)
+                  // customer_id: 1
                },
                {
                  headers: {

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useFormik } from 'formik';
-import { ForgetPassSchema, LoginSchema } from '../schemas';
+import { ForgetPassSchema, LoginSchema, SignUpSchema } from '../schemas';
 import Swal from 'sweetalert2';
 import { useContext, useState, useRef } from 'react';
 import noteContext from '../Context/noteContext';
@@ -243,11 +243,25 @@ function Login({ isOpen, onClose, onOpen }) {
     const handleRegisterClose = () => setShowRegister(false);
     const handleRegisterShow = () => setShowRegister(true);
 
+    const SignUpVal = {
+        name: '',
+        phone: '',
+        email: '',
+        password: '',
+    }
+
     const [signUpVal, setSignUpVal] = useState({
         name: '',
         phone: '',
         email: '',
         password: '',
+    })
+
+    const SignUpFormik = useFormik({
+        initialValues: SignUpVal,
+        validationSchema: SignUpSchema,
+        onSubmit: (values , action) => {
+        }
     })
 
     const handleSignUp = async (e) => {
@@ -439,28 +453,33 @@ function Login({ isOpen, onClose, onOpen }) {
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='s_model_con'>
-                    <form onSubmit={handleSignUp}>
+                    <form onSubmit={SignUpFormik.handleSubmit}>
                         <div className='s_modal_head text-center' >
                             <h2>Create Account</h2>
                             <p>Create an account & get access to exclusive collection of jewelry</p>
                         </div>
                         <div className='s_modal_field'>
                             <p>Name</p>
-                            <input type='text' placeholder='Enter name' value={signUpVal.name} onChange={(e) => setSignUpVal({ ...signUpVal, name: e.target.value })} ></input>
+                            <input type='text' placeholder='Enter name' name='name' value={SignUpFormik.values.name} onChange={SignUpFormik.handleChange} ></input>
+                            {SignUpFormik.errors.name && SignUpFormik.touched.name ? <p className='ds_new-danger mb-0'>{SignUpFormik.errors.name}</p> : null}
+
                         </div>
                         <div className='s_modal_field'>
                             <p>Mobile No.</p>
-                            <input type='text' placeholder='Enter mobile no.' value={signUpVal.phone} onChange={(e) => setSignUpVal({ ...signUpVal, phone: e.target.value })}></input>
+                            <input type='text' placeholder='Enter mobile no.' name='phone' value={SignUpFormik.values.phone} onChange={SignUpFormik.handleChange}></input>
+                            {SignUpFormik.errors.phone && SignUpFormik.touched.phone ? <p className='ds_new-danger mb-0'>{SignUpFormik.errors.phone}</p> : null}
                         </div>
                         <div className='s_modal_field'>
                             <p>Email</p>
-                            <input type='text' placeholder='Enter email' value={signUpVal.email} onChange={(e) => setSignUpVal({ ...signUpVal, email: e.target.value })}></input>
+                            <input type='text' placeholder='Enter email' name='email' value={SignUpFormik.values.email} onChange={SignUpFormik.handleChange}></input>
+                            {SignUpFormik.errors.email && SignUpFormik.touched.email ? <p className='ds_new-danger mb-0'>{SignUpFormik.errors.email}</p> : null}
                         </div>
                         <div className='s_modal_field'>
                             <p>Password</p>
-                            <input type='password' placeholder='Enter password' value={signUpVal.password} onChange={(e) => setSignUpVal({ ...signUpVal, password: e.target.value })}></input>
+                            <input type='password' placeholder='Enter password' name='password' value={SignUpFormik.values.password} onChange={SignUpFormik.handleChange}></input>
+                            {SignUpFormik.errors.password && SignUpFormik.touched.password ? <p className='ds_new-danger mb-0'>{SignUpFormik.errors.password}</p> : null}
                         </div>
-                        <div className='s_modal_btn' onClick={(e) => handleSignUp(e)}>
+                        <div className='s_modal_btn' >
                             <button type='submit' >Register</button>
                         </div>
                     </form>

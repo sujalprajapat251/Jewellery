@@ -12,20 +12,18 @@ import axios from 'axios'
 
 const Cart = () => {
 
-  const {Api , store ,  myAddData , AddFormik  , newAddModal, setNewAddModal ,activeCard , setActiveCard ,   hello , addwishlistHandler ,
+  const {Api , store ,  myAddData , AddFormik  , newAddModal, setNewAddModal ,  hello , addwishlistHandler ,
 
-         mycartData, setMyCartData , cartData, setCardData ,deleteToggle, setDeleteToggle , priceToggle, setPriceToggle , price, setPrice  , removePopup, setRemovePopup,
+        cartData, price  , removePopup, setRemovePopup,  wishId,  handleRemove , handleQuantityChange , handleFinalRemove} = useContext(noteContext)
 
-         removeId, setRemoveId , wishId, setWishId , handleRemove , handleQuantityChange , handleFinalRemove} = useContext(noteContext)
-
-  // const cartData = JSON.parse(localStorage.getItem("cardDetail")) || []
   const navigate = useNavigate()
 
   const [addType, setAddType] = useState("Home")
   const [changeAddPopup, setChangeAddPopup] = useState(false)
 
-
   const [cupon, setCupon] = useState([])
+  const [offer, setOffer] = useState([])
+
 
 
   const handleAddType = (type) => {
@@ -68,7 +66,9 @@ const Cart = () => {
 
   const handleCupanType = (type , amount) => {
       if(type === "fixed"){
-         setCupanOffer(amount)
+         console.log("hello " , amount);
+         
+         setCupanOffer(parseInt(amount))
       } 
       else{
         let offer =  price * amount / 100;
@@ -124,6 +124,28 @@ const Cart = () => {
      navigate("/payment")
   }
 
+  useEffect(()=>{
+     const fectchOfferData = async () => {
+        try{
+          const response = await axios.get(`${Api}/offers/getallactive`,{
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`
+            }
+          })
+          console.log("Beta " , response?.data?.offers);
+          setOffer(response?.data?.offers)
+        }
+        catch(error){
+
+        }
+     }
+
+     fectchOfferData()
+  },[])
+
+
+
+
   return (
     <>
 
@@ -147,7 +169,7 @@ const Cart = () => {
 
     {/* *************** Cart ************    */}
       { cartData?.length !== 0 &&
-        <section className='mb-5 pb-sm-5 '>
+        <section className='mb-5 pb-sm-5 ds_cart-main'>
         <div className='ds_container'>
             <div>
                 <h2>Cart</h2>
@@ -187,14 +209,14 @@ const Cart = () => {
                                           <div  className='w-100 mt-auto d-flex justify-content-end'>
                                           <div className='ds_cart-mul mt-auto '>
                                            <div className='d-flex justify-content-between'>
-                                               <div>
-                                                 <FaMinus  onClick={() => handleQuantityChange(element?.id, "subtract" , element?.customer_id , element?.product_id)} className='text-light ds_cart-ico ds_cursor' />
+                                               <div>a
+                                                 <FaMinus  onClick={() => handleQuantityChange(element?.id, "subtract" , element?.customer_id , element?.product_id)} className='ds_cart-count text-light ds_cart-ico ds_cursor' />
                                                </div>
                                                <div className='text-light'>
                                                  {element?.quantity}
                                                </div>
                                                <div>
-                                                  <FaPlus onClick={() => handleQuantityChange(element?.id, "add" , element?.customer_id , element?.product_id)} className='text-light ds_cart-ico ds_cursor' />
+                                                  <FaPlus onClick={() => handleQuantityChange(element?.id, "add" , element?.customer_id , element?.product_id)} className='ds_cart-count text-light ds_cart-ico ds_cursor' />
                                                </div>
                                            </div>
                                           </div>
@@ -208,7 +230,7 @@ const Cart = () => {
                     <p className='ds_tcolor mt-5'>Note : Order details will be send on Whatsapp or Email.</p>
                 </div>
 
-                <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mt-3">
+                <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mt-sm-3">
                     <div className='mt-4'>
                         <div className='ds_cart-address'>
                             {resolvedAddress?.slice(0 , 1)?.map((element)=>{
@@ -232,7 +254,7 @@ const Cart = () => {
                             })}
                         </div>
 
-                        <div className="ds_with-cupon mt-4" id="ds_cupon">
+                        <div className="ds_with-cupon overflow-hidden mt-4" id="ds_cupon">
                              <div>
                                <h6 className="ps-3 mb-3 fw-600 ds_color">
                                  Apply Coupon
@@ -251,8 +273,9 @@ const Cart = () => {
                              </div>
                              <div className="px-3 mt-3 fw-500">
                                <p className="ds_add-special ds_600" >Coupon List</p>
-                                {
-                                  cupon?.map((element)=>{
+                                <div className='overflow-y-auto overflow-hidden' style={{height:'170px'}}>
+                                  {
+                                    cupon?.map((element)=>{
                                      return(
                                         <div className="form-check d-flex align-items-center mb-3">
                                            <input onClick={()=> handleCupanType(element?.type , element?.price)} className="form-check-input ds_cursor ds_cart-radio" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
@@ -265,8 +288,26 @@ const Cart = () => {
                                            </div>
                                         </div>
                                      )
-                                  })
-                                }
+                                    })
+                                  }
+  
+                                  {
+                                     offer?.map((element)=>{
+                                    return(
+                                       <div className="form-check d-flex align-items-center mb-3">
+                                          <input onClick={()=> handleCupanType(element?.type , element?.discount)} className="form-check-input ds_cursor ds_cart-radio" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
+                                          <div className="ms-2">
+                                            <label className="form-check-label fw-bold ds_add-label ds_color" htmlFor="flexRadioDefault1">{element?.name}</label>
+                                            <p className="text-muted ds_tcolor mb-0 mt-1" style={{ lineHeight: "18px" }}>
+                                              {element?.description}
+                                            </p>
+                                            <label className="form-check-label  ds_color mt-1 ds_600" htmlFor="flexRadioDefault1">Save {element?.discount}</label>
+                                          </div>
+                                       </div>
+                                    )
+                                   })
+                                  }
+                                </div>
                              </div>
                          </div>
 

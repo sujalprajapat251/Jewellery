@@ -147,6 +147,9 @@
     .ds_al-desing{
         height: 280px;
     }
+    .ds_nack-star{
+        height: 214px;
+    }
 }
 
 @media (max-width:992px) {
@@ -158,6 +161,9 @@
     }
     .ds_al-desing{
         height: 250px;
+    }
+    .ds_nack-star{
+        height: 159px;
     }
 }
 
@@ -220,27 +226,30 @@
         left: 127px;
     }
     .ds_al-img{
-        height: 300px;
+        height: 220px;
         object-fit: cover;
     }
     .ds_al-nack{
-        height: 300px;
+        height: 220px;
         object-fit: cover; 
     }
+    .ds_nack-star{
+        height: 220px;
+    }
     .ds_hand-ring{
-        height: 300px;
+        height: 220px;
         object-fit: cover;  
     }
     .ds_al-box{
-        height: 300px;
+        height: 220px;
         object-fit: cover; 
     }
     .ds_al-paper-ring{
-        height: 300px;
+        height: 220px;
         object-fit: cover; 
     }
     .ds_al-chain{
-        height: 300px;
+        height: 220px;
         object-fit: cover; 
     }
 }

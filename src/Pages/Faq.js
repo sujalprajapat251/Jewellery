@@ -9,9 +9,9 @@ const Faq = () => {
     const [activeCategory, setActiveCategory] = useState('Registration1');
     const [openIndex, setOpenIndex] = useState(null);
     const [data, setData] = useState([])
-    const footer = JSON.parse(localStorage.getItem("Faq")) || ""
     const location = useLocation()
     const [footerMain, setFooterMain] = useState(location?.state?.faq)
+    const [returnFooter, setReturnFooter] = useState(location?.state?.return)
     
     
 
@@ -24,15 +24,20 @@ const Faq = () => {
             if (footerMain === "shipping") {
                 setActiveCategory("Delivery")
                 return element?.faq_name === "Delivery";
-            } else {
+            } 
+            else if (returnFooter === "returns") {
+                setActiveCategory("Returns and Exchange")
+                return element?.faq_name === "Returns and Exchange";
+            }
+            else {
                 return element?.faq_name === "Registration1";
             }
         });
     
         setData(filter);
-        console.log("Filter " , filter);
+        // console.log("Filter " , filter);
         
-    }, [subFaq, footer , footMain]);
+    }, [subFaq, footMain]);
     
 
     const handleFilter = (name) => {
