@@ -23,7 +23,10 @@
     width: 380px;
     margin-top: 16px;
 }
-
+.s_footer_main a {
+    text-decoration: none;
+    color: inherit;
+}
 .s_footer_main .s_footer_icon {
     margin-right: 20px;
     width: 40px;
@@ -73,6 +76,7 @@
 
 .s_footer_main .s_footer_right ul a:hover {
     color: var(--brown);
+    transform: scale(120%);
 }
 
 .s_footer_last p {

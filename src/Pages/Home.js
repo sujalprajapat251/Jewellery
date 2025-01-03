@@ -28,7 +28,8 @@ function Home() {
         600: { items: 3 },
         1024: { items: 4 },
         1200: { items: 5 },
-        1440: { items: 7 },
+        1440: { items: 6 },
+        1640:{ items: 7 },
     }
 
 
@@ -278,22 +279,22 @@ function Home() {
                     </div>
                     <Row className='row-cols-1 gx-0 gx-sm-4' lg={4} sm={2}>
                         <Col className='position-relative py-5' >
-                            <Link to={`/productlist/occasion/Wedding Wear`} className='s_es_card text-dark'>
+                            <Link to={`/productlist/occasion/Bridal Wear`} className='s_es_card text-dark'>
                                 <img src={require('../Img/Sujal/weddingwear.png')} alt='wedding wear' className='w-100 '></img>
                                 <div className='s_card_detail'>
                                     <div>
-                                        <h4>Wedding Wear</h4>
+                                        <h4>Bridal Wear</h4>
                                         <p>Traditional attire</p>
                                     </div>
                                 </div>
                             </Link>
                         </Col>
                         <Col className='position-relative py-5'>
-                            <Link to={`/productlist/occasion/Party Wear`} className='s_es_card text-dark'>
+                            <Link to={`/productlist/occasion/Traditional`} className='s_es_card text-dark'>
                                 <img src={require('../Img/Sujal/partywear.png')} alt='party wear' className='w-100 '></img>
                                 <div className='s_card_detail'>
                                     <div>
-                                        <h4>Party Wear</h4>
+                                        <h4>Traditional Wear</h4>
                                         <p>Glamorous Look</p>
                                     </div>
                                 </div>
@@ -311,11 +312,11 @@ function Home() {
                             </Link>
                         </Col>
                         <Col className='position-relative py-5'>
-                            <Link to={`/productlist/occasion/Everyday Year`} className='s_es_card text-dark'>
+                            <Link to={`/productlist/occasion/Modern wear`} className='s_es_card text-dark'>
                                 <img src={require('../Img/Sujal/everydaywear.png')} alt='everyday wear' className='w-100 '></img>
                                 <div className='s_card_detail'>
                                     <div>
-                                        <h4>Everyday Wear</h4>
+                                        <h4>Modern Wear</h4>
                                         <p>Casual Comfort</p>
                                     </div>
                                 </div>
@@ -480,9 +481,11 @@ function Home() {
                         </Col>
                     </Row>
                 </div>
-
             </section>
-            <section className='s_news_sec'>
+
+            {/* don't remove below code its important */}
+
+            {/* <section className='s_news_sec'>
                 <div className='s_news_detail'>
                     <p>NEWSLETTER</p>
                     <h2>Subscribe And Get</h2>
@@ -495,7 +498,7 @@ function Home() {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
         </>
     )
 }

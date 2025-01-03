@@ -7,16 +7,16 @@ import { cache } from 'react';
 
 const UseContext = (props) => {
   // acces token form localstores
-  let [store , setStore]= useState(JSON.parse(localStorage.getItem("Login")))
+  let [store, setStore] = useState(JSON.parse(localStorage.getItem("Login")))
 
-  const userHandling = (user)=>{
-    if(store?.id){
+  const userHandling = (user) => {
+    if (store?.id) {
       localStorage.removeItem("Login");
       setStore('');
     }
     else {
       localStorage.setItem("Login", JSON.stringify(user));
-      console.log("userData",user);
+      console.log("userData", user);
       setStore(JSON.parse(localStorage.getItem("Login")));
     }
   }
@@ -177,11 +177,26 @@ const UseContext = (props) => {
   // fetchcartsData
   const [cartData, setCardData] = useState([]);
 
-  const addToCardhandle = async (product, size) => {
+  const addToCardhandle = async (product, size, offer) => {
     console.warn("Cart", cartData);
     let CheckQty = cartData.filter((cart) => {
       return cart.product_id === product?.id
     });
+    console.error("data", product, size, offer);
+    let unit_price
+    if(offer.length === 0 ){
+      unit_price = product?.total_price
+    }else {
+      if (offer?.type === 'percentage') {
+        var discount = (parseFloat(product.total_price) * (parseFloat(offer.discount) / 100)).toFixed(2);
+        unit_price = (parseFloat(product.total_price) - parseFloat(discount)).toFixed(2);
+        console.error("discount", unit_price);
+      }
+      if (offer?.type === 'fixed') {
+        unit_price = (parseFloat(product.total_price) - parseFloat(offer.price)).toFixed(2);
+        console.error("discount", unit_price)
+      }
+    }
     console.warn("Check Qty", CheckQty);
     if (CheckQty.length > 0) {
       // update cart logic here
@@ -191,6 +206,7 @@ const UseContext = (props) => {
           product_id: product?.id,
           size: size || 0,
           quantity: CheckQty?.[0]?.quantity + 1,
+          unit_price: unit_price,
         },
         {
           headers: {
@@ -202,12 +218,13 @@ const UseContext = (props) => {
         })
     } else {
       // addtocart logic
+      console.error("Product added to cart successfully",unit_price);
       await axios.post(`${Api}/cart/create`,
         {
           customer_id: store?.id,
           product_id: product?.id,
           quantity: CheckQty.length || 1,
-          unit_price: product?.total_price,
+          unit_price: unit_price,
           size: size || 0,
         },
         {
@@ -250,41 +267,41 @@ const UseContext = (props) => {
     }
   }
 
-//   useEffect(() => {
-//     const fetchCartData = async () => {
-//       try {
-//         const response = await axios.get(`${Api}/cart/getall`, {
-//           headers: {
-//             Authorization: `Bearer ${store?.access_token}`,
-//           },
-//         });
-  
-//         console.log("CartData:", response?.data?.cart);
-  
-//         const cart = response?.data?.cart || [];
-//         const jem = cart.map((element) => element?.product_id);
-  
-//         console.log("jem:", jem);
-  
-//         // setCartData(cart)
-// ;
-  
-//         const hello = cart.map((element) => parseFloat(element?.total_price || 0));
-//         const totalPrice = hello.reduce((sum, price) => sum + price, 0);
-  
-//         setPrice(Math.floor(totalPrice));
-//       } catch (error) {
-//         console.error("Error fetching cart data:", error);
-//         alert("Failed to fetch cart data.");
-//       }
-//     };
-  
-//     fetchCartData();
-  
-//     console.log("Fetching cart data...");
-  
-//     // Dependencies
-//   }, [deleteToggle, priceToggle]);
+  //   useEffect(() => {
+  //     const fetchCartData = async () => {
+  //       try {
+  //         const response = await axios.get(`${Api}/cart/getall`, {
+  //           headers: {
+  //             Authorization: `Bearer ${store?.access_token}`,
+  //           },
+  //         });
+
+  //         console.log("CartData:", response?.data?.cart);
+
+  //         const cart = response?.data?.cart || [];
+  //         const jem = cart.map((element) => element?.product_id);
+
+  //         console.log("jem:", jem);
+
+  //         // setCartData(cart)
+  // ;
+
+  //         const hello = cart.map((element) => parseFloat(element?.total_price || 0));
+  //         const totalPrice = hello.reduce((sum, price) => sum + price, 0);
+
+  //         setPrice(Math.floor(totalPrice));
+  //       } catch (error) {
+  //         console.error("Error fetching cart data:", error);
+  //         alert("Failed to fetch cart data.");
+  //       }
+  //     };
+
+  //     fetchCartData();
+
+  //     console.log("Fetching cart data...");
+
+  //     // Dependencies
+  //   }, [deleteToggle, priceToggle]);
 
   const [removePopup, setRemovePopup] = useState(false)
   const [priceToggle, setPriceToggle] = useState(0)
@@ -294,7 +311,7 @@ const UseContext = (props) => {
     fetchWishlist();
     fetchCardData();
     // eslint-disable-next-line
-  }, [removePopup , priceToggle])
+  }, [removePopup, priceToggle])
 
 
 
@@ -332,7 +349,7 @@ const UseContext = (props) => {
 
   }, [editToggle])
 
-  
+
   console.log("pro ", profileData);
 
 
@@ -382,8 +399,8 @@ const UseContext = (props) => {
           }
         )
         .then((response) => {
-          console.log("gnrjghwgkwnfgek " , response);
-          
+          console.log("gnrjghwgkwnfgek ", response);
+
           alert("Profile updated successfully!");
           setEditToggle(false);
         })
@@ -564,7 +581,7 @@ const UseContext = (props) => {
     setSingleNewAdd(true);
     setSingleId(id);
   };
-  
+
 
   //--------------- Delete Item Popup --------------
   const [deleteId, setDeleteId] = useState(null)
@@ -604,31 +621,31 @@ const UseContext = (props) => {
 
   useEffect(() => {
 
-    const myOrderData = async (retryCount = 0) => {      
-       try{
-            const response = await axios.post(`${Api}/order/getbyuserid`,
-               {
-                //  customer_id: parseInt(`${store?.id}`)
-                  customer_id: 1
-               },
-               {
-                 headers: {
-                   Authorization: `Bearer ${store?.access_token}`
-                 }
-            })            
-            setOrderMain(response?.data?.orders)
-            setFilteredOrders(response?.data?.orders);
-          }
-          catch(error){
-             if (error?.response?.status === 429 && retryCount < 5) {
-               // Retry logic with exponential backoff
-               const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-               console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
-               setTimeout(() => myOrderData(retryCount + 1), retryAfter);
-             } else {
-               console.error("Failed to fetch profile data:", error.message);
-             }
-          }
+    const myOrderData = async (retryCount = 0) => {
+      try {
+        const response = await axios.post(`${Api}/order/getbyuserid`,
+          {
+            //  customer_id: parseInt(`${store?.id}`)
+            customer_id: 1
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`
+            }
+          })
+        setOrderMain(response?.data?.orders)
+        setFilteredOrders(response?.data?.orders);
+      }
+      catch (error) {
+        if (error?.response?.status === 429 && retryCount < 5) {
+          // Retry logic with exponential backoff
+          const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+          console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+          setTimeout(() => myOrderData(retryCount + 1), retryAfter);
+        } else {
+          console.error("Failed to fetch profile data:", error.message);
+        }
+      }
     }
 
     myOrderData()
@@ -777,30 +794,30 @@ const UseContext = (props) => {
   //           Authorization: `Bearer ${store?.access_token}`,
   //         },
   //       });
-  
+
   //       console.log("CartData:", response?.data?.cart);
-  
+
   //       const cart = response?.data?.cart || [];
   //       const jem = cart.map((element) => element?.product_id);
-  
+
   //       // console.log("jem:", jem);
-  
+
   //       cartData(cart);
-  
+
   //       const hello = cart.map((element) => parseFloat(element?.total_price || 0));
   //       const totalPrice = hello.reduce((sum, price) => sum + price, 0);
-  
+
   //       setPrice(Math.floor(totalPrice));
   //     } catch (error) {
   //       console.error("Error fetching cart data:", error);
   //       alert("Failed to fetch cart data.");
   //     }
   //   };
-  
+
   //   fetchCartData();
-  
+
   //   console.log("Fetching cart data...");
-  
+
   //   // Dependencies
   // }, [deleteToggle, priceToggle]);
 
@@ -808,8 +825,8 @@ const UseContext = (props) => {
     console.log(id);
     setRemovePopup(true)
     setRemoveId(id)
-    let wishId = cartData?.map((element)=> element?.product?.id)
-    setWishId(wishId[0]); 
+    let wishId = cartData?.map((element) => element?.product?.id)
+    setWishId(wishId[0]);
   }
 
   const handleQuantityChange = async (id, action, cusId, prod_id) => {
@@ -818,20 +835,20 @@ const UseContext = (props) => {
       if (item.id === id) {
         const newQuantity = action === "add" ? item?.quantity + 1 : Math.max(item?.quantity - 1, 1);
         const newPrice = item.price_per_unit * newQuantity; // Calculate new price
-        
+
         return { ...item, quantity: newQuantity, total_price: !isNaN(newPrice) ? newPrice : item?.total_price };
       }
       return item;
     });
-  
+
     // Update UI immediately with validated data
     setCardData(updatedCart);
-  
+
     // Find the updated item to send to the API
     const updatedItem = updatedCart.find((item) => item?.id === id);
-  
+
     if (!updatedItem) return;
-  
+
     try {
       // Send updated quantity to the API
       const response = await axios.post(
@@ -841,7 +858,7 @@ const UseContext = (props) => {
           product_id: prod_id,
           quantity: updatedItem.quantity,
           product_price: updatedItem.total_price,
-          size:updatedItem?.size ? updatedItem?.size : 2
+          size: updatedItem?.size ? updatedItem?.size : 2
         },
         {
           headers: {
@@ -853,16 +870,16 @@ const UseContext = (props) => {
     } catch (error) {
       console.error("Failed to update quantity:", error);
     }
-  
+
     // Optional: Re-trigger UI updates
     setPriceToggle((prev) => prev + 1);
   };
 
   const handleFinalRemove = async () => {
     let retryCount = 0;
-    const maxRetries = 3; 
-    const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; 
-    
+    const maxRetries = 3;
+    const retryDelay = (attempt) => Math.pow(2, attempt) * 1000;
+
     const attemptDelete = async () => {
       try {
         const response = await axios.delete(`${Api}/cart/delete/${removeId}`, {
@@ -871,40 +888,40 @@ const UseContext = (props) => {
           },
         });
         console.log("Delete Response:", response);
-        setDeleteToggle((prev) => prev + 1); 
-        setRemovePopup(false); 
+        setDeleteToggle((prev) => prev + 1);
+        setRemovePopup(false);
       } catch (error) {
         if (error.response?.status === 429 && retryCount < maxRetries) {
           retryCount++;
           const delay = retryDelay(retryCount);
           console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
-          await new Promise((resolve) => setTimeout(resolve, delay)); 
-          await attemptDelete(); 
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          await attemptDelete();
         } else {
           console.error("Error Deleting Cart Item:", error);
           alert("Failed to delete item from cart. Please try again later.");
-          setRemovePopup(false); 
+          setRemovePopup(false);
         }
       }
     };
-  
+
     await attemptDelete();
   };
 
 
   // ************  Footer **********
   const [footMain, setFootMain] = useState("")
-  const handleMyFaq = (data) => {   
-     setFootMain(data)
+  const handleMyFaq = (data) => {
+    setFootMain(data)
   }
- console.log("vbweyfgqwfguqwhfiqwhdfiwqhfjqwoifjqwo " , footMain);
- 
+  console.log("vbweyfgqwfguqwhfiqwhdfiwqhfjqwoifjqwo ", footMain);
+
 
   return (
     <noteContext.Provider value={{
       allCategory, allProduct, allSubCategory, token, wishlistData, addwishlistHandler, removeWishlistHandler, wishlistID, findWishlistID, bestseller,
 
-      Api, cartData, addToCardhandle,userHandling
+      Api, cartData, addToCardhandle, userHandling
       // ******* My Profile *******
       , store, profileData, setProfileData,
 
@@ -934,11 +951,11 @@ const UseContext = (props) => {
       handleTrackOrder, trackFilter,
 
       // ************** Return Order *********
-      handleReturnOrder, returnOrderData ,
+      handleReturnOrder, returnOrderData,
 
       // **************** Cart ****************
-       deleteToggle, setDeleteToggle , priceToggle, setPriceToggle , price, setPrice , removePopup, setRemovePopup,
-      removeId, setRemoveId , wishId, setWishId , handleRemove , handleQuantityChange , handleFinalRemove , cartData, setCardData ,
+      deleteToggle, setDeleteToggle, priceToggle, setPriceToggle, price, setPrice, removePopup, setRemovePopup,
+      removeId, setRemoveId, wishId, setWishId, handleRemove, handleQuantityChange, handleFinalRemove, cartData, setCardData,
 
       // ************  Footer **********
       handleMyFaq
