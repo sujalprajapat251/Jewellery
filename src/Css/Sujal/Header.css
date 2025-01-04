@@ -448,7 +448,7 @@
     top: 80px;
     left: -500px;
     background-color: #ffffff;
-    z-index: 9999;
+    z-index: 9;
     transition: .5s;
     width: 0px;
     padding: 20px;

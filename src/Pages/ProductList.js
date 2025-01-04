@@ -3,7 +3,7 @@ import '../Css/Sujal/ProductList.css'
 import { useContext, useEffect, useState } from 'react';
 import MultiRangeSlider from "multi-range-slider-react";
 import { IoCloseOutline } from 'react-icons/io5';
-import { FaAngleDown, FaBars } from 'react-icons/fa';
+import { FaAngleDown, FaBars, FaFilter } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
 import axios from 'axios';
@@ -64,9 +64,7 @@ function ProductList() {
         if (type === 'occasion') {
             console.log(allProduct?.map((product) => product.occasion));
             product = allProduct?.filter(product =>
-                product.occasion?.includes(
-                    id
-                )
+                product.occasion.toLowerCase().includes(id.toLowerCase())
             );
             console.log('product', product);
             setHeading(id);
@@ -202,7 +200,6 @@ function ProductList() {
             clarity: [...new Set(productlist?.map(item => item?.clarity).filter(value => value) || [])],
             metal: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
             metal_color: [...new Set(productlist?.map(item => item?.metal_color).filter(value => value) || [])],
-
         };
     }
     else {
@@ -212,13 +209,13 @@ function ProductList() {
             clarity: [...new Set(productlist?.map(item => item?.clarity).filter(value => value) || [])],
             metal: [...new Set(productlist?.map(item => item?.metal).filter(value => value) || [])],
             metal_color: [...new Set(productlist?.map(item => item?.metal_color).filter(value => value) || [])],
-            size_name: [
-                ...new Set(
-                    productlist
-                        ?.flatMap(item => item?.size_name?.split(',').map(Number) || [])
-                        .filter(value => !isNaN(value))
-                ),
-            ],
+            // size_name: [
+            //     ...new Set(
+            //         productlist
+            //             ?.flatMap(item => item?.size_name?.split(',').map(Number) || [])
+            //             .filter(value => !isNaN(value))
+            //     ),
+            // ],
         };
     }
 
@@ -228,7 +225,7 @@ function ProductList() {
         if (isWatch) {
             setSelectedFilters({ gender: [], theme: [], clasp_type: [], metal_color: [], occasion: [] });
         } else if (isRing) {
-            setSelectedFilters({ gender: [], purity: [], occasion: [], clarity: [], metal: [], metal_color: [], size_name: [] });
+            setSelectedFilters({ gender: [], purity: [], occasion: [], clarity: [], metal: [], metal_color: []});
         } else {
             setSelectedFilters({ gender: [], purity: [], occasion: [], clarity: [], metal: [], metal_color: [] });
         }
@@ -244,6 +241,7 @@ function ProductList() {
 
             return { ...prev, [type]: updatedValues };
         });
+        console.info(selectedFilters)
     };
 
     // min and max price showing dynamically when page loaded
@@ -479,13 +477,12 @@ function ProductList() {
                                     {Object.keys(filters).map((filterType, index) => {
                                         const formattedWord = filterType.charAt(0).toUpperCase() + filterType.slice(1).toLowerCase();
                                         return (
-
                                             < Accordion.Item eventKey={index} key={filterType} >
                                                 <Accordion.Header className='text-capitalize' ><p className='mb-0'> {filterType === 'size_name' ? 'width' : formattedWord}</p> </Accordion.Header>
                                                 <Accordion.Body>
                                                     {filters?.[filterType].map((value, index) => {
-                                                        const isChecked = selectedFilters?.[filterType]?.includes(value) && false;
-                                                        console.log('isChecked', filterType, value, isChecked);
+                                                        const isChecked = selectedFilters?.[filterType]?.includes(value);
+                                                        console.info('isChecked', filterType, value, isChecked);
                                                         return (
                                                             // console.log('id123', typeof(filterType+index))
                                                             <div key={value} className="d-flex align-items-center s_checkbox">
@@ -513,7 +510,7 @@ function ProductList() {
 
                 <div className='s_responsive_fliter d-md-none d-flex justify-content-between align-items-center'>
                     <p className='mb-0'>Fliter</p>
-                    <FaBars onClick={handleShow} />
+                    <FaFilter onClick={handleShow} />
                 </div>
                 <div className='s_product_list flex-fill'>
                     <div className='s_top d-sm-flex justify-content-between'>

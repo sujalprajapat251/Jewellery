@@ -418,7 +418,7 @@ function Header() {
                         </div>
                     </Nav.Item>
                     <Nav.Item className='position-relative d-flex'>
-                        <Link to="/productlist/occasion/wedding wear">Wedding</Link>
+                        <Link to="/productlist/occasion/bridal wear">Wedding</Link>
                     </Nav.Item>
                     <Nav.Item className='position-relative d-flex'>
                         <Link to={`/productlist/category/Watch`}>Watches</Link>
@@ -487,9 +487,9 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price Band</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist/all/price/>25">&lt;25K</Link></p>
+                                                <p><Link to="/productlist/all/price/<25">&lt;25K</Link></p>
                                                 <p> <Link to="/productlist/all/price/25-50">25K - 50K</Link></p>
-                                                <p> <Link to="/productlist/all/price/100<">1L & Above</Link></p>
+                                                <p> <Link to="/productlist/all/price/>100">1L & Above</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -719,7 +719,7 @@ function Header() {
                             </Accordion.Body>
                         </Accordion.Item>
                         <Accordion.Item className='sp_spacial_accitem'>
-                            <Link to="/productlist/occasion/wedding wear" className='s_spec_submenu_head'><h4>Wedding</h4></Link>
+                            <Link to="/productlist/occasion/bridal wear" className='s_spec_submenu_head'><h4>Wedding</h4></Link>
                         </Accordion.Item>
                         <Accordion.Item eventKey="7">
                             <Accordion.Header><h4 className='s_submenu_head px-0'>Watches</h4></Accordion.Header>

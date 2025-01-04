@@ -8,7 +8,7 @@ import { useContext, useState } from 'react';
 import noteContext from '../Context/noteContext';
 import Login from './Login';
 function Footer() {
-    const { store , handleMyFaq } = useContext(noteContext);
+    const { store, handleMyFaq } = useContext(noteContext);
 
     // LoginModal handing
     const [showLogin, setShowLogin] = useState(false);
@@ -27,10 +27,10 @@ function Footer() {
                             <h4 className='s_logo'>Logo</h4>
                             <p className='s_logo_des'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the</p>
                             <div className='d-none d-lg-flex'>
-                                <div className='s_footer_icon'><Link to='#'></Link><GrFacebookOption /></div>
-                                <div className='s_footer_icon'><GrTwitter /></div>
-                                <div className='s_footer_icon'><FaXTwitter /></div>
-                                <div className='s_footer_icon'><PiInstagramLogoFill /></div>
+                                <Link to={'https://www.facebook.com/'}><div className='s_footer_icon'><GrFacebookOption /></div></Link>
+                                {/* <Link to={'www.facebook.com'}> <div className='s_footer_icon'><GrTwitter /></div></Link> */}
+                                <Link to={'https://x.com/'}>  <div className='s_footer_icon'><FaXTwitter /></div></Link>
+                                <Link to={'https://www.instagram.com/'}> <div className='s_footer_icon'><PiInstagramLogoFill /></div></Link>
                             </div>
                         </Col>
                         <Col lg={7} xl={6}>
@@ -62,10 +62,10 @@ function Footer() {
                         </Col>
                     </Row>
                     <div className='d-flex justify-content-center d-lg-none'>
-                        <div className='s_footer_icon'><Link to='#'></Link><GrFacebookOption /></div>
-                        <div className='s_footer_icon'><GrTwitter /></div>
-                        <div className='s_footer_icon'><FaXTwitter /></div>
-                        <div className='s_footer_icon'><PiInstagramLogoFill /></div>
+                        <Link to={'https://www.facebook.com/'}><div className='s_footer_icon'><GrFacebookOption /></div></Link>
+                        {/* <Link to={'www.facebook.com'}> <div className='s_footer_icon'><GrTwitter /></div></Link> */}
+                        <Link to={'https://x.com/'}>  <div className='s_footer_icon'><FaXTwitter /></div></Link>
+                        <Link to={'https://www.instagram.com/'}> <div className='s_footer_icon'><PiInstagramLogoFill /></div></Link>
                     </div>
                 </section>
                 <section className="s_footer_last border-top">

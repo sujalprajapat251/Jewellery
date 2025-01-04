@@ -140,7 +140,9 @@
     height: 250px;
     object-fit: cover;
 }
-
+.s_cat_slider .owl-item img:hover {
+    opacity:.5;
+}
 .s_cat_slider a {
     text-decoration: none;
     color: inherit;
@@ -795,6 +797,10 @@
 
     .s_feature_slider {
         padding: 20px 40px;
+    }
+
+    .s_essential_sec .s_card_detail{
+        width: 80%;
     }
 }
 

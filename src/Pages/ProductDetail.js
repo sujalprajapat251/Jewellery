@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import { GoHeart, GoHeartFill } from 'react-icons/go';
 import { FaAngleDown, FaShareAlt } from 'react-icons/fa';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 import noteContext from '../Context/noteContext';
 
@@ -76,7 +76,7 @@ function ProductDetail() {
         setYouAlsoLike(youAlso);
 
         // fetch product offer using api 
-        axios.get(`${Api}/productoffers/getall`,
+        axios.get(`${Api}/productoffers/getallactive`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -98,8 +98,10 @@ function ProductDetail() {
         setPeopleAlsoSearch(randomProducts);
         console.log(randomProducts);
         // eslint-disable-next-line
-
+        console.warn('size', product)
     }, [product])
+
+
     // fetch stock data 
     const fetchStockData = async (retryCount = 0) => {
         try {
@@ -115,7 +117,7 @@ function ProductDetail() {
                     setInStock(false);
                 }
                 else {
-                    
+                    setInStock(true);
                 }
             }
         } catch (error) {
@@ -160,7 +162,7 @@ function ProductDetail() {
         if (!store) {
             setShowLogin(true);
         } else {
-            addToCardhandle(product, size);
+            addToCardhandle(product, size, selectedOffers);
             setAddToCard(false);
         }
     }
@@ -283,6 +285,86 @@ function ProductDetail() {
         if (response) {
             fetchReviewData();
         }
+    }
+
+
+
+    // offer handling code 
+    const [selectedOffers, setSelectedOffers] = useState([]);
+
+    const handleOfferSelect = (offer, e) => {
+        const parent = e.target.closest('.s_parent');
+
+        // const isChecking = selectedOffers.find((item) => item.id === offer.id);
+        // if (isChecking) {
+        //     const data = selectedOffers.filter((item) => item.id !== offer.id);
+        //     setSelectedOffers(data);
+        //     console.log("Updated Offers:", data);
+        //     parent.classList.remove('s_light_brown');
+        // } else {
+        var classname = document.getElementsByClassName('s_parent');
+        Array.from(classname).forEach(function (item) {
+            if (item.classList.contains('s_light_brown')) {
+                item.classList.remove('s_light_brown');
+            }
+        });
+        console.warn("Updated Offers:", offer);
+        setSelectedOffers(offer);
+        parent.classList.add('s_light_brown');
+        // }
+    }
+
+    // buy now handling
+    const buyNowHandling = () => {
+        let discount = 0;
+        if (selectedOffers?.type === 'percentage') {
+            discount = (parseFloat(product.total_price) * (parseFloat(selectedOffers.discount) / 100)).toFixed(2);
+            //   unit_price = (parseFloat(product.total_price) - parseFloat(discount)).toFixed(2);
+        }
+        if (selectedOffers?.type === 'fixed') {
+            discount = parseFloat(selectedOffers.price);
+            //   unit_price = (parseFloat(product.total_price) - parseFloat(selectedOffers.price)).toFixed(2);
+        }
+        const tax = ((parseFloat(product?.total_price) - discount) * 3 / 100).toFixed(2);
+        const total = (parseFloat(product?.total_price) + parseFloat(tax)).toFixed(2);
+        localStorage.setItem("OrderDetails", JSON.stringify({
+            sub_total: product?.total_price,
+            discount,
+            tax,
+            total
+        }));
+    }
+
+    // share modal handling
+
+    const [shareModal, setShareModal] = useState(false);
+
+    const copyLinkHandle = () => {
+        const currentUrl = window.location.href;
+        navigator.clipboard.writeText(currentUrl);
+    };
+
+    const shareOnFacebook = () => {
+        const currentUrl = encodeURIComponent(window.location.href); // Encode the current URL
+        const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
+        window.open(facebookShareUrl, '_blank'); // Open in a new tab
+    };
+
+    const shareOnWhatsApp = () => {
+        const currentUrl = encodeURIComponent(window.location.href); // Encode the current URL
+        const whatsappShareUrl = `https://api.whatsapp.com/send?text=${currentUrl}`;
+        window.open(whatsappShareUrl, '_blank'); // Open in a new tab
+    };
+
+    const shareOnX = () => {
+        const currentUrl = encodeURIComponent(window.location.href); // Encode the current URL
+        const xShareUrl = `https://twitter.com/intent/tweet?url=${currentUrl}`;
+        window.open(xShareUrl, '_blank'); // Open in a new tab
+    };
+
+    const shareOnInstagram = () => {
+        const instagramProfileUrl = `https://www.instagram.com/direct/inbox/`;
+        window.open(instagramProfileUrl, '_blank');
     }
     return (
         <>
@@ -410,11 +492,11 @@ function ProductDetail() {
                                 isSelected ?
                                     <div className='d-flex justify-content-end s_share_icon' onClick={() => { findWishlistID(product.id) }}>
                                         <GoHeartFill className='s_active' />
-                                        <FaShareAlt />
+                                        <FaShareAlt onClick={() => { setShareModal(true) }} />
                                     </div> :
                                     <div className='d-flex justify-content-end s_share_icon' onClick={() => { addwishlistHandler(product.id) }}>
                                         <GoHeart />
-                                        <FaShareAlt />
+                                        <FaShareAlt onClick={() => { setShareModal(true) }} />
                                     </div>
                             }
                             <h3 className='s_title text-capitalize text-center text-lg-start '>{product?.product_name}</h3>
@@ -431,7 +513,7 @@ function ProductDetail() {
                                 }
                             </div>
                             <div className='d-flex align-items-center justify-content-center justify-content-lg-start'>
-                                <h2 className='s_price text-center text-lg-start'>₹{great_total}</h2>
+                                <h2 className='s_price text-center text-lg-start'>₹ {great_total}</h2>
                                 {inStock !== true ? <div className='s_stock_status'>out of stack</div> : ''}
                             </div>
                             <p className='s_description text-center text-lg-start'>{product?.description}</p>
@@ -488,13 +570,13 @@ function ProductDetail() {
                                 </div>
                             </div>
                             <div className='s_offers'>
-                                <Accordion flush >
+                                <Accordion defaultActiveKey="0" flush>
                                     <Accordion.Item eventKey="0">
                                         <Accordion.Header>Trending Offers</Accordion.Header>
                                         <Accordion.Body>
                                             {offers.map((item, index) => {
                                                 return (
-                                                    <div key={index} className={`d-flex align-items-center s_parent px-2`} >
+                                                    <div key={index} className={`d-flex align-items-center s_parent px-2`} onClick={(e) => { handleOfferSelect(item, e) }}>
                                                         <img src={item.image} alt='discount' />
                                                         <div>
                                                             <p className='mb-0'>{item?.name}</p>
@@ -517,7 +599,7 @@ function ProductDetail() {
                                     )}
                                 </div>
                                 <div className='s_buy_btn'>
-                                    <Link to={'#'}>Buy Now</Link>
+                                    <Link to={'/payment'} onClick={() => { buyNowHandling() }}>Buy Now</Link>
                                 </div>
                             </div>
                             <div className='s_product_service justify-content-start'>
@@ -538,10 +620,10 @@ function ProductDetail() {
                                 <h4>Return Policy</h4>
                                 <span>Return Reason</span>
                                 <p>Physical Damage, Defective, Wrong and missing item and any other reason</p>
-                                <span>Return Reason</span>
-                                <p>Physical Damage, Defective, Wrong and missing item and any other reason</p>
-                                <span>Return Reason</span>
-                                <p>Physical Damage, Defective, Wrong and missing item and any other reason</p>
+                                <span>Return Period</span>
+                                <p>10 days from delivery</p>
+                                <span>Return Policy</span>
+                                <p>Full refund and replacement</p>
                             </div>
                         </div>
                     </Col>
@@ -931,6 +1013,48 @@ function ProductDetail() {
             {/* login modal component */}
             <Login isOpen={showLogin} onClose={() => handleLoginClose()} onOpen={() => handleLoginShow()}>
             </Login>
+
+            {/* share link modal */}
+            <Modal className='s_share_madal'
+                show={shareModal}
+                onHide={() => setShareModal(false)}
+                centered>
+                <Modal.Header closeButton className='border-0'>
+                    <Modal.Title id="" className='fs-3'>
+                        Share Your Discovery!
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className='s_product d-flex align-items-center'>
+                        <img alt='product_img' src={product?.images?.[0]}></img>
+                        <p>{product?.product_name}</p>
+                    </div>
+                    <div className='s_link'>
+                        <div className='s_link_url text-truncate'>{window.location.href}</div>
+                        <div className='s_link_btn' onClick={() => { copyLinkHandle() }}>Copy URL</div>
+                    </div>
+                    <div className='s_link_icon'>
+                        <Link to={''} onClick={() => { shareOnFacebook() }}>
+                            <div>
+                                <img alt='facebook' src={require('../Img/Sujal/facebook.png')}></img>
+                                <p>facebook</p>
+                            </div>
+                        </Link>
+                        <Link to={''} onClick={() => { shareOnWhatsApp() }}>
+                            <img alt='facebook' src={require('../Img/Sujal/whatsapp.png')}></img>
+                            <p>Whatsapp</p>
+                        </Link>
+                        <Link to={''} onClick={() => { shareOnX() }}>
+                            <img alt='facebook' src={require('../Img/Sujal/twitter.png')}></img>
+                            <p>X</p>
+                        </Link>
+                        <Link to={''} onClick={()=>{shareOnInstagram()}}>
+                            <img alt='facebook' src={require('../Img/Sujal/instagram.png')}></img>
+                            <p>Instagram</p>
+                        </Link>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </>
     )
 }
