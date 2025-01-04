@@ -333,6 +333,12 @@ function ProductDetail() {
             tax,
             total
         }));
+        localStorage.setItem("BuyNow", JSON.stringify({
+            product_id: product?.id,
+            qty:1,
+            size:size || 0,
+            metal: product?.metal
+        }))
     }
 
     // share modal handling

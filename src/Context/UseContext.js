@@ -247,7 +247,7 @@ const UseContext = (props) => {
         },
       });
       if (response.data.cart) {
-        console.warn('cartData', response);
+        // console.warn('cartData', response);
         setCardData(response?.data?.cart);
 
         const cart = response?.data?.cart || [];
@@ -331,7 +331,7 @@ const UseContext = (props) => {
           },
         });
         setProfileData(response?.data?.user);
-        console.log(response?.data?.user);
+        // console.log(response?.data?.user);
 
       } catch (error) {
         if (error?.response?.status === 429 && retryCount < 5) {
@@ -350,7 +350,7 @@ const UseContext = (props) => {
   }, [editToggle])
 
 
-  console.log("pro ", profileData);
+  // console.log("pro ", profileData);
 
 
   // ******* Edit User State *******
@@ -618,9 +618,9 @@ const UseContext = (props) => {
   // ********** My Order **********
   const [orderMain, setOrderMain] = useState({})
   const [filteredOrders, setFilteredOrders] = useState([]);
+  const [payCount, setPayCount] = useState(0)
 
   useEffect(() => {
-
     const myOrderData = async (retryCount = 0) => {      
        try{
             const response = await axios.post(`${Api}/order/getbyuserid`,
@@ -650,7 +650,7 @@ const UseContext = (props) => {
 
     myOrderData()
 
-  }, [])
+  }, [payCount])
 
 
   // ********** Change Password **********
@@ -914,7 +914,7 @@ const UseContext = (props) => {
   const handleMyFaq = (data) => {
     setFootMain(data)
   }
-  console.log("vbweyfgqwfguqwhfiqwhdfiwqhfjqwoifjqwo ", footMain);
+  // console.log("vbweyfgqwfguqwhfiqwhdfiwqhfjqwoifjqwo ", footMain);
 
 
   return (
@@ -956,6 +956,9 @@ const UseContext = (props) => {
       // **************** Cart ****************
       deleteToggle, setDeleteToggle, priceToggle, setPriceToggle, price, setPrice, removePopup, setRemovePopup,
       removeId, setRemoveId, wishId, setWishId, handleRemove, handleQuantityChange, handleFinalRemove, cartData, setCardData,
+
+      // *********** Payment ***************
+      setPayCount,
 
       // ************  Footer **********
       handleMyFaq

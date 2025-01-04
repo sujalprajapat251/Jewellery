@@ -7,7 +7,7 @@ import noteContext from '../Context/noteContext';
 
 const Payment = () => {
 
-  const {Api ,store} = useContext(noteContext)
+  const {Api ,store , setPayCount} = useContext(noteContext)
   const data = JSON.parse(localStorage.getItem("OrderDetails")) || {}
   const login = JSON.parse(localStorage.getItem("Login")) || {}
   const deliverId = JSON.parse(localStorage.getItem("default") || "")
@@ -55,9 +55,25 @@ const Payment = () => {
         size: parseInt(item?.size ? item?.size : 2),
         metal: item?.metal,
       }));
+
+
+      console.log("xxxxxxxxxxxxxxxxxxxxxx " , formattedProducts);
+      
+      const directByNow = new Array(JSON.parse(localStorage.getItem("BuyNow"))) || null
+      console.log("directByNow " , directByNow);
+      
+      const byNowProducts = directByNow.map((item)=>({
+        product_id: item?.product_id,
+        qty: item?.qty,
+        size: parseInt(item?.size ? item?.size : 2),
+        metal: item?.metal,
+      }))
+      
     
       const maxRetries = 3; 
       const retryDelay = (retryCount) => Math.pow(2, retryCount) * 1000; 
+      // console.log("fwebnfghweifhwei " , directByNow);
+      
     
       const createOrder = async (retryCount = 0) => {
         try {
@@ -70,7 +86,7 @@ const Payment = () => {
               total_amount: data?.total,
               deliveryAddress_id: deliverId,
               discount: data?.discount ? data?.discount : 0,
-              products: formattedProducts,
+              products: !directByNow === null ? byNowProducts : formattedProducts,
             },
             {
               headers: {
@@ -94,6 +110,9 @@ const Payment = () => {
       };
     
       await createOrder();
+      
+      
+      setPayCount((payCount)=> payCount + 1)
   };
 
 

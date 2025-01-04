@@ -1,7 +1,59 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import '../Css/dhruvin/Contact.css'
+import { useFormik } from 'formik'
+import { ContactSchema } from '../schemas'
+import axios from 'axios'
+import noteContext from '../Context/noteContext'
 
 const Contact = () => {
+
+const {Api , store} = useContext(noteContext)
+
+const contactData = {
+  name:'',
+  email:'',
+  subject:'',
+  message:''
+}
+
+const ContactFormik = useFormik({
+  initialValues: contactData,
+  validationSchema: ContactSchema,
+  onSubmit: async (values, action) => {
+    const maxRetries = 3; // Maximum retry attempts
+    const retryDelay = 2000; // Delay in milliseconds between retries
+
+    const sendRequest = async (retryCount = 0) => {
+      try {
+        const response = await axios.post(`${Api}/leaveusmeassage/create`, {
+          name: values.name,
+          email: values.email,
+          subject: values.subject,
+          message: values.message,
+        });
+        alert("Message Sent Successfully");
+        console.log("Contact Us Response:", response);
+        action.resetForm();
+      } catch (error) {
+        if (error.response && error.response.status === 429 && retryCount < maxRetries) {
+          console.warn(`Retrying... Attempt ${retryCount + 1}`);
+          await new Promise((resolve) => setTimeout(resolve, retryDelay)); // Wait before retrying
+          return sendRequest(retryCount + 1);
+        } else {
+          const errorMessage = error.response
+            ? `Error: ${error.response.status} - ${error.response.data.message || "Too Many Requests"}`
+            : `Error: ${error.message}`;
+          alert(errorMessage);
+          console.error(errorMessage);
+        }
+      }
+    };
+
+    await sendRequest(); 
+  },
+});
+
+
   return (
     <>
       <section>
@@ -11,7 +63,7 @@ const Contact = () => {
                     <div className='ds_contact-inner'>
                      <div className='row'>
                         <div className="col-xl-8 col-lg-10 col-md-12 pt-5">
-                            <div className='position-relative'>
+                            <form onSubmit={ContactFormik.handleSubmit} className='position-relative'>
                                <div>
                                   <img src={require("../Img/dhruvin/contact-bg.png")} alt="" width="100%" />
                                </div>
@@ -24,34 +76,38 @@ const Contact = () => {
                                         <div className="col-xl-6 mt-4">
                                             <div>
                                                <label htmlFor="" className='d-block ds_600 mb-1'>Name</label> 
-                                               <input type="text" className='ds_contact-input' placeholder='Enter Name' />
+                                               <input type="text" className='ds_contact-input' name='name' value={ContactFormik.values.name} onChange={ContactFormik.handleChange} onBlur={ContactFormik.handleBlur} placeholder='Enter Name' />
+                                               {ContactFormik.errors.name && ContactFormik.touched.name ? <p className='ds_new-danger mb-0'>{ContactFormik.errors.name}</p> : null}
                                             </div>
                                         </div>
                                         <div className="col-xl-6 mt-4">
                                             <div>
                                                <label htmlFor="" className='d-block ds_600 mb-1'>Email</label> 
-                                               <input type="email" className='ds_contact-input' placeholder='Enter Email' />
+                                               <input type="email" className='ds_contact-input' name='email' value={ContactFormik.values.email} onChange={ContactFormik.handleChange} onBlur={ContactFormik.handleBlur} placeholder='Enter Email' />
+                                               {ContactFormik.errors.email && ContactFormik.touched.email ? <p className='ds_new-danger mb-0'>{ContactFormik.errors.email}</p> : null}
                                             </div>
                                         </div>
                                         <div className="col-xl-12 mt-4">
                                             <div>
                                                <label htmlFor="" className='d-block ds_600 mb-1'>Subject</label> 
-                                               <input type="text" className='ds_contact-input' placeholder='Enter Subject' />
+                                               <input type="text" className='ds_contact-input' name='subject' value={ContactFormik.values.subject} onChange={ContactFormik.handleChange} onBlur={ContactFormik.handleBlur} placeholder='Enter Subject' />
+                                               {ContactFormik.errors.subject && ContactFormik.touched.subject ? <p className='ds_new-danger mb-0'>{ContactFormik.errors.subject}</p> : null}
                                             </div>
                                         </div>
                                         <div className="col-xl-12 mt-4">
                                             <div>
                                                <label htmlFor="" className='d-block ds_600 mb-1'>Message</label> 
-                                               <textarea class="ds_contact-area" rows="4" placeholder="Write your Meassage...." id="floatingTextarea"></textarea>
+                                               <textarea class="ds_contact-area" rows="4" name='message' value={ContactFormik.values.message} onChange={ContactFormik.handleChange} onBlur={ContactFormik.handleBlur} placeholder="Write your Meassage...." id="floatingTextarea"></textarea>
+                                               {ContactFormik.errors.message && ContactFormik.touched.message ? <p className='ds_new-danger mb-0'>{ContactFormik.errors.message}</p> : null}
                                             </div>
                                         </div>
                                     </div>
                                     <div className='mt-4'>
-                                        <button className='ds_contact-btn'>Submit</button>
+                                        <button type='submit' className='ds_contact-btn'>Submit</button>
                                     </div>
                                  </div>
                                </div>
-                            </div>
+                            </form>
                         </div>
                      </div>
                     </div>

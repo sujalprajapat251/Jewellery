@@ -138,6 +138,8 @@ useEffect(() => {
                         </thead>
                         <tbody>
                           {invoiceData?.map((element , index)=>{
+                            console.log("Helllo" , element);
+                            
                             return(
                                  <tr key={index}>
                                      <td>
@@ -151,7 +153,7 @@ useEffect(() => {
                                  </tr>
                             )
                           })}
-                        </tbody>
+                        </tbody>  
                       </table>
 
 

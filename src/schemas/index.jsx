@@ -61,13 +61,9 @@ export const SignUpSchema = Yup.object({
     .required('Email is required')
     .email('Please enter a valid email'),
   
-  password: Yup.string()
+    password: Yup.string()
     .required('Password is required')
-    .min(6, 'Password must be at least 8 characters')
-    .matches(
-      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/,
-      'Password must contain at least one letter, one number, and be 8 characters long'
-    ),
+    .min(6, 'Password must be at least 6 characters long'),
 });
 
 export const EditProfileSchema = Yup.object({
@@ -138,3 +134,20 @@ export const ReturnOrderSchema = Yup.object({
   reason:Yup.string().required("Reason is required"),
   phone: Yup.string().required('Phone number is required').matches(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits'),  
 })
+
+export const ContactSchema = Yup.object({
+  name: Yup.string()
+    .required('Name is required')
+    .min(2, 'Name must be at least 2 characters')
+    .max(50, 'Name must not exceed 50 characters'),
+  email: Yup.string()
+    .required('Email is required')
+    .email('Invalid email format'),
+  subject: Yup.string()
+    .required('Subject is required')
+    .max(100, 'Subject must not exceed 100 characters'),
+  message: Yup.string()
+    .required('Message is required')
+    .min(10, 'Message must be at least 10 characters')
+    .max(500, 'Message must not exceed 500 characters'),
+});

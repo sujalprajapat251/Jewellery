@@ -23,7 +23,7 @@ const OrderDetails = () => {
          Authorization: `Bearer ${store?.access_token}`
        }
      }).then((value)=>{
-        console.log(value?.data);
+        console.log("OrderItem " ,value?.data?.order);
         setOrderData(value?.data?.order)
         setOrderItem(value?.data?.order?.order_items)
      }).catch((error)=>{
@@ -34,6 +34,7 @@ const OrderDetails = () => {
   console.log("OrderData" ,orderData);
   
   const handleView = () => {
+     localStorage.removeItem("BuyNow")
      navigate("/invoice")
   }
 

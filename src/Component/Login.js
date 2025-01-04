@@ -260,36 +260,37 @@ function Login({ isOpen, onClose, onOpen }) {
     const SignUpFormik = useFormik({
         initialValues: SignUpVal,
         validationSchema: SignUpSchema,
-        onSubmit: (values , action) => {
+        onSubmit: async (values , action) => {
+            try {
+                const response = await axios.post(`${Api}/user/create`, {
+                    name: values.name,
+                    phone: values.phone,
+                    email: values.email,
+                    password: values.password,
+                    role_id: 2,
+                    dob: "2001-01-01",
+                });
+    
+                console.warn("SignUp Response:", response);
+    
+                alert("Registration successful! Please log in.");
+    
+                setShowRegister(false);
+                onOpen();
+            } catch (error) {
+                console.error("Error during registration:", error);
+    
+                alert(
+                    error.response?.data?.message ||
+                    "Failed to register. Please check your details and try again."
+                );
+            }
         }
     })
 
     const handleSignUp = async (e) => {
         e.preventDefault();
-        try {
-            const response = await axios.post(`${Api}/user/create`, {
-                name: signUpVal.name,
-                phone: signUpVal.phone,
-                email: signUpVal.email,
-                password: signUpVal.password,
-                role_id: 2,
-                dob: "2001-01-01",
-            });
-
-            console.warn("SignUp Response:", response);
-
-            alert("Registration successful! Please log in.");
-
-            setShowRegister(false);
-            onOpen();
-        } catch (error) {
-            console.error("Error during registration:", error);
-
-            alert(
-                error.response?.data?.message ||
-                "Failed to register. Please check your details and try again."
-            );
-        }
+        
     };
 
     return (
@@ -460,23 +461,23 @@ function Login({ isOpen, onClose, onOpen }) {
                         </div>
                         <div className='s_modal_field'>
                             <p>Name</p>
-                            <input type='text' placeholder='Enter name' name='name' value={SignUpFormik.values.name} onChange={SignUpFormik.handleChange} ></input>
+                            <input type='text' placeholder='Enter name' name='name' value={SignUpFormik.values.name} onChange={SignUpFormik.handleChange} onBlur={SignUpFormik.handleBlur} ></input>
                             {SignUpFormik.errors.name && SignUpFormik.touched.name ? <p className='ds_new-danger mb-0'>{SignUpFormik.errors.name}</p> : null}
 
                         </div>
                         <div className='s_modal_field'>
                             <p>Mobile No.</p>
-                            <input type='text' placeholder='Enter mobile no.' name='phone' value={SignUpFormik.values.phone} onChange={SignUpFormik.handleChange}></input>
+                            <input type='text' placeholder='Enter mobile no.' name='phone' value={SignUpFormik.values.phone} onChange={SignUpFormik.handleChange} onBlur={SignUpFormik.handleBlur}></input>
                             {SignUpFormik.errors.phone && SignUpFormik.touched.phone ? <p className='ds_new-danger mb-0'>{SignUpFormik.errors.phone}</p> : null}
                         </div>
                         <div className='s_modal_field'>
                             <p>Email</p>
-                            <input type='text' placeholder='Enter email' name='email' value={SignUpFormik.values.email} onChange={SignUpFormik.handleChange}></input>
+                            <input type='text' placeholder='Enter email' name='email' value={SignUpFormik.values.email} onChange={SignUpFormik.handleChange} onBlur={SignUpFormik.handleBlur}></input>
                             {SignUpFormik.errors.email && SignUpFormik.touched.email ? <p className='ds_new-danger mb-0'>{SignUpFormik.errors.email}</p> : null}
                         </div>
                         <div className='s_modal_field'>
                             <p>Password</p>
-                            <input type='password' placeholder='Enter password' name='password' value={SignUpFormik.values.password} onChange={SignUpFormik.handleChange}></input>
+                            <input type='password' placeholder='Enter password' name='password' value={SignUpFormik.values.password} onChange={SignUpFormik.handleChange} onBlur={SignUpFormik.handleBlur}></input>
                             {SignUpFormik.errors.password && SignUpFormik.touched.password ? <p className='ds_new-danger mb-0'>{SignUpFormik.errors.password}</p> : null}
                         </div>
                         <div className='s_modal_btn' >

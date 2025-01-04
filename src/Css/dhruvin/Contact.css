@@ -32,6 +32,11 @@
     border: 1px solid #4D1F08;
     padding: 8px 50px;
 }
+.ds_contact-btn:hover{
+    background-color: white;
+    color: #4D1F08;
+    border: 1px solid #4D1F08;
+}
 .ds_contact-card {
     background: 
         url(../../Img/dhruvin/contact-card-bg.png); /* Image layer */

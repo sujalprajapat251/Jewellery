@@ -178,6 +178,8 @@ const Cart = () => {
                 <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 mt-3">
 
                       {cartData?.map((element , index)=>{
+                        console.log("CartData " , element);
+                        
                           const totalPrice = isNaN(element?.total_price) ? 0 : Math.floor(element?.total_price);
                           const discountedPrice = isNaN(element?.total_price) ? 0 : Math.floor(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price));
                           // console.log("doiscountPrice" , Math.floor(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price)))

@@ -8,19 +8,40 @@ const {Api , store} = useContext(noteContext)
 
 const [data, setData] = useState([])
 
-useEffect(()=>{
-   axios.get(`${Api}/privacypolicies/getall`,{
-     headers: {
-       Authorization: `Bearer ${store?.access_token}`
-     }
-   }).then((value)=>{
-      console.log("Privacy " , value.data.data);
-      setData(value.data.data)
-   }).catch((error)=>{
-      alert(error)
-   })
-},[])
+useEffect(() => {
+  const fetchData = async () => {
+    const maxRetries = 3; // Maximum retry attempts
+    const retryDelay = 2000; // Delay in milliseconds between retries
 
+    const getRequest = async (retryCount = 0) => {
+      try {
+        const response = await axios.get(`${Api}/privacypolicies/getall`, {
+          headers: {
+            Authorization: `Bearer ${store?.access_token}`,
+          },
+        });
+        console.log("Privacy", response.data.data);
+        setData(response.data.data);
+      } catch (error) {
+        if (error.response && error.response.status === 429 && retryCount < maxRetries) {
+          console.warn(`Retrying... Attempt ${retryCount + 1}`);
+          await new Promise((resolve) => setTimeout(resolve, retryDelay)); // Wait before retrying
+          return getRequest(retryCount + 1);
+        } else {
+          const errorMessage = error.response
+            ? `Error: ${error.response.status} - ${error.response.data.message || "Too Many Requests"}`
+            : `Error: ${error.message}`;
+          alert(errorMessage);
+          console.error(errorMessage);
+        }
+      }
+    };
+
+    await getRequest(); // Call the function
+  };
+
+  fetchData();
+}, []);
   return (
     <>
             <section className='mb-5 pb-3'>

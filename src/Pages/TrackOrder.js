@@ -14,8 +14,6 @@ const navigate = useNavigate()
 const [trackOrderData, setTrackOrderData] = useState([])
 
 const trackKey = JSON.parse(localStorage.getItem("TrackOrderKey")) || null
-const cusId = JSON.parse(localStorage.getItem("Login")) || null
-// console.log(trackKey);
 
 
 const handleCancelOrder = (id) => {
@@ -33,17 +31,17 @@ useEffect(() => {
       try {
         const response = await axios.post(
           `${Api}/order/getbyuserid`,
-          { customer_id:1  },
+          { customer_id: `${store?.id}`  },
           {
             headers: {
               Authorization: `Bearer ${store?.access_token}`,
             },
           }
         );
-        console.log("res" , response);
+        // console.log("res" , response);
 
         const data = response?.data?.orders?.filter((element) => element?.order_number === trackKey)
-        console.log("uvchhvuwhvu " , data);
+        // console.log("uvchhvuwhvu " , data);
         
 
         console.log(
@@ -185,6 +183,14 @@ const handleContinue = async () => {
 };
 
 
+// *********** Dwonload Invoice ********
+const handleDownloadInvoice = () => {
+    trackOrderData?.map((element)=>{
+      // console.log("zzzzzzzzzzzzzzzzzzz " , element);
+      localStorage.setItem("orderId" , JSON.stringify(element?.id))
+   })
+}
+
   return (
     <>
       <section className='mb-5'>
@@ -278,7 +284,7 @@ const handleContinue = async () => {
                                           </div>
                                           <div className='ds_track-line mt-1'></div>
                                             <h6 className='fw-bold text-end ds_track-margin pe-4 mt-2'>
-                                                <Link to="" className='text-dark'>Download Invoice</Link>
+                                                <Link to="/invoice" className='text-dark' onClick={handleDownloadInvoice}>Download Invoice</Link>
                                             </h6>
                                           {element?.order_items?.map((item)=>{
                                              return (
@@ -292,7 +298,7 @@ const handleContinue = async () => {
                                                            </div>
                                                            <div className='ds_cart-deta mt-xl-0 mt-2'>
                                                               <h6>{item?.product_name}</h6>
-                                                              <h6 className='mb-0'><span className='ds_color'>₹1200</span> <span className='ms-2 ds_order-line-txt'>₹1500</span></h6>
+                                                              <h6 className='mb-0'><span className='ds_color'>₹{item?.price}</span> <span className='ms-2 ds_order-line-txt'>₹1500</span></h6>
                                                               <p className='ds_tcolor mb-0'>Metal Color :<span className='ds_color'> {item?.metal_color}</span>  <span className='ds_tcolor ms-4'>Size : </span> <span className='ds_color'>{item?.size}</span></p>
                                                               <p className='ds_tcolor mb-0'>Diamond Quality:  <span className='ds_color'>{item?.diamond_quality}</span></p>
                                                               <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'>{item?.sku}</span></p>

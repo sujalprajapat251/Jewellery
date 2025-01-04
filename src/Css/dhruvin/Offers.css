@@ -20,6 +20,10 @@
     color: white;
     padding: 10px 43px;
 }
+.ds_offer-btn:hover{
+    background-color: white;
+    color: black;
+}
 .ds_offer-padding{
    padding: 0px 28px;
 }
@@ -37,6 +41,10 @@
     padding: 8px 33px;
     color: white;
     background-color: transparent;
+}
+.ds_off-shop:hover{
+    background-color: white;
+    color: black;
 }
 .ds_img-manage{
     padding: 0px 120px;
@@ -88,7 +96,12 @@
     padding: 8px 40px;
     color: black;
     background-color: white;
-    border: none;
+    border: 1px solid white;
+}
+.ds_offer-shop:hover{
+    border: 1px solid white;
+    color: white;
+    background-color: transparent;
 }
 
 
