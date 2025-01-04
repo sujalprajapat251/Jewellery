@@ -292,16 +292,16 @@ function ProductList() {
 
         // Sorting data based on selected sort option
         let sortedData = [];
-        if (condition === 1) {
+        if (x === 1) {
             sortedData = filterData.sort((a, b) => b.total_rating - a.total_rating);
         }
-        else if (condition === 2) {
+        else if (x === 2) {
             sortedData = filterData.sort((a, b) => a.total_price - b.total_price);
         }
-        else if (condition === 3) {
+        else if (x === 3) {
             sortedData = filterData.sort((a, b) => b.total_price - a.total_price);
         }
-        else if (condition === 4) {
+        else if (x === 4) {
             sortedData = filterData.reverse();
         }
         else {
