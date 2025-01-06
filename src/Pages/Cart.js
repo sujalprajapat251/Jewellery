@@ -136,7 +136,6 @@ const Cart = () => {
           setOffer(response?.data?.offers)
         }
         catch(error){
-
         }
      }
 
@@ -207,7 +206,7 @@ const Cart = () => {
                                      </div>
            
                                      <div className='d-flex ds_cart-manage'>
-                                        <h5 className='ds_color mt-2'>{Math.floor(totalPrice)}<span className='ds_cart-less-price ms-2'>{discountedPrice}</span></h5>
+                                        <h5 className='ds_color mt-2'>₹{Math.floor(totalPrice)}<span className='ds_cart-less-price ms-2'>₹{discountedPrice}</span></h5>
                                           <div  className='w-100 mt-auto d-flex justify-content-end'>
                                           <div className='ds_cart-mul mt-auto '>
                                            <div className='d-flex justify-content-between'>
@@ -277,7 +276,7 @@ const Cart = () => {
                                <p className="ds_add-special ds_600" >Coupon List</p>
                                 <div className='overflow-y-auto overflow-hidden' style={{height:'170px'}}>
                                   {
-                                    cupon?.map((element)=>{
+                                    cupon?.map((element)=>{                                      
                                      return(
                                         <div className="form-check d-flex align-items-center mb-3">
                                            <input onClick={()=> handleCupanType(element?.type , element?.price)} className="form-check-input ds_cursor ds_cart-radio" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
@@ -286,7 +285,7 @@ const Cart = () => {
                                              <p className="text-muted ds_tcolor mb-0 mt-1" style={{ lineHeight: "18px" }}>
                                                {element?.description}
                                              </p>
-                                             <label className="form-check-label  ds_color mt-1 ds_600" htmlFor="flexRadioDefault1">Save {element?.price}</label>
+                                             <label className="form-check-label  ds_color mt-1 ds_600" htmlFor="flexRadioDefault1">Save {element?.type === "percentage" ? '' : '₹'}{element?.price}{element?.type === "percentage" ? '%' : ''}</label>
                                            </div>
                                         </div>
                                      )
@@ -303,7 +302,7 @@ const Cart = () => {
                                             <p className="text-muted ds_tcolor mb-0 mt-1" style={{ lineHeight: "18px" }}>
                                               {element?.description}
                                             </p>
-                                            <label className="form-check-label  ds_color mt-1 ds_600" htmlFor="flexRadioDefault1">Save {element?.discount}</label>
+                                            <label className="form-check-label  ds_color mt-1 ds_600" htmlFor="flexRadioDefault1">Save ₹{element?.discount}</label>
                                           </div>
                                        </div>
                                     )
@@ -342,7 +341,7 @@ const Cart = () => {
                                     <div className="px-3 mt-3">
                                       <div className="d-flex justify-content-between">
                                         <h5 className="h5 mb-0 ds_color">Total Amount</h5>
-                                        <h5 className="h5 mb-0 ds_color">{price + (-cupanOffer ? -cupanOffer : -appyVal) + Math.floor(price * 3 / 100) }</h5>
+                                        <h5 className="h5 mb-0 ds_color">₹{price + (-cupanOffer ? -cupanOffer : -appyVal) + Math.floor(price * 3 / 100) }</h5>
                                       </div>
                                       <button onClick={handleProcessCheckout} className="ds_add-proccess mt-5" id="ds_proceed_btn">
                                         Proceed to checkout

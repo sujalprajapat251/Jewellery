@@ -12,6 +12,7 @@ const Payment = () => {
   const login = JSON.parse(localStorage.getItem("Login")) || {}
   const deliverId = JSON.parse(localStorage.getItem("default") || "")
   const [cardData, setCardData] = useState([])
+  const navigate = useNavigate()
   
   useEffect(()=>{
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -46,28 +47,40 @@ const Payment = () => {
 
     // console.log("format " , formattedProducts);
 
+    
+      // console.log("directByNow " , byNowProducts);
+      
+
 
   const handlePay = async () => {
-      const formattedProducts = cardData?.map((item) => ({
-        product_id: item?.product_id,
-        qty: item?.quantity,
-        size: parseInt(item?.size ? item?.size : 2),
-        metal: item?.metal,
-      }));
+    const formattedProducts = (cardData || []).map((item) => ({
+      product_id: item?.product_id || 0,
+      qty: item?.quantity || 1,
+      size: parseInt(item?.size || 2),
+      metal: item?.metal || "default_metal",
+    }));
+  
+    const localByNow = JSON.parse(localStorage.getItem("BuyNow")) || [];
+    const byNowProducts = (Array.isArray(localByNow) ? localByNow : [localByNow]).map((item) => ({
+      product_id: item?.product_id || 0,
+      qty: item?.qty || 1,
+      size: parseInt(item?.size || 2),
+      metal: item?.metal || "default_metal",
+    }));
+  
+  
+      // console.log("Hello " , directByNow);
+      
+      // console.log("Final products:", 
+      //   directByNow.length > 0 ? byNowProducts : formattedProducts
+      // );
 
+      // console.log("Final " ,  localByNow?.length !== 0 ? byNowProducts : formattedProducts);
+      
 
-      console.log("xxxxxxxxxxxxxxxxxxxxxx " , formattedProducts);
-      
-      const directByNow = new Array(JSON.parse(localStorage.getItem("BuyNow"))) || null
-      console.log("directByNow " , directByNow);
-      
-      const byNowProducts = directByNow.map((item)=>({
-        product_id: item?.product_id,
-        qty: item?.qty,
-        size: parseInt(item?.size ? item?.size : 2),
-        metal: item?.metal,
-      }))
-      
+      // console.log("Format products:", 
+      //    formattedProducts
+      // );
     
       const maxRetries = 3; 
       const retryDelay = (retryCount) => Math.pow(2, retryCount) * 1000; 
@@ -76,6 +89,8 @@ const Payment = () => {
     
       const createOrder = async (retryCount = 0) => {
         try {
+          // console.log("hello" , formattedProducts);
+          
           const response = await axios.post(
             `${Api}/order/create`,
             {
@@ -85,7 +100,8 @@ const Payment = () => {
               total_amount: data?.total,
               deliveryAddress_id: deliverId,
               discount: data?.discount ? data?.discount : 0,
-              products: !directByNow === null ? byNowProducts : formattedProducts,
+              products: localByNow?.length !== 0 ? byNowProducts : formattedProducts
+
             },
             {
               headers: {
@@ -99,7 +115,7 @@ const Payment = () => {
             console.log('order',response?.data?.order); 
             // removeCartItem();
           }
-          // navigate("/orderdetails");
+          navigate("/orderdetails");
         } catch (error) {
           if (error.response?.status === 429 && retryCount < maxRetries) {
             console.warn(`Retrying order creation in ${retryDelay(retryCount)}ms...`);
@@ -110,6 +126,7 @@ const Payment = () => {
           console.error("Error creating order:", error);
           alert(`Error: ${error.response?.data?.message || error.message}`);
         }
+
       };
     
       await createOrder();
@@ -117,6 +134,44 @@ const Payment = () => {
       
       setPayCount((payCount)=> payCount + 1)
   };
+
+  // const handlePay = async () => {
+  //   // Validate cardData
+  //   console.log("cardData:", cardData);
+  //   const formattedProducts = (cardData || []).map((item) => ({
+  //     product_id: item?.product_id || 0,
+  //     qty: item?.quantity || 1,
+  //     size: parseInt(item?.size || 2),
+  //     metal: item?.metal || "default_metal",
+  //   }));
+  
+  //   const localByNow = JSON.parse(localStorage.getItem("BuyNow")) || [];
+  //   console.log("localByNow:", localByNow);
+  //   const byNowProducts = (Array.isArray(localByNow) ? localByNow : [localByNow]).map((item) => ({
+  //     product_id: item?.product_id || 0,
+  //     qty: item?.qty || 1,
+  //     size: parseInt(item?.size || 2),
+  //     metal: item?.metal || "default_metal",
+  //   }));
+  
+  //   // Log processed data
+  //   console.log("Processed formattedProducts:", formattedProducts);
+  //   console.log("Processed byNowProducts:", byNowProducts);
+  
+  //   // Final product selection
+  //   const products = localByNow.length > 0 ? byNowProducts : formattedProducts;
+  //   console.log("Final products:", products);
+  
+  //   // Prevent proceeding if products are invalid
+  //   if (!products.every((p) => p.product_id && p.qty)) {
+  //     alert("Invalid product data.");
+  //     return;
+  //   }
+  
+  //   // Additional logic for API request can go here...
+  //   setPayCount((payCount) => payCount + 1);
+  // };
+  
 
 
   // *************** Razorpay **************

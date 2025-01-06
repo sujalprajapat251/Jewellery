@@ -14,66 +14,7 @@ import jsPDF from 'jspdf'
 const ReturnOrder = () => {
   
 
-const {Api , store , returnOrderData} = useContext(noteContext)
-
-const ReturnOrderKey = JSON.parse(localStorage.getItem("ReturnOrderKey")) || null
-
-const [returnData, setReturnData] = useState([])
-const [prodID, setProdID] = useState([])
-const [orderID, setOrderID] = useState(null)
-
-useEffect(() => {
-  const fetchOrderData = async () => {
-    let retryCount = 0;
-    const maxRetries = 3; 
-    const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; 
-
-    const attemptFetch = async () => {
-      try {
-        const response = await axios.post( `${Api}/order/getbyuserid`,
-          { customer_id: 1 },
-          {
-            headers: {
-              Authorization: `Bearer ${store?.access_token}`,
-            },
-          }
-        );
-        
-        const data = response?.data?.orders?.filter(
-          (element) => element?.order_number === ReturnOrderKey
-        );
-        const First = data?.map((element) => element?.order_items);
-        const Second = First[0]?.map((element) => element?.product_id);
-        const ID = data.map((element)=> element?.id)
-        // const reviewID = data
-        // console.log("Review " , response?.data?.orders[0]?.customer_id);  
-        setCustomerID(response?.data?.orders[0]?.customer_id)
-        setOrderID(ID[0])
-        setProdID([...new Set(Second)]);
-        setReturnData(data);
-
-      } catch (error) {
-        if (error.response?.status === 429 && retryCount < maxRetries) {
-          retryCount++;
-          const delay = retryDelay(retryCount);
-          console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
-          await new Promise((resolve) => setTimeout(resolve, delay)); 
-          await attemptFetch(); 
-        } else {
-          console.error("Error Fetching Order Data:", error);
-          alert("Failed to fetch order data. Please try again later.");
-        }
-      }
-    };
-
-    await attemptFetch();
-  };
-
-  fetchOrderData();
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [returnOrderData]);
-
+const {Api , store , returnOrderData , returnData, setReturnData , prodID, setProdID , orderID, setOrderID , customerID, setCustomerID} = useContext(noteContext)
 
 useEffect(() => {
   setReturnPopup((prev) => ({
@@ -81,7 +22,6 @@ useEffect(() => {
     order_id: orderID,
   }));
 }, [orderID]);
-
 
 
 // --------------- Return Order Popup -------------
@@ -133,7 +73,6 @@ const handleRequestOtp = async (e) => {
 
   await requestOtp();
 };
-
 
 
 // ---------------  Return Order With OTP Popup  ------------------- }
@@ -225,13 +164,10 @@ const handleConfirmReturn = async (e) => {
 };
 
 
-
-
 // ********** Review & Feedback **********
 const [subRevToggle, setSubRevToggle] = useState(false)
 const [rating, setRating] = useState(0);
 const [reviewId, setReviewId] = useState(null)
-const [customerID, setCustomerID] = useState(null)
 const [uploadedImages, setUploadedImages] = useState([]);
 const [feedback, setFeedback] = useState("")
 
@@ -335,37 +271,18 @@ return () => {
 }, [uploadedImages]);
 
 
+const handleDownloadInvoice = () => {
+  returnData?.map((element)=>{
+    const hello = element
+    console.log("zzzzzzzzzzzzzzzzzzz " , hello);
+    // localStorage.setItem("OrderDetails" , JSON.stringify())
+    localStorage.setItem("orderId" , JSON.stringify(element?.id))
+ })
+}
+
+
 // -------------- Doanload Invoice -------------
 
-const invoiceRef = useRef(); 
-
-const handlePrint = () => {
-  const element = invoiceRef.current;
-
-  // Wait for all images to load
-  const images = Array.from(element.querySelectorAll('.ds_TrackOrder-img'));
-  const loadImages = images.map((img) => {
-    if (img.complete) {
-      return Promise.resolve();
-    }
-    return new Promise((resolve) => {
-      img.onload = resolve;
-      img.onerror = resolve; // Resolve even if there’s an error
-    });
-  });
-
-  Promise.all(loadImages).then(() => {
-    html2canvas(element, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF();
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('Return_Order_Details.pdf');
-      alert('Invoice has been downloaded successfully!');
-    });
-  });
-};
 
 
 
@@ -434,7 +351,7 @@ const handlePrint = () => {
                     </div>
                     <div>
                     <div className='ds_track-overflow mt-4'>
-                        <div className='ds_track-box ' ref={invoiceRef}>
+                        <div className='ds_track-box ' >
                            
                              
                                      <div> 
@@ -464,7 +381,7 @@ const handlePrint = () => {
                                        </div>
                                        <div className='ds_track-line mt-1'></div>
                                             <h6 className='fw-bold text-end ds_track-margin mt-2'>
-                                                <Link to="#" onClick={handlePrint} className='text-dark'>Download Invoice</Link>
+                                                <Link to="" onClick={handleDownloadInvoice}  className='text-dark'>Download Invoice</Link>
                                             </h6>
                                        {
                                          returnData[0]?.order_items?.map((item , index)=>{

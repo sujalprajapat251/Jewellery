@@ -3,7 +3,7 @@ import '../Css/dhruvin/OrderDetails.css'
 import { RiArrowDropDownLine } from 'react-icons/ri'
 import axios from 'axios'
 import noteContext from '../Context/noteContext'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Invoice from './Invoice'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
@@ -35,7 +35,7 @@ const OrderDetails = () => {
   
   const handleView = () => {
      localStorage.removeItem("BuyNow")
-     navigate("/invoice")
+    //  navigate("/invoice")
   }
 
 
@@ -105,7 +105,7 @@ const OrderDetails = () => {
                             <p className="ds_con-font text-dark ds_600 " > {orderData?.contact_name} </p>
                             <p className="ds_con-font text-dark ds_600">{orderData?.delivery_address}</p>
                             <p className="ds_con-font text-dark ds_600">+91 {orderData?.contact_no}</p>
-                            <button className=" ds_con-btn" onClick={handleView} >View Invoice</button>
+                            <Link to="/invoice" className=" ds_con-btn text-decoration-none" onClick={()=>handleView()} >View Invoice</Link>
                           </div>
                         </div>
                       </div>
@@ -117,6 +117,8 @@ const OrderDetails = () => {
               <div className="col-xl-4 col-lg-4 mt-lg-0 mt-4">
                 <div className="ds_con-buy">
                   {orderItem?.map((element)=>{
+                    console.log("Hevbsdjuvbsdjuv " , element);
+                    
                     return (
                          <div className="d-flex justify-content-between px-3">
                             <div>

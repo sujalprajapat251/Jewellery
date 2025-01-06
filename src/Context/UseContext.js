@@ -619,6 +619,20 @@ const UseContext = (props) => {
   const [orderMain, setOrderMain] = useState({})
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [payCount, setPayCount] = useState(0)
+  // ----------- Track Order -------------
+  const [trackOrderData, setTrackOrderData] = useState([])
+  const [trackFilter, seTrackFilter] = useState("")
+  const trackKey = JSON.parse(localStorage.getItem("TrackOrderKey")) || null
+  // ------------ Return Order -------------
+  const [returnData, setReturnData] = useState([])
+  const [prodID, setProdID] = useState([])
+  const [orderID, setOrderID] = useState(null)
+  const [returnOrderData, setReturnOrderData] = useState("")
+  const ReturnOrderKey = JSON.parse(localStorage.getItem("ReturnOrderKey")) || null
+  const [customerID, setCustomerID] = useState(null)
+
+
+
 
   useEffect(() => {
     const myOrderData = async (retryCount = 0) => {      
@@ -635,6 +649,22 @@ const UseContext = (props) => {
             })            
             setOrderMain(response?.data?.orders)
             setFilteredOrders(response?.data?.orders);
+            setTrackOrderData(
+              response?.data?.orders?.filter((element) => element?.order_number === trackKey)
+            );
+
+
+            const data = response?.data?.orders?.filter(
+              (element) => element?.order_number === ReturnOrderKey
+            );
+            const First = data?.map((element) => element?.order_items);
+            const Second = First[0]?.map((element) => element?.product_id);
+            const ID = data.map((element)=> element?.id)
+    
+            setCustomerID(response?.data?.orders[0]?.customer_id)
+            setOrderID(ID[0])
+            setProdID([...new Set(Second)]);
+            setReturnData(data);
           }
           catch(error){
              if (error?.response?.status === 429 && retryCount < 5) {
@@ -649,7 +679,9 @@ const UseContext = (props) => {
     }
     myOrderData()
 
-  }, [payCount])
+  }, [payCount , trackFilter , returnOrderData])
+
+
   // ********** Change Password **********
   const [changePassToggle, setChangePassToggle] = useState(false)
 
@@ -696,8 +728,6 @@ const UseContext = (props) => {
 
 
   // *************** Track Order Page ************
-  const [trackFilter, seTrackFilter] = useState("")
-  // use
 
   const handleTrackOrder = (data) => {
     seTrackFilter(data)
@@ -705,69 +735,8 @@ const UseContext = (props) => {
   }
 
 
-  // ************ Faq **********
-
-  const [mainFaq, setMainFaq] = useState([])
-  const [subFaq, setSubFaq] = useState([])
-
-  useEffect(() => {
-
-    const faqData = async (retryCount = 0) => {
-      try {
-        const response = await axios.get(`${Api}/faqs/getall`, {
-          headers: {
-            Authorization: `Bearer ${store?.access_token}`
-          }
-        })
-        setMainFaq(response?.data?.faqs)
-      }
-      catch (error) {
-        if (error?.response?.status === 429 && retryCount < 5) {
-          // Retry logic with exponential backoff
-          const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-          console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
-          setTimeout(() => faqData(retryCount + 1), retryAfter);
-        } else {
-          console.error("Failed to fetch profile data:", error.message);
-        }
-      }
-    }
-
-    faqData()
-
-  }, [])
-
-  useEffect(() => {
-
-    const subFaqData = async (retryCount = 0) => {
-      try {
-        const response = await axios.get(`${Api}/subfaqs/getall`, {
-          headers: {
-            Authorization: `Bearer ${store?.access_token}`
-          }
-        })
-        setSubFaq(response?.data?.subfaqs)
-      }
-      catch (error) {
-        if (error?.response?.status === 429 && retryCount < 5) {
-          // Retry logic with exponential backoff
-          const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-          console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
-          setTimeout(() => subFaqData(retryCount + 1), retryAfter);
-        } else {
-          console.error("Failed to fetch profile data:", error.message);
-        }
-      }
-    }
-
-    subFaqData()
-
-  }, [])
-
-
   // ************** Return Order *********
 
-  const [returnOrderData, setReturnOrderData] = useState("")
 
   const handleReturnOrder = (customer) => {
     setReturnOrderData(customer)
@@ -942,13 +911,12 @@ const UseContext = (props) => {
       changePassToggle, setChangePassToggle, ChangePassFormik,
 
       // ************ Faq **********
-      mainFaq, subFaq, setSubFaq,
 
       // *************** Track Order Page ************
-      handleTrackOrder, trackFilter,
+      handleTrackOrder, trackFilter, trackOrderData , setTrackOrderData ,
 
       // ************** Return Order *********
-      handleReturnOrder, returnOrderData,
+      handleReturnOrder, returnOrderData, returnData, setReturnData , prodID, setProdID , orderID, setOrderID ,customerID, setCustomerID ,
 
       // **************** Cart ****************
       deleteToggle, setDeleteToggle, priceToggle, setPriceToggle, price, setPrice, removePopup, setRemovePopup,

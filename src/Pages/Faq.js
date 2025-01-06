@@ -2,22 +2,83 @@ import React, { useContext, useEffect, useState } from 'react'
 import '../Css/dhruvin/Faq.css'
 import noteContext from '../Context/noteContext';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 const Faq = () => {
 
-    const {mainFaq , subFaq , footMain} = useContext(noteContext)
+    const {Api , store , footMain} = useContext(noteContext)
     const [activeCategory, setActiveCategory] = useState('Registration1');
     const [openIndex, setOpenIndex] = useState(null);
     const [data, setData] = useState([])
     const location = useLocation()
     const [footerMain, setFooterMain] = useState(location?.state?.faq)
     const [returnFooter, setReturnFooter] = useState(location?.state?.return)
+    const [mainFaq, setMainFaq] = useState([])
+    const [subFaq, setSubFaq] = useState([])
     
     
 
     const toggleAccordion = (index) => {
         setOpenIndex(openIndex === index ? null : index);        
     };
+
+
+
+  
+    useEffect(() => {
+  
+      const faqData = async (retryCount = 0) => {
+        try {
+          const response = await axios.get(`${Api}/faqs/getall`, {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`
+            }
+          })
+          setMainFaq(response?.data?.faqs)
+        }
+        catch (error) {
+          if (error?.response?.status === 429 && retryCount < 5) {
+            // Retry logic with exponential backoff
+            const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+            console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+            setTimeout(() => faqData(retryCount + 1), retryAfter);
+          } else {
+            console.error("Failed to fetch profile data:", error.message);
+          }
+        }
+      }
+  
+      faqData()
+  
+    }, [])
+  
+    useEffect(() => {
+  
+      const subFaqData = async (retryCount = 0) => {
+        try {
+          const response = await axios.get(`${Api}/subfaqs/getall`, {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`
+            }
+          })
+          setSubFaq(response?.data?.subfaqs)
+        }
+        catch (error) {
+          if (error?.response?.status === 429 && retryCount < 5) {
+            // Retry logic with exponential backoff
+            const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+            console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+            setTimeout(() => subFaqData(retryCount + 1), retryAfter);
+          } else {
+            console.error("Failed to fetch profile data:", error.message);
+          }
+        }
+      }
+  
+      subFaqData()
+  
+    }, [])
+
   
     useEffect(() => {
         let filter = subFaq?.filter((element) => {
@@ -38,6 +99,8 @@ const Faq = () => {
         // console.log("Filter " , filter);
         
     }, [subFaq, footMain]);
+
+    
     
 
     const handleFilter = (name) => {

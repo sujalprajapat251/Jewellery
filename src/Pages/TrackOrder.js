@@ -7,71 +7,67 @@ import axios from 'axios'
 
 const TrackOrder = () => {
 
-const { Api , store , trackFilter} = useContext(noteContext)
+const { Api , store , trackFilter , trackOrderData , setTrackOrderData} = useContext(noteContext)
 const [trackPopup, setTrackPopup] = useState(false)
 const [trackId, setTrackId] = useState(null)
 const navigate = useNavigate()
-const [trackOrderData, setTrackOrderData] = useState([])
-
-const trackKey = JSON.parse(localStorage.getItem("TrackOrderKey")) || null
-
 
 const handleCancelOrder = (id) => {
      setTrackPopup(true)
      setTrackId(id)     
 }
 
-useEffect(() => {
-  const fetchOrderData = async () => {
-    let retryCount = 0;
-    const maxRetries = 3;
-    const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; 
+// useEffect(() => {
+//   const fetchOrderData = async () => {
+//     let retryCount = 0;
+//     const maxRetries = 3;
+//     const retryDelay = (attempt) => Math.pow(2, attempt) * 1000; 
 
-    const attemptFetch = async () => {
-      try {
-        const response = await axios.post(
-          `${Api}/order/getbyuserid`,
-          { customer_id: `${store?.id}`  },
-          {
-            headers: {
-              Authorization: `Bearer ${store?.access_token}`,
-            },
-          }
-        );
-        // console.log("res" , response);
+//     const attemptFetch = async () => {
+//       try {
+//         const response = await axios.post(
+//           `${Api}/order/getbyuserid`,
+//           { customer_id: `${store?.id}`  },
+//           {
+//             headers: {
+//               Authorization: `Bearer ${store?.access_token}`,
+//             },
+//           }
+//         );
+//         // console.log("res" , response);
 
-        const data = response?.data?.orders?.filter((element) => element?.order_number === trackKey)
-        // console.log("uvchhvuwhvu " , data);
+//         const data = response?.data?.orders?.filter((element) => element?.order_number === trackKey)
+//         // console.log("uvchhvuwhvu " , data);
         
 
-        console.log(
-          "TrackOrder",
-          response?.data?.orders?.filter((element) => element?.order_number === trackKey)
-        );
-        setTrackOrderData(
-          response?.data?.orders?.filter((element) => element?.order_number === trackKey)
-        );
-      } catch (error) {
-        if (error.response?.status === 429 && retryCount < maxRetries) {
-          retryCount++;
-          const delay = retryDelay(retryCount);
-          console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
-          await new Promise((resolve) => setTimeout(resolve, delay)); 
-          await attemptFetch(); 
-        } else {
-          console.error("Error Fetching Order Data:", error);
-          alert("Failed to fetch order data. Please try again later.");
-        }
-      }
-    };
+//         console.log(
+//           "TrackOrder",
+//           response?.data?.orders?.filter((element) => element?.order_number === trackKey)
+//         );
+//         setTrackOrderData(
+//           response?.data?.orders?.filter((element) => element?.order_number === trackKey)
+//         );
+//       } catch (error) {
+//         if (error.response?.status === 429 && retryCount < maxRetries) {
+//           retryCount++;
+//           const delay = retryDelay(retryCount);
+//           console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
+//           await new Promise((resolve) => setTimeout(resolve, delay)); 
+//           await attemptFetch(); 
+//         } else {
+//           console.error("Error Fetching Order Data:", error);
+//           alert("Failed to fetch order data. Please try again later.");
+//         }
+//       }
+//     };
 
-    await attemptFetch();
-  };
+//     await attemptFetch();
+//   };
 
-  fetchOrderData();
+//   fetchOrderData();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [trackFilter]);
+//   // eslint-disable-next-line react-hooks/exhaustive-deps
+// }, [trackFilter]);
 
 
 
@@ -186,9 +182,23 @@ const handleContinue = async () => {
 // *********** Dwonload Invoice ********
 const handleDownloadInvoice = () => {
     trackOrderData?.map((element)=>{
-      // console.log("zzzzzzzzzzzzzzzzzzz " , element);
-      localStorage.setItem("orderId" , JSON.stringify(element?.id))
+      const orderTotal = element?.order_items?.reduce((sum, item) => {
+        return sum + (item?.total_price || 0); // Add each item's total_price or 0 if undefined
+    }, 0);
+    const tax = Math.floor(orderTotal * 3 / 100)
+    const MyObject = {
+      sub_total:Math.floor(orderTotal),
+      discount:element?.discount,
+      tax: Math.floor(orderTotal * 3 / 100),
+      total: Math.floor(orderTotal + tax)
+    }
+    localStorage.setItem("OrderDetails" , JSON.stringify(MyObject))
+    const Id = element?.id
+    localStorage.setItem("orderId", JSON.stringify(Id))
+   console.log(element);
+   
    })
+   
 }
 
   return (
@@ -287,6 +297,11 @@ const handleDownloadInvoice = () => {
                                                 <Link to="/invoice" className='text-dark' onClick={handleDownloadInvoice}>Download Invoice</Link>
                                             </h6>
                                           {element?.order_items?.map((item)=>{
+                                               
+                                               const totalPrice = isNaN(item?.total_price) ? 0 : Math.floor(item?.total_price);
+                                               console.log("vwerfw " , element);
+                                               
+                                               const discountedPrice = isNaN(item?.total_price) ? 0 : Math.floor(parseInt(item?.total_price * item?.discount / 100) + parseInt(item?.total_price));
                                              return (
                                               <div className="row px-4 mt-4">
                                                  <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 ">
@@ -298,7 +313,7 @@ const handleDownloadInvoice = () => {
                                                            </div>
                                                            <div className='ds_cart-deta mt-xl-0 mt-2'>
                                                               <h6>{item?.product_name}</h6>
-                                                              <h6 className='mb-0'><span className='ds_color'>₹{item?.price}</span> <span className='ms-2 ds_order-line-txt'>₹1500</span></h6>
+                                                              <h6 className='mb-0'><span className='ds_color'>₹{Math.floor(totalPrice)}</span> <span className='ms-2 ds_order-line-txt'>₹{Math.floor(discountedPrice)}</span></h6>
                                                               <p className='ds_tcolor mb-0'>Metal Color :<span className='ds_color'> {item?.metal_color}</span>  <span className='ds_tcolor ms-4'>Size : </span> <span className='ds_color'>{item?.size}</span></p>
                                                               <p className='ds_tcolor mb-0'>Diamond Quality:  <span className='ds_color'>{item?.diamond_quality}</span></p>
                                                               <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'>{item?.sku}</span></p>
