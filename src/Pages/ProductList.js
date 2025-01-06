@@ -26,7 +26,7 @@ function ProductList() {
         if (type === 'subcategory') {
             // fliter sub category data form allsubcatgeories data
             const data = allSubCategory?.filter((item) =>  item.id === parseInt(id) )
-            console.log(data);
+            // console.log(data);
             const checkRing = data?.[0].name?.includes('Ring') || data?.[0].category_name?.includes('Ring');
             setIsRing(checkRing);
             const checkWatch = data?.[0].name?.includes('Watch') || data?.[0].category_name?.includes('Watch');
@@ -62,11 +62,11 @@ function ProductList() {
             setHeading('');
         }
         if (type === 'occasion') {
-            console.log(allProduct?.map((product) => product.occasion));
+            // console.log(allProduct?.map((product) => product.occasion));
             product = allProduct?.filter(product =>
                 product.occasion.toLowerCase().includes(id.toLowerCase())
             );
-            console.log('product', product);
+            // console.log('product', product);
             setHeading(id);
         }
 
@@ -168,7 +168,7 @@ function ProductList() {
                     setHeading(category + ' ' + value + ' for men');
                 }
 
-                console.log('pro', data);
+                // console.log('pro', data);
             }
         }
         setproductList_detail(product);
@@ -241,7 +241,7 @@ function ProductList() {
 
             return { ...prev, [type]: updatedValues };
         });
-        console.info(selectedFilters)
+        // console.info(selectedFilters)
     };
 
     // min and max price showing dynamically when page loaded
@@ -280,7 +280,7 @@ function ProductList() {
     // sorting functionality is here
     const fliterDatahandle = (x) => {
         setCondition(x);
-        console.warn('condition', condition)
+        // console.warn('condition', condition)
         const filterData = productlist?.filter((item) =>
             // Check all selected filters
             Object.keys(selectedFilters).every(key =>
@@ -307,7 +307,7 @@ function ProductList() {
         else {
             sortedData = filterData;
         }
-        console.log('sort', sortedData)
+        // console.log('sort', sortedData)
         setproductList_detail(sortedData);
     }
 

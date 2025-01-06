@@ -14,7 +14,7 @@ function Login({ isOpen, onClose, onOpen }) {
     // login and register with facebook
 
     const handleResponse = async (response) => {
-        console.log("Facebook Login Response:", response);
+        // console.log("Facebook Login Response:", response);
         if (response.email) {
             console.log("Access Token:", response.email);
             var data = await axios.post(`${Api}/social-api`, {
@@ -22,12 +22,12 @@ function Login({ isOpen, onClose, onOpen }) {
                 email: response.email,
             },
             )
-            console.log('faceboookkkkk done', data.data.result);
+            // console.log('faceboookkkkk done', data.data.result);
             // localStorage.setItem("Login", JSON.stringify(data.data.result));
             userHandling(data.data.result);
             onClose();
         } else {
-            console.error("Facebook login failed", response);
+            // console.error("Facebook login failed", response);
         }
     };
 
@@ -35,14 +35,14 @@ function Login({ isOpen, onClose, onOpen }) {
     const handleSuccess = async (response) => {
         const token = response.credential; // Get the Google JWT
         const user = jwtDecode(token); // Decode the JWT to get user details
-        console.warn("User Info:", user);
+        // console.warn("User Info:", user);
         if (user) {
             var data = await axios.post(`${Api}/social-api`, {
                 name: user.name,
                 email: user.email,
             },
             )
-            console.log(data);
+            // console.log(data);
             // localStorage.setItem("Login", JSON.stringify(data.data.result));
             userHandling(data.data.result);
             onClose();
@@ -71,7 +71,7 @@ function Login({ isOpen, onClose, onOpen }) {
                     password: values.password,
                 });
 
-                console.log("LoginRes", response.data);
+                // console.log("LoginRes", response.data);
 
                 if (response?.data?.result) {
 
@@ -130,7 +130,7 @@ function Login({ isOpen, onClose, onOpen }) {
                     email: values.email,
                 });
 
-                console.log("ForgetRes", response.data);
+                // console.log("ForgetRes", response.data);
 
                 alert("A reset password email has been sent to your email address.");
                 handleForPassClose();
@@ -174,7 +174,7 @@ function Login({ isOpen, onClose, onOpen }) {
                     otp: otpValue,
                 });
 
-                console.log("OtpRes", response.data);
+                // console.log("OtpRes", response.data);
                 handleOTPClose();
                 handleResetPassShow();
                 setStoreOtp(otpValue);
@@ -218,7 +218,7 @@ function Login({ isOpen, onClose, onOpen }) {
                     new_password: values.newPass,
                     confirm_password: values.conPass,
                 });
-                console.log("ResetPassRes", response.data);
+                // console.log("ResetPassRes", response.data);
                 alert("Your password has been reset successfully. Please log in with your new password.");
                 handleResetPassClose();
                 // handleLoginShow();
@@ -271,7 +271,7 @@ function Login({ isOpen, onClose, onOpen }) {
                     dob: "2001-01-01",
                 });
     
-                console.warn("SignUp Response:", response);
+                // console.warn("SignUp Response:", response);
     
                 alert("Registration successful! Please log in.");
     

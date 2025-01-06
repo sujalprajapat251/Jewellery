@@ -17,7 +17,7 @@ function Wishlist() {
         const productData = allProduct.filter((wishlistItem) =>
             wishlistData.some((product) => product.product_id === wishlistItem.id)
         );
-        console.log('data',productData);
+        // console.log('data',productData);
         setWishlistData(productData);
     }, [wishlistData, allProduct]);
 
