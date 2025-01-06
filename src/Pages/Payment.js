@@ -11,7 +11,6 @@ const Payment = () => {
   const data = JSON.parse(localStorage.getItem("OrderDetails")) || {}
   const login = JSON.parse(localStorage.getItem("Login")) || {}
   const deliverId = JSON.parse(localStorage.getItem("default") || "")
-  const navigate = useNavigate()
   const [cardData, setCardData] = useState([])
   
   useEffect(()=>{
@@ -38,12 +37,12 @@ const Payment = () => {
      })
   },[])
 
-  const formattedProducts = cardData?.map((item) => ({
-    product_id: item?.product_id,
-    qty: item?.quantity,
-    size: parseInt(item?.size ? item?.size : 2),
-    metal: item?.metal,
-  }));
+  // const formattedProducts = cardData?.map((item) => ({
+  //   product_id: item?.product_id,
+  //   qty: item?.quantity,
+  //   size: parseInt(item?.size ? item?.size : 2),
+  //   metal: item?.metal,
+  // }));
 
     // console.log("format " , formattedProducts);
 
@@ -96,7 +95,11 @@ const Payment = () => {
           );
           alert("Payment SuccessFully")
           localStorage.setItem("orderId", JSON.stringify(response?.data?.order?.order_id));
-          navigate("/orderdetails");
+          if(response?.data?.order){
+            console.log('order',response?.data?.order); 
+            // removeCartItem();
+          }
+          // navigate("/orderdetails");
         } catch (error) {
           if (error.response?.status === 429 && retryCount < maxRetries) {
             console.warn(`Retrying order creation in ${retryDelay(retryCount)}ms...`);

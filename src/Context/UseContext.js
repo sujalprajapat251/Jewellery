@@ -166,7 +166,7 @@ const UseContext = (props) => {
       if (error?.response?.status === 429 && retryCount < 5) {
         // Retry logic with exponential backoff
         const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-        console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+        console.warn(`Too many requests. Retrying after ${retryAfter / 1050}s...`);
         setTimeout(() => fetchWishlist(retryCount + 1), retryAfter);
       } else {
         console.error("Failed to fetch data:", error.message);
@@ -647,12 +647,9 @@ const UseContext = (props) => {
              }
           }
     }
-
     myOrderData()
 
   }, [payCount])
-
-
   // ********** Change Password **********
   const [changePassToggle, setChangePassToggle] = useState(false)
 

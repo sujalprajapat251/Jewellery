@@ -26,22 +26,33 @@ function ProductDetail() {
     useEffect(() => {
         // allow scroll form top
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        fetchProductData()
 
-        axios.get(`${Api}/products/get/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
-            .then((response) => {
-                const fetchedProducts = response?.data?.data || [];
-                setProduct(fetchedProducts);
-            })
-            .catch((error) => {
-                console.error("Error fetching products:", error);
-            });
         setAddToCard(true);
     }, [id, token, Api]);
 
+// fetch product data 
+const fetchProductData = async (retryCount = 0) => {
+    try {
+        const response = await axios.get(`${Api}/products/get/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (response?.data?.data) {
+            const fetchedProducts = response?.data?.data || [];
+            setProduct(fetchedProducts);
+        }
+    } catch (error) {
+        if (error?.response?.status === 429 && retryCount < 5) {
+            const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+            console.warn(`Too many requests. Retrying after ${retryAfter / 1100}s...`);
+            setTimeout(() => fetchProductData(retryCount + 1), retryAfter);
+        } else {
+            console.error("Failed to fetch data:", error.message);
+        }
+    }
+}
     // get size , youAlso like and people also search for Data from all products 
     const [size, setSize] = useState(0);
     const [sizeArray, setSizeArray] = useState([]);
@@ -76,16 +87,7 @@ function ProductDetail() {
         setYouAlsoLike(youAlso);
 
         // fetch product offer using api 
-        axios.get(`${Api}/productoffers/getallactive`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }).then((response) => {
-                const offersData = response.data.productOffers.filter((offer) => offer.product_id === parseInt(id));
-                setOffers(offersData);
-                ;
-            })
+        fetchProductOffer();
 
         //people also search for product
         for (let i = allProduct.length - 1; i > 0; i--) {
@@ -101,6 +103,28 @@ function ProductDetail() {
         console.warn('size', product)
     }, [product])
 
+    // fetch product offers
+    const fetchProductOffer = async (retryCount = 0) => {
+        try {
+            const response = await axios.get(`${Api}/productoffers/getallactive`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response?.data?.productOffers) {
+                const offersData = response?.data?.productOffers.filter((offer) => offer.product_id === parseInt(id));
+                setOffers(offersData);
+            }
+        } catch (error) {
+            if (error?.response?.status === 429 && retryCount < 5) {
+                const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
+                console.warn(`Too many requests. Retrying after ${retryAfter / 1100}s...`);
+                setTimeout(() => fetchProductOffer(retryCount + 1), retryAfter);
+            } else {
+                console.error("Failed to fetch data:", error.message);
+            }
+        }
+    }
 
     // fetch stock data 
     const fetchStockData = async (retryCount = 0) => {
@@ -123,14 +147,13 @@ function ProductDetail() {
         } catch (error) {
             if (error?.response?.status === 429 && retryCount < 5) {
                 const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-                console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+                console.warn(`Too many requests. Retrying after ${retryAfter / 1200}s...`);
                 setTimeout(() => fetchStockData(retryCount + 1), retryAfter);
             } else {
                 console.error("Failed to fetch data:", error.message);
             }
         }
     }
-
 
     // fetch review data  function is here
     const fetchReviewData = async (retryCount = 0) => {
@@ -144,7 +167,7 @@ function ProductDetail() {
         } catch (error) {
             if (error?.response?.status === 429 && retryCount < 5) {
                 const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-                console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+                console.warn(`Too many requests. Retrying after ${retryAfter / 1300}s...`);
                 setTimeout(() => fetchReviewData(retryCount + 1), retryAfter);
             } else {
                 console.error("Failed to fetch data:", error.message);
@@ -286,9 +309,6 @@ function ProductDetail() {
             fetchReviewData();
         }
     }
-
-
-
     // offer handling code 
     const [selectedOffers, setSelectedOffers] = useState([]);
 
@@ -1054,7 +1074,7 @@ function ProductDetail() {
                             <img alt='facebook' src={require('../Img/Sujal/twitter.png')}></img>
                             <p>X</p>
                         </Link>
-                        <Link to={''} onClick={()=>{shareOnInstagram()}}>
+                        <Link to={''} onClick={() => { shareOnInstagram() }}>
                             <img alt='facebook' src={require('../Img/Sujal/instagram.png')}></img>
                             <p>Instagram</p>
                         </Link>
