@@ -13,7 +13,9 @@ import es_card1 from '../Img/Sujal/platinum.png';
 import es_card2 from '../Img/Sujal/design.png';
 import es_card3 from '../Img/Sujal/jewel.png';
 import noteContext from '../Context/noteContext';
-
+import fillstar from '../Img/Sujal/fillStar.png';
+import halfstar from '../Img/Sujal/halfstar.png';
+import nofillstar from '../Img/Sujal/nofillstar.png';
 function Home() {
     // backend connection code----------------------------------
 
@@ -29,7 +31,7 @@ function Home() {
         1024: { items: 4 },
         1200: { items: 5 },
         1440: { items: 6 },
-        1640:{ items: 7 },
+        1640: { items: 7 },
     }
 
 
@@ -220,9 +222,6 @@ function Home() {
                                                     <GoHeart />
                                                 </div>
                                             )}
-                                            {/* {ele.gender ?
-                                                    <div className='s_card_status'><p className='mb-0'>{ele.metal_color}</p></div>
-                                                    : ''} */}
                                             <div className='s_card_text' >
                                                 <Link to={`/productdetail/${ele.id}`}>
                                                     <h5>{ele.product_name}</h5>
@@ -230,11 +229,15 @@ function Home() {
                                                     <div className='s_rating'>
                                                         {
                                                             [...Array(5)].map((_, index) => {
-                                                                if (index < ele?.total_rating) {
-                                                                    return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                const rating = ele.total_rating;
+                                                                if (index < Math.floor(rating)) {
+                                                                    return <img alt={index} src={fillstar} />;
+                                                                } else if (index < rating) {
+
+                                                                    return <img alt={index} src={halfstar} />;
                                                                 } else {
-                                                                    return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                                    ;
+
+                                                                    return <img alt={index} src={nofillstar} />;
                                                                 }
                                                             })
                                                         }
@@ -403,11 +406,15 @@ function Home() {
                                                         <div className='s_rating'>
                                                             {
                                                                 [...Array(5)].map((_, index) => {
-                                                                    if (index < item.total_rating) {
-                                                                        return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                    const rating = item.total_rating;
+                                                                    if (index < Math.floor(rating)) {
+                                                                        return <img alt={index} src={fillstar} />;
+                                                                    } else if (index < rating) {
+
+                                                                        return <img alt={index} src={halfstar} />;
                                                                     } else {
-                                                                        return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                                        ;
+
+                                                                        return <img alt={index} src={nofillstar} />;
                                                                     }
                                                                 })
                                                             }

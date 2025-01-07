@@ -3,10 +3,12 @@ import '../Css/Sujal/ProductList.css'
 import { useContext, useEffect, useState } from 'react';
 import MultiRangeSlider from "multi-range-slider-react";
 import { IoCloseOutline } from 'react-icons/io5';
-import { FaAngleDown, FaBars, FaFilter } from 'react-icons/fa';
+import { FaAngleDown, FaFilter, } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
-import axios from 'axios';
+import fillstar from '../Img/Sujal/fillStar.png';
+import halfstar from '../Img/Sujal/halfstar.png';
+import nofillstar from '../Img/Sujal/nofillstar.png';
 function ProductList() {
 
     // backend connection code ----------------------------------------------------------------
@@ -25,7 +27,7 @@ function ProductList() {
     useEffect(() => {
         if (type === 'subcategory') {
             // fliter sub category data form allsubcatgeories data
-            const data = allSubCategory?.filter((item) =>  item.id === parseInt(id) )
+            const data = allSubCategory?.filter((item) => item.id === parseInt(id))
             // console.log(data);
             const checkRing = data?.[0].name?.includes('Ring') || data?.[0].category_name?.includes('Ring');
             setIsRing(checkRing);
@@ -33,7 +35,8 @@ function ProductList() {
             setIsWatch(checkWatch);
             setHeading(data?.[0]?.name);
         }
-    }, [id, type, Api, token]);
+
+    }, [id, type, Api, token,allSubCategory]);
 
 
     //  show data according useParam infrormations
@@ -225,7 +228,7 @@ function ProductList() {
         if (isWatch) {
             setSelectedFilters({ gender: [], theme: [], clasp_type: [], metal_color: [], occasion: [] });
         } else if (isRing) {
-            setSelectedFilters({ gender: [], purity: [], occasion: [], clarity: [], metal: [], metal_color: []});
+            setSelectedFilters({ gender: [], purity: [], occasion: [], clarity: [], metal: [], metal_color: [] });
         } else {
             setSelectedFilters({ gender: [], purity: [], occasion: [], clarity: [], metal: [], metal_color: [] });
         }
@@ -265,7 +268,7 @@ function ProductList() {
     }, [productlist]);
 
     // min and max price handling when user when value
-    var [condition,setCondition] =useState(1);
+    var [condition, setCondition] = useState(1);
     const handleInput = (e) => {
         set_minValue(e.minValue);
         set_maxValue(e.maxValue);
@@ -585,16 +588,20 @@ function ProductList() {
                                                             <h5>{ele.product_name}</h5>
                                                             <p className='mb-0'><span className='mx-2'>₹{ele.total_price}</span><strike className="mx-2">₹{discountPrice}</strike></p>
                                                             <div className='s_rating'>
-                                                                {
-                                                                    [...Array(5)].map((_, index) => {
-                                                                        if (index < ele.total_rating) {
-                                                                            return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                                        } else {
-                                                                            return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                                            ;
-                                                                        }
-                                                                    })
+                                                            {
+                                                            [...Array(5)].map((_, index) => {
+                                                                const rating = ele.total_rating;
+                                                                if (index < Math.floor(rating)) {
+                                                                    return <img alt={index} src={fillstar} />;
+                                                                } else if (index < rating) {
+
+                                                                    return <img alt={index} src={halfstar} />;
+                                                                } else {
+
+                                                                    return <img alt={index} src={nofillstar} />;
                                                                 }
+                                                            })
+                                                        }
                                                             </div>
                                                             <div className='s_card_btn'><p className=''>Buy Now</p></div>
                                                         </Link>

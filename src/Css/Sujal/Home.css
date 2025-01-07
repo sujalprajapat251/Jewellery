@@ -163,6 +163,7 @@
     font-weight: 600;
 }
 .s_cat_slider .owl-nav {
+    margin-top: 0px !important;
     display: flex !important;
     justify-content: space-between;
     position: absolute;
@@ -303,8 +304,8 @@
 }
 
 .s_seller_card .s_rating img {
-    height: 20px;
-    width: 20px;
+    height: 22px;
+    width: 22px;
     margin: 2px;
 }
 
@@ -506,7 +507,9 @@
 .s_feature_slider .owl-item {
     height: 100%;
 }
-
+.s_feature_slider .owl-nav {
+    transform: translate(-50%,-100%) ;
+}
 .s_feature_sec .owl-theme {
     /* position: relative; */
     /* width: 100%; */
@@ -549,7 +552,7 @@
 
 .s_feature_slider .s_slider_text {
     background-color: #ffffff;
-    padding: 15px 20px;
+    padding: 15px 10px;
     text-align: center;
 }
 
