@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import noteContext from './noteContext'
 import axios from 'axios';
 import { ChangePass, EditProfileSchema, NewAddSchema } from '../schemas';
 import { useFormik } from 'formik';
-import { cache } from 'react';
-
 const UseContext = (props) => {
   // acces token form localstores
+  const calledOnce = React.useRef(false);
+  const hasFetched = useRef(false);
   let [store, setStore] = useState(JSON.parse(localStorage.getItem("Login")))
 
   const userHandling = (user) => {
@@ -16,7 +16,7 @@ const UseContext = (props) => {
     }
     else {
       localStorage.setItem("Login", JSON.stringify(user));
-      console.log("userData", user);
+      // console.log("userData", user);
       setStore(JSON.parse(localStorage.getItem("Login")));
     }
   }
@@ -41,14 +41,7 @@ const UseContext = (props) => {
       });
       setAllCatgegory(response?.data?.categories);
     } catch (error) {
-      if (error?.response?.status === 429 && retryCount < 5) {
-        // Retry logic with exponential backoff
-        const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-        console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
-        setTimeout(() => fetchCategory(retryCount + 1), retryAfter);
-      } else {
-        console.error("Failed to fetch  data:", error.message);
-      }
+      console.error("Failed to fetch  data:", error.message);
     }
   }
   const fetchSubCategory = async (retryCount = 0) => {
@@ -61,14 +54,8 @@ const UseContext = (props) => {
       });
       setAllSubCategory(response?.data?.subCategories);
     } catch (error) {
-      if (error?.response?.status === 429 && retryCount < 5) {
-        // Retry logic with exponential backoff
-        const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-        console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
-        setTimeout(() => fetchSubCategory(retryCount + 1), retryAfter);
-      } else {
-        console.error("Failed to fetch data:", error.message);
-      }
+
+      console.error("Failed to fetch data:", error.message);
     }
   }
 
@@ -82,19 +69,16 @@ const UseContext = (props) => {
       });
       setAllProduct(response?.data?.data);
     } catch (error) {
-      if (error?.response?.status === 429 && retryCount < 5) {
-        // Retry logic with exponential backoff
-        const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-        console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
-        setTimeout(() => fetchProduct(retryCount + 1), retryAfter);
-      } else {
-        console.error("Failed to fetch data:", error.message);
-      }
+      console.error("Failed to fetch data:", error.message);
     }
   }
 
 
   useEffect(() => {
+    if (calledOnce.current) return;
+
+    calledOnce.current = true;
+
     fetchCategory();
     fetchSubCategory();
     fetchProduct();
@@ -113,10 +97,10 @@ const UseContext = (props) => {
 
   const [wishlistID, setWishlistID] = useState([]);
   const addwishlistHandler = async (id) => {
-    console.log("wishId", wishlistID);
+    // console.log("wishId", wishlistID);
     const check = wishlistID.includes(id);
     if (!check) {
-      console.log('Product id', id);
+      // console.log('Product id', id);
       var res = await axios.post(`${Api}/wishlists/create`, {
         customer_id: store?.id,
         product_id: id,
@@ -125,7 +109,7 @@ const UseContext = (props) => {
           Authorization: `Bearer ${token}`
         }
       })
-      console.log('response', res);
+      // console.log('response', res);
     }
     fetchWishlist();
   }
@@ -137,7 +121,7 @@ const UseContext = (props) => {
       }
     })
     if (res.data) {
-      console.log('Removed from wishlist', res);
+      // console.log('Removed from wishlist', res);
       fetchWishlist();
     }
   }
@@ -163,14 +147,8 @@ const UseContext = (props) => {
         setWishlistID(idData);
       }
     } catch (error) {
-      if (error?.response?.status === 429 && retryCount < 5) {
-        // Retry logic with exponential backoff
-        const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-        console.warn(`Too many requests. Retrying after ${retryAfter / 1050}s...`);
-        setTimeout(() => fetchWishlist(retryCount + 1), retryAfter);
-      } else {
-        console.error("Failed to fetch data:", error.message);
-      }
+
+      console.error("Failed to fetch data:", error.message);
     }
   }
 
@@ -178,23 +156,23 @@ const UseContext = (props) => {
   const [cartData, setCardData] = useState([]);
 
   const addToCardhandle = async (product, size, offer) => {
-    console.warn("Cart", cartData);
+    // console.warn("Cart", cartData);
     let CheckQty = cartData.filter((cart) => {
       return cart.product_id === product?.id
     });
-    console.error("data", product, size, offer);
+    // console.error("data", product, size, offer);
     let unit_price
-    if(offer.length === 0 ){
+    if (offer.length === 0) {
       unit_price = product?.total_price
-    }else {
+    } else {
       if (offer?.type === 'percentage') {
         var discount = (parseFloat(product.total_price) * (parseFloat(offer.discount) / 100)).toFixed(2);
         unit_price = (parseFloat(product.total_price) - parseFloat(discount)).toFixed(2);
-        console.error("discount", unit_price);
+        // console.error("discount", unit_price);
       }
       if (offer?.type === 'fixed') {
         unit_price = (parseFloat(product.total_price) - parseFloat(offer.price)).toFixed(2);
-        console.error("discount", unit_price)
+        // console.error("discount", unit_price)
       }
     }
     console.warn("Check Qty", CheckQty);
@@ -213,12 +191,12 @@ const UseContext = (props) => {
             Authorization: `Bearer ${token}`,
           },
         }).then((response) => {
-          console.log("Product added to cart successfully!", response);
+          // console.log("Product added to cart successfully!", response);
           fetchCardData();
         })
     } else {
       // addtocart logic
-      console.error("Product added to cart successfully",unit_price);
+      // console.error("Product added to cart successfully", unit_price);
       await axios.post(`${Api}/cart/create`,
         {
           customer_id: store?.id,
@@ -232,7 +210,7 @@ const UseContext = (props) => {
             Authorization: `Bearer ${token}`,
           },
         }).then((response) => {
-          console.log("Product added to cart successfully!", response);
+          // console.log("Product added to cart successfully!", response);
           fetchCardData();
         })
     }
@@ -257,13 +235,7 @@ const UseContext = (props) => {
 
       }
     } catch (error) {
-      if (error?.response?.status === 429 && retryCount < 5) {
-        const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-        console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
-        setTimeout(() => fetchCardData(retryCount + 1), retryAfter);
-      } else {
         console.error("Failed to fetch data:", error.message);
-      }
     }
   }
 
@@ -308,6 +280,10 @@ const UseContext = (props) => {
 
 
   useEffect(() => {
+    // if (hasFetched.current) return; // Prevent further executions
+
+    // hasFetched.current = true;
+
     fetchWishlist();
     fetchCardData();
     // eslint-disable-next-line
@@ -321,8 +297,8 @@ const UseContext = (props) => {
   const [profileData, setProfileData] = useState([])
   const [editToggle, setEditToggle] = useState(false)
 
+  // shifted
   useEffect(() => {
-
     const myProfileData = async (retryCount = 0) => {
       try {
         const response = await axios.get(`${Api}/user/get/${store?.id}`, {
@@ -338,7 +314,7 @@ const UseContext = (props) => {
           // Retry logic with exponential backoff
           const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
           console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
-          setTimeout(() => myProfileData(retryCount + 1), retryAfter);
+          // setTimeout(() => myProfileData(retryCount + 1), retryAfter);
         } else {
           console.error("Failed to fetch profile data:", error.message);
         }
@@ -346,7 +322,6 @@ const UseContext = (props) => {
     }
 
     myProfileData()
-
   }, [editToggle])
 
 
@@ -399,7 +374,7 @@ const UseContext = (props) => {
           }
         )
         .then((response) => {
-          console.log("gnrjghwgkwnfgek ", response);
+          // console.log("gnrjghwgkwnfgek ", response);
 
           alert("Profile updated successfully!");
           setEditToggle(false);
@@ -460,7 +435,7 @@ const UseContext = (props) => {
             },
           }
         );
-        console.log("NewAdd", response);
+        // console.log("NewAdd", response);
         alert("Address Add SuccessFully")
         setNewAddModal(false);
         setAddMainNewAdd(true);
@@ -498,7 +473,7 @@ const UseContext = (props) => {
           console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
           setTimeout(() => addressMyData(retryCount + 1), retryAfter);
         } else {
-          console.error("Failed to fetch profile data:", error.message);
+          // console.error("Failed to fetch profile data:", error.message);
         }
       }
     }
@@ -507,6 +482,12 @@ const UseContext = (props) => {
 
   }, [addMainNewAdd, singleNewAdd, deleteUseEffect])
 
+  useEffect(() => {
+    var data = localStorage.getItem("default");
+    if (!data) {
+      setHello(myAddData[0]?.id);
+    }
+  }, [myAddData])
   const handleMark = (id) => {
     setHello(id);
     localStorage.setItem("default", JSON.stringify(id));
@@ -550,7 +531,7 @@ const UseContext = (props) => {
             },
           }
         );
-        console.log("UpdateAdd", response);
+        // console.log("UpdateAdd", response);
         setSingleNewAdd(false);
         setActiveCard(true);
         action.resetForm();
@@ -600,7 +581,7 @@ const UseContext = (props) => {
           Authorization: `Bearer ${store?.access_token}`,
         },
       });
-      console.log("DeleteAdd", response);
+      // console.log("DeleteAdd", response);
       alert("Address Delete SuccessFully")
       setDeleteAdd(false);
       setdeleteUseEffect(deleteUseEffect + 1);
@@ -710,7 +691,7 @@ const UseContext = (props) => {
           }
         );
 
-        console.log("Change Password Response:", response);
+        // console.log("Change Password Response:", response);
         setChangePassToggle(false);
         alert("Password changed successfully.");
 
@@ -788,7 +769,7 @@ const UseContext = (props) => {
   // }, [deleteToggle, priceToggle]);
 
   const handleRemove = (id) => {
-    console.log(id);
+    // console.log(id);
     setRemovePopup(true)
     setRemoveId(id)
     let wishId = cartData?.map((element) => element?.product?.id)
@@ -832,7 +813,7 @@ const UseContext = (props) => {
           },
         }
       );
-      console.log("Quantity updated:", response.data);
+      // console.log("Quantity updated:", response.data);
     } catch (error) {
       console.error("Failed to update quantity:", error);
     }
@@ -853,7 +834,7 @@ const UseContext = (props) => {
             Authorization: `Bearer ${store?.access_token}`,
           },
         });
-        console.log("Delete Response:", response);
+        // console.log("Delete Response:", response);
         setDeleteToggle((prev) => prev + 1);
         setRemovePopup(false);
       } catch (error) {

@@ -29,11 +29,6 @@ function Header() {
     // const [store, setStore] = useState('');
 
     useEffect(() => {
-        // Update `store` when `storedata` changes
-        // setStore(storedata);
-        console.log("Data", wishlistData.length);
-    }, [wishlistData]); // Runs only when `storedata` changes
-    useEffect(() => {
         const goldCategories = [];
         allSubCategory.map((ele) => {
             if (ele.category_name === "Gold") {
@@ -140,11 +135,11 @@ function Header() {
     const searchHandle = () => {
         var data = document.getElementById('searchData').value;
         const filteredSearchData = allProduct.filter(item => item.product_name.toLowerCase().includes(data));
-        console.log(filteredSearchData);
+        // console.log(filteredSearchData);
         setSearchData(filteredSearchData);
         const filteredPopularData = bestseller.filter(item => item.product_name.toLowerCase().includes(data));
         setPopularData(filteredPopularData);
-        console.warn(data);
+        // console.warn(data);
         if (data.length > 0) {
             setSearchModal(true);
         }

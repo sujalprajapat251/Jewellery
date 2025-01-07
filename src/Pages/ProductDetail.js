@@ -1,7 +1,7 @@
 import '../Css/Sujal/ProductDetail.css'
 import { Accordion, Col, Modal, Nav, Row } from "react-bootstrap";
 import video from '../Img/Sujal/ringvideo.mp4'
-import { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import { GoHeart, GoHeartFill } from 'react-icons/go';
 import { FaAngleDown, FaShareAlt } from 'react-icons/fa';
@@ -14,8 +14,10 @@ import Login from '../Component/Login';
 function ProductDetail() {
     const { id } = useParams();
     const user = JSON.parse(localStorage.getItem("Login"));
-    console.log('user', user?.id);
+    // console.log('user', user?.id);
     let [inStock, setInStock] = useState(true);
+    const calledOnce = React.useRef(false);
+    const hasRun = useRef(false);
     // backend connnectivity code ---------------------------------------------------------------
 
     // useContext
@@ -23,36 +25,47 @@ function ProductDetail() {
 
     // get product detail using Api
     const [product, setProduct] = useState([]);
+
+    // Reset the 
     useEffect(() => {
-        // allow scroll form top
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        fetchProductData()
+        // Reset calledOnce when `id` changes
+        calledOnce.current = false;
+        // Call getProduct when `id` changes
+        getProduct(product);
+    }, [id]); // Depend on `id` to trigger effect on id change
 
-        setAddToCard(true);
-    }, [id, token, Api]);
+    const getProduct = () => {
+        // Prevent execution if already done
+        if (calledOnce.current) return;
 
-// fetch product data 
-const fetchProductData = async (retryCount = 0) => {
-    try {
-        const response = await axios.get(`${Api}/products/get/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        if (response?.data?.data) {
-            const fetchedProducts = response?.data?.data || [];
-            setProduct(fetchedProducts);
+        // Execute only the first time after `id` changes
+        if (!calledOnce.current) {
+            // Allow scroll to the top
+            window.scrollTo({ top: 0, behavior: "smooth" });
+
+            // Fetch product data and update the state
+            fetchProductData();
+            setAddToCard(true);
+            calledOnce.current = true; // Set flag to true after execution
         }
-    } catch (error) {
-        if (error?.response?.status === 429 && retryCount < 5) {
-            const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-            console.warn(`Too many requests. Retrying after ${retryAfter / 1100}s...`);
-            setTimeout(() => fetchProductData(retryCount + 1), retryAfter);
-        } else {
+    };
+
+    // fetch product data 
+    const fetchProductData = async () => {
+        try {
+            const response = await axios.get(`${Api}/products/get/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response?.data?.data) {
+                const fetchedProducts = response?.data?.data || [];
+                setProduct(fetchedProducts);
+            }
+        } catch (error) {
             console.error("Failed to fetch data:", error.message);
         }
     }
-}
     // get size , youAlso like and people also search for Data from all products 
     const [size, setSize] = useState(0);
     const [sizeArray, setSizeArray] = useState([]);
@@ -61,9 +74,8 @@ const fetchProductData = async (retryCount = 0) => {
     const [offers, setOffers] = useState([]);
     const [peopleAlsoSearch, setPeopleAlsoSearch] = useState([]);
     useEffect(() => {
-
-
-
+        if (hasRun.current) return; // Prevent subsequent executions
+        hasRun.current = true; // Mark as run
         // get size data
         const array = product?.size_name?.split(',').map(Number).filter((num) => !isNaN(num));
         if (array?.length) {
@@ -80,15 +92,18 @@ const fetchProductData = async (retryCount = 0) => {
         // fetch review data using function 
         fetchReviewData()
 
-        const youAlso = allProduct.filter(
-            (item) =>
-                item.category_id === product.category_id && item.id !== product.id
-        )
-        setYouAlsoLike(youAlso);
-
         // fetch product offer using api 
         fetchProductOffer();
 
+
+    }, [product])
+    useEffect(() => {
+        // alert('');
+        // console.error('allProduct = > ', allProduct);
+        const youAlso = allProduct.filter((item) =>
+            item.category_id === product?.category_id && item.id !== product.id
+        )
+        setYouAlsoLike(youAlso);
         //people also search for product
         for (let i = allProduct.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -98,13 +113,14 @@ const fetchProductData = async (retryCount = 0) => {
         // Get 5 random products for people also search
         const randomProducts = allProduct.slice(0, 10);
         setPeopleAlsoSearch(randomProducts);
-        console.log(randomProducts);
+        // console.log(randomProducts);
         // eslint-disable-next-line
-        console.warn('size', product)
-    }, [product])
+        // console.warn('size', product)
+    }, [allProduct, product])
+
 
     // fetch product offers
-    const fetchProductOffer = async (retryCount = 0) => {
+    const fetchProductOffer = async () => {
         try {
             const response = await axios.get(`${Api}/productoffers/getallactive`, {
                 headers: {
@@ -116,18 +132,12 @@ const fetchProductData = async (retryCount = 0) => {
                 setOffers(offersData);
             }
         } catch (error) {
-            if (error?.response?.status === 429 && retryCount < 5) {
-                const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-                console.warn(`Too many requests. Retrying after ${retryAfter / 1100}s...`);
-                setTimeout(() => fetchProductOffer(retryCount + 1), retryAfter);
-            } else {
-                console.error("Failed to fetch data:", error.message);
-            }
+            console.error("Failed to fetch data:", error.message);
         }
     }
 
     // fetch stock data 
-    const fetchStockData = async (retryCount = 0) => {
+    const fetchStockData = async () => {
         try {
             const response = await axios.get(`${Api}/stocks/getall`, {
                 headers: {
@@ -136,7 +146,7 @@ const fetchProductData = async (retryCount = 0) => {
             });
             if (response.data.data) {
                 var data = response.data.data.filter(data => data?.product_id === product?.id);
-                console.warn('data', data);
+                // console.warn('data', data);
                 if (data.length === 0) {
                     setInStock(false);
                 }
@@ -145,18 +155,12 @@ const fetchProductData = async (retryCount = 0) => {
                 }
             }
         } catch (error) {
-            if (error?.response?.status === 429 && retryCount < 5) {
-                const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-                console.warn(`Too many requests. Retrying after ${retryAfter / 1200}s...`);
-                setTimeout(() => fetchStockData(retryCount + 1), retryAfter);
-            } else {
-                console.error("Failed to fetch data:", error.message);
-            }
+            console.error("Failed to fetch data:", error.message);
         }
     }
 
     // fetch review data  function is here
-    const fetchReviewData = async (retryCount = 0) => {
+    const fetchReviewData = async () => {
         try {
             const response = await axios.get(`${Api}/reviews/getall`, {
                 headers: {
@@ -165,13 +169,7 @@ const fetchProductData = async (retryCount = 0) => {
             });
             setReviews(response?.data?.data);
         } catch (error) {
-            if (error?.response?.status === 429 && retryCount < 5) {
-                const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-                console.warn(`Too many requests. Retrying after ${retryAfter / 1300}s...`);
-                setTimeout(() => fetchReviewData(retryCount + 1), retryAfter);
-            } else {
-                console.error("Failed to fetch data:", error.message);
-            }
+            console.error("Failed to fetch data:", error.message);
         }
     }
 
@@ -258,14 +256,14 @@ const fetchProductData = async (retryCount = 0) => {
     const making_charge = product?.making_charge
         ? `${((parseFloat(metal_total) + parseFloat(stone_total)) * (parseFloat(product?.making_charge) / 100)).toFixed(2)}`
         : 0;
-    console.log('making_charge', ((parseFloat(metal_total) + parseFloat(stone_total)) * (parseFloat(product?.making_charge) / 100)));
+    // console.log('making_charge', ((parseFloat(metal_total) + parseFloat(stone_total)) * (parseFloat(product?.making_charge) / 100)));
     const discount = (parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)) * parseFloat(product?.discount || 0) / 100;
-    console.log(discount);
+    // console.log(discount);
     const sub_total = ((parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)) - discount).toFixed(2);
     const gst_total = (sub_total * 3 / 100).toFixed(2);
     const great_total = ((parseFloat(sub_total) + parseFloat(gst_total)).toFixed(2));
     const isSelected = wishlistID.find((items) => items === product.id);
-    console.log('price', product.making_charge);
+    // console.log('price', product.making_charge);
 
     // people also like and people also search for responsive handling
 
@@ -297,7 +295,7 @@ const fetchProductData = async (retryCount = 0) => {
 
     // like dislike handling
     const handleLike = async (id, x) => {
-        console.warn(id, x);
+        // console.warn(id, x);
         const response = await axios.post(`${Api}/reviews/${id}/like-dislike`, {
             like_or_dislike: `${x}`,
         }, {
@@ -314,22 +312,15 @@ const fetchProductData = async (retryCount = 0) => {
 
     const handleOfferSelect = (offer, e) => {
         const parent = e.target.closest('.s_parent');
-
-        // const isChecking = selectedOffers.find((item) => item.id === offer.id);
-        // if (isChecking) {
-        //     const data = selectedOffers.filter((item) => item.id !== offer.id);
-        //     setSelectedOffers(data);
-        //     console.log("Updated Offers:", data);
-        //     parent.classList.remove('s_light_brown');
-        // } else {
         var classname = document.getElementsByClassName('s_parent');
         Array.from(classname).forEach(function (item) {
             if (item.classList.contains('s_light_brown')) {
                 item.classList.remove('s_light_brown');
             }
         });
-        console.warn("Updated Offers:", offer);
+        // console.warn("Updated Offers:", offer);
         setSelectedOffers(offer);
+        // console.log('offer',offer);
         parent.classList.add('s_light_brown');
         // }
     }
@@ -338,12 +329,15 @@ const fetchProductData = async (retryCount = 0) => {
     const buyNowHandling = () => {
         let discount = 0;
         if (selectedOffers?.type === 'percentage') {
-            discount = (parseFloat(product.total_price) * (parseFloat(selectedOffers.discount) / 100)).toFixed(2);
+            // console.log('selected',selectedOffers)
+            discount = parseFloat((parseFloat(product.total_price) * (parseFloat(selectedOffers.discount) / 100)).toFixed(2));
             //   unit_price = (parseFloat(product.total_price) - parseFloat(discount)).toFixed(2);
+            console.log('discount', discount);
         }
         if (selectedOffers?.type === 'fixed') {
+            // console.log('selected',selectedOffers)
             discount = parseFloat(selectedOffers.price);
-            //   unit_price = (parseFloat(product.total_price) - parseFloat(selectedOffers.price)).toFixed(2);
+            //unit_price = (parseFloat(product.total_price) - parseFloat(selectedOffers.price)).toFixed(2);
         }
         const tax = ((parseFloat(product?.total_price) - discount) * 3 / 100).toFixed(2);
         const total = (parseFloat(product?.total_price) + parseFloat(tax)).toFixed(2);
@@ -355,8 +349,8 @@ const fetchProductData = async (retryCount = 0) => {
         }));
         localStorage.setItem("BuyNow", JSON.stringify({
             product_id: product?.id,
-            qty:1,
-            size:size || 0,
+            qty: 1,
+            size: size || 0,
             metal: product?.metal
         }))
     }
@@ -514,7 +508,7 @@ const fetchProductData = async (retryCount = 0) => {
                     </Col>
                     <Col>
                         <div className='s_productdetail_sec'>
-                            {
+                            {store ?
                                 isSelected ?
                                     <div className='d-flex justify-content-end s_share_icon' onClick={() => { findWishlistID(product.id) }}>
                                         <GoHeartFill className='s_active' />
@@ -522,6 +516,10 @@ const fetchProductData = async (retryCount = 0) => {
                                     </div> :
                                     <div className='d-flex justify-content-end s_share_icon' onClick={() => { addwishlistHandler(product.id) }}>
                                         <GoHeart />
+                                        <FaShareAlt onClick={() => { setShareModal(true) }} />
+                                    </div> :
+                                    <div className='d-flex justify-content-end s_share_icon' >
+                                        <GoHeart onClick={handleLoginShow}/>
                                         <FaShareAlt onClick={() => { setShareModal(true) }} />
                                     </div>
                             }
@@ -625,7 +623,12 @@ const fetchProductData = async (retryCount = 0) => {
                                     )}
                                 </div>
                                 <div className='s_buy_btn'>
-                                    <Link to={'/payment'} onClick={() => { buyNowHandling() }}>Buy Now</Link>
+                                    {!addToCard ? (
+                                        <Link to={'/payment'} onClick={() => { buyNowHandling() }}>Buy Now</Link>
+                                    ) : (
+                                        <Link to={'#'} onClick={addCardHandle}>Buy Now</Link>
+                                    )}
+
                                 </div>
                             </div>
                             <div className='s_product_service justify-content-start'>
@@ -670,7 +673,7 @@ const fetchProductData = async (retryCount = 0) => {
                     </div>
                     <div className={`s_table_sec d-lg-flex  px-0 ${tab === 'tab-0' ? '' : 'd-none d-lg-none'}`}>
                         {product.category_name !== 'Watch' ? <>
-                            {console.log(product.category_name)}
+                            {/* {console.log(product.category_name)} */}
                             <div className='s_table s_w_30'>
                                 <h4 className='s_table_head'>Metal Details</h4>
                                 <span className='d-flex justify-content-between'><p>Metal Type</p><b>{product?.metal || '--'}</b></span>
@@ -811,7 +814,7 @@ const fetchProductData = async (retryCount = 0) => {
                                                     : ''}
                                             </div>
                                             <div className='s_review_icon d-flex'>
-                                                {console.warn(item.like_or_dislike)}
+                                                {/* {console.warn(item.like_or_dislike)} */}
                                                 {item.like_or_dislike === 0 ? <>
                                                     <div className="d-flex align-items-center me-4">
                                                         <AiOutlineLike onClick={() => { handleLike(item.id, 1) }} />

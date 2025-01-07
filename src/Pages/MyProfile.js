@@ -429,7 +429,7 @@ useEffect(() => {
                                                     <div className="ds_add-mini">
                                                       <p className="ds_add-mini-box ds_600 ds_cursor mb-0" onClick={()=>handleSingleNewAdd(item.id)}>Edit</p>
                                                       <p className="ds_add-mini-box ds_600 ds_cursor mb-0" onClick={()=>handleDeleteAdd(item.id)}>Delete</p>
-                                                      <p className="ds_add-mini-box ds_600 ds_cursor mb-0" onClick={()=> handleMark(item.id)}>Make as default</p>
+                                                      <p className="ds_add-mini-box ds_600 ds_cursor mb-0" onClick={()=>handleMark(item.id)}>Make as default</p>
                                                     </div>
                                                   )}
                                                </div>
