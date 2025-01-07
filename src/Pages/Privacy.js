@@ -10,8 +10,8 @@ const [data, setData] = useState([])
 
 useEffect(() => {
   const fetchData = async () => {
-    const maxRetries = 3; // Maximum retry attempts
-    const retryDelay = 2000; // Delay in milliseconds between retries
+    const maxRetries = 3; 
+    const retryDelay = 2000; 
 
     const getRequest = async (retryCount = 0) => {
       try {
@@ -25,7 +25,7 @@ useEffect(() => {
       } catch (error) {
         if (error.response && error.response.status === 429 && retryCount < maxRetries) {
           console.warn(`Retrying... Attempt ${retryCount + 1}`);
-          await new Promise((resolve) => setTimeout(resolve, retryDelay)); // Wait before retrying
+          await new Promise((resolve) => setTimeout(resolve, retryDelay)); 
           return getRequest(retryCount + 1);
         } else {
           const errorMessage = error.response
@@ -37,7 +37,7 @@ useEffect(() => {
       }
     };
 
-    await getRequest(); // Call the function
+    await getRequest(); 
   };
 
   fetchData();

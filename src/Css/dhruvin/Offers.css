@@ -169,6 +169,7 @@
     .ds_offer-bg{
         height: 100px;
     }
+    
     .ds_offer-text {
         left: 100px;
     }
@@ -176,7 +177,7 @@
         height: 250px;
     }
     .ds_nack-star{
-        height: 159px;
+        height: 368px;
     }
 }
 
@@ -187,8 +188,18 @@
    .ds_al-desing{
       display: none;
    }
+   .ds_al-img{
+    height: 300px;
+    object-fit: cover;
+   }
+   .ds_al-nack{
+     height: 300px;
+   }
    .ds_hide{
       display: block;
+   }
+   .ds_al-chain{
+      height: 262px;
    }
 }
 

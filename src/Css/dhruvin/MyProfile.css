@@ -341,6 +341,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding: 8px 35px;
     border: 1px solid #4D1F08;
 }
+.ds_order-browse:hover{
+    border: 1px solid #4D1F08;
+    background-color: white;
+    color: #4D1F08;
+}
 
 /* {----------------------- My Order -------------------} */
 .ds_order-inner{
@@ -560,6 +565,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     }
     .ds_oder-img{
         width: 230px;
+        height: 200px;
     }
     .ds_cart-deta{
         margin-top: 10px;

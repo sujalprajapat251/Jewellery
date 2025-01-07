@@ -3,7 +3,9 @@ import '../Css/dhruvin/Payment.css'
 import { MdRefresh } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { loadCaptchaEnginge , LoadCanvasTemplate, validateCaptcha } from 'react-simple-captcha';
 import noteContext from '../Context/noteContext';
+
 
 const Payment = () => {
 
@@ -38,98 +40,73 @@ const Payment = () => {
      })
   },[])
 
-  // const formattedProducts = cardData?.map((item) => ({
-  //   product_id: item?.product_id,
-  //   qty: item?.quantity,
-  //   size: parseInt(item?.size ? item?.size : 2),
-  //   metal: item?.metal,
-  // }));
-
-    // console.log("format " , formattedProducts);
-
-    
-      // console.log("directByNow " , byNowProducts);
-      
-
 
   const handlePay = async () => {
-    const formattedProducts = (cardData || []).map((item) => ({
-      product_id: item?.product_id || 0,
-      qty: item?.quantity || 1,
-      size: parseInt(item?.size || 2),
-      metal: item?.metal || "default_metal",
-    }));
-  
-    const localByNow = JSON.parse(localStorage.getItem("BuyNow")) || [];
-    const byNowProducts = (Array.isArray(localByNow) ? localByNow : [localByNow]).map((item) => ({
-      product_id: item?.product_id || 0,
-      qty: item?.qty || 1,
-      size: parseInt(item?.size || 2),
-      metal: item?.metal || "default_metal",
-    }));
-  
-  
-      // console.log("Hello " , directByNow);
-      
-      // console.log("Final products:", 
-      //   directByNow.length > 0 ? byNowProducts : formattedProducts
-      // );
-
-      // console.log("Final " ,  localByNow?.length !== 0 ? byNowProducts : formattedProducts);
-      
-
-      // console.log("Format products:", 
-      //    formattedProducts
-      // );
-    
-      const maxRetries = 3; 
-      const retryDelay = (retryCount) => Math.pow(2, retryCount) * 1000; 
-      // console.log("fwebnfghweifhwei " , directByNow);
-      
-    
-      const createOrder = async (retryCount = 0) => {
-        try {
-          // console.log("hello" , formattedProducts);
+    if(userInput === captcha) {
+          alert("Captcha Verified! Proceeding to Payment.");
+          const formattedProducts = (cardData || []).map((item) => ({
+            product_id: item?.product_id || 0,
+            qty: item?.quantity || 1,
+            size: parseInt(item?.size || 2),
+            metal: item?.metal || "default_metal",
+          }));
+        
+          const localByNow = JSON.parse(localStorage.getItem("BuyNow")) || [];
+          const byNowProducts = (Array.isArray(localByNow) ? localByNow : [localByNow]).map((item) => ({
+            product_id: item?.product_id || 0,
+            qty: item?.qty || 1,
+            size: parseInt(item?.size || 2),
+            metal: item?.metal || "default_metal",
+          }));
           
-          const response = await axios.post(
-            `${Api}/order/create`,
-            {
-              customer_id: login?.id,
-              order_date: finalDate,
-              order_status: 'pending',
-              total_amount: data?.total,
-              deliveryAddress_id: deliverId,
-              discount: data?.discount ? data?.discount : 0,
-              products: localByNow?.length !== 0 ? byNowProducts : formattedProducts
-
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${store?.access_token}`,
-              },
-            }
-          );
-          alert("Payment SuccessFully")
-          localStorage.setItem("orderId", JSON.stringify(response?.data?.order?.order_id));
-          if(response?.data?.order){
-            console.log('order',response?.data?.order); 
-            // removeCartItem();
-          }
-          navigate("/orderdetails");
-        } catch (error) {
-          if (error.response?.status === 429 && retryCount < maxRetries) {
-            console.warn(`Retrying order creation in ${retryDelay(retryCount)}ms...`);
-            await new Promise((resolve) => setTimeout(resolve, retryDelay(retryCount)));
-            return createOrder(retryCount + 1);
-          }
-    
-          console.error("Error creating order:", error);
-          alert(`Error: ${error.response?.data?.message || error.message}`);
-        }
-
-      };
-    
-      await createOrder();
+            const maxRetries = 3; 
+            const retryDelay = (retryCount) => Math.pow(2, retryCount) * 1000; 
+            
+          
+            const createOrder = async (retryCount = 0) => {
+              try {          
+                const response = await axios.post(
+                  `${Api}/order/create`,
+                  {
+                    customer_id: login?.id,
+                    order_date: finalDate,
+                    order_status: 'pending',
+                    total_amount: data?.total,
+                    deliveryAddress_id: deliverId,
+                    discount: data?.discount ? data?.discount : 0,
+                    products: localByNow?.length !== 0 ? byNowProducts : formattedProducts
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${store?.access_token}`,
+                    },
+                  }
+                );
+                alert("Payment SuccessFully")
+                localStorage.setItem("orderId", JSON.stringify(response?.data?.order?.order_id));
+                if(response?.data?.order){
+                  console.log('order',response?.data?.order); 
+                  // removeCartItem();
+                }
+                navigate("/orderdetails");
+              } catch (error) {
+                if (error.response?.status === 429 && retryCount < maxRetries) {
+                  console.warn(`Retrying order creation in ${retryDelay(retryCount)}ms...`);
+                  await new Promise((resolve) => setTimeout(resolve, retryDelay(retryCount)));
+                  return createOrder(retryCount + 1);
+                }
+          
+                console.error("Error creating order:", error);
+                alert(`Error: ${error.response?.data?.message || error.message}`);
+              }
+      
+            };
+          
+            await createOrder();
+    }
+    else{
+      alert("Invalid CAPTCHA. Please try again.");
+    }
       
       
       setPayCount((payCount)=> payCount + 1)
@@ -208,6 +185,39 @@ const Payment = () => {
     const rzp1 = new window.Razorpay(options);
     rzp1.open();
   };
+
+
+  //  ------------------ Captha  --------------
+
+  const generateCaptcha = () => {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let captcha = "";
+    for (let i = 0; i < 6; i++) {
+      captcha += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return captcha;
+  };
+
+
+  const [captcha, setCaptcha] = useState(generateCaptcha());
+  const [userInput, setUserInput] = useState("");
+
+
+  const handleRefresh = () => {
+    setCaptcha(generateCaptcha());
+    setUserInput(""); 
+  };
+
+
+
+  // const handlePay = () => {
+  //   if (userInput === captcha) {
+  //     alert("Captcha Verified! Proceeding to Payment.");
+  //     // Add further payment logic here
+  //   } else {
+  //     alert("Invalid CAPTCHA. Please try again.");
+  //   }
+  // };
   
 
   return (
@@ -236,14 +246,16 @@ const Payment = () => {
                               </div>
 
                               <div className="row justify-content-center align-items-center">
-                                <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 mt-3">
-                                  <img src={require("../Img/dhruvin/captha.png")} alt="" className="ds_cod-cap" />
+                                <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 mt-3 text-sm-center">
+                                  {/* <img src={require("../Img/dhruvin/captha.png")} alt="" className="ds_cod-cap" /> */}
+                                  <h5 className='ds_cod-captha'>{captcha}</h5>
+
                                 </div>
                                 <div className="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12 mt-3">
-                                  <input type="text" className="ds_cod-input" placeholder="Enter the captcha" />
+                                  <input type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} className="ds_cod-input" placeholder="Enter the captcha" />
                                 </div>
                                 <div className="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 mt-3">
-                                  <MdRefresh className="ds_cod-refresh" />
+                                  <MdRefresh className="ds_cod-refresh ds_cursor" onClick={handleRefresh} />
                                 </div>
                               </div>
 

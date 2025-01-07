@@ -73,7 +73,7 @@ const Cart = () => {
       else{
         let offer =  price * amount / 100;
         console.log("Offer " , offer);
-        setCupanOffer(Math.floor(offer))
+        setCupanOffer(Math.round(offer))
       } 
   }
 
@@ -85,11 +85,11 @@ const Cart = () => {
         setCupanText({text:'Successfully applied coupon!' , toggle:true})
         cupon?.map((element)=>{
           if(element.type === 'fixed'){
-            return setAppyVal(Math.floor(element?.price))
+            return setAppyVal(Math.round(element?.price))
           }
           else{
             const sum =  price * element?.price / 100;
-            return setAppyVal(Math.floor(sum))
+            return setAppyVal(Math.round(sum))
           }
         })
     } else {
@@ -101,7 +101,7 @@ const Cart = () => {
 
   useEffect(() => {
     const discount = cupanOffer ? cupanOffer : appyVal ? appyVal : 0;
-    const tax = Math.floor(price * 3 / 100);
+    const tax = Math.round(price * 3 / 100);
     const total = parseInt(price) - parseInt(discount) +  parseInt(tax)  
   
     setOrderData({
@@ -179,16 +179,16 @@ const Cart = () => {
                       {cartData?.map((element , index)=>{
                         console.log("CartData " , element);
                         
-                          const totalPrice = isNaN(element?.total_price) ? 0 : Math.floor(element?.total_price);
-                          const discountedPrice = isNaN(element?.total_price) ? 0 : Math.floor(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price));
-                          // console.log("doiscountPrice" , Math.floor(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price)))
+                          const totalPrice = isNaN(element?.total_price) ? 0 : Math.round(element?.total_price);
+                          const discountedPrice = isNaN(element?.total_price) ? 0 : Math.round(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price));
+                          // console.log("doiscountPrice" , Math.round(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price)))
                           
                            return(
                               <div key={element?.id} className='ds_cart-box mt-4'>
                                    <div className='text-end'>
                                       <IoIosCloseCircle onClick={()=> handleRemove(element?.id)} className='ds_cart-cancel ds_cursor' />
                                    </div>
-                                  <div className='d-flex justify-content-between flex-wrap'>
+                                  <div className='d-flex justify-content-between ds_cart-main-flex'>
                                      <div>
                                        <div className='d-flex ds_cart-flex'>
                                            <div className='mx-auto'>
@@ -206,7 +206,7 @@ const Cart = () => {
                                      </div>
            
                                      <div className='d-flex ds_cart-manage'>
-                                        <h5 className='ds_color mt-2'>₹{Math.floor(totalPrice)}<span className='ds_cart-less-price ms-2'>₹{discountedPrice}</span></h5>
+                                        <h5 className='ds_color mt-2'>₹{Math.round(totalPrice)}<span className='ds_cart-less-price ms-2'>₹{discountedPrice}</span></h5>
                                           <div  className='w-100 mt-auto d-flex justify-content-end'>
                                           <div className='ds_cart-mul mt-auto '>
                                            <div className='d-flex justify-content-between'>
@@ -330,7 +330,7 @@ const Cart = () => {
                                       </div>
                                       <div className="d-flex justify-content-between">
                                         <p className="ds_tcolor">Tax</p>
-                                        <p className="fw-600 ds_color ds_600">₹{Math.floor(price * 3 / 100)}</p>
+                                        <p className="fw-600 ds_color ds_600">₹{Math.round(price * 3 / 100)}</p>
                                       </div>
                                       <div className="d-flex justify-content-between">
                                         <p className="ds_tcolor">Delivery Charge</p>
@@ -341,7 +341,7 @@ const Cart = () => {
                                     <div className="px-3 mt-3">
                                       <div className="d-flex justify-content-between">
                                         <h5 className="h5 mb-0 ds_color">Total Amount</h5>
-                                        <h5 className="h5 mb-0 ds_color">₹{price + (-cupanOffer ? -cupanOffer : -appyVal) + Math.floor(price * 3 / 100) }</h5>
+                                        <h5 className="h5 mb-0 ds_color">₹{price + (-cupanOffer ? -cupanOffer : -appyVal) + Math.round(price * 3 / 100) }</h5>
                                       </div>
                                       <button onClick={handleProcessCheckout} className="ds_add-proccess mt-5" id="ds_proceed_btn">
                                         Proceed to checkout

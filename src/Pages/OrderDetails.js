@@ -136,7 +136,7 @@ const OrderDetails = () => {
                                 </div>
                               </div>
                             </div>
-                            <p className="ds_con-price ds_600">₹ {Math.floor(element?.total_price * element?.qty)}</p>
+                            <p className="ds_con-price ds_600">₹ {Math.floor(element?.total_price)}</p>
                         </div>
                     )
                   })}

@@ -62,7 +62,7 @@ const ContactFormik = useFormik({
                 <div className="ds_container">
                     <div className='ds_contact-inner'>
                      <div className='row'>
-                        <div className="col-xl-8 col-lg-10 col-md-12 pt-5">
+                        <div className="col-xl-8 col-lg-12 col-md-12 pt-5">
                             <form onSubmit={ContactFormik.handleSubmit} className='position-relative'>
                                <div>
                                   <img src={require("../Img/dhruvin/contact-bg.png")} alt="" width="100%" />

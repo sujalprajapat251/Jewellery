@@ -286,6 +286,12 @@
 }
 }
 
+@media (max-width:992px) {
+    .ds_cart-main-flex{
+        flex-wrap:wrap ;
+    }
+}
+
 @media (max-width:768px) {
 /* {*************** Add New Address Popup ************   } */
     .ds_add-modal{
@@ -324,7 +330,8 @@
     padding-top: 20px;
 }
 .ds_cart-mul{
-    padding: 7px 5px;
+    padding: 7px 0px;
+    width: 99px;
 }
   /* {*************** Add New Address Popup ************   } */
   .ds_add-modal{

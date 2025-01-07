@@ -26,7 +26,6 @@ const Faq = () => {
 
   
     useEffect(() => {
-  
       const faqData = async (retryCount = 0) => {
         try {
           const response = await axios.get(`${Api}/faqs/getall`, {
@@ -79,7 +78,6 @@ const Faq = () => {
   
     }, [])
 
-  
     useEffect(() => {
         let filter = subFaq?.filter((element) => {
             if (footerMain === "shipping") {
@@ -101,8 +99,6 @@ const Faq = () => {
     }, [subFaq, footMain]);
 
     
-    
-
     const handleFilter = (name) => {
         setActiveCategory(name)
         

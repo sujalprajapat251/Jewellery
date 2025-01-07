@@ -322,7 +322,7 @@ const UseContext = (props) => {
     }
 
     myProfileData()
-  }, [editToggle])
+  }, [editToggle , store])
 
 
   // console.log("pro ", profileData);
@@ -480,7 +480,7 @@ const UseContext = (props) => {
 
     addressMyData()
 
-  }, [addMainNewAdd, singleNewAdd, deleteUseEffect])
+  }, [addMainNewAdd, singleNewAdd, deleteUseEffect , store])
 
   useEffect(() => {
     var data = localStorage.getItem("default");
@@ -604,6 +604,7 @@ const UseContext = (props) => {
   const [trackOrderData, setTrackOrderData] = useState([])
   const [trackFilter, seTrackFilter] = useState("")
   const trackKey = JSON.parse(localStorage.getItem("TrackOrderKey")) || null
+  const [cancelOrder, setCancelOrder] = useState(0)
   // ------------ Return Order -------------
   const [returnData, setReturnData] = useState([])
   const [prodID, setProdID] = useState([])
@@ -620,8 +621,8 @@ const UseContext = (props) => {
        try{
             const response = await axios.post(`${Api}/order/getbyuserid`,
                {
-                 customer_id: parseInt(`${store?.id}`)
-                  // customer_id: 1
+                //  customer_id: parseInt(`${store?.id}`)
+                  customer_id: 1
                },
                {
                  headers: {
@@ -631,12 +632,12 @@ const UseContext = (props) => {
             setOrderMain(response?.data?.orders)
             setFilteredOrders(response?.data?.orders);
             setTrackOrderData(
-              response?.data?.orders?.filter((element) => element?.order_number === trackKey)
+              response?.data?.orders?.filter((element) => element?.id === trackKey)
             );
 
 
             const data = response?.data?.orders?.filter(
-              (element) => element?.order_number === ReturnOrderKey
+              (element) => element?.id === ReturnOrderKey
             );
             const First = data?.map((element) => element?.order_items);
             const Second = First[0]?.map((element) => element?.product_id);
@@ -660,7 +661,7 @@ const UseContext = (props) => {
     }
     myOrderData()
 
-  }, [payCount , trackFilter , returnOrderData])
+  }, [store , payCount , trackFilter , returnOrderData , cancelOrder])
 
 
   // ********** Change Password **********
@@ -894,7 +895,7 @@ const UseContext = (props) => {
       // ************ Faq **********
 
       // *************** Track Order Page ************
-      handleTrackOrder, trackFilter, trackOrderData , setTrackOrderData ,
+      handleTrackOrder, trackFilter, trackOrderData , setTrackOrderData , cancelOrder ,setCancelOrder , 
 
       // ************** Return Order *********
       handleReturnOrder, returnOrderData, returnData, setReturnData , prodID, setProdID , orderID, setOrderID ,customerID, setCustomerID ,

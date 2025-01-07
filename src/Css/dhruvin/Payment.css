@@ -57,6 +57,9 @@
 .ds_cod-refresh{
     font-size: 25px;
 }
+.ds_cod-refresh:hover{
+    color: #f30505;
+}
 .ds_cod-pay{
     border: none;
     border-radius: 4px;
@@ -81,6 +84,12 @@
     width: 100%;
     padding: 10px 0px;
     background-color: white;
+}
+.ds_cod-captha{
+    padding: 10px 15px;
+    background: gainsboro;
+    letter-spacing: 5px;
+    width: 130px;
 }
 
 

@@ -72,8 +72,11 @@
 
 @media (max-width:1200px) {
     .ds_contact-box{
-      width: 72%;
-      right: -137px;
+        position: relative;
+        width: 100%;
+        left: 0;
+        right: 0;
+        top: 0;
     }
     .ds_contact-body {
         padding: 30px 19px;

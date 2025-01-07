@@ -148,8 +148,8 @@ useEffect(() => {
                                        <p className=''><span className='ds_tcolor'>Metal :</span> <span className='ds_600'>{element?.metal}</span></p>
                                      </td>
                                      <td className="ds_table-quantity  ds_600">{element?.qty}</td>
+                                     <td className="ds_table-price text-center">{Math.floor(element?.price)}</td>
                                      <td className="ds_table-price text-center">{Math.floor(element?.total_price)}</td>
-                                     <td className="ds_table-price text-center">{Math.floor(element?.total_price * element?.qty)}</td>
                                  </tr>
                             )
                           })}

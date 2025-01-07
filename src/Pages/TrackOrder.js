@@ -7,7 +7,7 @@ import axios from 'axios'
 
 const TrackOrder = () => {
 
-const { Api , store , trackFilter , trackOrderData , setTrackOrderData} = useContext(noteContext)
+const { Api , store , trackFilter , trackOrderData , setTrackOrderData , setCancelOrder} = useContext(noteContext)
 const [trackPopup, setTrackPopup] = useState(false)
 const [trackId, setTrackId] = useState(null)
 const navigate = useNavigate()
@@ -154,7 +154,10 @@ const handleContinue = async () => {
         }
       );
       console.log("Order Cancel Response", response);
+      alert("Order Cancel SuccessFully")
+      setCancelOrder((cancelOrder)=> cancelOrder + 1)
       return response;
+      
     } catch (error) {
       if (error.response?.status === 429 && retries > 0) {
         console.warn(`429 error: Retrying in ${delayTime}ms... (${retries} attempts left)`);
@@ -185,12 +188,12 @@ const handleDownloadInvoice = () => {
       const orderTotal = element?.order_items?.reduce((sum, item) => {
         return sum + (item?.total_price || 0); // Add each item's total_price or 0 if undefined
     }, 0);
-    const tax = Math.floor(orderTotal * 3 / 100)
+    const tax = Math.round(orderTotal * 3 / 100)
     const MyObject = {
-      sub_total:Math.floor(orderTotal),
+      sub_total:Math.round(orderTotal),
       discount:element?.discount,
-      tax: Math.floor(orderTotal * 3 / 100),
-      total: Math.floor(orderTotal + tax)
+      tax: Math.round(orderTotal * 3 / 100),
+      total: Math.round(orderTotal + tax - element?.discount)
     }
     localStorage.setItem("OrderDetails" , JSON.stringify(MyObject))
     const Id = element?.id
@@ -267,7 +270,7 @@ const handleDownloadInvoice = () => {
                             console.log(element);
                             
                              return (
-                                        <div key={index}> 
+                                        <div key={index} className='w-100'> 
                                           <div className='px-4'>
                                             <div className="row">
                                                <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
@@ -298,10 +301,9 @@ const handleDownloadInvoice = () => {
                                             </h6>
                                           {element?.order_items?.map((item)=>{
                                                
-                                               const totalPrice = isNaN(item?.total_price) ? 0 : Math.floor(item?.total_price);
+                                               const totalPrice = isNaN(item?.total_price) ? 0 : Math.round(item?.total_price) + Math.round(item?.total_price * 3 / 100);
                                                console.log("vwerfw " , element);
-                                               
-                                               const discountedPrice = isNaN(item?.total_price) ? 0 : Math.floor(parseInt(item?.total_price * item?.discount / 100) + parseInt(item?.total_price));
+                                               const discountedPrice = isNaN(item?.total_price) ? 0 : parseInt(item?.total_price) + Math.round(parseInt(item?.total_price * item?.discount / 100)   + Math.round(item?.total_price * 3 / 100));
                                              return (
                                               <div className="row px-4 mt-4">
                                                  <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 ">
@@ -309,11 +311,11 @@ const handleDownloadInvoice = () => {
                                                          <div className='d-flex ds_track-manage'>
                                                            <div className='ds_track-center'>
                                                                <img className='ds_TrackOrder-img' src={item?.image[0]} alt="" />
-                                                               <p className='ds_tcolor mb-0 ds_track-mini text-center'>Order Id : <span className='ds_color'>{element?.order_number}</span></p>
+                                                               <p className='ds_tcolor mb-0 ds_track-mini text-center'>Order Id : <span className='ds_color'>{element?.id}</span></p>
                                                            </div>
                                                            <div className='ds_cart-deta mt-xl-0 mt-2'>
                                                               <h6>{item?.product_name}</h6>
-                                                              <h6 className='mb-0'><span className='ds_color'>₹{Math.floor(totalPrice)}</span> <span className='ms-2 ds_order-line-txt'>₹{Math.floor(discountedPrice)}</span></h6>
+                                                              <h6 className='mb-0'><span className='ds_color'>₹{Math.round(totalPrice)}</span> <span className='ms-2 ds_order-line-txt'>₹{Math.round(discountedPrice)}</span></h6>
                                                               <p className='ds_tcolor mb-0'>Metal Color :<span className='ds_color'> {item?.metal_color}</span>  <span className='ds_tcolor ms-4'>Size : </span> <span className='ds_color'>{item?.size}</span></p>
                                                               <p className='ds_tcolor mb-0'>Diamond Quality:  <span className='ds_color'>{item?.diamond_quality}</span></p>
                                                               <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'>{item?.sku}</span></p>
@@ -411,7 +413,7 @@ const handleDownloadInvoice = () => {
                    </div>
                    <h5 className='ds_tcolor mt-3'>Your order has been cancelled successfully.</h5>
                    <div>
-                     <button onClick={()=>navigate("/")} className='ds_cancel-btn mb-3 mt-sm-5 mt-4'>Back To Home</button>
+                        <button onClick={()=>{navigate("/myprofile"); setCancelOrder((cancelOrder)=> cancelOrder + 1)}} className='ds_cancel-btn mb-3 mt-sm-5 mt-4'>Back To Home</button>
                    </div>
                 </div>
            </Modal.Body>

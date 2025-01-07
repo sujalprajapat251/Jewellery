@@ -140,7 +140,7 @@ const Offers = () => {
                            </div>
                         </div>
                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-6">
-                           <div className='mt-md-3 mt-3'>
+                           <div className='mt-md-3 mt-0'>
                              <img className='ds_al-nack' src={require("../Img/dhruvin/alnack.png")} alt="" width="100%" />
                            </div>
                         </div>

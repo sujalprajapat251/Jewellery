@@ -56,9 +56,9 @@ const handleRequestOtp = async (e) => {
           },
         }
       );
-
-      console.log(response);
+      console.log("Order Cancel" , response);
       setReturnOtpToggle(true); 
+      return response
     } catch (error) {
       if (error.response?.status === 429 && retryCount < maxRetries) {
         console.warn(`Retrying request in ${retryDelay(retryCount)}ms...`);
@@ -74,6 +74,10 @@ const handleRequestOtp = async (e) => {
   await requestOtp();
 };
 
+
+
+
+console.log("Return data " , returnData);
 
 // ---------------  Return Order With OTP Popup  ------------------- }
 
@@ -273,10 +277,21 @@ return () => {
 
 const handleDownloadInvoice = () => {
   returnData?.map((element)=>{
-    const hello = element
-    console.log("zzzzzzzzzzzzzzzzzzz " , hello);
-    // localStorage.setItem("OrderDetails" , JSON.stringify())
-    localStorage.setItem("orderId" , JSON.stringify(element?.id))
+    const orderTotal = element?.order_items?.reduce((sum, item) => {
+      return sum + (item?.total_price || 0);
+  }, 0);
+  const tax = Math.round(orderTotal * 3 / 100)
+  const MyObject = {
+    sub_total:Math.round(orderTotal),
+    discount:element?.discount,
+    tax: Math.round(orderTotal * 3 / 100),
+    total: Math.round(orderTotal + tax - element?.discount)
+  }
+  localStorage.setItem("OrderDetails" , JSON.stringify(MyObject))
+  const Id = element?.id
+  localStorage.setItem("orderId", JSON.stringify(Id))
+ console.log(element);
+ 
  })
 }
 
@@ -352,9 +367,7 @@ const handleDownloadInvoice = () => {
                     <div>
                     <div className='ds_track-overflow mt-4'>
                         <div className='ds_track-box ' >
-                           
-                             
-                                     <div> 
+                                     <div className='w-100'> 
                                        <div className='px-4'>
                                          <div className="row">
                                             <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
@@ -381,11 +394,12 @@ const handleDownloadInvoice = () => {
                                        </div>
                                        <div className='ds_track-line mt-1'></div>
                                             <h6 className='fw-bold text-end ds_track-margin mt-2'>
-                                                <Link to="" onClick={handleDownloadInvoice}  className='text-dark'>Download Invoice</Link>
+                                                <Link to="/invoice" onClick={handleDownloadInvoice}  className='text-dark'>Download Invoice</Link>
                                             </h6>
                                        {
                                          returnData[0]?.order_items?.map((item , index)=>{
-                                              
+                                          const totalPrice = isNaN(item?.total_price) ? 0 : Math.round(item?.total_price) + Math.round(item?.total_price * 3 / 100);
+                                          const discountedPrice = isNaN(item?.total_price) ? 0 : parseInt(item?.total_price) + Math.round(parseInt(item?.total_price * item?.discount / 100)   + Math.round(item?.total_price * 3 / 100));
                                             return(
                                               <div className="row px-4 mt-4" key={index}>
                                               <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 ">
@@ -393,11 +407,11 @@ const handleDownloadInvoice = () => {
                                                       <div className='d-flex ds_track-manage'>
                                                         <div className='ds_track-center'>
                                                             <img className='ds_TrackOrder-img' src={item?.image[0]} alt=""  />
-                                                            <p className='ds_tcolor mb-0 ds_track-mini text-center'>Order Id : <span className='ds_color'>{returnData[0]?.order_number}</span></p>
+                                                            <p className='ds_tcolor mb-0 ds_track-mini text-center'>Order Id : <span className='ds_color'>{returnData[0]?.id}</span></p>
                                                         </div>
                                                         <div className='ds_cart-deta mt-xl-0 mt-2'>
                                                            <h6>{item?.product_name}</h6>
-                                                           <h6 className='mb-0'><span className='ds_color'>₹1200</span> <span className='ms-2 ds_order-line-txt'>₹1500</span></h6>
+                                                           <h6 className='mb-0'><span className='ds_color'>₹{totalPrice}</span> <span className='ms-2 ds_order-line-txt'>₹{discountedPrice}</span></h6>
                                                            <p className='ds_tcolor mb-0'>Metal Color :<span className='ds_color'> {item?.metal_color}</span>  <span className='ds_tcolor ms-4'>Size : </span> <span className='ds_color'>{item?.size}</span></p>
                                                            <p className='ds_tcolor mb-0'>Diamond Quality:  <span className='ds_color'>{item?.diamond_quality}</span></p>
                                                            <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'>{item?.sku}</span></p>

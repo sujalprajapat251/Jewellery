@@ -46,12 +46,26 @@ function Login({ isOpen, onClose, onOpen }) {
             // localStorage.setItem("Login", JSON.stringify(data.data.result));
             userHandling(data.data.result);
             onClose();
+
+            Swal.fire({
+                position: "top-end",
+                toast: true,
+                icon: "success",
+                title: "Login Successfully",
+                showConfirmButton: false,
+                timer: 3000,
+                showCloseButton: true,
+                background: "green",
+                color: "white",
+                iconColor: "white"
+            });
         }
         // Example: { email, name, sub (Google UID), picture, etc. }
     };
 
     const handleFailure = (error) => {
         console.error("Login Failed:", error);
+        
     };
 
 
@@ -78,6 +92,7 @@ function Login({ isOpen, onClose, onOpen }) {
                     Swal.fire({
                         position: "top-end",
                         toast: true,
+                        icon: "success",
                         title: "Login Successfully",
                         showConfirmButton: false,
                         timer: 3000,
@@ -88,23 +103,35 @@ function Login({ isOpen, onClose, onOpen }) {
                     });
                     userHandling(response?.data?.result);
                     onClose();
+                    action.resetForm()
                 } else {
-                    alert("Unexpected login response. Please try again.");
                     Swal.fire({
                         position: "top-end",
                         toast: true,
                         icon: "error",
-                        title: "Login Successfully",
+                        title: "Unexpected login response. Please try again.",
                         showConfirmButton: false,
                         timer: 3000,
                         showCloseButton: true,
                         background: "black",
                         color: "white",
-                        iconColor: "green"
+                        iconColor: "red"
                     });
                 }
-            } catch (e) {
-
+            } catch (error) {
+                // alert("Unexpected login response. Please try again.");
+                Swal.fire({
+                    position: "top-end",
+                    toast: true,
+                    icon: "error",
+                    title: error,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    showCloseButton: true,
+                    background: "black",
+                    color: "white",
+                    iconColor: "red"
+                });
             }
         }
     })

@@ -10,6 +10,7 @@ import { Col, Modal, Offcanvas, Row } from 'react-bootstrap';
 import { FiPlus } from 'react-icons/fi';
 import { IoMdClose } from 'react-icons/io';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const MyProfile = () => {
 
@@ -76,11 +77,9 @@ const MyProfile = () => {
        
     };
 
-  // console.log("Zzz" , filteredOrders);
-  
 
-  console.log(profileData);
-  
+    // ******** Saved Card ********
+    const [savePopup, setSavePopup] = useState(false)
 
 
   // **********  Submit Review Popup  ********
@@ -217,12 +216,31 @@ useEffect(() => {
   //  ************ LogOut Modal *********
   const [logOut, setLogOut] = useState(false)
 
-   const handleLogOut = () => {
-    userHandling();
+const handleLogOut = () => {
+    Swal.fire({
+      position: "top-end",
+      toast: true,
+      icon: "error",
+      title: "LogOut SuccessFully",
+      showConfirmButton: false,
+      timer: 3000,
+      showCloseButton: true,
+      background: "black",
+      color: "white",
+      iconColor: "green"
+  });
+   localStorage.removeItem("Faq")
+   localStorage.removeItem("Login")
+   localStorage.removeItem("OrderDetails")
+   localStorage.removeItem("ReturnOrderKey")
+   localStorage.removeItem("TrackOrderKey")
+   localStorage.removeItem("default")
+   localStorage.removeItem("orderId")
+   localStorage.removeItem("rzp_checkout_anon_id")
+   localStorage.removeItem("rzp_device_id")
+      userHandling();
       navigate("/")
-      // window.location.reload()
-
-   }
+  }
 
   return (
     <>
@@ -685,7 +703,7 @@ useEffect(() => {
                                         <div className="row">
                                             <div className="col-xl-4 col-lg-6 col-md-12 col-sm-6 mt-3">
                                                 <div className='ds_card-make position-relative h-100 d-flex flex-column'>
-                                                      <FaRegTrashAlt className='ds_save-trash' data-bs-toggle="modal" data-bs-target="#deletePopup" />
+                                                      <FaRegTrashAlt className='ds_save-trash' onClick={()=> setSavePopup(true)} />
                                                        <div>
                                                           <h5 className='text-light'>Credit Card Balance</h5>
                                                           <h3 className='text-light fw-bold mt-4'>$ 8,850.62</h3>
@@ -741,7 +759,7 @@ useEffect(() => {
                                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                  </div>
                                                  <div className="modal-body pt-0 px-4">
-                                                    <h4 className="modal-title text-center ds_color fw-bold" >Add New Card</h4>
+                                                    <h4 className="modal-title text-center ds_color " >Add New Card</h4>
                                                     <div>
                                                       <div className="row">
                                                           <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
@@ -793,23 +811,18 @@ useEffect(() => {
                                     {/* ---------------- Delete Popup ------------------ */}
                                  <section>
                                     <div>
-                                      <div className="modal fade" id="deletePopup"  aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                       <div className="modal-dialog modal-dialog-centered ds_delete-modal">
-                                         <div className="modal-content">
-                                           <div className="modal-header border-0">
-                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                           </div>
-                                           <div className="modal-body text-center pt-0">
-                                             <h4 className="modal-title ds_color" id="exampleModalLabel">Delete</h4>
+                                    <Modal show={savePopup} onHide={()=> setSavePopup(false)} aria-labelledby="contained-modal-title-vcenter" centered>
+                                        <Modal.Header closeButton className='pb-0 border-0'>
+                                        </Modal.Header>
+                                        <Modal.Body className='text-center pt-0'>
+                                           <h4 className="modal-title ds_color" id="exampleModalLabel">Delete</h4>
                                              <h6>Are you sure you want to delete card?</h6>
                                              <div className='mt-4 pt-3 mb-4'>
                                                 <button className='ds_delete-no'>No</button>
-                                                <button className='ds_delete-yes'>Yes</button>
+                                                <button className='ds_delete-yes ms-sm-0 ms-3'>Yes</button>
                                              </div>
-                                           </div>
-                                         </div>
-                                       </div>
-                                      </div>
+                                        </Modal.Body>
+                                     </Modal>
                                     </div>
                                  </section>
 
@@ -867,16 +880,15 @@ useEffect(() => {
                                                     <p className="ds_order-text ds_600 mb-0">{element?.order_date}</p>
                                                     <p className="ds_order-order mb-0">
                                                       <span className="text-muted">Order Id : </span>
-                                                      <span className="ds_color">{element?.order_number}</span>
+                                                      <span className="ds_color">{element?.id}</span>
                                                     </p>
                                                   </div>
                                                   <h5 className='text-end me-4 mt-2'>
-                                                      <span className="ms-lg-0 ms-md-3 ms-0 ds_order-padding ds_color">{  parseInt(element?.total_amount) - (element?.total_amount * 20 / 100) }</span>
-                                                      <span className="ms-2 ds_order-line-txt">{element?.total_amount}</span>
+                                                      <span className="ms-lg-0 ms-md-3 ms-0 ds_order-padding ds_color">₹{element?.total_amount }</span>
                                                   </h5>
                                                   {
                                                     element?.order_status === "pending" ? (
-                                                         <Link onClick={()=> handleTrackOrder(element?.order_number)} to='/TrackOrder'  className="ds_order-pending text-dark ds_600 pe-3 ms-lg-0 ms-3" >
+                                                         <Link onClick={()=> handleTrackOrder(element?.id)} to='/TrackOrder'  className="ds_order-pending text-dark ds_600 pe-3 ms-lg-0 ms-3" >
                                                             Track Order
                                                         </Link>
                                                     ) : ("")
@@ -884,7 +896,7 @@ useEffect(() => {
 
                                                   {
                                                     element?.order_status === "delivered" ? (
-                                                        <Link  to='/returnOrder'  onClick={() => handleReturnOrder(element?.order_number)} className="ds_order-hover text-dark ds_600 pe-3 ms-lg-0 ms-3" >
+                                                        <Link  to='/returnOrder'  onClick={() => handleReturnOrder(element?.id)} className="ds_order-hover text-dark ds_600 pe-3 ms-lg-0 ms-3" >
                                                             Return Order
                                                         </Link>
                                                     ) : ("")
@@ -954,68 +966,73 @@ useEffect(() => {
                          {/* ************* My WishList ************** */}
                          {
                            mainActive === "My Wishlist" ? (
-                            wishlistData.length === 0 ?
-                            <section>
-                                <div className='ds_empty-inner'>
-                                    <div className='d-flex justify-content-center align-items-center h-100'>
-                                        <div className='text-center'>
-                                            <img src={require("../Img/Sujal/empty_wishlist.png")} alt="" width="20%" />
-                                            <h3 className='ds_color'>Empty Wishlist</h3>
-                                            <p className='mb-0'>Your wishlist is empty please add</p><p> your favourite items to wishlist</p>
+                             <section>
+                                <h3>My Wishlist</h3>
+                              {
+                                wishlistData.length === 0 ?
+                                <section>
+                                    <div className='ds_empty-inner'>
+                                        <div className='d-flex justify-content-center align-items-center h-100'>
+                                            <div className='text-center'>
+                                                <img src={require("../Img/Sujal/empty_wishlist.png")} alt="" width="20%" />
+                                                <h3 className='ds_color'>Empty Wishlist</h3>
+                                                <p className='mb-0'>Your wishlist is empty please add</p><p> your favourite items to wishlist</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </section>
-                            :
-                            <section className=''>
-                                <Row xxl={3} lg={3} md={2} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
-                                    {
-                                        wishlistproducts?.map((ele, id) => {
-                                            const discounted = ((parseFloat(ele?.total_price) * parseFloat(ele?.discount)) / 100).toFixed(2);
-                                            let discountPrice = [];
-                                            if (!isNaN(parseFloat(discounted))) {
-                                                discountPrice = (parseFloat(ele?.total_price) + parseFloat(discounted)).toFixed(2);
-                                            } else {
-                                                discountPrice = ele?.total_price;
-                                            }
-                                            return (
-                                                <Col key={id} className='py-4'>
-                                                    <div className='s_seller_card'>
-                                                        <div className='s_card_img'>
-                                                            <img src={ele?.images[0] || ele?.product_image[0]} className="w-100" alt={ele.title} key={ele.title} />
+                                </section>
+                                :
+                                <section className=''>
+                                    <Row xxl={3} lg={3} md={2} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
+                                        {
+                                            wishlistproducts?.map((ele, id) => {
+                                                const discounted = ((parseFloat(ele?.total_price) * parseFloat(ele?.discount)) / 100).toFixed(2);
+                                                let discountPrice = [];
+                                                if (!isNaN(parseFloat(discounted))) {
+                                                    discountPrice = (parseFloat(ele?.total_price) + parseFloat(discounted)).toFixed(2);
+                                                } else {
+                                                    discountPrice = ele?.total_price;
+                                                }
+                                                return (
+                                                    <Col key={id} className='py-4'>
+                                                        <div className='s_seller_card'>
+                                                            <div className='s_card_img'>
+                                                                <img src={ele?.images[0] || ele?.product_image[0]} className="w-100" alt={ele.title} key={ele.title} />
+                                                            </div>
+                                                            <div className='s_heart_icon s_heart_icons filled' onClick={() => { findWishlistID(ele.id) }}>
+                                                                <GoHeartFill />
+                                                            </div>
+                                                            <div  className='s_card_text'>
+                                                                <Link to={`/productdetail/${ele.product_id || ele.id}`}>
+                                                                    <h5>{ele.product_name}</h5>
+                                                                    <p className='mb-0' key={'p' + id}>
+                                                                        <span className='mx-2' key={'price' + id}>₹{discountPrice}</span>
+                                                                        <strike className="mx-2" key={id}>₹{ele.total_price}</strike>
+                                                                    </p>
+                                                                    <div className='s_rating'>
+                                                                        {
+                                                                            [...Array(5)].map((_, index) => {
+                                                                                if (index < ele.total_rating) {
+                                                                                    return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                                } else {
+                                                                                    return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
+                                                                                    ;
+                                                                                }
+                                                                            })
+                                                                        }
+                                                                    </div>
+                                                                    <div className='s_card_btn'><p className=''>Buy Now</p></div>
+                                                                </Link>
+                                                            </div>
                                                         </div>
-                                                        <div className='s_heart_icon s_heart_icons filled' onClick={() => { findWishlistID(ele.id) }}>
-                                                            <GoHeartFill />
-                                                        </div>
-                                                        <div  className='s_card_text'>
-                                                            <Link to={`/productdetail/${ele.product_id || ele.id}`}>
-                                                                <h5>{ele.product_name}</h5>
-                                                                <p className='mb-0' key={'p' + id}>
-                                                                    <span className='mx-2' key={'price' + id}>₹{discountPrice}</span>
-                                                                    <strike className="mx-2" key={id}>₹{ele.total_price}</strike>
-                                                                </p>
-                                                                <div className='s_rating'>
-                                                                    {
-                                                                        [...Array(5)].map((_, index) => {
-                                                                            if (index < ele.total_rating) {
-                                                                                return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                                                            } else {
-                                                                                return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                                                ;
-                                                                            }
-                                                                        })
-                                                                    }
-                                                                </div>
-                                                                <div className='s_card_btn'><p className=''>Buy Now</p></div>
-                                                            </Link>
-                                                        </div>
-                                                    </div>
-                                                </Col>
-                                            )
-                                        })
-                                    }
-                                </Row>
-                            </section>
+                                                    </Col>
+                                                )
+                                            })
+                                        }
+                                    </Row>
+                                </section>
+                              }
+                             </section>
                            ) : ("")
                          }
 
@@ -1101,7 +1118,7 @@ useEffect(() => {
                          <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                              <div>
                                  <label htmlFor="" className='ds_600 mb-1'>Old Password</label>
-                                 <input type="text" name='Old_Pass' value={ChangePassFormik.values.Old_Pass} onChange={ChangePassFormik.handleChange} onBlur={ChangePassFormik.handleBlur} className='ds_new-input' placeholder="Enter old password" />
+                                 <input type="password" name='Old_Pass' value={ChangePassFormik.values.Old_Pass} onChange={ChangePassFormik.handleChange} onBlur={ChangePassFormik.handleBlur} className='ds_new-input' placeholder="Enter old password" />
                                  { ChangePassFormik.errors.Old_Pass &&  ChangePassFormik.touched.Old_Pass ? <p className='ds_new-danger mb-0'>{ChangePassFormik.errors.Old_Pass}</p> : null}
                              </div>
                          </div>
@@ -1109,7 +1126,7 @@ useEffect(() => {
                          <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                              <div>
                                <label htmlFor="" className='ds_600 mb-1'>New Password</label>
-                               <input type="text" name='New_Pass' value={ChangePassFormik.values.New_Pass} onChange={ChangePassFormik.handleChange} onBlur={ChangePassFormik.handleBlur} className='ds_new-input' placeholder="New password" />
+                               <input type="password" name='New_Pass' value={ChangePassFormik.values.New_Pass} onChange={ChangePassFormik.handleChange} onBlur={ChangePassFormik.handleBlur} className='ds_new-input' placeholder="New password" />
                                { ChangePassFormik.errors.New_Pass &&  ChangePassFormik.touched.New_Pass ? <p className='ds_new-danger mb-0'>{ChangePassFormik.errors.New_Pass}</p> : null}
                              </div>
                          </div>
@@ -1117,7 +1134,7 @@ useEffect(() => {
                          <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                              <div>
                                <label htmlFor="" className='ds_600 mb-1'>Confirm New Password</label>
-                               <input type="text" name='Con_Pass' value={ChangePassFormik.values.Con_Pass} onChange={ChangePassFormik.handleChange} onBlur={ChangePassFormik.handleBlur} className='ds_new-input' placeholder="Enter new password" />
+                               <input type="password" name='Con_Pass' value={ChangePassFormik.values.Con_Pass} onChange={ChangePassFormik.handleChange} onBlur={ChangePassFormik.handleBlur} className='ds_new-input' placeholder="Enter new password" />
                                { ChangePassFormik.errors.Con_Pass &&  ChangePassFormik.touched.Con_Pass ? <p className='ds_new-danger mb-0'>{ChangePassFormik.errors.Con_Pass}</p> : null}
                              </div>
                          </div>
@@ -1148,7 +1165,7 @@ useEffect(() => {
                   <h6>Are you sure you want to Logout?</h6>
                   <div className='mt-4 pt-3 mb-4 ds_log-popup'>
                      <button className='ds_delete-no' onClick={()=> setLogOut(false)}>No</button>
-                     <button className='ds_delete-yes' onClick={handleLogOut}>Yes</button>
+                     <button className='ds_delete-yes ms-sm-0 ms-3' onClick={handleLogOut}>Yes</button>
                   </div>
              </Modal.Body>
            </Modal>

@@ -100,7 +100,7 @@
     .ds_track-box {
         display: flex;
         white-space: nowrap;
-        width: 1000px;
+        width: 950px;
     }
     .ds_track-margin{
         margin-right: 35px;
