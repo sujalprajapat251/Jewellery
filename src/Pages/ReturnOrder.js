@@ -75,7 +75,7 @@ const handleRequestOtp = async (e) => {
 
 
 
-console.log("Return data " , returnData);
+// console.log("Return data " , returnData);
 
 // ---------------  Return Order With OTP Popup  ------------------- }
 
@@ -148,6 +148,11 @@ const handleConfirmReturn = async (e) => {
       alert("Return Order SuccessFully")
       console.log("Final Response: ", response);
       setReturnToggle(false);
+      setReturnPopup({order_id : null})
+      setReturnPopup({phone: ""})
+      setReturnPopup({reason: ""})
+      setReturnOtpVal({otp1:"" , otp2:"" , otp3:"" , otp4:"", otp5:"", otp6:""})
+      setReturnOtpToggle(false); 
     } catch (error) {
       if (error.response?.status === 429 && retryCount < maxRetries) {
         retryCount++;
@@ -167,7 +172,7 @@ const handleConfirmReturn = async (e) => {
 
 
 // ********** Review & Feedback **********
-const [setSubRevToggle] = useState(false)
+const [subRevToggle , setSubRevToggle] = useState(false)
 const [rating, setRating] = useState(0);
 const [uploadedImages, setUploadedImages] = useState([]);
 const [feedback, setFeedback] = useState("")
@@ -288,7 +293,7 @@ const handleDownloadInvoice = () => {
   localStorage.setItem("OrderDetails" , JSON.stringify(MyObject))
   const Id = element?.id
   localStorage.setItem("orderId", JSON.stringify(Id))
- console.log(element);
+//  console.log(element);
  
  })
 }
@@ -396,8 +401,8 @@ const handleDownloadInvoice = () => {
                                             </h6>
                                        {
                                          returnData[0]?.order_items?.map((item , index)=>{
-                                          const totalPrice = isNaN(item?.total_price) ? 0 : Math.round(item?.total_price) + Math.round(item?.total_price * 3 / 100);
-                                          const discountedPrice = isNaN(item?.total_price) ? 0 : parseInt(item?.total_price) + Math.round(parseInt(item?.total_price * item?.discount / 100)   + Math.round(item?.total_price * 3 / 100));
+                                          const totalPrice = isNaN(item?.total_price) ? 0 : Math.round(item?.total_price +  item?.total_price * 3 / 100);
+                                          const discountedPrice = isNaN(item?.total_price) ? 0 : parseInt(item?.total_price) + Math.round(parseInt(item?.total_price * item?.discount / 100 + item?.total_price * 3 / 100));
                                             return(
                                               <div className="row px-4 mt-4" key={index}>
                                               <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 ">

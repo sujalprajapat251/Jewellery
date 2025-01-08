@@ -100,7 +100,7 @@ const UseContext = (props) => {
     const check = wishlistID.includes(id);
     if (!check) {
       // console.log('Product id', id);
-      var res = await axios.post(`${Api}/wishlists/create`, {
+       await axios.post(`${Api}/wishlists/create`, {
         customer_id: store?.id,
         product_id: id,
       }, {
@@ -261,30 +261,12 @@ const UseContext = (props) => {
           }
 
 
-            return item; // Keep item as-is if condition doesn't apply
+            return item; 
         });
 
-        // Optionally log or use the updated cart
         console.log("Updated Cart:", updatedCart);
         setCardData(updatedCart);
-        
-
-        if (response?.data?.cart?.offer) {
-
-          
-          const today = new Date();
-          const SelectOffer = response?.data?.cart?.offer
-          // console.log("CartData " , SelectOffer);
-          
-          // const offersData = response.data.productOffers.filter((offer) => {
-          //     if (!offer.end_date) return false;
-          //     const offerEndDate = new Date(offer.end_date);
-          //     return offer.product_id === parseInt(id) && offerEndDate >= today;
-          // });
-          // setOffers(offersData);
-      }
      
-        const cart = response?.data?.cart || [];
         const totalPrice = updatedCart
                 .map((element) => parseFloat(element?.total_price || 0))
                 .reduce((sum, price) => sum + price, 0);
@@ -359,7 +341,7 @@ const UseContext = (props) => {
   useEffect(() => {
     const myProfileData = async (retryCount = 0) => {
       try {
-        const response = await axios.get(`${Api}/user/get/${store?.id}`, {
+        const response =  await axios.get(`${Api}/user/get/${store?.id}`, {
           headers: {
             Authorization: `Bearer ${store?.access_token}`,
           },
@@ -433,7 +415,6 @@ const UseContext = (props) => {
         )
         .then((response) => {
           // console.log("gnrjghwgkwnfgek ", response);
-
           alert("Profile updated successfully!");
           setEditToggle(false);
         })
@@ -475,7 +456,7 @@ const UseContext = (props) => {
     validationSchema: NewAddSchema,
     onSubmit: async (values, action) => {
       try {
-        const response = await axios.post(`${Api}/deliveryAddress/create`,
+          await axios.post(`${Api}/deliveryAddress/create`,
           {
             customer_id: store?.id,
             address: values.address,
@@ -522,6 +503,8 @@ const UseContext = (props) => {
             Authorization: `Bearer ${store?.access_token}`
           }
         })
+        // console.log("My Address " , response?.data?.deliveryAddress);
+        
         setMyAddData(response?.data?.deliveryAddress)
       }
       catch (error) {
@@ -572,7 +555,7 @@ const UseContext = (props) => {
     validationSchema: NewAddSchema,
     onSubmit: async (values, action) => {
       try {
-        const response = await axios.post(`${Api}/deliveryAddress/update/${singleId}`,
+          await axios.post(`${Api}/deliveryAddress/update/${singleId}`,
           {
             customer_id: `${store?.id}`,
             address: values.address,
@@ -635,7 +618,7 @@ const UseContext = (props) => {
 
   const handleDeleteYes = async () => {
     try {
-      const response = await axios.delete(`${Api}/deliveryAddress/delete/${deleteId}`, {
+       await axios.delete(`${Api}/deliveryAddress/delete/${deleteId}`, {
         headers: {
           Authorization: `Bearer ${store?.access_token}`,
         },
@@ -680,8 +663,8 @@ const UseContext = (props) => {
        try{
             const response = await axios.post(`${Api}/order/getbyuserid`,
                {
-                //  customer_id: parseInt(`${store?.id}`)
-                  customer_id: 1
+                 customer_id: parseInt(`${store?.id}`)
+                  // customer_id: 1
                },
                {
                  headers: {
@@ -702,7 +685,7 @@ const UseContext = (props) => {
             const Second = First[0]?.map((element) => element?.product_id);
             const ID = data.map((element)=> element?.id)
     
-            setCustomerID(response?.data?.orders[0]?.customer_id)
+            setCustomerID(response?.data?.orders[0]?.customer_id ? response?.data?.orders[0]?.customer_id : 1 )
             setOrderID(ID[0])
             setProdID([...new Set(Second)]);
             setReturnData(data);
@@ -719,7 +702,7 @@ const UseContext = (props) => {
           }
     }
     myOrderData()
-
+  // eslint-disable-next-line
   }, [store , payCount , trackFilter , returnOrderData , cancelOrder])
 
 
@@ -737,8 +720,7 @@ const UseContext = (props) => {
     validationSchema: ChangePass,
     onSubmit: async (values, action) => {
       try {
-
-        const response = await axios.post(`${Api}/password/change`,
+          await axios.post(`${Api}/password/change`,
           {
             current_password: values.Old_Pass,
             new_password: values.New_Pass,
@@ -792,41 +774,6 @@ const UseContext = (props) => {
   const [removeId, setRemoveId] = useState(null)
   const [wishId, setWishId] = useState(null)
 
-
-  // useEffect(() => {
-  //   const fetchCartData = async () => {
-  //     try {
-  //       const response = await axios.get(`${Api}/cart/getall`, {
-  //         headers: {
-  //           Authorization: `Bearer ${store?.access_token}`,
-  //         },
-  //       });
-
-  //       console.log("CartData:", response?.data?.cart);
-
-  //       const cart = response?.data?.cart || [];
-  //       const jem = cart.map((element) => element?.product_id);
-
-  //       // console.log("jem:", jem);
-
-  //       cartData(cart);
-
-  //       const hello = cart.map((element) => parseFloat(element?.total_price || 0));
-  //       const totalPrice = hello.reduce((sum, price) => sum + price, 0);
-
-  //       setPrice(Math.floor(totalPrice));
-  //     } catch (error) {
-  //       console.error("Error fetching cart data:", error);
-  //       alert("Failed to fetch cart data.");
-  //     }
-  //   };
-
-  //   fetchCartData();
-
-  //   console.log("Fetching cart data...");
-
-  //   // Dependencies
-  // }, [deleteToggle, priceToggle]);
 
   const handleRemove = (id) => {
     // console.log(id);
@@ -884,8 +831,6 @@ const UseContext = (props) => {
   // };
 
 
-
-
   const handleQuantityChange = async (id, action, cusId, prod_id, offerId) => {
     const updatedCart = cartData?.map((item) => {
       if (item.id === id) {
@@ -923,7 +868,7 @@ const UseContext = (props) => {
     if (!updatedItem) return;
   
     try {
-      const response = await axios.post(
+       await axios.post(
         `${Api}/cart/update/${id}`,
         {
           customer_id: cusId,
@@ -949,11 +894,6 @@ const UseContext = (props) => {
   };
   
 
-  
-
-
-  
-
   const handleFinalRemove = async () => {
     let retryCount = 0;
     const maxRetries = 3;
@@ -961,7 +901,7 @@ const UseContext = (props) => {
 
     const attemptDelete = async () => {
       try {
-        const response = await axios.delete(`${Api}/cart/delete/${removeId}`, {
+       await axios.delete(`${Api}/cart/delete/${removeId}`, {
           headers: {
             Authorization: `Bearer ${store?.access_token}`,
           },
@@ -988,11 +928,7 @@ const UseContext = (props) => {
   };
 
 
-  // ************  Footer **********
-  const [footMain, setFootMain] = useState("")
-  const handleMyFaq = (data) => {
-    setFootMain(data)
-  }
+  
   // console.log("vbweyfgqwfguqwhfiqwhdfiwqhfjqwoifjqwo ", footMain);
 
 
@@ -1038,8 +974,6 @@ const UseContext = (props) => {
       // *********** Payment ***************
       setPayCount,
 
-      // ************  Footer **********
-      handleMyFaq
     }}>
 
       {props.children}

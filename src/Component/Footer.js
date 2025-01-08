@@ -1,6 +1,6 @@
 import { Col, Row } from 'react-bootstrap';
 import '../Css/Sujal/Footer.css';
-import { GrFacebookOption, GrTwitter } from 'react-icons/gr';
+import { GrFacebookOption } from 'react-icons/gr';
 import { FaXTwitter } from 'react-icons/fa6';
 import { PiInstagramLogoFill } from 'react-icons/pi';
 import { Link } from 'react-router-dom';
@@ -8,7 +8,7 @@ import { useContext, useState } from 'react';
 import noteContext from '../Context/noteContext';
 import Login from './Login';
 function Footer() {
-    const { store, handleMyFaq } = useContext(noteContext);
+    const { store } = useContext(noteContext);
 
     // LoginModal handing
     const [showLogin, setShowLogin] = useState(false);

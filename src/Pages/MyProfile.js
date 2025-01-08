@@ -229,6 +229,7 @@ const handleLogOut = () => {
       color: "white",
       iconColor: "green"
   });
+   localStorage.removeItem("BuyNow")
    localStorage.removeItem("Faq")
    localStorage.removeItem("Login")
    localStorage.removeItem("OrderDetails")
@@ -334,11 +335,11 @@ const handleLogOut = () => {
                                     </div>
                                     <div className="col-xl-9 col-lg-9 col-md-9 col-sm-8 col-7">
                                         <div className='ms-3'>
-                                            <p className='ds_600'>{profileData?.name}</p>
+                                            <p className='ds_600 text-capitalize'>{profileData?.name}</p>
                                             <p className='ds_600'>{profileData?.dob }</p>
                                             <p className='ds_600'>{profileData?.phone}</p>
                                             <p className='ds_600 ds_myprofile-scroll overflow-x-auto'>{profileData?.email}</p>
-                                            <p className='ds_600'>{profileData?.gender}</p>
+                                            <p className='ds_600 text-capitalize'>{profileData?.gender}</p>
                                             <p className='ds_600'>{profileData?.pincode}</p>
                                         </div>
                                     </div>
@@ -433,6 +434,7 @@ const handleLogOut = () => {
                                </div>
                                <div className='ds_add-box mt-4'>
                                   <div className='mb-4'>
+                                    {myAddData.length === 0 ? <h3 className='text-center mb-0 mt-5 mb-5 py-5 ds_color'>Address Not Found</h3> : ""}
                                      <div className="row">
                                      { myAddData?.map((item , index)=>{
                                          const isDefault = hello === item?.id;
@@ -454,9 +456,9 @@ const handleLogOut = () => {
                                              </div>
                                              <div className="ds_chan-line mt-2"></div>
                                              <div className="px-3 mt-3">
-                                               <p className="ds_600 mb-2">{item.contact_name}</p>
+                                               <p className="ds_600 mb-2 text-capitalize">{item.contact_name}</p>
                                                <p className="ds_600 mb-2">{item.contact_no}</p>
-                                               <p className="ds_600">{item.address}</p>
+                                               <p className="ds_600 text-capitalize">{item.address}</p>
                                              </div>
                                            </div>
                                          </div>
@@ -857,7 +859,7 @@ const handleLogOut = () => {
                                                          <div>
                                                              <h5>No orders yet</h5>
                                                              <p className='text-muted'>You have no order yet with us keep shopping </p>
-                                                             <button className='ds_order-browse'>Browse Products</button>
+                                                             <Link to="/productlist/all/null" className='ds_order-browse text-decoration-none'>Browse Products</Link>
                                                          </div>
                                                      </div>
                                                   </div>
@@ -868,7 +870,7 @@ const handleLogOut = () => {
                                     <div className=' px-sm-4 pb-4 px-3'>
                                       <div className="row">
                                            { filteredOrders && filteredOrders?.map((element , index)=>{ 
-                                            console.log("wefqwefwefwefwef " , element);
+                                            // console.log("wefqwefwefwefwef " , element);
                                             
                                             
                                              return(
@@ -915,7 +917,7 @@ const handleLogOut = () => {
                                                                  <img className="ds_oder-img" src={item?.image[0]} alt={item?.product_name}  />
                                                                </div>
                                                                <div className="ds_cart-deta">
-                                                                 <h6> {item?.product_name}</h6>
+                                                                 <h6 className='text-capitalize'> {item?.product_name}</h6>
                                                                  {item?.sku && <p className="ds_tcolor mb-0">
                                                                    SKU : <span className="ds_color">{item?.sku}</span>
                                                                  </p>}

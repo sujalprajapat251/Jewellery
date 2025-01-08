@@ -69,7 +69,7 @@ const handleCancelOrder = (id) => {
 //   // eslint-disable-next-line react-hooks/exhaustive-deps
 // }, [trackFilter]);
 
-console.log("tacked",trackOrderData);
+// console.log("tacked",trackOrderData);
 
 // ********** Reason For Cencellation Popup **********
 
@@ -199,7 +199,7 @@ const handleDownloadInvoice = () => {
     localStorage.setItem("OrderDetails" , JSON.stringify(MyObject))
     const Id = element?.id
     localStorage.setItem("orderId", JSON.stringify(Id))
-   console.log(element);
+  //  console.log(element);
    
    })
    
@@ -268,7 +268,7 @@ const handleDownloadInvoice = () => {
                     <div className='ds_track-overflow mt-4'>
                         <div className='ds_track-box '>
                            { trackOrderData?.map((element , index)=>{
-                            console.log(element);
+                            // console.log(element);
                             
                              return (
                                         <div key={index} className='w-100'> 
@@ -302,9 +302,8 @@ const handleDownloadInvoice = () => {
                                             </h6>
                                           {element?.order_items?.map((item)=>{
                                                
-                                               const totalPrice = isNaN(item?.total_price) ? 0 : Math.round(item?.total_price) + Math.round(item?.total_price * 3 / 100);
-                                               console.log("vwerfw " , element);
-                                               const discountedPrice = isNaN(item?.total_price) ? 0 : parseInt(item?.total_price) + Math.round(parseInt(item?.total_price * item?.discount / 100)   + Math.round(item?.total_price * 3 / 100));
+                                               const totalPrice = isNaN(item?.total_price) ? 0 : Math.round(item?.total_price +  item?.total_price * 3 / 100);
+                                               const discountedPrice = isNaN(item?.total_price) ? 0 : parseInt(item?.total_price) + Math.round(parseInt(item?.total_price * item?.discount / 100 + item?.total_price * 3 / 100));
                                              return (
                                               <div className="row px-4 mt-4">
                                                  <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 ">
@@ -315,8 +314,8 @@ const handleDownloadInvoice = () => {
                                                                <p className='ds_tcolor mb-0 ds_track-mini text-center'>Order Id : <span className='ds_color'>{element?.id}</span></p>
                                                            </div>
                                                            <div className='ds_cart-deta mt-xl-0 mt-2'>
-                                                              <h6>{item?.product_name}</h6>
-                                                              <h6 className='mb-0'><span className='ds_color'>₹{Math.round(totalPrice)}</span> <span className='ms-2 ds_order-line-txt'>₹{Math.round(discountedPrice)}</span></h6>
+                                                              <h6 className='text-capitalize'>{item?.product_name}</h6>
+                                                              <h6 className='mb-0'><span className='ds_color'>₹{totalPrice}</span> <span className='ms-2 ds_order-line-txt'>₹{Math.round(discountedPrice)}</span></h6>
                                                               <p className='ds_tcolor mb-0'>Metal Color :<span className='ds_color'> {item?.metal_color}</span>  <span className='ds_tcolor ms-4'>Size : </span> <span className='ds_color'>{item?.size}</span></p>
                                                               <p className='ds_tcolor mb-0'>Diamond Quality:  <span className='ds_color'>{item?.diamond_quality}</span></p>
                                                               <p className='ds_tcolor mb-0'>SKU : <span className='ds_color'>{item?.sku}</span></p>
@@ -329,9 +328,9 @@ const handleDownloadInvoice = () => {
                  
                                                  <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 ">
                                                      <div>
-                                                       <h6 className='fw-bold'>{element?.customer_name}</h6>
+                                                       <h6 className='fw-bold text-capitalize'>{element?.customer_name}</h6>
                                                        <p className='ds_600 mb-1'>+91 {element?.customer_phone}</p>
-                                                       <p className='ds_600' style={{whiteSpace:"wrap"}}>{element?.delivery_address}</p>
+                                                       <p className='ds_600 text-capitalize' style={{whiteSpace:"wrap"}}>{element?.delivery_address}</p>
                                                      </div>
                                                  </div>
                  

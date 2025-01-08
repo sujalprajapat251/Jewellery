@@ -11,8 +11,8 @@ const Faq = () => {
     const [openIndex, setOpenIndex] = useState(null);
     const [data, setData] = useState([])
     const location = useLocation()
-    const [footerMain] = useState(location?.state?.faq)
-    const [returnFooter] = useState(location?.state?.return)
+    const [footerMain , setFooterMain] = useState(location?.state?.faq)
+    const [returnFooter , setReturnFooter] = useState(location?.state?.return)
     const [mainFaq, setMainFaq] = useState([])
     const [subFaq, setSubFaq] = useState([])
     
