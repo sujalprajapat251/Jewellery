@@ -7,7 +7,7 @@ import slider1 from '../Img/Sujal/slider1.png';
 import slider2 from '../Img/Sujal/slider2.png';
 import slider3 from '../Img/Sujal/slider3.png';
 import { Col, Row } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GoHeart, GoHeartFill } from 'react-icons/go';
 import es_card1 from '../Img/Sujal/platinum.png';
 import es_card2 from '../Img/Sujal/design.png';
@@ -17,6 +17,7 @@ import fillstar from '../Img/Sujal/fillStar.png';
 import halfstar from '../Img/Sujal/halfstar.png';
 import nofillstar from '../Img/Sujal/nofillstar.png';
 function Home() {
+    const navigate = useNavigate();
     // backend connection code----------------------------------
 
     // useContext //
@@ -175,15 +176,15 @@ function Home() {
                         {
                             bestseller.slice(0, itemsToShow).map((ele, id) => {
                                 var isSelected = wishlistID.find((items) => items === ele.id);
-                                const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
+                                const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                                 let discountPrice = [];
                                 if (!isNaN(parseFloat(discounted))) {
-                                    discountPrice = (parseFloat(ele.total_price) + parseFloat(discounted)).toFixed(2);
+                                    discountPrice = (parseFloat(ele.price_with_gst) + parseFloat(discounted)).toFixed(0);
                                 } else {
-                                    discountPrice = ele.total_price;
+                                    discountPrice = ele.price_with_gst;
                                 }
                                 return (
-                                    <Col key={id} className='py-4'>
+                                    <Col key={id} className='py-4' onClick={()=>{navigate(`/productdetail/${ele.id}`)}}>
                                         <div className='s_seller_card'>
 
                                             <div className='s_card_img bg-white'>
@@ -225,7 +226,7 @@ function Home() {
                                             <div className='s_card_text' >
                                                 <Link to={`/productdetail/${ele.id}`}>
                                                     <h5>{ele.product_name}</h5>
-                                                    <p className='mb-0'><span className='mx-2'>₹{ele.total_price}</span><strike className="mx-2">₹{discountPrice}</strike></p>
+                                                    <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                     <div className='s_rating'>
                                                         {
                                                             [...Array(5)].map((_, index) => {
@@ -383,26 +384,26 @@ function Home() {
                     <div className='col-lg-8 s_feature_slider '>
                         <div className="s_feature_bgtxt ">FEATURED PRODUCTS</div>
                         <div className='s_cat_slider w-100 pt-0' >
-                            <OwlCarousel className='owl-theme ' loop margin={20} items={4} nav={true} dots={false}
+                            <OwlCarousel className='owl-theme' loop margin={20} items={4} nav={true} dots={false}
                                 responsive={
                                     feature_sliderres
                                 }>
                                 {allProduct.slice(0, 5).map((item, idx) => {
-                                    const discounted = ((parseFloat(item.total_price) * parseFloat(item.discount)) / 100).toFixed(2);
+                                    const discounted = ((parseFloat(item.price_with_gst) * parseFloat(item.discount)) / 100).toFixed(2);
                                     let discountPrice = [];
                                     if (!isNaN(parseFloat(discounted))) {
-                                        discountPrice = (parseFloat(item.total_price) + parseFloat(discounted)).toFixed(2);
+                                        discountPrice = (parseFloat(item.price_with_gst) + parseFloat(discounted)).toFixed(0);
                                     } else {
-                                        discountPrice = item.total_price;
+                                        discountPrice = item.price_with_gst;
                                     }
                                     return (
-                                        <div className='item bg-white' key={idx}  >
+                                        <div className='item bg-white' key={idx}  onClick={()=>{navigate(`/productdetail/${item.id}`)}}>
                                             <div className='shadow'>
                                                 <img src={item.images[0]} className='w-100' alt={`image${idx}`}></img>
                                                 <div className='s_slider_text '>
                                                     <Link to={`/productdetail/${item.id}`}>
                                                         <h5 className='text-capitalize'>{item.product_name}</h5>
-                                                        <p className='mb-0'><span className='mx-2'>₹{item.total_price}</span><strike className="mx-2">₹{discountPrice}</strike></p>
+                                                        <p className='mb-0'><span className='mx-2'>₹ {parseFloat(item.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                         <div className='s_rating'>
                                                             {
                                                                 [...Array(5)].map((_, index) => {
