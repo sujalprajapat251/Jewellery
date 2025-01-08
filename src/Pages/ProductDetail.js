@@ -4,20 +4,20 @@ import video from '../Img/Sujal/ringvideo.mp4'
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import { GoHeart, GoHeartFill } from 'react-icons/go';
-import { FaAngleDown, FaShareAlt } from 'react-icons/fa';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { FaAngleDown, FaShareAlt, } from 'react-icons/fa';
+import { Link, useParams } from 'react-router-dom';
 import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 import noteContext from '../Context/noteContext';
-
 import axios from 'axios';
 import Login from '../Component/Login';
+import fillstar from '../Img/Sujal/fillStar.png';
+import halfstar from '../Img/Sujal/halfstar.png';
+import nofillstar from '../Img/Sujal/nofillstar.png';
 function ProductDetail() {
     const { id } = useParams();
-    const user = JSON.parse(localStorage.getItem("Login"));
     // console.log('user', user?.id);
     let [inStock, setInStock] = useState(true);
     const calledOnce = React.useRef(false);
-    const hasRun = useRef(false);
     // backend connnectivity code ---------------------------------------------------------------
 
     // useContext
@@ -28,27 +28,16 @@ function ProductDetail() {
 
     // Reset the 
     useEffect(() => {
-        // Reset calledOnce when `id` changes
-        calledOnce.current = false;
-        // Call getProduct when `id` changes
-        getProduct(product);
-    }, [id]); // Depend on `id` to trigger effect on id change
+        getProduct();
+        // eslint-disable-next-line
+    }, [id]);
 
     const getProduct = () => {
-        // Prevent execution if already done
-        if (calledOnce.current) return;
-
-        // Execute only the first time after `id` changes
-        if (!calledOnce.current) {
-            // Allow scroll to the top
-            window.scrollTo({ top: 0, behavior: "smooth" });
-
-            // Fetch product data and update the state
-            fetchProductData();
-            setAddToCard(true);
-            calledOnce.current = true; // Set flag to true after execution
-        }
-    };
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        fetchProductData();
+        setAddToCard(true);
+        calledOnce.current = true;
+    }
 
     // fetch product data 
     const fetchProductData = async () => {
@@ -74,8 +63,7 @@ function ProductDetail() {
     const [offers, setOffers] = useState([]);
     const [peopleAlsoSearch, setPeopleAlsoSearch] = useState([]);
     useEffect(() => {
-        if (hasRun.current) return; // Prevent subsequent executions
-        hasRun.current = true; // Mark as run
+        console.log("product", product);
         // get size data
         const array = product?.size_name?.split(',').map(Number).filter((num) => !isNaN(num));
         if (array?.length) {
@@ -95,8 +83,9 @@ function ProductDetail() {
         // fetch product offer using api 
         fetchProductOffer();
 
-
+        // eslint-disable-next-line
     }, [product])
+
     useEffect(() => {
         // alert('');
         // console.error('allProduct = > ', allProduct);
@@ -128,7 +117,12 @@ function ProductDetail() {
                 },
             });
             if (response?.data?.productOffers) {
-                const offersData = response?.data?.productOffers.filter((offer) => offer.product_id === parseInt(id));
+                const today = new Date();
+                const offersData = response.data.productOffers.filter((offer) => {
+                    if (!offer.end_date) return false; // Exclude if end_date is missing
+                    const offerEndDate = new Date(offer.end_date);
+                    return offer.product_id === parseInt(id) && offerEndDate >= today;
+                });
                 setOffers(offersData);
             }
         } catch (error) {
@@ -145,8 +139,9 @@ function ProductDetail() {
                 },
             });
             if (response.data.data) {
-                var data = response.data.data.filter(data => data?.product_id === product?.id);
+                var data = response?.data?.data.filter(data => data?.product_id === product?.id);
                 // console.warn('data', data);
+                console.log('stockData', product);
                 if (data.length === 0) {
                     setInStock(false);
                 }
@@ -389,7 +384,24 @@ function ProductDetail() {
     return (
         <>
             <section className="s_prodetail_page ds_container">
-                <Row lg={2} className='gx-0 gx-md-4 py-4 row-cols-1'>
+            <div className='d-block d-lg-none s_productdetail_sec'>
+                                {store ?
+                                    isSelected ?
+                                        <div className='d-flex justify-content-end s_share_icon' >
+                                            <GoHeartFill className='s_active' onClick={() => { findWishlistID(product.id) }}/>
+                                            <FaShareAlt onClick={() => { setShareModal(true) }} />
+                                        </div> :
+                                        <div className='d-flex justify-content-end s_share_icon' >
+                                            <GoHeart onClick={() => { addwishlistHandler(product.id) }} />
+                                            <FaShareAlt onClick={() => { setShareModal(true) }} />
+                                        </div> :
+                                    <div className='d-flex justify-content-end s_share_icon' >
+                                        <GoHeart onClick={handleLoginShow} />
+                                        <FaShareAlt onClick={() => { setShareModal(true) }} />
+                                    </div>
+                                }
+                            </div>
+                <Row lg={2} className='gx-0 gx-md-4 pt-lg-4 pb-4 row-cols-1'>
                     <Col>
                         {thumbnail !== null ?
                             (() => {
@@ -507,22 +519,24 @@ function ProductDetail() {
                         </div>
                     </Col>
                     <Col>
-                        <div className='s_productdetail_sec'>
-                            {store ?
-                                isSelected ?
-                                    <div className='d-flex justify-content-end s_share_icon' onClick={() => { findWishlistID(product.id) }}>
-                                        <GoHeartFill className='s_active' />
-                                        <FaShareAlt onClick={() => { setShareModal(true) }} />
-                                    </div> :
-                                    <div className='d-flex justify-content-end s_share_icon' onClick={() => { addwishlistHandler(product.id) }}>
-                                        <GoHeart />
-                                        <FaShareAlt onClick={() => { setShareModal(true) }} />
-                                    </div> :
+                        <div className='s_productdetail_sec '>
+                            <div className='d-none d-lg-block'>
+                               {store ?
+                                    isSelected ?
+                                        <div className='d-flex justify-content-end s_share_icon' >
+                                            <GoHeartFill className='s_active' onClick={() => { findWishlistID(product.id) }}/>
+                                            <FaShareAlt onClick={() => { setShareModal(true) }} />
+                                        </div> :
+                                        <div className='d-flex justify-content-end s_share_icon' >
+                                            <GoHeart onClick={() => { addwishlistHandler(product.id) }} />
+                                            <FaShareAlt onClick={() => { setShareModal(true) }} />
+                                        </div> :
                                     <div className='d-flex justify-content-end s_share_icon' >
-                                        <GoHeart onClick={handleLoginShow}/>
+                                        <GoHeart onClick={handleLoginShow} />
                                         <FaShareAlt onClick={() => { setShareModal(true) }} />
                                     </div>
-                            }
+                                }
+                            </div>
                             <h3 className='s_title text-capitalize text-center text-lg-start '>{product?.product_name}</h3>
                             <div className='s_rating d-flex justify-content-center justify-content-lg-start'>
                                 {
@@ -580,7 +594,7 @@ function ProductDetail() {
                                     <div>
                                         <h4>Diamond Quality</h4>
                                         <div className='s_box d-flex  align-items-center'>
-                                            <span>{product?.metal}</span>
+                                            <span>{product?.diamond_quality || '--'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -623,10 +637,10 @@ function ProductDetail() {
                                     )}
                                 </div>
                                 <div className='s_buy_btn'>
-                                    {!addToCard ? (
+                                    {store ? (
                                         <Link to={'/payment'} onClick={() => { buyNowHandling() }}>Buy Now</Link>
                                     ) : (
-                                        <Link to={'#'} onClick={addCardHandle}>Buy Now</Link>
+                                        <Link to={'#'} onClick={handleLoginShow}>Buy Now</Link>
                                     )}
 
                                 </div>
@@ -784,7 +798,6 @@ function ProductDetail() {
 
                         <div className='s_review'>
                             {reviewDetail.slice(0, 4).map((item, index) => {
-
                                 return (
                                     <div className='d-flex s_review_div' key={index}>
                                         <div className='s_review_profile'>
@@ -795,11 +808,15 @@ function ProductDetail() {
                                             <div className='s_rating'>
                                                 {
                                                     [...Array(5)].map((_, index) => {
-                                                        if (index < item.rating) {
-                                                            return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                        const rating = product?.total_rating;
+                                                        if (index < Math.floor(rating)) {
+                                                            return <img alt={index} src={fillstar} />;
+                                                        } else if (index < rating) {
+
+                                                            return <img alt={index} src={halfstar} />;
                                                         } else {
-                                                            return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                            ;
+
+                                                            return <img alt={index} src={nofillstar} />;
                                                         }
                                                     })
                                                 }
@@ -815,7 +832,7 @@ function ProductDetail() {
                                             </div>
                                             <div className='s_review_icon d-flex'>
                                                 {/* {console.warn(item.like_or_dislike)} */}
-                                                {item.like_or_dislike === 0 ? <>
+                                                {store && item.like_or_dislike === 0 ? <>
                                                     <div className="d-flex align-items-center me-4">
                                                         <AiOutlineLike onClick={() => { handleLike(item.id, 1) }} />
                                                         <span>Like</span>
@@ -824,18 +841,18 @@ function ProductDetail() {
                                                         <AiOutlineDislike onClick={() => { handleLike(item.id, 2) }} />
                                                         <span>Dislike</span>
                                                     </div>
-                                                </> : ''}{
-                                                    item.like_or_dislike === 1 ? <>
-                                                        <div className="d-flex align-items-center me-4">
-                                                            <AiFillLike onClick={() => { handleLike(item.id, 1) }} />
-                                                            <span>Like</span>
-                                                        </div>
-                                                        <div className="d-flex align-items-center me-4">
-                                                            <AiOutlineDislike onClick={() => { handleLike(item.id, 2) }} />
-                                                            <span>Dislike</span>
-                                                        </div>
-                                                    </> : ''}
-                                                {item.like_or_dislike === 2 ? <>
+                                                </> : ''}
+                                                {store && item.like_or_dislike === 1 ? <>
+                                                    <div className="d-flex align-items-center me-4">
+                                                        <AiFillLike onClick={() => { handleLike(item.id, 1) }} />
+                                                        <span>Like</span>
+                                                    </div>
+                                                    <div className="d-flex align-items-center me-4">
+                                                        <AiOutlineDislike onClick={() => { handleLike(item.id, 2) }} />
+                                                        <span>Dislike</span>
+                                                    </div>
+                                                </> : ''}
+                                                {store && item.like_or_dislike === 2 ? <>
                                                     <div className="d-flex align-items-center me-4">
                                                         <AiOutlineLike onClick={() => { handleLike(item.id, 1) }} />
                                                         <span>Like</span>
@@ -865,9 +882,14 @@ function ProductDetail() {
                     <div>
                         <Row xxl={5} lg={4} md={3} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                             {
-                                youAlsoLike.slice(0, itemsToShow).map((ele, id) => {
+                                youAlsoLike?.slice(0, itemsToShow).map((ele, id) => {
                                     const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
-                                    const discountPrice = (parseFloat(ele.total_price) - parseFloat(discounted)).toFixed(2);
+                                    let discountPrice = [];
+                                    if (!isNaN(parseFloat(discounted))) {
+                                        discountPrice = (parseFloat(ele.total_price) + parseFloat(discounted)).toFixed(2);
+                                    } else {
+                                        discountPrice = ele.total_price;
+                                    }
                                     return (
                                         <Col key={id} className='py-4'>
                                             <div className='s_seller_card'>
@@ -882,11 +904,15 @@ function ProductDetail() {
                                                         <div className='s_rating'>
                                                             {
                                                                 [...Array(5)].map((_, index) => {
-                                                                    if (index < ele.total_rating) {
-                                                                        return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                    const rating = ele.total_rating;
+                                                                    if (index < Math.floor(rating)) {
+                                                                        return <img alt={index} src={fillstar} />;
+                                                                    } else if (index < rating) {
+
+                                                                        return <img alt={index} src={halfstar} />;
                                                                     } else {
-                                                                        return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                                        ;
+
+                                                                        return <img alt={index} src={nofillstar} />;
                                                                     }
                                                                 })
                                                             }
@@ -911,7 +937,7 @@ function ProductDetail() {
                     <div>
                         <Row xxl={5} lg={4} md={3} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                             {
-                                peopleAlsoSearch.slice(0, itemsToShow).map((ele, id) => {
+                                peopleAlsoSearch?.slice(0, itemsToShow).map((ele, id) => {
                                     const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
                                     let discountPrice = [];
                                     if (!isNaN(parseFloat(discounted))) {
@@ -932,11 +958,15 @@ function ProductDetail() {
                                                         <div className='s_rating'>
                                                             {
                                                                 [...Array(5)].map((_, index) => {
-                                                                    if (index < ele.total_rating) {
-                                                                        return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                    const rating = ele.total_rating;
+                                                                    if (index < Math.floor(rating)) {
+                                                                        return <img alt={index} src={fillstar} />;
+                                                                    } else if (index < rating) {
+
+                                                                        return <img alt={index} src={halfstar} />;
                                                                     } else {
-                                                                        return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                                        ;
+
+                                                                        return <img alt={index} src={nofillstar} />;
                                                                     }
                                                                 })
                                                             }
@@ -949,7 +979,6 @@ function ProductDetail() {
                                     )
                                 })
                             }
-
                         </Row>
                     </div>
                 </div>
@@ -970,7 +999,8 @@ function ProductDetail() {
                 </Modal.Header>
                 <Modal.Body>
                     <div className='s_review'>
-                        {reviewDetail.map((item, index) => {
+                        {reviewDetail?.map((item, index) => {
+                            console.log(item);
                             return (
                                 <div className='d-flex s_review_div' key={index}>
                                     <div className='s_review_profile'>
@@ -981,11 +1011,15 @@ function ProductDetail() {
                                         <div className='s_rating'>
                                             {
                                                 [...Array(5)].map((_, index) => {
-                                                    if (index < item.total_rating) {
-                                                        return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                    const rating = item.rating;
+                                                    if (index < Math.floor(rating)) {
+                                                        return <img alt={index} src={fillstar} />;
+                                                    } else if (index < rating) {
+
+                                                        return <img alt={index} src={halfstar} />;
                                                     } else {
-                                                        return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                        ;
+
+                                                        return <img alt={index} src={nofillstar} />;
                                                     }
                                                 })
                                             }
@@ -1000,7 +1034,7 @@ function ProductDetail() {
                                                 : ''}
 
                                         </div>
-                                        <div className='s_review_icon d-flex'>
+                                        <div className='s_review_icon d-flex '>
                                             {item.like_or_dislike === 0 ? <>
                                                 <div className="d-flex align-items-center me-4">
                                                     <AiOutlineLike onClick={() => { handleLike(item.id, 1) }} />

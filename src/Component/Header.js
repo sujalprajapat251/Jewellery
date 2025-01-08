@@ -241,7 +241,7 @@ function Header() {
                                 <h4 className='s_submenu_head ps-0'>Category</h4>
                                 {allSubCategory.slice(0, 9).map((ele, id) => {
                                     return (
-                                        <Link to={`/productlist/subcategory/${ele.id}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link>
+                                        <Link to={`/productlist/search/${ele.name.endsWith('s') ? ele.name.slice(0, -1) : ele.name}`} key={ele.id}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link>
                                     )
                                 })}
                             </div>

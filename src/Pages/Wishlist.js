@@ -4,6 +4,9 @@ import { Col, Row } from 'react-bootstrap';
 import { GoHeartFill } from 'react-icons/go';
 import { Link } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
+import fillstar from '../Img/Sujal/fillStar.png';
+import halfstar from '../Img/Sujal/halfstar.png';
+import nofillstar from '../Img/Sujal/nofillstar.png';
 function Wishlist() {
     // backend conection code ----------------------------------------------------------------
 
@@ -63,17 +66,21 @@ function Wishlist() {
                                                 <Link to={`/productdetail/${ele.product_id || ele.id}`}>
                                                     <h5>{ele.product_name}</h5>
                                                     <p className='mb-0' key={'p' + id}>
-                                                        <span className='mx-2' key={'price' + id}>₹{discountPrice}</span>
-                                                        <strike className="mx-2" key={id}>₹{ele.total_price}</strike>
+                                                        <span className='mx-2' key={'price' + id}>₹{ele.total_price}</span>
+                                                        <strike className="mx-2" key={id}>₹{discountPrice}</strike>
                                                     </p>
                                                     <div className='s_rating'>
                                                         {
                                                             [...Array(5)].map((_, index) => {
-                                                                if (index < ele.total_rating) {
-                                                                    return <img src={require('../Img/Sujal/fillStar.png')} alt='star' />;
+                                                                const rating = ele.total_rating;
+                                                                if (index < Math.floor(rating)) {
+                                                                    return <img alt={index} src={fillstar} />;
+                                                                } else if (index < rating) {
+
+                                                                    return <img alt={index} src={halfstar} />;
                                                                 } else {
-                                                                    return <img src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                                                    ;
+
+                                                                    return <img alt={index} src={nofillstar} />;
                                                                 }
                                                             })
                                                         }

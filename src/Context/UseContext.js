@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import noteContext from './noteContext'
 import axios from 'axios';
 import { ChangePass, EditProfileSchema, NewAddSchema } from '../schemas';
@@ -6,7 +6,6 @@ import { useFormik } from 'formik';
 const UseContext = (props) => {
   // acces token form localstores
   const calledOnce = React.useRef(false);
-  const hasFetched = useRef(false);
   let [store, setStore] = useState(JSON.parse(localStorage.getItem("Login")))
 
   const userHandling = (user) => {
@@ -89,7 +88,7 @@ const UseContext = (props) => {
   useEffect(() => {
     const sortedFlitter = [...allProduct]
       .sort((a, b) => b.total_rating - a.total_rating);
-    setBestseller(sortedFlitter.slice(0, 12));
+    setBestseller(sortedFlitter);
   }, [allProduct]);
 
 
@@ -156,25 +155,27 @@ const UseContext = (props) => {
   const [cartData, setCardData] = useState([]);
 
   const addToCardhandle = async (product, size, offer) => {
+    console.log("Apicard",offer)
     // console.warn("Cart", cartData);
     let CheckQty = cartData.filter((cart) => {
       return cart.product_id === product?.id
     });
-    // console.error("data", product, size, offer);
-    let unit_price
-    if (offer.length === 0) {
-      unit_price = product?.total_price
-    } else {
-      if (offer?.type === 'percentage') {
-        var discount = (parseFloat(product.total_price) * (parseFloat(offer.discount) / 100)).toFixed(2);
-        unit_price = (parseFloat(product.total_price) - parseFloat(discount)).toFixed(2);
-        // console.error("discount", unit_price);
-      }
-      if (offer?.type === 'fixed') {
-        unit_price = (parseFloat(product.total_price) - parseFloat(offer.price)).toFixed(2);
-        // console.error("discount", unit_price)
-      }
-    }
+
+    // let unit_price
+    // if (offer.length === 0) {
+    //   unit_price = product?.total_price
+    // } else {
+    //   if (offer?.type === 'percentage') {
+    //     var discount = (parseFloat(product.total_price) * (parseFloat(offer.discount) / 100)).toFixed(2);
+    //     unit_price = (parseFloat(product.total_price) - parseFloat(discount)).toFixed(2);
+    //     // console.error("discount", unit_price);
+    //   }
+    //   if (offer?.type === 'fixed') {
+    //     unit_price = (parseFloat(product.total_price) - parseFloat(offer.price)).toFixed(2);
+    //     // console.error("discount", unit_price)
+    //   }
+    // }
+
     console.warn("Check Qty", CheckQty);
     if (CheckQty.length > 0) {
       // update cart logic here
@@ -184,7 +185,8 @@ const UseContext = (props) => {
           product_id: product?.id,
           size: size || 0,
           quantity: CheckQty?.[0]?.quantity + 1,
-          unit_price: unit_price,
+          unit_price: product?.total_price || 0,
+          offer_id: offer?.id || null,
         },
         {
           headers: {
@@ -202,8 +204,9 @@ const UseContext = (props) => {
           customer_id: store?.id,
           product_id: product?.id,
           quantity: CheckQty.length || 1,
-          unit_price: unit_price,
+          unit_price: product?.total_price || 0,
           size: size || 0,
+          offer_id: offer?.id || null,
         },
         {
           headers: {
@@ -287,7 +290,7 @@ const UseContext = (props) => {
     fetchWishlist();
     fetchCardData();
     // eslint-disable-next-line
-  }, [removePopup, priceToggle])
+  }, [removePopup, priceToggle,store])
 
 
 
@@ -488,6 +491,7 @@ const UseContext = (props) => {
       setHello(myAddData[0]?.id);
     }
   }, [myAddData])
+
   const handleMark = (id) => {
     setHello(id);
     localStorage.setItem("default", JSON.stringify(id));
