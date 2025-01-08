@@ -1,37 +1,53 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect,useState } from 'react'
 import '../Css/dhruvin/OrderDetails.css'
 import { RiArrowDropDownLine } from 'react-icons/ri'
 import axios from 'axios'
 import noteContext from '../Context/noteContext'
-import { Link, useNavigate } from 'react-router-dom'
-import Invoice from './Invoice'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
+import { Link } from 'react-router-dom'
 
 const OrderDetails = () => {
 
   const {Api , store} = useContext(noteContext)
   const mydata = JSON.parse(localStorage.getItem("OrderDetails"))
   const Id = JSON.parse(localStorage.getItem("orderId"))
-  const navigate = useNavigate()
   const [orderData, setOrderData] = useState({})
   const [orderItem, setOrderItem] = useState([])
 
-  useEffect(()=>{
-     axios.get(`${Api}/order/get/${Id}`,{
-       headers: {
-         Authorization: `Bearer ${store?.access_token}`
-       }
-     }).then((value)=>{
-        console.log("OrderItem " ,value?.data?.order);
-        setOrderData(value?.data?.order)
-        setOrderItem(value?.data?.order?.order_items)
-     }).catch((error)=>{
-        alert("orderDetails" ,error)
-     })
-  },[])
+  useEffect(() => {
+    const fetchOrderDetails = async (retries = 3, delay = 1000) => {
+      let attempt = 0;
+      while (attempt < retries) {
+        try {
+          const response = await axios.get(`${Api}/order/get/${Id}`, {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`,
+            },
+          });
+          console.log("OrderItem:", response?.data?.order);
+          setOrderData(response?.data?.order);
+          setOrderItem(response?.data?.order?.order_items);
+          return; 
+        } catch (error) {
+          if (error.response?.status === 429 && attempt < retries - 1) {
+            attempt++;
+            const waitTime = delay * 2 ** attempt; 
+            console.warn(`Retrying in ${waitTime}ms... (Attempt ${attempt + 1})`);
+            await new Promise((resolve) => setTimeout(resolve, waitTime)); 
+          } else {
+            console.error("Error fetching order details:", error);
+            alert(`Failed to fetch order details: ${error.message}`);
+            return; 
+          }
+        }
+      }
+    };
 
-  console.log("OrderData" ,orderData);
+    
+    fetchOrderDetails();
+    // eslint-disable-next-line
+  }, []);
+
+  // console.log("OrderData" ,orderData);
   
   const handleView = () => {
      localStorage.removeItem("BuyNow")

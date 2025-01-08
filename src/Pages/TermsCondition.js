@@ -37,6 +37,7 @@ useEffect(() => {
   };
 
   fetchTermsAndConditions();
+  // eslint-disable-next-line
 }, []);
 
 

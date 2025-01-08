@@ -7,7 +7,7 @@ import noteContext from '../Context/noteContext'
 
 const Contact = () => {
 
-const {Api , store} = useContext(noteContext)
+const {Api } = useContext(noteContext)
 
 const contactData = {
   name:'',
@@ -20,8 +20,8 @@ const ContactFormik = useFormik({
   initialValues: contactData,
   validationSchema: ContactSchema,
   onSubmit: async (values, action) => {
-    const maxRetries = 3; // Maximum retry attempts
-    const retryDelay = 2000; // Delay in milliseconds between retries
+    const maxRetries = 3; 
+    const retryDelay = 2000; 
 
     const sendRequest = async (retryCount = 0) => {
       try {

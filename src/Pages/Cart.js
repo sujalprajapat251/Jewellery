@@ -4,10 +4,9 @@ import { IoIosCloseCircle } from 'react-icons/io'
 import { FaMinus, FaPlus } from 'react-icons/fa'
 import { IoBagHandleOutline } from 'react-icons/io5'
 import { GoHome } from 'react-icons/go'
-import { BsThreeDotsVertical } from 'react-icons/bs'
 import { Modal } from 'react-bootstrap'
 import noteContext from '../Context/noteContext'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 const Cart = () => {
@@ -36,18 +35,38 @@ const Cart = () => {
   const myAddress = myAddData.filter((element) => element?.id === mydefault);
   const resolvedAddress = myAddress.length > 0 ? myAddress : yes;
   
-  useEffect(()=>{
-    axios.get(`${Api}/coupons/getall`,{
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`
+  useEffect(() => {
+    const fetchCoupons = async (retries = 3, delay = 1000) => {
+      let attempt = 0;
+      while (attempt < retries) {
+        try {
+          const response = await axios.get(`${Api}/coupons/getall`, {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`,
+            },
+          });
+          console.log("Coupons:", response?.data?.coupons);
+          setCupon(response?.data?.coupons);
+          return; 
+        } catch (error) {
+          if (error.response?.status === 429 && attempt < retries - 1) {
+            attempt++;
+            const waitTime = delay * 2 ** attempt; 
+            console.warn(`Retrying in ${waitTime}ms... (Attempt ${attempt + 1})`);
+            await new Promise((resolve) => setTimeout(resolve, waitTime)); 
+          } else {
+            console.error("Error fetching coupons:", error);
+            alert(`Failed to fetch coupons: ${error.message}`);
+            return; 
+          }
+        }
       }
-    }).then((value)=>{
-      console.log(value?.data?.coupons);
-      setCupon(value?.data?.coupons)
-    }).catch((error)=>{
-      alert("Cupon " , error)
-    })
-  },[])
+    };
+
+    
+    fetchCoupons();
+    // eslint-disable-next-line
+  }, []);
 
   
   const [cupanOffer, setCupanOffer] = useState("")
@@ -57,7 +76,7 @@ const Cart = () => {
     toggle: false
   })
   const [appyVal, setAppyVal] = useState("")
-  const [orderData, setOrderData] = useState({
+  const [orderData,setOrderData] = useState({
     sub_total:'',
     discount:'',
     tax:'',
@@ -111,36 +130,52 @@ const Cart = () => {
       total
     });
   
-    // Storing data in localStorage after the state update
     localStorage.setItem("OrderDetails", JSON.stringify({
       sub_total: price,
       discount,
       tax,
       total
     }));
+
+    // eslint-disable-next-line
+
   }, [price, cupanOffer, appyVal]);
 
   const handleProcessCheckout = () => {
      navigate("/payment")
   }
 
-  useEffect(()=>{
-     const fectchOfferData = async () => {
-        try{
-          const response = await axios.get(`${Api}/offers/getallactive`,{
+  useEffect(() => {
+    const fetchOfferData = async (retries = 3, delay = 1000) => {
+      let attempt = 0;
+      while (attempt < retries) {
+        try {
+          const response = await axios.get(`${Api}/offers/getallactive`, {
             headers: {
-              Authorization: `Bearer ${store?.access_token}`
-            }
-          })
-          console.log("Beta " , response?.data?.offers);
-          setOffer(response?.data?.offers)
+              Authorization: `Bearer ${store?.access_token}`,
+            },
+          });
+          console.log("Offers:", response?.data?.offers);
+          setOffer(response?.data?.offers);
+          return; 
+        } catch (error) {
+          if (error.response?.status === 429 && attempt < retries - 1) {
+            attempt++;
+            const waitTime = delay * 2 ** attempt; 
+            console.warn(`Retrying in ${waitTime}ms... (Attempt ${attempt + 1})`);
+            await new Promise((resolve) => setTimeout(resolve, waitTime)); 
+          } else {
+            console.error("Error fetching offers:", error);
+            alert(`Failed to fetch offers: ${error.message}`);
+            return; 
+          }
         }
-        catch(error){
-        }
-     }
+      }
+    };
 
-     fectchOfferData()
-  },[])
+    fetchOfferData(); 
+    // eslint-disable-next-line
+  }, []);
 
 
 
@@ -181,6 +216,7 @@ const Cart = () => {
                         
                           const totalPrice = isNaN(element?.total_price) ? 0 : Math.round(element?.total_price);
                           const discountedPrice = isNaN(element?.total_price) ? 0 : Math.round(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price));
+                          const offerID = element?.offer?.id ? element?.offer?.id : null
                           // console.log("doiscountPrice" , Math.round(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price)))
                           
                            return(
@@ -211,13 +247,13 @@ const Cart = () => {
                                           <div className='ds_cart-mul mt-auto '>
                                            <div className='d-flex justify-content-between'>
                                                <div>a
-                                                 <FaMinus  onClick={() => handleQuantityChange(element?.id, "subtract" , element?.customer_id , element?.product_id)} className='ds_cart-count text-light ds_cart-ico ds_cursor' />
+                                                 <FaMinus  onClick={() => handleQuantityChange(element?.id, "subtract" , element?.customer_id , element?.product_id , offerID)} className='ds_cart-count text-light ds_cart-ico ds_cursor' />
                                                </div>
                                                <div className='text-light'>
                                                  {element?.quantity}
                                                </div>
                                                <div>
-                                                  <FaPlus onClick={() => handleQuantityChange(element?.id, "add" , element?.customer_id , element?.product_id)} className='ds_cart-count text-light ds_cart-ico ds_cursor' />
+                                                  <FaPlus onClick={() => handleQuantityChange(element?.id, "add" , element?.customer_id , element?.product_id , offerID)} className='ds_cart-count text-light ds_cart-ico ds_cursor' />
                                                </div>
                                            </div>
                                           </div>

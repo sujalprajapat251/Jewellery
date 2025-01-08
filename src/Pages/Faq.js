@@ -11,8 +11,8 @@ const Faq = () => {
     const [openIndex, setOpenIndex] = useState(null);
     const [data, setData] = useState([])
     const location = useLocation()
-    const [footerMain, setFooterMain] = useState(location?.state?.faq)
-    const [returnFooter, setReturnFooter] = useState(location?.state?.return)
+    const [footerMain] = useState(location?.state?.faq)
+    const [returnFooter] = useState(location?.state?.return)
     const [mainFaq, setMainFaq] = useState([])
     const [subFaq, setSubFaq] = useState([])
     
@@ -37,7 +37,7 @@ const Faq = () => {
         }
         catch (error) {
           if (error?.response?.status === 429 && retryCount < 5) {
-            // Retry logic with exponential backoff
+            
             const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
             console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
             setTimeout(() => faqData(retryCount + 1), retryAfter);
@@ -48,7 +48,7 @@ const Faq = () => {
       }
   
       faqData()
-  
+      // eslint-disable-next-line
     }, [])
   
     useEffect(() => {
@@ -75,7 +75,7 @@ const Faq = () => {
       }
   
       subFaqData()
-  
+      // eslint-disable-next-line
     }, [])
 
     useEffect(() => {
@@ -94,8 +94,7 @@ const Faq = () => {
         });
     
         setData(filter);
-        // console.log("Filter " , filter);
-        
+      // eslint-disable-next-line
     }, [subFaq, footMain]);
 
     

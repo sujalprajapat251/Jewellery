@@ -8,13 +8,11 @@ import { Link } from 'react-router-dom'
 import noteContext from '../Context/noteContext'
 import axios from 'axios'
 import { Modal } from 'react-bootstrap'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
 
 const ReturnOrder = () => {
   
 
-const {Api , store , returnOrderData , returnData, setReturnData , prodID, setProdID , orderID, setOrderID , customerID, setCustomerID} = useContext(noteContext)
+const {Api , store  , returnData , prodID , orderID,  customerID, setCustomerID} = useContext(noteContext)
 
 useEffect(() => {
   setReturnPopup((prev) => ({
@@ -169,9 +167,8 @@ const handleConfirmReturn = async (e) => {
 
 
 // ********** Review & Feedback **********
-const [subRevToggle, setSubRevToggle] = useState(false)
+const [setSubRevToggle] = useState(false)
 const [rating, setRating] = useState(0);
-const [reviewId, setReviewId] = useState(null)
 const [uploadedImages, setUploadedImages] = useState([]);
 const [feedback, setFeedback] = useState("")
 
@@ -276,6 +273,7 @@ return () => {
 
 
 const handleDownloadInvoice = () => {
+  // eslint-disable-next-line
   returnData?.map((element)=>{
     const orderTotal = element?.order_items?.reduce((sum, item) => {
       return sum + (item?.total_price || 0);

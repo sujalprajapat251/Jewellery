@@ -229,12 +229,67 @@ const UseContext = (props) => {
       });
       if (response.data.cart) {
         // console.warn('cartData', response);
-        setCardData(response?.data?.cart);
+        // setCardData(response?.data?.cart);
+        const Cart = response?.data?.cart || [];
 
+        const today = new Date("2024-12-23");
+
+        const updatedCart = Cart?.map((item) => {
+            const endDate = new Date(item?.offer?.end_date);
+
+            // Check if the current date is greater than end_date
+            if (today < endDate && item?.offer) {
+              const discount = parseFloat(item.offer.discount) || 0;
+
+              let discountedPrice = parseFloat(item.total_price || 0);
+
+              if (item.offer.type === "fixed") {
+                  // Apply fixed discount
+                  discountedPrice = discountedPrice - discount;
+              } else if (item.offer.type === "percentage") {
+                  // Apply percentage discount
+                  discountedPrice = discountedPrice * (1 - discount / 100);
+              }
+
+              // Ensure discountedPrice is not negative
+              discountedPrice = Math.max(discountedPrice, 0);
+
+              return {
+                  ...item,
+                  total_price: discountedPrice.toFixed(2), 
+              };
+          }
+
+
+            return item; // Keep item as-is if condition doesn't apply
+        });
+
+        // Optionally log or use the updated cart
+        console.log("Updated Cart:", updatedCart);
+        setCardData(updatedCart);
+        
+
+        if (response?.data?.cart?.offer) {
+
+          
+          const today = new Date();
+          const SelectOffer = response?.data?.cart?.offer
+          // console.log("CartData " , SelectOffer);
+          
+          // const offersData = response.data.productOffers.filter((offer) => {
+          //     if (!offer.end_date) return false;
+          //     const offerEndDate = new Date(offer.end_date);
+          //     return offer.product_id === parseInt(id) && offerEndDate >= today;
+          // });
+          // setOffers(offersData);
+      }
+     
         const cart = response?.data?.cart || [];
-        const hello = cart.map((element) => parseFloat(element?.total_price || 0));
-        const totalPrice = hello.reduce((sum, price) => sum + price, 0);
-        setPrice(Math.floor(totalPrice));
+        const totalPrice = updatedCart
+                .map((element) => parseFloat(element?.total_price || 0))
+                .reduce((sum, price) => sum + price, 0);
+
+            setPrice(Math.floor(totalPrice));
 
       }
     } catch (error) {
@@ -781,28 +836,93 @@ const UseContext = (props) => {
     setWishId(wishId[0]);
   }
 
-  const handleQuantityChange = async (id, action, cusId, prod_id) => {
-    // Calculate the updated cart directly
+  // const handleQuantityChange = async (id, action, cusId, prod_id , offerId) => {
+  //   // Calculate the updated cart directly
+  //   const updatedCart = cartData?.map((item) => {
+  //     if (item.id === id) {
+  //       const newQuantity = action === "add" ? item?.quantity + 1 : Math.max(item?.quantity - 1, 1);
+  //       const newPrice = item.price_per_unit * newQuantity; // Calculate new price
+
+  //       return { ...item, quantity: newQuantity, total_price: !isNaN(newPrice) ? newPrice : item?.total_price };
+  //     }
+  //     return item;
+  //   });
+
+  //   // Update UI immediately with validated data
+  //   setCardData(updatedCart);
+
+  //   // Find the updated item to send to the API
+  //   const updatedItem = updatedCart.find((item) => item?.id === id);
+
+  //   if (!updatedItem) return;
+
+  //   try {
+  //     // Send updated quantity to the API
+  //     const response = await axios.post(
+  //       `${Api}/cart/update/${id}`,
+  //       {
+  //         customer_id: cusId,
+  //         product_id: prod_id,
+  //         quantity: updatedItem.quantity,
+  //         product_price: updatedItem.total_price,
+  //         size: updatedItem?.size ? updatedItem?.size : 2,
+  //         offer_id: offerId
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${store?.access_token}`,
+  //         },
+  //       }
+  //     );
+  //     // console.log("Quantity updated:", response.data);
+  //   } catch (error) {
+  //     console.error("Failed to update quantity:", error);
+  //   }
+
+  //   // Optional: Re-trigger UI updates
+  //   setPriceToggle((prev) => prev + 1);
+  // };
+
+
+
+
+  const handleQuantityChange = async (id, action, cusId, prod_id, offerId) => {
     const updatedCart = cartData?.map((item) => {
       if (item.id === id) {
         const newQuantity = action === "add" ? item?.quantity + 1 : Math.max(item?.quantity - 1, 1);
-        const newPrice = item.price_per_unit * newQuantity; // Calculate new price
-
-        return { ...item, quantity: newQuantity, total_price: !isNaN(newPrice) ? newPrice : item?.total_price };
+  
+        // Recalculate price with discounts applied, if any
+        let newPrice = item.price_per_unit * newQuantity;
+  
+        // Apply discount if offer exists
+        if (item?.offer) {
+          const discount = parseFloat(item.offer.discount) || 0;
+  
+          if (item.offer.type === "fixed") {
+            newPrice -= discount;
+          } else if (item.offer.type === "percentage") {
+            newPrice *= 1 - discount / 100;
+          }
+  
+          // Ensure newPrice is not negative
+          newPrice = Math.max(newPrice, 0);
+        }
+  
+        return {
+          ...item,
+          quantity: newQuantity,
+          total_price: parseFloat(newPrice.toFixed(2)), 
+        };
       }
       return item;
     });
-
-    // Update UI immediately with validated data
+  
     setCardData(updatedCart);
-
-    // Find the updated item to send to the API
+  
     const updatedItem = updatedCart.find((item) => item?.id === id);
-
     if (!updatedItem) return;
-
+  
     try {
-      // Send updated quantity to the API
       const response = await axios.post(
         `${Api}/cart/update/${id}`,
         {
@@ -810,7 +930,8 @@ const UseContext = (props) => {
           product_id: prod_id,
           quantity: updatedItem.quantity,
           product_price: updatedItem.total_price,
-          size: updatedItem?.size ? updatedItem?.size : 2
+          size: updatedItem?.size ? updatedItem?.size : 2,
+          offer_id: offerId,
         },
         {
           headers: {
@@ -818,14 +939,20 @@ const UseContext = (props) => {
           },
         }
       );
+      // Optionally log response
       // console.log("Quantity updated:", response.data);
     } catch (error) {
-      console.error("Failed to update quantity:", error);
+      console.error("Failed to update quantity:", error.message);
     }
-
-    // Optional: Re-trigger UI updates
+  
     setPriceToggle((prev) => prev + 1);
   };
+  
+
+  
+
+
+  
 
   const handleFinalRemove = async () => {
     let retryCount = 0;

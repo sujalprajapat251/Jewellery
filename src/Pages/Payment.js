@@ -3,7 +3,6 @@ import '../Css/dhruvin/Payment.css'
 import { MdRefresh } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { loadCaptchaEnginge , LoadCanvasTemplate, validateCaptcha } from 'react-simple-captcha';
 import noteContext from '../Context/noteContext';
 
 
@@ -27,18 +26,37 @@ const Payment = () => {
 
   const finalDate = `${year}-${month}-${day}`
 
-  useEffect(()=>{
-     axios.get(`${Api}/cart/getall`,{
-      headers: {
-        Authorization: `Bearer ${store?.access_token}`
+  useEffect(() => {
+    const fetchCartData = async (retries = 3, delay = 1000) => {
+      let attempt = 0;
+      while (attempt < retries) {
+        try {
+          const response = await axios.get(`${Api}/cart/getall`, {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`,
+            },
+          });
+          console.log("Cart Data:", response?.data?.cart);
+          setCardData(response?.data?.cart);
+          return; 
+        } catch (error) {
+          if (error.response?.status === 429 && attempt < retries - 1) {
+            attempt++;
+            const waitTime = delay * 2 ** attempt; 
+            console.warn(`Retrying in ${waitTime}ms... (Attempt ${attempt + 1})`);
+            await new Promise((resolve) => setTimeout(resolve, waitTime)); 
+          } else {
+            console.error("Error fetching cart data:", error);
+            alert(`Failed to fetch cart data: ${error.message}`);
+            return; 
+          }
+        }
       }
-     }).then((value)=>{
-        console.log(value?.data?.cart);
-        setCardData(value?.data?.cart)
-     }).catch((error)=>{
-        alert("PaymentPage" , error)
-     })
-  },[])
+    };
+
+    fetchCartData();
+    // eslint-disable-next-line
+  }, []);
 
 
   const handlePay = async () => {

@@ -7,7 +7,7 @@ import axios from 'axios'
 
 const TrackOrder = () => {
 
-const { Api , store , trackFilter , trackOrderData , setTrackOrderData , setCancelOrder} = useContext(noteContext)
+const { Api , store  , trackOrderData  , setCancelOrder} = useContext(noteContext)
 const [trackPopup, setTrackPopup] = useState(false)
 const [trackId, setTrackId] = useState(null)
 const navigate = useNavigate()
@@ -184,9 +184,10 @@ const handleContinue = async () => {
 
 // *********** Dwonload Invoice ********
 const handleDownloadInvoice = () => {
+  // eslint-disable-next-line
     trackOrderData?.map((element)=>{
       const orderTotal = element?.order_items?.reduce((sum, item) => {
-        return sum + (item?.total_price || 0); // Add each item's total_price or 0 if undefined
+        return sum + (item?.total_price || 0); 
     }, 0);
     const tax = Math.round(orderTotal * 3 / 100)
     const MyObject = {

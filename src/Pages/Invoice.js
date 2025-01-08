@@ -44,6 +44,7 @@ useEffect(() => {
   };
 
   fetchInvoice();
+  // eslint-disable-next-line
 }, []); 
 
 
