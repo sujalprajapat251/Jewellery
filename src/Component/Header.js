@@ -638,10 +638,10 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist/diamond/price/<25">&lt;25K</Link></p>
-                                                <p><Link to="/productlist/diamond/price/25-50">25K - 50K</Link></p>
-                                                <p><Link to="/productlist/diamond/price/50-100">50K - 1L</Link></p>
-                                                <p><Link to="/productlist/diamond/price/>100">1L & Above</Link></p>
+                                                <p><Link to="/productlist/Diamond/price/<25">&lt;25K</Link></p>
+                                                <p><Link to="/productlist/Diamond/price/25-50">25K - 50K</Link></p>
+                                                <p><Link to="/productlist/Diamond/price/50-100">50K - 1L</Link></p>
+                                                <p><Link to="/productlist/Diamond/price/>100">1L & Above</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>

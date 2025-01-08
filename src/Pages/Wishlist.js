@@ -2,12 +2,13 @@ import { useContext, useEffect, useState } from 'react';
 import '../Css/Sujal/Wishlist.css'
 import { Col, Row } from 'react-bootstrap';
 import { GoHeartFill } from 'react-icons/go';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
 import fillstar from '../Img/Sujal/fillStar.png';
 import halfstar from '../Img/Sujal/halfstar.png';
 import nofillstar from '../Img/Sujal/nofillstar.png';
 function Wishlist() {
+    const navigate = useNavigate();
     // backend conection code ----------------------------------------------------------------
 
     // useContext
@@ -46,15 +47,15 @@ function Wishlist() {
                     <Row xxl={5} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                         {
                             wishlistproducts.map((ele, id) => {
-                                const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
+                                const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                                 let discountPrice = [];
                                 if (!isNaN(parseFloat(discounted))) {
-                                    discountPrice = (parseFloat(ele.total_price) + parseFloat(discounted)).toFixed(2);
+                                    discountPrice = (parseFloat(ele.price_with_gst) + parseFloat(discounted)).toFixed(0);
                                 } else {
-                                    discountPrice = ele.total_price;
+                                    discountPrice = ele.price_with_gst;
                                 }
                                 return (
-                                    <Col key={id} className='py-4'>
+                                    <Col key={id} className='py-4' onClick={()=>{navigate(`/productdetail/${ele.id}`)}}>
                                         <div className='s_seller_card'>
                                             <div className='s_card_img'>
                                                 <img src={ele?.images[0] || ele?.product_image[0]} className="w-100" alt={ele.title} key={ele.title} />
@@ -65,10 +66,7 @@ function Wishlist() {
                                             <div  className='s_card_text'>
                                                 <Link to={`/productdetail/${ele.product_id || ele.id}`}>
                                                     <h5>{ele.product_name}</h5>
-                                                    <p className='mb-0' key={'p' + id}>
-                                                        <span className='mx-2' key={'price' + id}>₹{ele.total_price}</span>
-                                                        <strike className="mx-2" key={id}>₹{discountPrice}</strike>
-                                                    </p>
+                                                    <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                     <div className='s_rating'>
                                                         {
                                                             [...Array(5)].map((_, index) => {

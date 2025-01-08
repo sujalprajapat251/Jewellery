@@ -4,13 +4,13 @@ import { useContext, useEffect, useState } from 'react';
 import MultiRangeSlider from "multi-range-slider-react";
 import { IoCloseOutline } from 'react-icons/io5';
 import { FaAngleDown, FaFilter, } from 'react-icons/fa';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import noteContext from '../Context/noteContext';
 import fillstar from '../Img/Sujal/fillStar.png';
 import halfstar from '../Img/Sujal/halfstar.png';
 import nofillstar from '../Img/Sujal/nofillstar.png';
 function ProductList() {
-
+    const navigate = useNavigate();
     // backend connection code ----------------------------------------------------------------
 
     // useContext 
@@ -29,9 +29,9 @@ function ProductList() {
             // fliter sub category data form allsubcatgeories data
             const data = allSubCategory?.filter((item) => item.id === parseInt(id))
             // console.log(data);
-            const checkRing = data?.[0].name?.includes('Ring') || data?.[0].category_name?.includes('Ring');
+            const checkRing = data?.[0]?.name?.includes('Ring') || data?.[0]?.category_name?.includes('Ring');
             setIsRing(checkRing);
-            const checkWatch = data?.[0].name?.includes('Watch') || data?.[0].category_name?.includes('Watch');
+            const checkWatch = data?.[0]?.name?.includes('Watch') || data?.[0]?.category_name?.includes('Watch');
             setIsWatch(checkWatch);
             setHeading(data?.[0]?.name);
         }
@@ -91,13 +91,13 @@ function ProductList() {
 
                     product = allProduct?.filter((product) => {
                         if (value.includes('>')) {
-                            return product.total_price >= minPrice;
+                            return product.price_with_gst >= minPrice;
                         } else if (value.includes('<')) {
-                            return product.total_price <= minPrice;
+                            return product.price_with_gst <= minPrice;
                         } else {
                             return (
-                                product.total_price >= minPrice &&
-                                product.total_price <= maxPrice
+                                product.price_with_gst >= minPrice &&
+                                product.price_with_gst <= maxPrice
                             );
                         }
                     });
@@ -153,13 +153,13 @@ function ProductList() {
 
                     product = data?.filter((product) => {
                         if (value.includes('>')) {
-                            return product.total_price >= minPrice;
+                            return product.price_with_gst >= minPrice;
                         } else if (value.includes('<')) {
-                            return product.total_price <= minPrice;
+                            return product.price_with_gst <= minPrice;
                         } else {
                             return (
-                                product.total_price >= minPrice &&
-                                product.total_price <= maxPrice
+                                product.price_with_gst >= minPrice &&
+                                product.price_with_gst <= maxPrice
                             );
                         }
                     });
@@ -254,7 +254,7 @@ function ProductList() {
     useEffect(() => {
         if (productlist?.length > 0) {
             const prices = productlist
-                .map(item => item?.total_price)
+                .map(item => item?.price_with_gst)
                 .filter(price => price !== undefined && price !== null);
 
             if (prices.length > 0) {
@@ -290,7 +290,7 @@ function ProductList() {
                 selectedFilters[key].length === 0 || selectedFilters[key].includes(item[key])
             ) &&
             // Check price range
-            (item.total_price >= minValue && item.total_price <= maxValue)
+            (item.price_with_gst >= minValue && item.price_with_gst <= maxValue)
         );
 
         // Sorting data based on selected sort option
@@ -299,10 +299,10 @@ function ProductList() {
             sortedData = filterData.sort((a, b) => b.total_rating - a.total_rating);
         }
         else if (x === 2) {
-            sortedData = filterData.sort((a, b) => a.total_price - b.total_price);
+            sortedData = filterData.sort((a, b) => a.price_with_gst - b.price_with_gst);
         }
         else if (x === 3) {
-            sortedData = filterData.sort((a, b) => b.total_price - a.total_price);
+            sortedData = filterData.sort((a, b) => b.price_with_gst - a.price_with_gst);
         }
         else if (x === 4) {
             sortedData = filterData.reverse();
@@ -349,8 +349,8 @@ function ProductList() {
                                                     onInput={handleInput}
                                                 />
                                                 <div className='d-flex justify-content-between align-items-center flex-wrap s_slider_text'>
-                                                    <p>min : ₹ {minValue}</p>
-                                                    <p>max : ₹ {maxValue}</p>
+                                                    <p>min : ₹ {parseFloat(minValue).toFixed(0)}</p>
+                                                    <p>max : ₹ {parseFloat(maxValue).toFixed(0)}</p>
                                                 </div>
                                             </div>
                                         </Accordion.Body>
@@ -567,16 +567,16 @@ function ProductList() {
                         <Row xxl={4} lg={3} md={2} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-3 '>
                             {
                                 productList_detail.map((ele, id) => {
-
-                                    const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
+                                    // console.log(ele);
+                                    const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                                     let discountPrice = [];
                                     if (!isNaN(parseFloat(discounted))) {
-                                        discountPrice = (parseFloat(ele.total_price) + parseFloat(discounted)).toFixed(2);
+                                        discountPrice = (parseFloat(ele.price_with_gst) + parseFloat(discounted)).toFixed(0);
                                     } else {
-                                        discountPrice = ele.total_price;
+                                        discountPrice = ele.price_with_gst;
                                     }
                                     return (
-                                        <Col key={id} className='py-4 '>
+                                        <Col key={id} className='py-4' onClick={()=>{navigate(`/productdetail/${ele.id}`)}}>
                                             <div className='s_seller_card '>
                                                 <div >
                                                     <div className='s_card_img'>
@@ -586,7 +586,7 @@ function ProductList() {
                                                     <div className='s_card_text'>
                                                         <Link to={`/productdetail/${ele.id}`}>
                                                             <h5>{ele.product_name}</h5>
-                                                            <p className='mb-0'><span className='mx-2'>₹{ele.total_price}</span><strike className="mx-2">₹{discountPrice}</strike></p>
+                                                            <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                             <div className='s_rating'>
                                                             {
                                                             [...Array(5)].map((_, index) => {

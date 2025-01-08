@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import { GoHeart, GoHeartFill } from 'react-icons/go';
 import { FaAngleDown, FaShareAlt, } from 'react-icons/fa';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 import noteContext from '../Context/noteContext';
 import axios from 'axios';
@@ -14,6 +14,7 @@ import fillstar from '../Img/Sujal/fillStar.png';
 import halfstar from '../Img/Sujal/halfstar.png';
 import nofillstar from '../Img/Sujal/nofillstar.png';
 function ProductDetail() {
+    const navigate = useNavigate();
     const { id } = useParams();
     // console.log('user', user?.id);
     let [inStock, setInStock] = useState(true);
@@ -71,7 +72,7 @@ function ProductDetail() {
             setSize(array[0]);
         } else {
             setSizeArray([]);
-            setSize(null);
+            setSize(0);
         }
 
         // outof stock handling 
@@ -257,7 +258,7 @@ function ProductDetail() {
     const sub_total = ((parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)) - discount).toFixed(2);
     const gst_total = (sub_total * 3 / 100).toFixed(2);
     const great_total = ((parseFloat(sub_total) + parseFloat(gst_total)).toFixed(2));
-    const isSelected = wishlistID.find((items) => items === product.id);
+    const isSelected = wishlistID.find((items) => items === product?.id);
     // console.log('price', product.making_charge);
 
     // people also like and people also search for responsive handling
@@ -384,23 +385,23 @@ function ProductDetail() {
     return (
         <>
             <section className="s_prodetail_page ds_container">
-            <div className='d-block d-lg-none s_productdetail_sec'>
-                                {store ?
-                                    isSelected ?
-                                        <div className='d-flex justify-content-end s_share_icon' >
-                                            <GoHeartFill className='s_active' onClick={() => { findWishlistID(product.id) }}/>
-                                            <FaShareAlt onClick={() => { setShareModal(true) }} />
-                                        </div> :
-                                        <div className='d-flex justify-content-end s_share_icon' >
-                                            <GoHeart onClick={() => { addwishlistHandler(product.id) }} />
-                                            <FaShareAlt onClick={() => { setShareModal(true) }} />
-                                        </div> :
-                                    <div className='d-flex justify-content-end s_share_icon' >
-                                        <GoHeart onClick={handleLoginShow} />
-                                        <FaShareAlt onClick={() => { setShareModal(true) }} />
-                                    </div>
-                                }
-                            </div>
+                <div className='d-block d-lg-none s_productdetail_sec'>
+                    {store ?
+                        isSelected ?
+                            <div className='d-flex justify-content-end s_share_icon' >
+                                <GoHeartFill className='s_active' onClick={() => { findWishlistID(product.id) }} />
+                                <FaShareAlt onClick={() => { setShareModal(true) }} />
+                            </div> :
+                            <div className='d-flex justify-content-end s_share_icon' >
+                                <GoHeart onClick={() => { addwishlistHandler(product.id) }} />
+                                <FaShareAlt onClick={() => { setShareModal(true) }} />
+                            </div> :
+                        <div className='d-flex justify-content-end s_share_icon' >
+                            <GoHeart onClick={handleLoginShow} />
+                            <FaShareAlt onClick={() => { setShareModal(true) }} />
+                        </div>
+                    }
+                </div>
                 <Row lg={2} className='gx-0 gx-md-4 pt-lg-4 pb-4 row-cols-1'>
                     <Col>
                         {thumbnail !== null ?
@@ -417,32 +418,53 @@ function ProductDetail() {
                             })()
                             :
                             <div className="s_product_img d-flex flex-wrap">
-                                {product?.images?.slice(0, 4).map((media, index) => {
-                                    // Check if the media source ends with an image or video extension
-                                    const isVideo = /\.(mp4|webm|ogg)$/i.test(media);
-                                    const isImage = /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/i.test(media);
+                                {[...Array(4)].map((_, index) => {
+                                    const media = product?.images?.[index];
+                                    const isVideo = media && /\.(mp4|webm|ogg)$/i.test(media);
+                                    const isImage = media && /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/i.test(media);
 
-                                    return isVideo ? (
-                                        <div className='s_product_video'
-                                            onMouseLeave={handleStopclick}>
-                                            <video ref={videoRef}
-                                                controls={controlsVisible} muted>
-                                                <source src={media} type="video/mp4" />
-                                                Your browser does not support the video tag.
-                                            </video>
-                                            {!controlsVisible && (
-                                                <img
-                                                    src={require("../Img/Sujal/play.png")}
-                                                    alt="play"
-                                                    onClick={handlePlayClick}
-                                                />
-                                            )}
+                                    return media ? (
+                                        isVideo ? (
+                                            <div
+                                                className="s_product_video"
+                                                onMouseLeave={handleStopclick}
+                                                key={`video-${index}`}
+                                            >
+                                                <video ref={videoRef} controls={controlsVisible} muted>
+                                                    <source src={media} type="video/mp4" />
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                                {!controlsVisible && (
+                                                    <img
+                                                        src={require("../Img/Sujal/play.png")}
+                                                        alt="play"
+                                                        onClick={handlePlayClick}
+                                                    />
+                                                )}
+                                            </div>
+                                        ) : isImage ? (
+                                            <div className='s_image'>
+                                            <img
+                                                key={`image-${index}`}
+                                                src={media}
+                                                alt={`product-media-${index}`}
+                                                
+                                                onClick={() => productImgHanddler(index)}
+                                            />
+                                            </div>
+                                        ) : null
+                                    ) : (
+                                        <div className='s_blank_img'>
+                                            <div
+                                                className="s_product-image"
+                                            >
+                                                
+                                            </div>
                                         </div>
-                                    ) : isImage ? (
-                                        <img key={index} src={media} alt={`product-media-${index}`} className="product-image" onClick={() => productImgHanddler(index)} />
-                                    ) : null; // Handle unknown formats
+                                    );
                                 })}
                             </div>
+
                         }
 
                         <div className='s_product_slider'>
@@ -490,7 +512,6 @@ function ProductDetail() {
                                     }}
                                 >
                                     {product.images?.map((item, index) => {
-
                                         const isVideo = /\.(mp4|webm|ogg)$/i.test(item);
                                         return (
                                             <div className='item ' key={index} >
@@ -521,10 +542,10 @@ function ProductDetail() {
                     <Col>
                         <div className='s_productdetail_sec '>
                             <div className='d-none d-lg-block'>
-                               {store ?
+                                {store ?
                                     isSelected ?
                                         <div className='d-flex justify-content-end s_share_icon' >
-                                            <GoHeartFill className='s_active' onClick={() => { findWishlistID(product.id) }}/>
+                                            <GoHeartFill className='s_active' onClick={() => { findWishlistID(product.id) }} />
                                             <FaShareAlt onClick={() => { setShareModal(true) }} />
                                         </div> :
                                         <div className='d-flex justify-content-end s_share_icon' >
@@ -551,7 +572,7 @@ function ProductDetail() {
                                 }
                             </div>
                             <div className='d-flex align-items-center justify-content-center justify-content-lg-start'>
-                                <h2 className='s_price text-center text-lg-start'>₹ {great_total}</h2>
+                                <h2 className='s_price text-center text-lg-start'>₹ {parseFloat(product?.price_with_gst).toFixed(2)}</h2>
                                 {inStock !== true ? <div className='s_stock_status'>out of stack</div> : ''}
                             </div>
                             <p className='s_description text-center text-lg-start'>{product?.description}</p>
@@ -608,7 +629,7 @@ function ProductDetail() {
                                 </div>
                             </div>
                             <div className='s_offers'>
-                                <Accordion defaultActiveKey="0" flush>
+                                <Accordion flush>
                                     <Accordion.Item eventKey="0">
                                         <Accordion.Header>Trending Offers</Accordion.Header>
                                         <Accordion.Body>
@@ -883,15 +904,15 @@ function ProductDetail() {
                         <Row xxl={5} lg={4} md={3} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                             {
                                 youAlsoLike?.slice(0, itemsToShow).map((ele, id) => {
-                                    const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
+                                    const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                                     let discountPrice = [];
                                     if (!isNaN(parseFloat(discounted))) {
-                                        discountPrice = (parseFloat(ele.total_price) + parseFloat(discounted)).toFixed(2);
+                                        discountPrice = (parseFloat(ele.price_with_gst) + parseFloat(discounted)).toFixed(0);
                                     } else {
-                                        discountPrice = ele.total_price;
+                                        discountPrice = ele.price_with_gst;
                                     }
                                     return (
-                                        <Col key={id} className='py-4'>
+                                        <Col key={id} className='py-4' onClick={() => { navigate(`/productdetail/${ele.id}`) }}>
                                             <div className='s_seller_card'>
                                                 <div className='s_card_img'>
                                                     <img src={ele.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
@@ -900,7 +921,7 @@ function ProductDetail() {
                                                 <div className='s_card_text'>
                                                     <Link to={`/productdetail/${ele.id}`}>
                                                         <h5>{ele.product_name}</h5>
-                                                        <p className='mb-0'><span className='mx-2'>₹{discountPrice}</span><strike className="mx-2">₹{ele.total_price}</strike></p>
+                                                        <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                         <div className='s_rating'>
                                                             {
                                                                 [...Array(5)].map((_, index) => {
@@ -938,15 +959,15 @@ function ProductDetail() {
                         <Row xxl={5} lg={4} md={3} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                             {
                                 peopleAlsoSearch?.slice(0, itemsToShow).map((ele, id) => {
-                                    const discounted = ((parseFloat(ele.total_price) * parseFloat(ele.discount)) / 100).toFixed(2);
+                                    const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                                     let discountPrice = [];
                                     if (!isNaN(parseFloat(discounted))) {
-                                        discountPrice = (parseFloat(ele.total_price) + parseFloat(discounted)).toFixed(2);
+                                        discountPrice = (parseFloat(ele.price_with_gst) + parseFloat(discounted)).toFixed(0);
                                     } else {
-                                        discountPrice = ele.total_price;
+                                        discountPrice = ele.price_with_gst;
                                     }
                                     return (
-                                        <Col key={id} className='py-4'>
+                                        <Col key={id} className='py-4' onClick={() => { navigate(`/productdetail/${ele.id}`) }}>
                                             <div className='s_seller_card'>
                                                 <div className='s_card_img'>
                                                     <img src={ele?.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
@@ -954,7 +975,7 @@ function ProductDetail() {
                                                 <div className='s_card_text'>
                                                     <Link to={`/productdetail/${ele.id}`}>
                                                         <h5>{ele.product_name}</h5>
-                                                        <p className='mb-0'><span className='mx-2'>₹ {discountPrice}</span><strike className="mx-2">₹ {ele.total_price}</strike></p>
+                                                        <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                         <div className='s_rating'>
                                                             {
                                                                 [...Array(5)].map((_, index) => {
