@@ -4,7 +4,7 @@ import video from '../Img/Sujal/ringvideo.mp4'
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import { GoHeart, GoHeartFill } from 'react-icons/go';
-import { FaAngleDown, FaShareAlt, } from 'react-icons/fa';
+import { FaAngleDown, FaAngleUp, FaShareAlt, } from 'react-icons/fa';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 import noteContext from '../Context/noteContext';
@@ -63,6 +63,7 @@ function ProductDetail() {
     const [youAlsoLike, setYouAlsoLike] = useState([]);
     const [offers, setOffers] = useState([]);
     const [peopleAlsoSearch, setPeopleAlsoSearch] = useState([]);
+    const [sizeOpen,setSizeOpen] = useState(false)
     useEffect(() => {
         console.log("product", product);
         // get size data
@@ -604,11 +605,15 @@ function ProductDetail() {
                                         <h4>Size</h4>
                                         <div className='s_box d-flex justify-content-between align-items-center'>
                                             <p className='mb-0'>{size}</p>
-                                            <FaAngleDown className='ms-auto' />
+                                            {sizeOpen ? 
+                                            <FaAngleUp className='ms-auto' style={{cursor:'pointer'}} onClick={()=>{setSizeOpen(false)}}/>
+                                            :
+                                            <FaAngleDown className='ms-auto' style={{cursor:'pointer'}} onClick={()=>{setSizeOpen(true)}}/>
+                                            }
                                             <div className='s_size_menu'>
-                                                {sizeArray.map((item) => {
+                                                { sizeOpen ? sizeArray.map((item) => {
                                                     return <div key={item} className={`s_size_box ${item === size ? 'active' : ''}`} onClick={() => { setSize(item) }}>{item}</div>
-                                                })}
+                                                }):''}
                                             </div>
                                         </div>
                                     </div>
@@ -711,27 +716,27 @@ function ProductDetail() {
                             {/* {console.log(product.category_name)} */}
                             <div className='s_table s_w_30'>
                                 <h4 className='s_table_head'>Metal Details</h4>
-                                <span className='d-flex justify-content-between'><p>Metal Type</p><b>{product?.metal || '--'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Metal Type</p><b>{product?.metal || '-'}</b></span>
                                 <span className='d-flex justify-content-between'><p>Weight</p><b>{product?.weight && product?.gram
                                     ? `${(parseFloat(product.weight) + parseFloat(product.gram)).toFixed(2)}g`
                                     : `${product.weight}g`} </b></span>
-                                <span className='d-flex justify-content-between'><p>Color</p><b>{product?.metal_color || '--'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Color</p><b>{product?.metal_color || '-'}</b></span>
                             </div>
                             <div className='s_table s_w_40'>
                                 <h4 className='s_table_head'>Diamond Details</h4>
-                                <span className='d-flex justify-content-between'><p>Clarity</p><b>{product?.clarity || '--'}</b></span>
-                                <span className='d-flex justify-content-between'><p>Setting</p><b>{product?.diamond_setting || '--'}</b></span>
-                                <span className='d-flex justify-content-between'><p>Color</p><b>{product?.diamond_color || '--'}</b></span>
-                                <span className='d-flex justify-content-between'><p>Shape</p><b>{product?.diamond_shape || '--'}</b></span>
-                                <span className='d-flex justify-content-between'><p>No. of Diamonds</p><b>{product?.no_of_diamonds || '--'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Clarity</p><b>{product?.clarity || '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Setting</p><b>{product?.diamond_setting || '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Color</p><b>{product?.diamond_color || '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Shape</p><b>{product?.diamond_shape || '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>No. of Diamonds</p><b>{product?.no_of_diamonds || '-'}</b></span>
                             </div>
                             <div className='s_table s_w_30'>
                                 <h4 className='s_table_head'>General Details</h4>
-                                <span className='d-flex justify-content-between'><p>Jewellry Type</p><b>{product?.category_name || '--'}</b></span>
-                                <span className='d-flex justify-content-between'><p>Gender</p><b>{product?.gender || '--'}</b></span>
-                                <span className='d-flex justify-content-between'><p>Collection</p><b>{product?.collection || '--'}</b></span>
-                                <span className='d-flex justify-content-between'><p>Occasion</p><b>{product?.occasion || '--'}</b></span>
-                                <span className='d-flex justify-content-between word-wrap'><p>Size</p><b>{sizeArray.map((item) => item).join(', ') || '--'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Jewellry Type</p><b>{product?.category_name || '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Gender</p><b>{product?.gender || '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Collection</p><b>{product?.collection || '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Occasion</p><b>{product?.occasion || '-'}</b></span>
+                                <span className='d-flex justify-content-between word-wrap'><p>Size</p><b>{sizeArray.map((item) => item).join(', ') || '-'}</b></span>
                             </div>
                         </> : <>
                             <div className='s_table s_w_30'>
@@ -1056,7 +1061,7 @@ function ProductDetail() {
 
                                         </div>
                                         <div className='s_review_icon d-flex '>
-                                            {item.like_or_dislike === 0 ? <>
+                                            { store && item.like_or_dislike === 0 ? <>
                                                 <div className="d-flex align-items-center me-4">
                                                     <AiOutlineLike onClick={() => { handleLike(item.id, 1) }} />
                                                     <span>Like</span>
@@ -1065,8 +1070,8 @@ function ProductDetail() {
                                                     <AiOutlineDislike onClick={() => { handleLike(item.id, 2) }} />
                                                     <span>Dislike</span>
                                                 </div>
-                                            </> : ''}{
-                                                item.like_or_dislike === 1 ? <>
+                                            </> : ''}
+                                            { store && item.like_or_dislike === 1 ? <>
                                                     <div className="d-flex align-items-center me-4">
                                                         <AiFillLike onClick={() => { handleLike(item.id, 1) }} />
                                                         <span>Like</span>
@@ -1076,7 +1081,7 @@ function ProductDetail() {
                                                         <span>Dislike</span>
                                                     </div>
                                                 </> : ''}
-                                            {item.like_or_dislike === 2 ? <>
+                                            {store && item.like_or_dislike === 2 ? <>
                                                 <div className="d-flex align-items-center me-4">
                                                     <AiOutlineLike onClick={() => { handleLike(item.id, 1) }} />
                                                     <span>Like</span>

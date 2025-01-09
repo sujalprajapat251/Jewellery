@@ -219,6 +219,8 @@ const UseContext = (props) => {
     }
   }
 
+
+  const [cartID , setCartID] =useState([])
   // funtion called item aaded or removed
   const fetchCardData = async (retryCount = 0) => {
     try {
@@ -228,17 +230,20 @@ const UseContext = (props) => {
         },
       });
       if (response.data.cart) {
+        var cartID = response.data.cart.filter((item) => item.product_id)
+        .map((item) => item.id);
+        setCartID(cartID);
+        console.log("cartID",cartID)
         // console.warn('cartData', response);
         // setCardData(response?.data?.cart);
         const Cart = response?.data?.cart || [];
 
-        const today = new Date("2024-12-23");
-
+        const today = new Date();
         const updatedCart = Cart?.map((item) => {
             const endDate = new Date(item?.offer?.end_date);
 
             // Check if the current date is greater than end_date
-            if (today < endDate && item?.offer) {
+            if (today <= endDate && item?.offer) {
               const discount = parseFloat(item.offer.discount) || 0;
 
               let discountedPrice = parseFloat(item.total_price || 0);
@@ -266,6 +271,18 @@ const UseContext = (props) => {
 
         console.log("Updated Cart:", updatedCart);
         setCardData(updatedCart);
+        if (response?.data?.cart?.offer) {
+          const today = new Date();
+          const SelectOffer = response?.data?.cart?.offer
+          // console.log("CartData " , SelectOffer);
+          
+          // const offersData = response.data.productOffers.filter((offer) => {
+          //     if (!offer.end_date) return false;
+          //     const offerEndDate = new Date(offer.end_date);
+          //     return offer.product_id === parseInt(id) && offerEndDate >= today;
+          // });
+          // setOffers(offersData);
+      }
      
         const totalPrice = updatedCart
                 .map((element) => parseFloat(element?.total_price || 0))
@@ -277,6 +294,13 @@ const UseContext = (props) => {
     } catch (error) {
         console.error("Failed to fetch data:", error.message);
     }
+  }
+
+  const removeCart = (ID) => {
+    axios.delete(`${Api}/cart/delete/${ID}`,{headers: {
+      Authorization: `Bearer ${store?.access_token}`,
+    }})
+    fetchCardData();
   }
 
   //   useEffect(() => {
@@ -862,7 +886,7 @@ const UseContext = (props) => {
       return item;
     });
   
-    setCardData(updatedCart);
+    // setCardData(updatedCart);
   
     const updatedItem = updatedCart.find((item) => item?.id === id);
     if (!updatedItem) return;
@@ -972,7 +996,7 @@ const UseContext = (props) => {
       removeId, setRemoveId, wishId, setWishId, handleRemove, handleQuantityChange, handleFinalRemove, cartData, setCardData,
 
       // *********** Payment ***************
-      setPayCount,
+      setPayCount,cartID,removeCart,
 
     }}>
 

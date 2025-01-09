@@ -323,7 +323,7 @@ function ProductList() {
     const handleShow = () => setShow(true);
     return (
         <>
-            <section className="d-md-flex ds_container">
+            <section className="d-md-flex ds_container mb-5">
                 {/* default fliter */}
                 {isRing === false && isWatch === false ?
                     <Offcanvas show={show} onHide={handleClose} responsive="md" className="s_fliter_offcanvas">
@@ -410,8 +410,8 @@ function ProductList() {
                                                     onInput={handleInput}
                                                 />
                                                 <div className='d-flex justify-content-between align-items-center flex-wrap s_slider_text'>
-                                                    <p>min : ₹ {minValue}</p>
-                                                    <p>max : ₹ {maxValue}</p>
+                                                <p>min : ₹ {parseFloat(minValue).toFixed(0)}</p>
+                                                <p>max : ₹ {parseFloat(maxValue).toFixed(0)}</p>
                                                 </div>
                                             </div>
                                         </Accordion.Body>
@@ -471,8 +471,8 @@ function ProductList() {
                                                     onInput={handleInput}
                                                 />
                                                 <div className='d-flex justify-content-between align-items-center flex-wrap s_slider_text'>
-                                                    <p>min : ₹ {minValue}</p>
-                                                    <p>max : ₹ {maxValue}</p>
+                                                <p>min : ₹ {parseFloat(minValue).toFixed(0)}</p>
+                                                <p>max : ₹ {parseFloat(maxValue).toFixed(0)}</p>
                                                 </div>
                                             </div>
                                         </Accordion.Body>
