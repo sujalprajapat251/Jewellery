@@ -65,7 +65,7 @@ function ProductDetail() {
     const [peopleAlsoSearch, setPeopleAlsoSearch] = useState([]);
     const [sizeOpen,setSizeOpen] = useState(false)
     useEffect(() => {
-        console.log("product", product);
+        // console.log("product", product);
         // get size data
         const array = product?.size_name?.split(',').map(Number).filter((num) => !isNaN(num));
         if (array?.length) {
@@ -143,7 +143,7 @@ function ProductDetail() {
             if (response.data.data) {
                 var data = response?.data?.data.filter(data => data?.product_id === product?.id);
                 // console.warn('data', data);
-                console.log('stockData', product);
+                // console.log('stockData', product);
                 if (data.length === 0) {
                     setInStock(false);
                 }
@@ -329,7 +329,7 @@ function ProductDetail() {
             // console.log('selected',selectedOffers)
             discount = parseFloat((parseFloat(product.total_price) * (parseFloat(selectedOffers.discount) / 100)).toFixed(2));
             //   unit_price = (parseFloat(product.total_price) - parseFloat(discount)).toFixed(2);
-            console.log('discount', discount);
+            // console.log('discount', discount);
         }
         if (selectedOffers?.type === 'fixed') {
             // console.log('selected',selectedOffers)
@@ -359,6 +359,7 @@ function ProductDetail() {
     const copyLinkHandle = () => {
         const currentUrl = window.location.href;
         navigator.clipboard.writeText(currentUrl);
+        setShareModal(false)
     };
 
     const shareOnFacebook = () => {
@@ -503,6 +504,7 @@ function ProductDetail() {
                                     className="owl-theme"
                                     margin={20}
                                     nav
+                                    dots={false}
                                     responsive={{
                                         0: {
                                             items: 4, // Show 4 items on very small screens
@@ -574,7 +576,7 @@ function ProductDetail() {
                             </div>
                             <div className='d-flex align-items-center justify-content-center justify-content-lg-start'>
                                 <h2 className='s_price text-center text-lg-start'>₹ {parseFloat(product?.price_with_gst).toFixed(2)}</h2>
-                                {inStock !== true ? <div className='s_stock_status'>out of stack</div> : ''}
+                                {inStock === true ?  '' : <div className='s_stock_status'>out of stack</div>}
                             </div>
                             <p className='s_description text-center text-lg-start'>{product?.description}</p>
 
@@ -1026,7 +1028,7 @@ function ProductDetail() {
                 <Modal.Body>
                     <div className='s_review'>
                         {reviewDetail?.map((item, index) => {
-                            console.log(item);
+                            // console.log(item);
                             return (
                                 <div className='d-flex s_review_div' key={index}>
                                     <div className='s_review_profile'>

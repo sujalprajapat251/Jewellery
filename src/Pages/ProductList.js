@@ -36,7 +36,7 @@ function ProductList() {
             setHeading(data?.[0]?.name);
         }
 
-    }, [id, type, Api, token,allSubCategory]);
+    }, [id, type, Api, token, allSubCategory]);
 
 
     //  show data according useParam infrormations
@@ -321,6 +321,10 @@ function ProductList() {
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+
+    // sort by handdler
+    const [sortOpen, setSortOpen] = useState(false);
     return (
         <>
             <section className="d-md-flex ds_container mb-5">
@@ -410,8 +414,8 @@ function ProductList() {
                                                     onInput={handleInput}
                                                 />
                                                 <div className='d-flex justify-content-between align-items-center flex-wrap s_slider_text'>
-                                                <p>min : ₹ {parseFloat(minValue).toFixed(0)}</p>
-                                                <p>max : ₹ {parseFloat(maxValue).toFixed(0)}</p>
+                                                    <p>min : ₹ {parseFloat(minValue).toFixed(0)}</p>
+                                                    <p>max : ₹ {parseFloat(maxValue).toFixed(0)}</p>
                                                 </div>
                                             </div>
                                         </Accordion.Body>
@@ -471,8 +475,8 @@ function ProductList() {
                                                     onInput={handleInput}
                                                 />
                                                 <div className='d-flex justify-content-between align-items-center flex-wrap s_slider_text'>
-                                                <p>min : ₹ {parseFloat(minValue).toFixed(0)}</p>
-                                                <p>max : ₹ {parseFloat(maxValue).toFixed(0)}</p>
+                                                    <p>min : ₹ {parseFloat(minValue).toFixed(0)}</p>
+                                                    <p>max : ₹ {parseFloat(maxValue).toFixed(0)}</p>
                                                 </div>
                                             </div>
                                         </Accordion.Body>
@@ -485,7 +489,7 @@ function ProductList() {
                                                 <Accordion.Body>
                                                     {filters?.[filterType].map((value, index) => {
                                                         const isChecked = selectedFilters?.[filterType]?.includes(value);
-                                                        console.info('isChecked', filterType, value, isChecked);
+                                                        // console.info('isChecked', filterType, value, isChecked);
                                                         return (
                                                             // console.log('id123', typeof(filterType+index))
                                                             <div key={value} className="d-flex align-items-center s_checkbox">
@@ -534,32 +538,34 @@ function ProductList() {
                                 }
 
                             </div>
-                            <div className='s_fliter_select w-auto'>
+                            <div className='s_fliter_select w-auto' onClick={() => setSortOpen(!sortOpen)}>
                                 <p className='mb-0 text-nowrap'>Sort by</p>
                                 <FaAngleDown />
-                                <div className='s_sortby_menu'>
+                                {sortOpen ?
+                                    <div className='s_sortby_menu'>
+                                        <div className='s_sortby_option'>
+                                            <input type='radio' name='sort_by' id='Best Sellings' onClick={() => { fliterDatahandle(1) }} checked={condition === 1}></input>
+                                            <label htmlFor='Best Sellings' >Best Sellings</label>
+                                        </div>
+                                        <div className='s_sortby_option'>
+                                            <input type='radio' name='sort_by' id='low to high' onClick={() => { fliterDatahandle(2) }} checked={condition === 2}></input>
+                                            <label htmlFor='low to high'>Price (low to high)</label>
+                                        </div>
+                                        <div className='s_sortby_option'>
+                                            <input type='radio' name='sort_by' id='high to low' onClick={() => { fliterDatahandle(3) }} checked={condition === 3}></input>
+                                            <label htmlFor='high to low'>Price (high to low)</label>
+                                        </div>
+                                        <div className='s_sortby_option'>
+                                            <input type='radio' name='sort_by' id='New Arrivals' onClick={() => { fliterDatahandle(4) }} checked={condition === 4}></input>
+                                            <label htmlFor='New Arrivals'>New Arrivals</label>
+                                        </div>
+                                        <div className='s_sortby_option'>
+                                            <input type='radio' name='sort_by' id='Recommendations' onClick={() => { fliterDatahandle(5) }} checked={condition === 5}></input>
+                                            <label htmlFor='Recommendations'>Recommendations</label>
+                                        </div>
+                                    </div> : ''
+                                }
 
-                                    <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='Best Sellings' onClick={() => { fliterDatahandle(1) }} checked={condition === 1}></input>
-                                        <label htmlFor='Best Sellings' >Best Sellings</label>
-                                    </div>
-                                    <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='low to high' onClick={() => { fliterDatahandle(2) }} checked={condition === 2}></input>
-                                        <label htmlFor='low to high'>Price (low to high)</label>
-                                    </div>
-                                    <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='high to low' onClick={() => { fliterDatahandle(3) }} checked={condition === 3}></input>
-                                        <label htmlFor='high to low'>Price (high to low)</label>
-                                    </div>
-                                    <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='New Arrivals' onClick={() => { fliterDatahandle(4) }} checked={condition === 4}></input>
-                                        <label htmlFor='New Arrivals'>New Arrivals</label>
-                                    </div>
-                                    <div className='s_sortby_option'>
-                                        <input type='radio' name='sort_by' id='Recommendations' onClick={() => { fliterDatahandle(5) }} checked={condition === 5}></input>
-                                        <label htmlFor='Recommendations'>Recommendations</label>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -576,7 +582,7 @@ function ProductList() {
                                         discountPrice = ele.price_with_gst;
                                     }
                                     return (
-                                        <Col key={id} className='py-4' onClick={()=>{navigate(`/productdetail/${ele.id}`)}}>
+                                        <Col key={id} className='py-4' onClick={() => { navigate(`/productdetail/${ele.id}`) }}>
                                             <div className='s_seller_card '>
                                                 <div >
                                                     <div className='s_card_img'>
@@ -588,20 +594,20 @@ function ProductList() {
                                                             <h5>{ele.product_name}</h5>
                                                             <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                             <div className='s_rating'>
-                                                            {
-                                                            [...Array(5)].map((_, index) => {
-                                                                const rating = ele.total_rating;
-                                                                if (index < Math.floor(rating)) {
-                                                                    return <img alt={index} src={fillstar} />;
-                                                                } else if (index < rating) {
+                                                                {
+                                                                    [...Array(5)].map((_, index) => {
+                                                                        const rating = ele.total_rating;
+                                                                        if (index < Math.floor(rating)) {
+                                                                            return <img alt={index} src={fillstar} />;
+                                                                        } else if (index < rating) {
 
-                                                                    return <img alt={index} src={halfstar} />;
-                                                                } else {
+                                                                            return <img alt={index} src={halfstar} />;
+                                                                        } else {
 
-                                                                    return <img alt={index} src={nofillstar} />;
+                                                                            return <img alt={index} src={nofillstar} />;
+                                                                        }
+                                                                    })
                                                                 }
-                                                            })
-                                                        }
                                                             </div>
                                                             <div className='s_card_btn'><p className=''>Buy Now</p></div>
                                                         </Link>

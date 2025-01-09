@@ -197,7 +197,7 @@
     /* transform: translateX(-50%); */
     background-color: white;
     width: 200px;
-    display: none;
+    /* display: none; */
     padding: 10px;
     z-index: 2;
     margin-top: 1px
