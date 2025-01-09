@@ -184,7 +184,7 @@ function Home() {
                                     discountPrice = ele.price_with_gst;
                                 }
                                 return (
-                                    <Col key={id} className='py-4' onClick={()=>{navigate(`/productdetail/${ele.id}`)}}>
+                                    <Col key={id} className='py-4' >
                                         <div className='s_seller_card'>
 
                                             <div className='s_card_img bg-white'>

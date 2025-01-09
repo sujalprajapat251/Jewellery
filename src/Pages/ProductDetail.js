@@ -256,7 +256,7 @@ function ProductDetail() {
     // console.log('making_charge', ((parseFloat(metal_total) + parseFloat(stone_total)) * (parseFloat(product?.making_charge) / 100)));
     const discount = (parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)) * parseFloat(product?.discount || 0) / 100;
     // console.log(discount);
-    const sub_total = ((parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)) - discount).toFixed(2);
+    const sub_total = ((parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge))).toFixed(2);
     const gst_total = (sub_total * 3 / 100).toFixed(2);
     const great_total = ((parseFloat(sub_total) + parseFloat(gst_total)).toFixed(2));
     const isSelected = wishlistID.find((items) => items === product?.id);

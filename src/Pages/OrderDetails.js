@@ -23,7 +23,7 @@ const OrderDetails = () => {
               Authorization: `Bearer ${store?.access_token}`,
             },
           });
-          // console.log("OrderItem:", response?.data?.order);
+          console.log("OrderItem:", response?.data?.order);
           setOrderData(response?.data?.order);
           setOrderItem(response?.data?.order?.order_items);
           return; 
