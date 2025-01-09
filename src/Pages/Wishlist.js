@@ -2,13 +2,12 @@ import { useContext, useEffect, useState } from 'react';
 import '../Css/Sujal/Wishlist.css'
 import { Col, Row } from 'react-bootstrap';
 import { GoHeartFill } from 'react-icons/go';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import noteContext from '../Context/noteContext';
 import fillstar from '../Img/Sujal/fillStar.png';
 import halfstar from '../Img/Sujal/halfstar.png';
 import nofillstar from '../Img/Sujal/nofillstar.png';
 function Wishlist() {
-    const navigate = useNavigate();
     // backend conection code ----------------------------------------------------------------
 
     // useContext
@@ -56,7 +55,7 @@ function Wishlist() {
                                     discountPrice = ele.price_with_gst;
                                 }
                                 return (
-                                    <Col key={id} className='py-4' onClick={()=>{navigate(`/productdetail/${ele.id}`)}}>
+                                    <Col key={id} className='py-4' >
                                         <div className='s_seller_card'>
                                             <div className='s_card_img'>
                                                 <img src={ele?.images[0] || ele?.product_image[0]} className="w-100" alt={ele.title} key={ele.title} />

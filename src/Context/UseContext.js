@@ -12,21 +12,21 @@ const UseContext = (props) => {
     const metal_total =
       product?.price && product?.weight
         ? `${(
-            (parseFloat(product.price) / parseFloat(product.weight)) *
-            parseFloat(product.weight)
-          ).toFixed(2)}`
+          (parseFloat(product.price) / parseFloat(product.weight)) *
+          parseFloat(product.weight)
+        ).toFixed(2)}`
         : 0;
     const stone_total =
       product?.stone_price && product?.gram
         ? `${(
-            parseFloat(product.stone_price) * parseFloat(product.gram)
-          ).toFixed(2)}`
+          parseFloat(product.stone_price) * parseFloat(product.gram)
+        ).toFixed(2)}`
         : 0;
     const making_charge = product?.making_charge
       ? `${(
-          (parseFloat(metal_total) + parseFloat(stone_total)) *
-          (parseFloat(product?.making_charge) / 100)
-        ).toFixed(2)}`
+        (parseFloat(metal_total) + parseFloat(stone_total)) *
+        (parseFloat(product?.making_charge) / 100)
+      ).toFixed(2)}`
       : 0;
     // console.log('making_charge', ((parseFloat(metal_total) + parseFloat(stone_total)) * (parseFloat(product?.making_charge) / 100)));
     const discount =
@@ -221,23 +221,21 @@ const UseContext = (props) => {
     console.warn("Check Qty", CheckQty);
     if (CheckQty.length > 0) {
       // update cart logic here
-      await axios
-        .post(
-          `${Api}/cart/update/${CheckQty?.[0]?.id}`,
-          {
-            customer_id: store?.id,
-            product_id: product?.id,
-            size: size || 0,
-            quantity: CheckQty?.[0]?.quantity + 1,
-            unit_price: product?.total_price || 0,
-            offer_id: offer?.id || null,
+      await axios.post(`${Api}/cart/update/${CheckQty?.[0]?.id}`,
+        {
+          customer_id: store?.id,
+          product_id: product?.id,
+          size: size || 0,
+          quantity: CheckQty?.[0]?.quantity + 1,
+          unit_price: product?.total_price || 0,
+          product_offer_id: offer?.id || null,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
+        }
+      )
         .then((response) => {
           // console.log("Product added to cart successfully!", response);
           fetchCardData();
@@ -245,23 +243,21 @@ const UseContext = (props) => {
     } else {
       // addtocart logic
       // console.error("Product added to cart successfully", unit_price);
-      await axios
-        .post(
-          `${Api}/cart/create`,
-          {
-            customer_id: store?.id,
-            product_id: product?.id,
-            quantity: CheckQty.length || 1,
-            unit_price: product?.total_price || 0,
-            size: size || 0,
-            offer_id: offer?.id || null,
+      await axios.post(`${Api}/cart/create`,
+        {
+          customer_id: store?.id,
+          product_id: product?.id,
+          quantity: CheckQty.length || 1,
+          unit_price: product?.total_price || 0,
+          size: size || 0,
+          product_offer_id: offer?.id || null,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
+        }
+      )
         .then((response) => {
           // console.log("Product added to cart successfully!", response);
           fetchCardData();
@@ -269,7 +265,9 @@ const UseContext = (props) => {
     }
   };
 
-  const [cartID, setCartID] = useState([]);
+
+  const [cartID, setCartID] = useState([])
+  const [tax, setTax] = useState(0)
   // funtion called item aaded or removed
   const fetchCardData = async (retryCount = 0) => {
     try {
@@ -279,8 +277,8 @@ const UseContext = (props) => {
         },
       });
       if (response.data.cart) {
-        var cartID = response.data.cart
-          .filter((item) => item.product_id)
+
+        var cartID = response.data.cart.filter((item) => item.product_id)
           .map((item) => item.id);
         setCartID(cartID);
         // console.log("cartID",cartID)
@@ -290,22 +288,21 @@ const UseContext = (props) => {
 
         const today = new Date();
         const updatedCart = Cart?.map((item) => {
-          const endDate = new Date(item?.offer?.end_date);
+          const endDate = new Date(item?.product_offer?.end_date);
 
           // Check if the current date is greater than end_date
-          if (today <= endDate && item?.offer) {
-            const discount = parseFloat(item.offer.discount) || 0;
+          if (today <= endDate && item?.product_offer) {
+            const discount = parseFloat(item?.product_offer?.discount) || 0;
 
-            let discountedPrice = parseFloat(item.total_price || 0);
+            let discountedPrice = parseFloat(item?.total_price || 0);
 
-            if (item.offer.type === "fixed") {
+            if (item?.product_offer?.type === "fixed") {
               // Apply fixed discount
-              discountedPrice = discountedPrice - discount;
-            } else if (item.offer.type === "percentage") {
+              discountedPrice = discountedPrice - parseFloat(item?.product_offer?.price);
+            } else if (item?.product_offer?.type === "percentage") {
               // Apply percentage discount
               discountedPrice = discountedPrice * (1 - discount / 100);
             }
-
             // Ensure discountedPrice is not negative
             discountedPrice = Math.max(discountedPrice, 0);
 
@@ -318,7 +315,7 @@ const UseContext = (props) => {
           return item;
         });
 
-        // console.log("Updated Cart:", updatedCart);
+        console.log("Updated Cart:", updatedCart);
         setCardData(updatedCart);
         if (response?.data?.cart?.offer) {
           const today = new Date();
@@ -334,10 +331,16 @@ const UseContext = (props) => {
         }
 
         const totalPrice = updatedCart
-          .map((element) => parseFloat(element?.total_price || 0))
+          .map((element) => parseFloat((parseFloat(element?.product_price) * parseFloat(element?.quantity)) || 0))
           .reduce((sum, price) => sum + price, 0);
 
+        console.log('total', totalPrice);
+        // alert('')
         setPrice(Math.floor(totalPrice));
+        // const total = updatedCart
+        // .map((element) => parseFloat((parseFloat(element?.total_price)|| 0)))
+        // .reduce((sum, price) => sum + price, 0);
+        setTax(parseFloat((totalPrice * 3) / 100).toFixed(0));
       }
     } catch (error) {
       console.error("Failed to fetch data:", error.message);
@@ -652,7 +655,7 @@ const UseContext = (props) => {
 
         alert(
           error.response?.data?.message ||
-            "Failed to update address. Please try again."
+          "Failed to update address. Please try again."
         );
       }
     },
@@ -699,7 +702,7 @@ const UseContext = (props) => {
       console.error("Error deleting address:", error);
       alert(
         error.response?.data?.message ||
-          "Failed to delete the address. Please try again."
+        "Failed to delete the address. Please try again."
       );
     }
   };
@@ -815,7 +818,7 @@ const UseContext = (props) => {
 
         alert(
           error.response?.data?.message ||
-            "Failed to change the password. Please try again."
+          "Failed to change the password. Please try again."
         );
       }
     },
@@ -906,21 +909,23 @@ const UseContext = (props) => {
             : Math.max(item?.quantity - 1, 1);
 
         // Recalculate price with discounts applied, if any
-        let newPrice = item.price_per_unit * newQuantity;
+        let newPrice = item?.unit_price * newQuantity;
 
         // Apply discount if offer exists
-        if (item?.offer) {
-          const discount = parseFloat(item.offer.discount) || 0;
+        if (item?.product_offer) {
+          const discount = parseFloat(item?.product_offer.discount) || 0;
 
-          if (item.offer.type === "fixed") {
-            newPrice -= discount;
-          } else if (item.offer.type === "percentage") {
+
+          if (item?.product_offer?.type === "fixed") {
+            newPrice -= parseFloat(item.product_offer.price);
+          } else if (item.product_offer.type === "percentage") {
             newPrice *= 1 - discount / 100;
           }
 
           // Ensure newPrice is not negative
           newPrice = Math.max(newPrice, 0);
         }
+
 
         return {
           ...item,
@@ -934,6 +939,8 @@ const UseContext = (props) => {
     // setCardData(updatedCart);
 
     const updatedItem = updatedCart.find((item) => item?.id === id);
+    console.log("weyvfqeyugweqgwe ", updatedItem);
+
     if (!updatedItem) return;
 
     try {
@@ -945,7 +952,7 @@ const UseContext = (props) => {
           quantity: updatedItem.quantity,
           product_price: updatedItem.total_price,
           size: updatedItem?.size ? updatedItem?.size : 2,
-          offer_id: offerId,
+          product_offer_id: offerId,
         },
         {
           headers: {
@@ -1017,7 +1024,7 @@ const UseContext = (props) => {
         cartData,
         addToCardhandle,
         userHandling,
-        pricehandling ,
+        pricehandling,
         // ******* My Profile *******
         store,
         profileData,
@@ -1101,30 +1108,14 @@ const UseContext = (props) => {
         setCustomerID,
 
         // **************** Cart ****************
-        deleteToggle,
-        setDeleteToggle,
-        priceToggle,
-        setPriceToggle,
-        price,
-        setPrice,
-        removePopup,
-        setRemovePopup,
-        removeId,
-        setRemoveId,
-        wishId,
-        setWishId,
-        handleRemove,
-        handleQuantityChange,
-        handleFinalRemove,
-        cartData,
-        setCardData,
+        deleteToggle, setDeleteToggle, priceToggle, setPriceToggle, price, setPrice, removePopup, setRemovePopup,
+        removeId, setRemoveId, wishId, setWishId, handleRemove, handleQuantityChange, handleFinalRemove, cartData, setCardData, tax,
 
         // *********** Payment ***************
-        setPayCount,
-        cartID,
-        removeCart,
-      }}
-    >
+        setPayCount, cartID, removeCart,
+
+      }}>
+
       {props.children}
     </noteContext.Provider>
   );

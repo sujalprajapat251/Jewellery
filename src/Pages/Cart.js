@@ -13,7 +13,7 @@ const Cart = () => {
 
   const { Api, store, myAddData, AddFormik, newAddModal, setNewAddModal, hello, addwishlistHandler,
 
-    cartData, price, removePopup, setRemovePopup, wishId, handleRemove, handleQuantityChange, handleFinalRemove } = useContext(noteContext)
+    cartData, price, removePopup, setRemovePopup, wishId, handleRemove, handleQuantityChange, handleFinalRemove,tax } = useContext(noteContext)
 
   const navigate = useNavigate()
 
@@ -116,25 +116,41 @@ const Cart = () => {
       setAppyVal(0)
     }
   }
+let sum = 0;
+let jab = cartData.map((item)=>{
+  if (item?.product_offer?.type === "fixed") {
+    console.log(item?.product_offer)
+    sum += parseFloat(item?.product_offer?.price); 
+    // newPrice -= parseFloat(item.product_offer.price);
+    console.log('sum1',sum)
+  } else if (item.product_offer.type === "percentage") {
+    sum += ((parseFloat(item?.product_price)*item?.quantity)*parseFloat(item?.product_offer?.discount)) /100;
+    console.log('sum1',sum)
+  }
+})
+console.log("job" , sum);
+
 
   useEffect(() => {
     const discount = cupanOffer ? cupanOffer : appyVal ? appyVal : 0;
-    const tax = Math.round(price * 3 / 100);
-    const total = parseInt(price) - parseInt(discount) + parseInt(tax)
+   
+    const total = parseInt(price)  + parseInt(tax) - parseInt(discount)
 
     setOrderData({
       sub_total: price,
       discount: discount ? discount : 0,
       tax,
-      total
+      total,
+      productDiscount: parseFloat(sum).toFixed(2),
     });
 
     // Storing data in localStorage after the state update
     localStorage.setItem("OrderDetails", JSON.stringify({
       sub_total: price,
       discount,
-      tax,
-      total
+      tax : tax,
+      total,
+      productDiscount: parseFloat(sum).toFixed(2),
     }));
 
     // eslint-disable-next-line
@@ -178,8 +194,17 @@ const Cart = () => {
     // eslint-disable-next-line
   }, []);
 
-
-
+  let sum1 = parseFloat(price);
+  if(cupanOffer){
+    sum1 -= cupanOffer;
+  }
+  else if(appyVal){
+    sum1 -= appyVal;
+  }
+  else {
+    sum1 = parseFloat(price);
+  }
+  // const myOffer = (cupanOffer ? -parseFloat(cupanOffer) : -parseFloat(appyVal) ? -parseFloat(appyVal) : parseFloat(price))
 
   return (
     <>
@@ -216,8 +241,8 @@ const Cart = () => {
                   // console.log("CartData ", element);
 
                   const totalPrice = isNaN(element?.total_price) ? 0 : Math.round(element?.total_price);
-                  const discountedPrice = isNaN(element?.total_price) ? 0 : Math.round(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price));
-                  const offerID = element?.offer?.id ? element?.offer?.id : null
+                  const discountedPrice = isNaN(element?.total_price) ? 0 : Math.round(element?.product_price * element?.quantity);
+                  const offerID = element?.product_offer?.id ? element?.product_offer?.id : null
                   // console.log("doiscountPrice" , Math.round(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price)))
 
                   return (
@@ -367,7 +392,7 @@ const Cart = () => {
                       </div>
                       <div className="d-flex justify-content-between">
                         <p className="ds_tcolor">Tax</p>
-                        <p className="fw-600 ds_color ds_600">₹{Math.round(price * 3 / 100)}</p>
+                        <p className="fw-600 ds_color ds_600">₹{tax}</p>
                       </div>
                       <div className="d-flex justify-content-between">
                         <p className="ds_tcolor">Delivery Charge</p>
@@ -378,7 +403,7 @@ const Cart = () => {
                     <div className="px-3 mt-3">
                       <div className="d-flex justify-content-between">
                         <h5 className="h5 mb-0 ds_color">Total Amount</h5>
-                        <h5 className="h5 mb-0 ds_color">₹{price + (-cupanOffer ? -cupanOffer : -appyVal) + Math.round(price * 3 / 100)}</h5>
+                        <h5 className="h5 mb-0 ds_color">₹ {sum1 + parseFloat(tax)}</h5>
                       </div>
                       <button onClick={handleProcessCheckout} className="ds_add-proccess mt-5" id="ds_proceed_btn">
                         Proceed to checkout

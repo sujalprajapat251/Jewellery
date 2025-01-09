@@ -27,7 +27,7 @@ useEffect(() => {
         },
       });
 
-      // console.log(response?.data);
+      console.log(response?.data);
       setInvoice(response?.data?.order);
       setinvoiceData(response?.data?.order?.order_items);
     } catch (error) {
@@ -61,6 +61,12 @@ useEffect(() => {
 };
 
 
+// calcution 
+let final_price = 0;
+let sub_total = 0;
+var gst = 0;
+var discountedPrice =0;
+var totalAmount =0;
   return (
     <div>
        <section className=" mb-5">
@@ -140,7 +146,11 @@ useEffect(() => {
                         <tbody>
                           {invoiceData?.map((element , index)=>{
                             // console.log("Helllo" , element);
-                            
+                            // final_price = parseFloat(parseFloat(element?.price) * parseFloat(element?.qty));
+                            sub_total= (parseFloat(sub_total) + parseFloat(element?.total_price));
+                            gst = (parseFloat(sub_total) * 3 /100);
+                            discountedPrice = ((parseFloat(sub_total)+ parseFloat(gst))  - invoice?.discount);
+                            totalAmount = (parseFloat(discountedPrice));
                             return(
                                  <tr key={index}>
                                      <td>
@@ -149,8 +159,8 @@ useEffect(() => {
                                        <p className=''><span className='ds_tcolor'>Metal :</span> <span className='ds_600'>{element?.metal}</span></p>
                                      </td>
                                      <td className="ds_table-quantity  ds_600">{element?.qty}</td>
-                                     <td className="ds_table-price text-center">{Math.round(element?.price)}</td>
-                                     <td className="ds_table-price text-center">{Math.round(element?.total_price)}</td>
+                                     <td className="ds_table-price text-center">{parseFloat(element?.price).toFixed(0)}</td>
+                                     <td className="ds_table-price text-center">{parseFloat(element?.total_price).toFixed(0)}</td>
                                  </tr>
                             )
                           })}
@@ -183,11 +193,11 @@ useEffect(() => {
                               <h6 className="ds_in-total">Total Amount</h6>
                             </div>
                             <div className="ms-5">
-                              <p className="ds_in-sub ds_600 text-dark">₹{local?.sub_total}</p>
-                              <p className="ds_in-sub ds_600" style={{ color: "#0F993E" }}>-₹{local?.discount}</p>
-                              <p className="ds_in-sub ds_600 text-dark">₹{local?.tax / 2}</p>
-                              <p className="ds_in-sub ds_600 text-dark">₹{local?.tax / 2}</p>
-                              <h6 className="ds_in-total ds_600">₹{local?.total}</h6>
+                              <p className="ds_in-sub ds_600 text-dark">₹ {sub_total}</p>
+                              <p className="ds_in-sub ds_600" style={{ color: "#0F993E" }}>- ₹ {parseFloat(invoice?.discount).toFixed(0)}</p>
+                              <p className="ds_in-sub ds_600 text-dark">₹ {parseFloat(gst / 2).toFixed(0)}</p>
+                              <p className="ds_in-sub ds_600 text-dark">₹ {parseFloat(gst / 2).toFixed(0)}</p>
+                              <h6 className="ds_in-total ds_600">₹{parseFloat(totalAmount).toFixed(0)}</h6>
                             </div>
                           </div>
                         </div>

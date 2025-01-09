@@ -302,8 +302,8 @@ const handleDownloadInvoice = () => {
                                             </h6>
                                           {element?.order_items?.map((item)=>{
                                                
-                                               const totalPrice = isNaN(item?.total_price) ? 0 : Math.round(item?.total_price +  item?.total_price * 3 / 100);
-                                               const discountedPrice = isNaN(item?.total_price) ? 0 : parseInt(item?.total_price) + Math.round(parseInt(item?.total_price * item?.discount / 100 + item?.total_price * 3 / 100));
+                                               const totalPrice = isNaN(item?.total_price) ? 0 : Math.round(item?.total_price );
+                                               const discountedPrice = isNaN(item?.total_price) ? 0 : parseInt(item?.total_price) + Math.round(parseInt(item?.total_price * item?.discount / 100));
                                              return (
                                               <div className="row px-4 mt-4">
                                                  <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 ">

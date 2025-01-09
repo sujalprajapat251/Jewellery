@@ -8,7 +8,7 @@ import noteContext from '../Context/noteContext';
 
 const Payment = () => {
 
-  const { Api, store, setPayCount, cartID,removeCart } = useContext(noteContext)
+  const { Api, store, setPayCount, cartID,removeCart ,tax } = useContext(noteContext)
   const data = JSON.parse(localStorage.getItem("OrderDetails")) || {}
   const login = JSON.parse(localStorage.getItem("Login")) || {}
   const deliverId = JSON.parse(localStorage.getItem("default") || "")
@@ -80,7 +80,11 @@ const Payment = () => {
       const maxRetries = 3;
       const retryDelay = (retryCount) => Math.pow(2, retryCount) * 1000;
 
-
+      const discount = parseFloat(data?.discount) + parseFloat(data?.productDiscount);
+      console.log('discount',discount);
+      const finalamount = parseFloat(data?.total) - discount;
+      // const finalprice = finalamount + tax;
+      console.log('final amount', finalamount);
       const createOrder = async (retryCount = 0) => {
         try {
           const response = await axios.post(
@@ -89,9 +93,9 @@ const Payment = () => {
               customer_id: login?.id,
               order_date: finalDate,
               order_status: 'pending',
-              total_amount: data?.total,
+              total_amount: finalamount,
               deliveryAddress_id: deliverId,
-              discount: data?.discount ? data?.discount : 0,
+              discount: discount || 0,
               products: localByNow?.length !== 0 ? byNowProducts : formattedProducts
             },
             {
@@ -110,11 +114,11 @@ const Payment = () => {
             if (BuyNow) {
               localStorage.removeItem('BuyNow');
             }
-            else {
-              for (let i = 0; i < cartID.length; i++) {
-                removeCart(cartID[i]);
-              }
-            }
+            // else {
+            //   for (let i = 0; i < cartID.length; i++) {
+            //     removeCart(cartID[i]);
+            //   }
+            // }
           }
           navigate("/orderdetails");
         } catch (error) {
