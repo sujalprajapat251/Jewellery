@@ -68,6 +68,7 @@
 
 
 .s_product_slider .owl-nav {
+    margin-top: 0px;
     display: flex !important;
     justify-content: space-between;
     position: absolute;
