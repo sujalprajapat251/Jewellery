@@ -45,7 +45,7 @@ const Cart = () => {
               Authorization: `Bearer ${store?.access_token}`,
             },
           });
-          console.log("Coupons:", response?.data?.coupons);
+          // console.log("Coupons:", response?.data?.coupons);
           setCupon(response?.data?.coupons);
           return;
         } catch (error) {
@@ -84,13 +84,13 @@ const Cart = () => {
 
   const handleCupanType = (type, amount) => {
     if (type === "fixed") {
-      console.log("hello ", amount);
+      // console.log("hello ", amount);
 
       setCupanOffer(parseInt(amount))
     }
     else {
       let offer = price * amount / 100;
-      console.log("Offer ", offer);
+      // console.log("Offer ", offer);
       setCupanOffer(Math.round(offer))
     }
   }
@@ -99,7 +99,7 @@ const Cart = () => {
     e.preventDefault();
     const isValidCoupon = cupon?.some((element) => element?.code === cupanVal);
     if (isValidCoupon) {
-      console.log("Successfully applied coupon!");
+      // console.log("Successfully applied coupon!");
       setCupanText({ text: 'Successfully applied coupon!', toggle: true })
       cupon?.map((element) => {
         if (element.type === 'fixed') {
@@ -156,7 +156,7 @@ const Cart = () => {
               Authorization: `Bearer ${store?.access_token}`,
             },
           });
-          console.log("Offers:", response?.data?.offers);
+          // console.log("Offers:", response?.data?.offers);
           setOffer(response?.data?.offers);
           return;
         } catch (error) {
@@ -213,7 +213,7 @@ const Cart = () => {
               <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 mt-3">
 
                 {cartData?.map((element, index) => {
-                  console.log("CartData ", element);
+                  // console.log("CartData ", element);
 
                   const totalPrice = isNaN(element?.total_price) ? 0 : Math.round(element?.total_price);
                   const discountedPrice = isNaN(element?.total_price) ? 0 : Math.round(parseInt(element?.total_price * element?.discount / 100) + parseInt(element?.total_price));

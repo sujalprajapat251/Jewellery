@@ -784,7 +784,7 @@ function Header() {
                         {PopularData.slice(0, 4).map((el, id) => {
                             const discounted = ((parseFloat(el.total_price) * parseFloat(el.discount)) / 100).toFixed(2);
                             let discountPrice = [];
-                            console.log(el.product_name, discounted);
+                            // console.log(el.product_name, discounted);
                             if (!isNaN(parseFloat(discounted))) {
                                 discountPrice = (parseFloat(el.total_price) - parseFloat(discounted)).toFixed(2);
                             } else {

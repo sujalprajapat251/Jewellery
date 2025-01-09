@@ -27,7 +27,7 @@ useEffect(() => {
         },
       });
 
-      console.log(response?.data);
+      // console.log(response?.data);
       setInvoice(response?.data?.order);
       setinvoiceData(response?.data?.order?.order_items);
     } catch (error) {
@@ -139,7 +139,7 @@ useEffect(() => {
                         </thead>
                         <tbody>
                           {invoiceData?.map((element , index)=>{
-                            console.log("Helllo" , element);
+                            // console.log("Helllo" , element);
                             
                             return(
                                  <tr key={index}>

@@ -23,7 +23,7 @@ const OrderDetails = () => {
               Authorization: `Bearer ${store?.access_token}`,
             },
           });
-          console.log("OrderItem:", response?.data?.order);
+          // console.log("OrderItem:", response?.data?.order);
           setOrderData(response?.data?.order);
           setOrderItem(response?.data?.order?.order_items);
           return; 
@@ -133,7 +133,7 @@ const OrderDetails = () => {
               <div className="col-xl-4 col-lg-4 mt-lg-0 mt-4">
                 <div className="ds_con-buy">
                   {orderItem?.map((element)=>{
-                    console.log("Hevbsdjuvbsdjuv " , element);
+                    // console.log("Hevbsdjuvbsdjuv " , element);
                     
                     return (
                          <div className="d-flex justify-content-between px-3">

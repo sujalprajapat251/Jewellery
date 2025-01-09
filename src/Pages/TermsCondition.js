@@ -18,7 +18,7 @@ useEffect(() => {
             Authorization: `Bearer ${store?.access_token}`,
           },
         });
-        console.log("Terms:", response.data.data);
+        // console.log("Terms:", response.data.data);
         setData(response.data.data);
         return; 
       } catch (error) {

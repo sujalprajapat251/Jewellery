@@ -36,7 +36,7 @@ const Payment = () => {
               Authorization: `Bearer ${store?.access_token}`,
             },
           });
-          console.log("Cart Data:", response?.data?.cart);
+          // console.log("Cart Data:", response?.data?.cart);
           setCardData(response?.data?.cart);
           return;
         } catch (error) {

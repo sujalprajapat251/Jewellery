@@ -20,7 +20,7 @@ useEffect(() => {
             Authorization: `Bearer ${store?.access_token}`,
           },
         });
-        console.log("Privacy", response.data.data);
+        // console.log("Privacy", response.data.data);
         setData(response.data.data);
       } catch (error) {
         if (error.response && error.response.status === 429 && retryCount < maxRetries) {

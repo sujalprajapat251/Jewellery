@@ -16,7 +16,7 @@ function Login({ isOpen, onClose, onOpen }) {
     const handleResponse = async (response) => {
         // console.log("Facebook Login Response:", response);
         if (response.email) {
-            console.log("Access Token:", response.email);
+            // console.log("Access Token:", response.email);
             var data = await axios.post(`${Api}/social-api`, {
                 name: response.name,
                 email: response.email,

@@ -155,7 +155,7 @@ const UseContext = (props) => {
   const [cartData, setCardData] = useState([]);
 
   const addToCardhandle = async (product, size, offer) => {
-    console.log("Apicard",offer)
+    // console.log("Apicard",offer)
     // console.warn("Cart", cartData);
     let CheckQty = cartData.filter((cart) => {
       return cart.product_id === product?.id
@@ -233,7 +233,7 @@ const UseContext = (props) => {
         var cartID = response.data.cart.filter((item) => item.product_id)
         .map((item) => item.id);
         setCartID(cartID);
-        console.log("cartID",cartID)
+        // console.log("cartID",cartID)
         // console.warn('cartData', response);
         // setCardData(response?.data?.cart);
         const Cart = response?.data?.cart || [];
@@ -269,7 +269,7 @@ const UseContext = (props) => {
             return item; 
         });
 
-        console.log("Updated Cart:", updatedCart);
+        // console.log("Updated Cart:", updatedCart);
         setCardData(updatedCart);
         if (response?.data?.cart?.offer) {
           const today = new Date();
