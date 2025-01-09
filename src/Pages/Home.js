@@ -21,7 +21,7 @@ function Home() {
     // backend connection code----------------------------------
 
     // useContext //
-    const { allCategory, allProduct, addwishlistHandler, wishlistID, findWishlistID, bestseller } = useContext(noteContext);
+    const { allCategory, allProduct, addwishlistHandler, wishlistID, findWishlistID, bestseller , pricehandling } = useContext(noteContext);
 
 
     // cat slideer responsive
@@ -175,13 +175,14 @@ function Home() {
                     <Row xxl={5} lg={4} md={3} sm={2} className='s_seller_cards s_seller_spe_cards row-cols-1 gx-2 gx-sm-3'>
                         {
                             bestseller.slice(0, itemsToShow).map((ele, id) => {
+                                const price = pricehandling(ele); 
                                 var isSelected = wishlistID.find((items) => items === ele.id);
-                                const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
+                                const discounted = ((parseFloat(ele.price) * parseFloat(ele.discount)) / 100).toFixed(2);
                                 let discountPrice = [];
                                 if (!isNaN(parseFloat(discounted))) {
-                                    discountPrice = (parseFloat(ele.price_with_gst) + parseFloat(discounted)).toFixed(0);
+                                    discountPrice = (parseFloat(ele.price) + parseFloat(discounted)).toFixed(0);
                                 } else {
-                                    discountPrice = ele.price_with_gst;
+                                    discountPrice = ele.price;
                                 }
                                 return (
                                     <Col key={id} className='py-4' onClick={()=>{navigate(`/productdetail/${ele.id}`)}}>
@@ -226,7 +227,7 @@ function Home() {
                                             <div className='s_card_text' >
                                                 <Link to={`/productdetail/${ele.id}`}>
                                                     <h5>{ele.product_name}</h5>
-                                                    <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
+                                                    <p className='mb-0'><span className='mx-2'>₹ {parseFloat(price).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                     <div className='s_rating'>
                                                         {
                                                             [...Array(5)].map((_, index) => {
@@ -389,6 +390,7 @@ function Home() {
                                     feature_sliderres
                                 }>
                                 {allProduct.slice(0, 5).map((item, idx) => {
+                                    const price = pricehandling(item); 
                                     const discounted = ((parseFloat(item.price_with_gst) * parseFloat(item.discount)) / 100).toFixed(2);
                                     let discountPrice = [];
                                     if (!isNaN(parseFloat(discounted))) {
@@ -403,7 +405,7 @@ function Home() {
                                                 <div className='s_slider_text '>
                                                     <Link to={`/productdetail/${item.id}`}>
                                                         <h5 className='text-capitalize'>{item.product_name}</h5>
-                                                        <p className='mb-0'><span className='mx-2'>₹ {parseFloat(item.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
+                                                        <p className='mb-0'><span className='mx-2'>₹ {parseFloat(price).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                         <div className='s_rating'>
                                                             {
                                                                 [...Array(5)].map((_, index) => {

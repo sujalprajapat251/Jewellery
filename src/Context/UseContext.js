@@ -1,33 +1,72 @@
-import React, { useEffect, useState } from 'react'
-import noteContext from './noteContext'
-import axios from 'axios';
-import { ChangePass, EditProfileSchema, NewAddSchema } from '../schemas';
-import { useFormik } from 'formik';
+import React, { useEffect, useState } from "react";
+import noteContext from "./noteContext";
+import axios from "axios";
+import { ChangePass, EditProfileSchema, NewAddSchema } from "../schemas";
+import { useFormik } from "formik";
 const UseContext = (props) => {
   // acces token form localstores
   const calledOnce = React.useRef(false);
-  let [store, setStore] = useState(JSON.parse(localStorage.getItem("Login")))
+  let [store, setStore] = useState(JSON.parse(localStorage.getItem("Login")));
+
+  const pricehandling = (product) => {
+    const metal_total =
+      product?.price && product?.weight
+        ? `${(
+            (parseFloat(product.price) / parseFloat(product.weight)) *
+            parseFloat(product.weight)
+          ).toFixed(2)}`
+        : 0;
+    const stone_total =
+      product?.stone_price && product?.gram
+        ? `${(
+            parseFloat(product.stone_price) * parseFloat(product.gram)
+          ).toFixed(2)}`
+        : 0;
+    const making_charge = product?.making_charge
+      ? `${(
+          (parseFloat(metal_total) + parseFloat(stone_total)) *
+          (parseFloat(product?.making_charge) / 100)
+        ).toFixed(2)}`
+      : 0;
+    // console.log('making_charge', ((parseFloat(metal_total) + parseFloat(stone_total)) * (parseFloat(product?.making_charge) / 100)));
+    const discount =
+      ((parseFloat(metal_total) +
+        parseFloat(stone_total) +
+        parseFloat(making_charge)) *
+        parseFloat(product?.discount || 0)) /
+      100;
+    // console.log(discount);
+    const sub_total = (
+      parseFloat(metal_total) +
+      parseFloat(stone_total) +
+      parseFloat(making_charge)
+    ).toFixed(2);
+    const gst_total = ((sub_total * 3) / 100).toFixed(2);
+    const great_total = (
+      parseFloat(sub_total) +
+      parseFloat(gst_total) -
+      discount
+    ).toFixed(2);
+    return great_total
+  };
 
   const userHandling = (user) => {
     if (store?.id) {
       localStorage.removeItem("Login");
-      setStore('');
-    }
-    else {
+      setStore("");
+    } else {
       localStorage.setItem("Login", JSON.stringify(user));
       // console.log("userData", user);
       setStore(JSON.parse(localStorage.getItem("Login")));
     }
-  }
-
+  };
 
   const [allCategory, setAllCatgegory] = useState([]);
   const [allSubCategory, setAllSubCategory] = useState([]);
   const [allProduct, setAllProduct] = useState([]);
   const [wishlistData, setWishlistData] = useState([]);
   const [bestseller, setBestseller] = useState([]);
-  const Api = 'https://shreekrishnaastrology.com/api'
-
+  const Api = "https://shreekrishnaastrology.com/api";
 
   const token = store?.access_token;
   const fetchCategory = async (retryCount = 0) => {
@@ -42,7 +81,7 @@ const UseContext = (props) => {
     } catch (error) {
       console.error("Failed to fetch  data:", error.message);
     }
-  }
+  };
   const fetchSubCategory = async (retryCount = 0) => {
     // fetch catgory
     try {
@@ -53,10 +92,9 @@ const UseContext = (props) => {
       });
       setAllSubCategory(response?.data?.subCategories);
     } catch (error) {
-
       console.error("Failed to fetch data:", error.message);
     }
-  }
+  };
 
   const fetchProduct = async (retryCount = 0) => {
     // fetch catgory
@@ -70,8 +108,7 @@ const UseContext = (props) => {
     } catch (error) {
       console.error("Failed to fetch data:", error.message);
     }
-  }
-
+  };
 
   useEffect(() => {
     if (calledOnce.current) return;
@@ -86,13 +123,13 @@ const UseContext = (props) => {
 
   // getting best selling products
   useEffect(() => {
-    const sortedFlitter = [...allProduct]
-      .sort((a, b) => b.total_rating - a.total_rating);
+    const sortedFlitter = [...allProduct].sort(
+      (a, b) => b.total_rating - a.total_rating
+    );
     setBestseller(sortedFlitter);
   }, [allProduct]);
 
-
-  // add to wishlist handlerrs {} 
+  // add to wishlist handlerrs {}
 
   const [wishlistID, setWishlistID] = useState([]);
   const addwishlistHandler = async (id) => {
@@ -100,34 +137,40 @@ const UseContext = (props) => {
     const check = wishlistID.includes(id);
     if (!check) {
       // console.log('Product id', id);
-       await axios.post(`${Api}/wishlists/create`, {
-        customer_id: store?.id,
-        product_id: id,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      await axios.post(
+        `${Api}/wishlists/create`,
+        {
+          customer_id: store?.id,
+          product_id: id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      })
+      );
       // console.log('response', res);
     }
     fetchWishlist();
-  }
+  };
   // Remove from wishlist handler {}
   const removeWishlistHandler = async (id) => {
     var res = await axios.delete(`${Api}/wishlists/delete/${id}`, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
+        Authorization: `Bearer ${token}`,
+      },
+    });
     if (res.data) {
       // console.log('Removed from wishlist', res);
       fetchWishlist();
     }
-  }
+  };
   const findWishlistID = (id) => {
-    var data = wishlistData.find((item) => { return item.product_id === id; });
-    removeWishlistHandler(data.id)
-  }
+    var data = wishlistData.find((item) => {
+      return item.product_id === id;
+    });
+    removeWishlistHandler(data.id);
+  };
 
   const fetchWishlist = async (retryCount = 0) => {
     // fetch catgory
@@ -146,10 +189,9 @@ const UseContext = (props) => {
         setWishlistID(idData);
       }
     } catch (error) {
-
       console.error("Failed to fetch data:", error.message);
     }
-  }
+  };
 
   // fetchcartsData
   const [cartData, setCardData] = useState([]);
@@ -158,7 +200,7 @@ const UseContext = (props) => {
     // console.log("Apicard",offer)
     // console.warn("Cart", cartData);
     let CheckQty = cartData.filter((cart) => {
-      return cart.product_id === product?.id
+      return cart.product_id === product?.id;
     });
 
     // let unit_price
@@ -179,48 +221,55 @@ const UseContext = (props) => {
     console.warn("Check Qty", CheckQty);
     if (CheckQty.length > 0) {
       // update cart logic here
-      await axios.post(`${Api}/cart/update/${CheckQty?.[0]?.id}`,
-        {
-          customer_id: store?.id,
-          product_id: product?.id,
-          size: size || 0,
-          quantity: CheckQty?.[0]?.quantity + 1,
-          unit_price: product?.total_price || 0,
-          offer_id: offer?.id || null,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+      await axios
+        .post(
+          `${Api}/cart/update/${CheckQty?.[0]?.id}`,
+          {
+            customer_id: store?.id,
+            product_id: product?.id,
+            size: size || 0,
+            quantity: CheckQty?.[0]?.quantity + 1,
+            unit_price: product?.total_price || 0,
+            offer_id: offer?.id || null,
           },
-        }).then((response) => {
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .then((response) => {
           // console.log("Product added to cart successfully!", response);
           fetchCardData();
-        })
+        });
     } else {
       // addtocart logic
       // console.error("Product added to cart successfully", unit_price);
-      await axios.post(`${Api}/cart/create`,
-        {
-          customer_id: store?.id,
-          product_id: product?.id,
-          quantity: CheckQty.length || 1,
-          unit_price: product?.total_price || 0,
-          size: size || 0,
-          offer_id: offer?.id || null,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+      await axios
+        .post(
+          `${Api}/cart/create`,
+          {
+            customer_id: store?.id,
+            product_id: product?.id,
+            quantity: CheckQty.length || 1,
+            unit_price: product?.total_price || 0,
+            size: size || 0,
+            offer_id: offer?.id || null,
           },
-        }).then((response) => {
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .then((response) => {
           // console.log("Product added to cart successfully!", response);
           fetchCardData();
-        })
+        });
     }
-  }
+  };
 
-
-  const [cartID , setCartID] =useState([])
+  const [cartID, setCartID] = useState([]);
   // funtion called item aaded or removed
   const fetchCardData = async (retryCount = 0) => {
     try {
@@ -230,8 +279,9 @@ const UseContext = (props) => {
         },
       });
       if (response.data.cart) {
-        var cartID = response.data.cart.filter((item) => item.product_id)
-        .map((item) => item.id);
+        var cartID = response.data.cart
+          .filter((item) => item.product_id)
+          .map((item) => item.id);
         setCartID(cartID);
         // console.log("cartID",cartID)
         // console.warn('cartData', response);
@@ -240,68 +290,68 @@ const UseContext = (props) => {
 
         const today = new Date();
         const updatedCart = Cart?.map((item) => {
-            const endDate = new Date(item?.offer?.end_date);
+          const endDate = new Date(item?.offer?.end_date);
 
-            // Check if the current date is greater than end_date
-            if (today <= endDate && item?.offer) {
-              const discount = parseFloat(item.offer.discount) || 0;
+          // Check if the current date is greater than end_date
+          if (today <= endDate && item?.offer) {
+            const discount = parseFloat(item.offer.discount) || 0;
 
-              let discountedPrice = parseFloat(item.total_price || 0);
+            let discountedPrice = parseFloat(item.total_price || 0);
 
-              if (item.offer.type === "fixed") {
-                  // Apply fixed discount
-                  discountedPrice = discountedPrice - discount;
-              } else if (item.offer.type === "percentage") {
-                  // Apply percentage discount
-                  discountedPrice = discountedPrice * (1 - discount / 100);
-              }
+            if (item.offer.type === "fixed") {
+              // Apply fixed discount
+              discountedPrice = discountedPrice - discount;
+            } else if (item.offer.type === "percentage") {
+              // Apply percentage discount
+              discountedPrice = discountedPrice * (1 - discount / 100);
+            }
 
-              // Ensure discountedPrice is not negative
-              discountedPrice = Math.max(discountedPrice, 0);
+            // Ensure discountedPrice is not negative
+            discountedPrice = Math.max(discountedPrice, 0);
 
-              return {
-                  ...item,
-                  total_price: discountedPrice.toFixed(2), 
-              };
+            return {
+              ...item,
+              total_price: discountedPrice.toFixed(2),
+            };
           }
 
-
-            return item; 
+          return item;
         });
 
         // console.log("Updated Cart:", updatedCart);
         setCardData(updatedCart);
         if (response?.data?.cart?.offer) {
           const today = new Date();
-          const SelectOffer = response?.data?.cart?.offer
+          const SelectOffer = response?.data?.cart?.offer;
           // console.log("CartData " , SelectOffer);
-          
+
           // const offersData = response.data.productOffers.filter((offer) => {
           //     if (!offer.end_date) return false;
           //     const offerEndDate = new Date(offer.end_date);
           //     return offer.product_id === parseInt(id) && offerEndDate >= today;
           // });
           // setOffers(offersData);
-      }
-     
+        }
+
         const totalPrice = updatedCart
-                .map((element) => parseFloat(element?.total_price || 0))
-                .reduce((sum, price) => sum + price, 0);
+          .map((element) => parseFloat(element?.total_price || 0))
+          .reduce((sum, price) => sum + price, 0);
 
-            setPrice(Math.floor(totalPrice));
-
+        setPrice(Math.floor(totalPrice));
       }
     } catch (error) {
-        console.error("Failed to fetch data:", error.message);
+      console.error("Failed to fetch data:", error.message);
     }
-  }
+  };
 
   const removeCart = (ID) => {
-    axios.delete(`${Api}/cart/delete/${ID}`,{headers: {
-      Authorization: `Bearer ${store?.access_token}`,
-    }})
+    axios.delete(`${Api}/cart/delete/${ID}`, {
+      headers: {
+        Authorization: `Bearer ${store?.access_token}`,
+      },
+    });
     fetchCardData();
-  }
+  };
 
   //   useEffect(() => {
   //     const fetchCartData = async () => {
@@ -339,9 +389,8 @@ const UseContext = (props) => {
   //     // Dependencies
   //   }, [deleteToggle, priceToggle]);
 
-  const [removePopup, setRemovePopup] = useState(false)
-  const [priceToggle, setPriceToggle] = useState(0)
-
+  const [removePopup, setRemovePopup] = useState(false);
+  const [priceToggle, setPriceToggle] = useState(0);
 
   useEffect(() => {
     // if (hasFetched.current) return; // Prevent further executions
@@ -351,46 +400,45 @@ const UseContext = (props) => {
     fetchWishlist();
     fetchCardData();
     // eslint-disable-next-line
-  }, [removePopup, priceToggle,store])
-
-
+  }, [removePopup, priceToggle, store]);
 
   // ************ My Profile **********
   // let store = JSON.parse(localStorage.getItem("Login"))
 
-  const [profileData, setProfileData] = useState([])
-  const [editToggle, setEditToggle] = useState(false)
+  const [profileData, setProfileData] = useState([]);
+  const [editToggle, setEditToggle] = useState(false);
 
   // shifted
   useEffect(() => {
     const myProfileData = async (retryCount = 0) => {
       try {
-        const response =  await axios.get(`${Api}/user/get/${store?.id}`, {
+        const response = await axios.get(`${Api}/user/get/${store?.id}`, {
           headers: {
             Authorization: `Bearer ${store?.access_token}`,
           },
         });
         setProfileData(response?.data?.user);
         // console.log(response?.data?.user);
-
       } catch (error) {
         if (error?.response?.status === 429 && retryCount < 5) {
           // Retry logic with exponential backoff
-          const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-          console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+          const retryAfter =
+            error?.response?.headers["retry-after"] ||
+            Math.pow(2, retryCount) * 1000;
+          console.warn(
+            `Too many requests. Retrying after ${retryAfter / 1000}s...`
+          );
           // setTimeout(() => myProfileData(retryCount + 1), retryAfter);
         } else {
           console.error("Failed to fetch profile data:", error.message);
         }
       }
-    }
+    };
 
-    myProfileData()
-  }, [editToggle , store])
-
+    myProfileData();
+  }, [editToggle, store]);
 
   // console.log("pro ", profileData);
-
 
   // ******* Edit User State *******
   const [editVal, setEditVal] = useState({
@@ -414,14 +462,14 @@ const UseContext = (props) => {
     setEditToggle(true);
   };
 
-
   const EditFormik = useFormik({
     initialValues: editVal,
     enableReinitialize: true,
     validationSchema: EditProfileSchema,
     onSubmit: (values, action) => {
       axios
-        .post(`${Api}/user/updateprofile/${store?.id}`,
+        .post(
+          `${Api}/user/updateprofile/${store?.id}`,
           {
             name: values?.name,
             email: values?.email,
@@ -451,40 +499,39 @@ const UseContext = (props) => {
   });
 
   const handleCancel = () => {
-    setEditToggle(false)
-  }
-
+    setEditToggle(false);
+  };
 
   // ********** My Address ********
-  const [addType, setAddType] = useState("Home")
-  const [myAddData, setMyAddData] = useState([])
-  const [addMainNewAdd, setAddMainNewAdd] = useState(false)
-  const [newAddModal, setNewAddModal] = useState(false)
+  const [addType, setAddType] = useState("Home");
+  const [myAddData, setMyAddData] = useState([]);
+  const [addMainNewAdd, setAddMainNewAdd] = useState(false);
+  const [newAddModal, setNewAddModal] = useState(false);
   const [hello, setHello] = useState(() => {
     const savedDefault = localStorage.getItem("default");
     return savedDefault ? JSON.parse(savedDefault) : "";
   });
 
-
   const newAddVal = {
-    address: '',
-    pincode: '',
-    state: '',
-    city: '',
-    name: '',
-    phone: ''
-  }
+    address: "",
+    pincode: "",
+    state: "",
+    city: "",
+    name: "",
+    phone: "",
+  };
 
   const AddFormik = useFormik({
     initialValues: newAddVal,
     validationSchema: NewAddSchema,
     onSubmit: async (values, action) => {
       try {
-          await axios.post(`${Api}/deliveryAddress/create`,
+        await axios.post(
+          `${Api}/deliveryAddress/create`,
           {
             customer_id: store?.id,
             address: values.address,
-            status: 'active',
+            status: "active",
             state: values.state,
             city: values.city,
             pincode: values.pincode,
@@ -499,7 +546,7 @@ const UseContext = (props) => {
           }
         );
         // console.log("NewAdd", response);
-        alert("Address Add SuccessFully")
+        alert("Address Add SuccessFully");
         setNewAddModal(false);
         setAddMainNewAdd(true);
         action.resetForm();
@@ -510,80 +557,79 @@ const UseContext = (props) => {
     },
   });
 
-
   const handleAddType = (type) => {
-    setAddType(type)
-  }
+    setAddType(type);
+  };
 
-  const [singleNewAdd, setSingleNewAdd] = useState(false)
-  const [deleteUseEffect, setdeleteUseEffect] = useState(0)
+  const [singleNewAdd, setSingleNewAdd] = useState(false);
+  const [deleteUseEffect, setdeleteUseEffect] = useState(0);
 
   useEffect(() => {
-
     const addressMyData = async (retryCount = 0) => {
       try {
         const response = await axios.get(`${Api}/deliveryAddress/getall`, {
           headers: {
-            Authorization: `Bearer ${store?.access_token}`
-          }
-        })
+            Authorization: `Bearer ${store?.access_token}`,
+          },
+        });
         // console.log("My Address " , response?.data?.deliveryAddress);
-        
-        setMyAddData(response?.data?.deliveryAddress)
-      }
-      catch (error) {
+
+        setMyAddData(response?.data?.deliveryAddress);
+      } catch (error) {
         if (error?.response?.status === 429 && retryCount < 5) {
           // Retry logic with exponential backoff
-          const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-          console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
+          const retryAfter =
+            error?.response?.headers["retry-after"] ||
+            Math.pow(2, retryCount) * 1000;
+          console.warn(
+            `Too many requests. Retrying after ${retryAfter / 1000}s...`
+          );
           setTimeout(() => addressMyData(retryCount + 1), retryAfter);
         } else {
           // console.error("Failed to fetch profile data:", error.message);
         }
       }
-    }
+    };
 
-    addressMyData()
-
-  }, [addMainNewAdd, singleNewAdd, deleteUseEffect , store])
+    addressMyData();
+  }, [addMainNewAdd, singleNewAdd, deleteUseEffect, store]);
 
   useEffect(() => {
     var data = localStorage.getItem("default");
     if (!data) {
       setHello(myAddData[0]?.id);
     }
-  }, [myAddData])
+  }, [myAddData]);
 
   const handleMark = (id) => {
     setHello(id);
     localStorage.setItem("default", JSON.stringify(id));
   };
 
-
   // {/* ---------------- Add New Single Address Popup ------------------ */}
-  const [singleId, setSingleId] = useState(null)
+  const [singleId, setSingleId] = useState(null);
   const [activeCard, setActiveCard] = useState(null);
 
-
   const singleAddVal = {
-    address: '',
-    pincode: '',
-    state: '',
-    city: '',
-    name: '',
-    phone: ''
-  }
+    address: "",
+    pincode: "",
+    state: "",
+    city: "",
+    name: "",
+    phone: "",
+  };
 
   const SingleAddFormik = useFormik({
     initialValues: singleAddVal,
     validationSchema: NewAddSchema,
     onSubmit: async (values, action) => {
       try {
-          await axios.post(`${Api}/deliveryAddress/update/${singleId}`,
+        await axios.post(
+          `${Api}/deliveryAddress/update/${singleId}`,
           {
             customer_id: `${store?.id}`,
             address: values.address,
-            status: 'active',
+            status: "active",
             state: values?.state,
             city: values?.city,
             pincode: `${values?.pincode}`,
@@ -606,49 +652,46 @@ const UseContext = (props) => {
 
         alert(
           error.response?.data?.message ||
-          "Failed to update address. Please try again."
+            "Failed to update address. Please try again."
         );
       }
     },
   });
 
-
   const handleSingleNewAdd = (id) => {
     const selectedAddress = myAddData.find((item) => item.id === id);
     if (selectedAddress) {
       SingleAddFormik.setValues({
-        address: selectedAddress?.address || '',
-        pincode: selectedAddress?.pincode || '',
-        state: selectedAddress?.state || '',
-        city: selectedAddress?.city || '',
-        name: selectedAddress?.contact_name || '',
-        phone: selectedAddress?.contact_no || '',
+        address: selectedAddress?.address || "",
+        pincode: selectedAddress?.pincode || "",
+        state: selectedAddress?.state || "",
+        city: selectedAddress?.city || "",
+        name: selectedAddress?.contact_name || "",
+        phone: selectedAddress?.contact_no || "",
       });
     }
     setSingleNewAdd(true);
     setSingleId(id);
   };
 
-
   //--------------- Delete Item Popup --------------
-  const [deleteId, setDeleteId] = useState(null)
-  const [deleteAdd, setDeleteAdd] = useState(false)
-
+  const [deleteId, setDeleteId] = useState(null);
+  const [deleteAdd, setDeleteAdd] = useState(false);
 
   const handleDeleteAdd = (id) => {
-    setDeleteAdd(true)
-    setDeleteId(id)
-  }
+    setDeleteAdd(true);
+    setDeleteId(id);
+  };
 
   const handleDeleteYes = async () => {
     try {
-       await axios.delete(`${Api}/deliveryAddress/delete/${deleteId}`, {
+      await axios.delete(`${Api}/deliveryAddress/delete/${deleteId}`, {
         headers: {
           Authorization: `Bearer ${store?.access_token}`,
         },
       });
       // console.log("DeleteAdd", response);
-      alert("Address Delete SuccessFully")
+      alert("Address Delete SuccessFully");
       setDeleteAdd(false);
       setdeleteUseEffect(deleteUseEffect + 1);
       setActiveCard(true);
@@ -656,95 +699,100 @@ const UseContext = (props) => {
       console.error("Error deleting address:", error);
       alert(
         error.response?.data?.message ||
-        "Failed to delete the address. Please try again."
+          "Failed to delete the address. Please try again."
       );
     }
   };
 
-
   // ********** My Order **********
-  const [orderMain, setOrderMain] = useState({})
+  const [orderMain, setOrderMain] = useState({});
   const [filteredOrders, setFilteredOrders] = useState([]);
-  const [payCount, setPayCount] = useState(0)
+  const [payCount, setPayCount] = useState(0);
   // ----------- Track Order -------------
-  const [trackOrderData, setTrackOrderData] = useState([])
-  const [trackFilter, seTrackFilter] = useState("")
-  const trackKey = JSON.parse(localStorage.getItem("TrackOrderKey")) || null
-  const [cancelOrder, setCancelOrder] = useState(0)
+  const [trackOrderData, setTrackOrderData] = useState([]);
+  const [trackFilter, seTrackFilter] = useState("");
+  const trackKey = JSON.parse(localStorage.getItem("TrackOrderKey")) || null;
+  const [cancelOrder, setCancelOrder] = useState(0);
   // ------------ Return Order -------------
-  const [returnData, setReturnData] = useState([])
-  const [prodID, setProdID] = useState([])
-  const [orderID, setOrderID] = useState(null)
-  const [returnOrderData, setReturnOrderData] = useState("")
-  const ReturnOrderKey = JSON.parse(localStorage.getItem("ReturnOrderKey")) || null
-  const [customerID, setCustomerID] = useState(null)
-
-
-
+  const [returnData, setReturnData] = useState([]);
+  const [prodID, setProdID] = useState([]);
+  const [orderID, setOrderID] = useState(null);
+  const [returnOrderData, setReturnOrderData] = useState("");
+  const ReturnOrderKey =
+    JSON.parse(localStorage.getItem("ReturnOrderKey")) || null;
+  const [customerID, setCustomerID] = useState(null);
 
   useEffect(() => {
-    const myOrderData = async (retryCount = 0) => {      
-       try{
-            const response = await axios.post(`${Api}/order/getbyuserid`,
-               {
-                 customer_id: parseInt(`${store?.id}`)
-                  // customer_id: 1
-               },
-               {
-                 headers: {
-                   Authorization: `Bearer ${store?.access_token}`
-                 }
-            })            
-            setOrderMain(response?.data?.orders)
-            setFilteredOrders(response?.data?.orders);
-            setTrackOrderData(
-              response?.data?.orders?.filter((element) => element?.id === trackKey)
-            );
-
-
-            const data = response?.data?.orders?.filter(
-              (element) => element?.id === ReturnOrderKey
-            );
-            const First = data?.map((element) => element?.order_items);
-            const Second = First[0]?.map((element) => element?.product_id);
-            const ID = data.map((element)=> element?.id)
-    
-            setCustomerID(response?.data?.orders[0]?.customer_id ? response?.data?.orders[0]?.customer_id : 1 )
-            setOrderID(ID[0])
-            setProdID([...new Set(Second)]);
-            setReturnData(data);
+    const myOrderData = async (retryCount = 0) => {
+      try {
+        const response = await axios.post(
+          `${Api}/order/getbyuserid`,
+          {
+            customer_id: parseInt(`${store?.id}`),
+            // customer_id: 1
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${store?.access_token}`,
+            },
           }
-          catch(error){
-             if (error?.response?.status === 429 && retryCount < 5) {
-               // Retry logic with exponential backoff
-               const retryAfter = error?.response?.headers['retry-after'] || Math.pow(2, retryCount) * 1000;
-               console.warn(`Too many requests. Retrying after ${retryAfter / 1000}s...`);
-               setTimeout(() => myOrderData(retryCount + 1), retryAfter);
-             } else {
-               console.error("Failed to fetch profile data:", error.message);
-             }
-          }
-    }
-    myOrderData()
-  // eslint-disable-next-line
-  }, [store , payCount , trackFilter , returnOrderData , cancelOrder])
+        );
+        setOrderMain(response?.data?.orders);
+        setFilteredOrders(response?.data?.orders);
+        setTrackOrderData(
+          response?.data?.orders?.filter((element) => element?.id === trackKey)
+        );
 
+        const data = response?.data?.orders?.filter(
+          (element) => element?.id === ReturnOrderKey
+        );
+        const First = data?.map((element) => element?.order_items);
+        const Second = First[0]?.map((element) => element?.product_id);
+        const ID = data.map((element) => element?.id);
+
+        setCustomerID(
+          response?.data?.orders[0]?.customer_id
+            ? response?.data?.orders[0]?.customer_id
+            : 1
+        );
+        setOrderID(ID[0]);
+        setProdID([...new Set(Second)]);
+        setReturnData(data);
+      } catch (error) {
+        if (error?.response?.status === 429 && retryCount < 5) {
+          // Retry logic with exponential backoff
+          const retryAfter =
+            error?.response?.headers["retry-after"] ||
+            Math.pow(2, retryCount) * 1000;
+          console.warn(
+            `Too many requests. Retrying after ${retryAfter / 1000}s...`
+          );
+          setTimeout(() => myOrderData(retryCount + 1), retryAfter);
+        } else {
+          console.error("Failed to fetch profile data:", error.message);
+        }
+      }
+    };
+    myOrderData();
+    // eslint-disable-next-line
+  }, [store, payCount, trackFilter, returnOrderData, cancelOrder]);
 
   // ********** Change Password **********
-  const [changePassToggle, setChangePassToggle] = useState(false)
+  const [changePassToggle, setChangePassToggle] = useState(false);
 
   const changePassVal = {
-    Old_Pass: '',
-    New_Pass: '',
-    Con_Pass: ''
-  }
+    Old_Pass: "",
+    New_Pass: "",
+    Con_Pass: "",
+  };
 
   const ChangePassFormik = useFormik({
     initialValues: changePassVal,
     validationSchema: ChangePass,
     onSubmit: async (values, action) => {
       try {
-          await axios.post(`${Api}/password/change`,
+        await axios.post(
+          `${Api}/password/change`,
           {
             current_password: values.Old_Pass,
             new_password: values.New_Pass,
@@ -767,45 +815,40 @@ const UseContext = (props) => {
 
         alert(
           error.response?.data?.message ||
-          "Failed to change the password. Please try again."
+            "Failed to change the password. Please try again."
         );
       }
     },
   });
 
-
   // *************** Track Order Page ************
 
   const handleTrackOrder = (data) => {
-    seTrackFilter(data)
-    localStorage.setItem("TrackOrderKey", JSON.stringify(data))
-  }
-
+    seTrackFilter(data);
+    localStorage.setItem("TrackOrderKey", JSON.stringify(data));
+  };
 
   // ************** Return Order *********
 
-
   const handleReturnOrder = (customer) => {
-    setReturnOrderData(customer)
-    localStorage.setItem("ReturnOrderKey", JSON.stringify(customer))
+    setReturnOrderData(customer);
+    localStorage.setItem("ReturnOrderKey", JSON.stringify(customer));
   };
 
-
   // **************** Cart **************
-  const [deleteToggle, setDeleteToggle] = useState(0)
+  const [deleteToggle, setDeleteToggle] = useState(0);
   // const [mycartData, setMyCartData] = useState([])
-  const [price, setPrice] = useState("")
-  const [removeId, setRemoveId] = useState(null)
-  const [wishId, setWishId] = useState(null)
-
+  const [price, setPrice] = useState("");
+  const [removeId, setRemoveId] = useState(null);
+  const [wishId, setWishId] = useState(null);
 
   const handleRemove = (id) => {
     // console.log(id);
-    setRemovePopup(true)
-    setRemoveId(id)
-    let wishId = cartData?.map((element) => element?.product?.id)
+    setRemovePopup(true);
+    setRemoveId(id);
+    let wishId = cartData?.map((element) => element?.product?.id);
     setWishId(wishId[0]);
-  }
+  };
 
   // const handleQuantityChange = async (id, action, cusId, prod_id , offerId) => {
   //   // Calculate the updated cart directly
@@ -854,45 +897,47 @@ const UseContext = (props) => {
   //   setPriceToggle((prev) => prev + 1);
   // };
 
-
   const handleQuantityChange = async (id, action, cusId, prod_id, offerId) => {
     const updatedCart = cartData?.map((item) => {
       if (item.id === id) {
-        const newQuantity = action === "add" ? item?.quantity + 1 : Math.max(item?.quantity - 1, 1);
-  
+        const newQuantity =
+          action === "add"
+            ? item?.quantity + 1
+            : Math.max(item?.quantity - 1, 1);
+
         // Recalculate price with discounts applied, if any
         let newPrice = item.price_per_unit * newQuantity;
-  
+
         // Apply discount if offer exists
         if (item?.offer) {
           const discount = parseFloat(item.offer.discount) || 0;
-  
+
           if (item.offer.type === "fixed") {
             newPrice -= discount;
           } else if (item.offer.type === "percentage") {
             newPrice *= 1 - discount / 100;
           }
-  
+
           // Ensure newPrice is not negative
           newPrice = Math.max(newPrice, 0);
         }
-  
+
         return {
           ...item,
           quantity: newQuantity,
-          total_price: parseFloat(newPrice.toFixed(2)), 
+          total_price: parseFloat(newPrice.toFixed(2)),
         };
       }
       return item;
     });
-  
+
     // setCardData(updatedCart);
-  
+
     const updatedItem = updatedCart.find((item) => item?.id === id);
     if (!updatedItem) return;
-  
+
     try {
-       await axios.post(
+      await axios.post(
         `${Api}/cart/update/${id}`,
         {
           customer_id: cusId,
@@ -913,10 +958,9 @@ const UseContext = (props) => {
     } catch (error) {
       console.error("Failed to update quantity:", error.message);
     }
-  
+
     setPriceToggle((prev) => prev + 1);
   };
-  
 
   const handleFinalRemove = async () => {
     let retryCount = 0;
@@ -925,7 +969,7 @@ const UseContext = (props) => {
 
     const attemptDelete = async () => {
       try {
-       await axios.delete(`${Api}/cart/delete/${removeId}`, {
+        await axios.delete(`${Api}/cart/delete/${removeId}`, {
           headers: {
             Authorization: `Bearer ${store?.access_token}`,
           },
@@ -937,7 +981,9 @@ const UseContext = (props) => {
         if (error.response?.status === 429 && retryCount < maxRetries) {
           retryCount++;
           const delay = retryDelay(retryCount);
-          console.warn(`Rate limit hit. Retrying in ${delay / 1000} seconds...`);
+          console.warn(
+            `Rate limit hit. Retrying in ${delay / 1000} seconds...`
+          );
           await new Promise((resolve) => setTimeout(resolve, delay));
           await attemptDelete();
         } else {
@@ -951,58 +997,137 @@ const UseContext = (props) => {
     await attemptDelete();
   };
 
-
-  
   // console.log("vbweyfgqwfguqwhfiqwhdfiwqhfjqwoifjqwo ", footMain);
 
-
   return (
-    <noteContext.Provider value={{
-      allCategory, allProduct, allSubCategory, token, wishlistData, addwishlistHandler, removeWishlistHandler, wishlistID, findWishlistID, bestseller,
+    <noteContext.Provider
+      value={{
+        allCategory,
+        allProduct,
+        allSubCategory,
+        token,
+        wishlistData,
+        addwishlistHandler,
+        removeWishlistHandler,
+        wishlistID,
+        findWishlistID,
+        bestseller,
 
-      Api, cartData, addToCardhandle, userHandling
-      // ******* My Profile *******
-      , store, profileData, setProfileData,
+        Api,
+        cartData,
+        addToCardhandle,
+        userHandling,
+        pricehandling ,
+        // ******* My Profile *******
+        store,
+        profileData,
+        setProfileData,
 
-      // ------ Edit User State -----
-      editToggle, setEditToggle, editVal, EditFormik, handleCancel, handleEditToggle,
+        // ------ Edit User State -----
+        editToggle,
+        setEditToggle,
+        editVal,
+        EditFormik,
+        handleCancel,
+        handleEditToggle,
 
-      // ------ My Address ------
-      addType, setAddType, myAddData, setMyAddData, addMainNewAdd, setAddMainNewAdd, newAddVal, newAddModal, setNewAddModal,
-      AddFormik, handleAddType, singleNewAdd, setSingleNewAdd, deleteUseEffect, setdeleteUseEffect, handleMark, hello,
+        // ------ My Address ------
+        addType,
+        setAddType,
+        myAddData,
+        setMyAddData,
+        addMainNewAdd,
+        setAddMainNewAdd,
+        newAddVal,
+        newAddModal,
+        setNewAddModal,
+        AddFormik,
+        handleAddType,
+        singleNewAdd,
+        setSingleNewAdd,
+        deleteUseEffect,
+        setdeleteUseEffect,
+        handleMark,
+        hello,
 
-      // ------- Add New Single Address Popup --------
-      singleId, setSingleId, singleAddVal, activeCard, setActiveCard, SingleAddFormik, handleSingleNewAdd,
+        // ------- Add New Single Address Popup --------
+        singleId,
+        setSingleId,
+        singleAddVal,
+        activeCard,
+        setActiveCard,
+        SingleAddFormik,
+        handleSingleNewAdd,
 
-      //--------- Delete Item Popup ---------
-      deleteId, setDeleteId, deleteAdd, setDeleteAdd, handleDeleteAdd, handleDeleteYes,
+        //--------- Delete Item Popup ---------
+        deleteId,
+        setDeleteId,
+        deleteAdd,
+        setDeleteAdd,
+        handleDeleteAdd,
+        handleDeleteYes,
 
-      // ********** My Order **********
-      orderMain, setOrderMain, filteredOrders, setFilteredOrders,
+        // ********** My Order **********
+        orderMain,
+        setOrderMain,
+        filteredOrders,
+        setFilteredOrders,
 
-      //  ******** Change Password **********
-      changePassToggle, setChangePassToggle, ChangePassFormik,
+        //  ******** Change Password **********
+        changePassToggle,
+        setChangePassToggle,
+        ChangePassFormik,
 
-      // ************ Faq **********
+        // ************ Faq **********
 
-      // *************** Track Order Page ************
-      handleTrackOrder, trackFilter, trackOrderData , setTrackOrderData , cancelOrder ,setCancelOrder , 
+        // *************** Track Order Page ************
+        handleTrackOrder,
+        trackFilter,
+        trackOrderData,
+        setTrackOrderData,
+        cancelOrder,
+        setCancelOrder,
 
-      // ************** Return Order *********
-      handleReturnOrder, returnOrderData, returnData, setReturnData , prodID, setProdID , orderID, setOrderID ,customerID, setCustomerID ,
+        // ************** Return Order *********
+        handleReturnOrder,
+        returnOrderData,
+        returnData,
+        setReturnData,
+        prodID,
+        setProdID,
+        orderID,
+        setOrderID,
+        customerID,
+        setCustomerID,
 
-      // **************** Cart ****************
-      deleteToggle, setDeleteToggle, priceToggle, setPriceToggle, price, setPrice, removePopup, setRemovePopup,
-      removeId, setRemoveId, wishId, setWishId, handleRemove, handleQuantityChange, handleFinalRemove, cartData, setCardData,
+        // **************** Cart ****************
+        deleteToggle,
+        setDeleteToggle,
+        priceToggle,
+        setPriceToggle,
+        price,
+        setPrice,
+        removePopup,
+        setRemovePopup,
+        removeId,
+        setRemoveId,
+        wishId,
+        setWishId,
+        handleRemove,
+        handleQuantityChange,
+        handleFinalRemove,
+        cartData,
+        setCardData,
 
-      // *********** Payment ***************
-      setPayCount,cartID,removeCart,
-
-    }}>
-
+        // *********** Payment ***************
+        setPayCount,
+        cartID,
+        removeCart,
+      }}
+    >
       {props.children}
     </noteContext.Provider>
-  )
-}
+  );
+};
 
-export default UseContext
+export default UseContext;

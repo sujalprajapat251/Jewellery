@@ -12,7 +12,7 @@ function Wishlist() {
     // backend conection code ----------------------------------------------------------------
 
     // useContext
-    const { wishlistData, findWishlistID, allProduct } = useContext(noteContext);
+    const { wishlistData, findWishlistID, allProduct ,pricehandling } = useContext(noteContext);
 
 
     // fliter wishlistData from product data
@@ -47,6 +47,7 @@ function Wishlist() {
                     <Row xxl={5} lg={4} md={3} sm={2} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                         {
                             wishlistproducts.map((ele, id) => {
+                                const price = pricehandling(ele);
                                 const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                                 let discountPrice = [];
                                 if (!isNaN(parseFloat(discounted))) {
@@ -66,7 +67,7 @@ function Wishlist() {
                                             <div  className='s_card_text'>
                                                 <Link to={`/productdetail/${ele.product_id || ele.id}`}>
                                                     <h5>{ele.product_name}</h5>
-                                                    <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
+                                                    <p className='mb-0'><span className='mx-2'>₹ {parseFloat(price).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                     <div className='s_rating'>
                                                         {
                                                             [...Array(5)].map((_, index) => {

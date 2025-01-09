@@ -22,7 +22,7 @@ function ProductDetail() {
     // backend connnectivity code ---------------------------------------------------------------
 
     // useContext
-    const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler, store, addToCardhandle } = useContext(noteContext);
+    const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler, store, addToCardhandle ,pricehandling } = useContext(noteContext);
 
     // get product detail using Api
     const [product, setProduct] = useState([]);
@@ -256,9 +256,9 @@ function ProductDetail() {
     // console.log('making_charge', ((parseFloat(metal_total) + parseFloat(stone_total)) * (parseFloat(product?.making_charge) / 100)));
     const discount = (parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)) * parseFloat(product?.discount || 0) / 100;
     // console.log(discount);
-    const sub_total = ((parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)) - discount).toFixed(2);
+    const sub_total = ((parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge))).toFixed(2);
     const gst_total = (sub_total * 3 / 100).toFixed(2);
-    const great_total = ((parseFloat(sub_total) + parseFloat(gst_total)).toFixed(2));
+    const great_total = ((parseFloat(sub_total) + parseFloat(gst_total) - discount).toFixed(2));
     const isSelected = wishlistID.find((items) => items === product?.id);
     // console.log('price', product.making_charge);
 
@@ -575,7 +575,7 @@ function ProductDetail() {
                                 }
                             </div>
                             <div className='d-flex align-items-center justify-content-center justify-content-lg-start'>
-                                <h2 className='s_price text-center text-lg-start'>₹ {parseFloat(product?.price_with_gst).toFixed(2)}</h2>
+                                <h2 className='s_price text-center text-lg-start'>₹ {parseFloat(great_total).toFixed(2)}</h2>
                                 {inStock === true ?  '' : <div className='s_stock_status'>out of stack</div>}
                             </div>
                             <p className='s_description text-center text-lg-start'>{product?.description}</p>
@@ -911,6 +911,7 @@ function ProductDetail() {
                         <Row xxl={5} lg={4} md={3} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                             {
                                 youAlsoLike?.slice(0, itemsToShow).map((ele, id) => {
+                                    const price = pricehandling(ele); 
                                     const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                                     let discountPrice = [];
                                     if (!isNaN(parseFloat(discounted))) {
@@ -928,7 +929,7 @@ function ProductDetail() {
                                                 <div className='s_card_text'>
                                                     <Link to={`/productdetail/${ele.id}`}>
                                                         <h5>{ele.product_name}</h5>
-                                                        <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
+                                                        <p className='mb-0'><span className='mx-2'>₹ {parseFloat(price).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                         <div className='s_rating'>
                                                             {
                                                                 [...Array(5)].map((_, index) => {
@@ -966,6 +967,7 @@ function ProductDetail() {
                         <Row xxl={5} lg={4} md={3} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                             {
                                 peopleAlsoSearch?.slice(0, itemsToShow).map((ele, id) => {
+                                    const price = pricehandling(ele); 
                                     const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                                     let discountPrice = [];
                                     if (!isNaN(parseFloat(discounted))) {
@@ -982,7 +984,7 @@ function ProductDetail() {
                                                 <div className='s_card_text'>
                                                     <Link to={`/productdetail/${ele.id}`}>
                                                         <h5>{ele.product_name}</h5>
-                                                        <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
+                                                        <p className='mb-0'><span className='mx-2'>₹ {parseFloat(price).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                         <div className='s_rating'>
                                                             {
                                                                 [...Array(5)].map((_, index) => {
