@@ -117,6 +117,9 @@
     .ds_about-girl {
         height:390px;
     }
+    .ds_about-padding {
+        padding-top: 48px;
+    }
 }
 
 @media (max-width:992px) {
@@ -133,9 +136,12 @@
     .ds_about-girl {
         height: 477px;
     }
+    .ds_about-padding {
+        padding-top: 0px;
+    }
 }
 
-@media (max-width:768px) {
+@media (max-width:767px) {
     .ds_about-hand-ring{
         height: 300px;
         object-fit: cover;

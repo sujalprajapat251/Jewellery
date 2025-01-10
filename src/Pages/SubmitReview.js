@@ -1,13 +1,18 @@
-import React from 'react'
+import React  from 'react'
 import '../Css/dhruvin/SubmitReview.css'
 import { FaStar } from 'react-icons/fa'
 import { IoMdClose } from 'react-icons/io'
 import { FiPlus } from 'react-icons/fi'
 
+
 const SubmitReview = () => {
+
   return (
     <>
         <section className='mb-5'>
+
+      
+
             <div className='mt-4'>
                 <div className='ds_container'>
                     <div>
@@ -53,7 +58,7 @@ const SubmitReview = () => {
                                             <h6 className='ds_600 mb-0'>Add Photo or Video</h6>
                                             <div className='d-flex mt-2'>
                                                 <div className='ds_review-inner position-relative'>
-                                                    <img src={require("../Img/dhruvin/ring.png")} alt="" width="100%"/>
+                                                    {/* <img src={require("../Img/dhruvin/ring.png")} alt="" width="100%"/> */}
                                                     <IoMdClose className='ds_review-cancel-icon' />
                                                 </div>
                                                 <div className='ds_review-add'>

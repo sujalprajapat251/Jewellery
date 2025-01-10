@@ -4,6 +4,8 @@ import { MdRefresh } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import noteContext from '../Context/noteContext';
+import { loadCaptchaEnginge, LoadCanvasTemplate, validateCaptcha } from 'react-simple-captcha';
+
 
 
 const Payment = () => {
@@ -60,8 +62,8 @@ const Payment = () => {
 
 
   const handlePay = async () => {
-    if (userInput === captcha) {
-      alert("Captcha Verified! Proceeding to Payment.");
+    if (validateCaptcha(captchaInput)) {
+      alert('CAPTCHA Verified Successfully!');
       const formattedProducts = (cardData || []).map((item) => ({
         product_id: item?.product_id || 0,
         qty: item?.quantity || 1,
@@ -222,45 +224,21 @@ const Payment = () => {
 
   //  ------------------ Captha  --------------
 
-  const generateCaptcha = () => {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let captcha = "";
-    for (let i = 0; i < 6; i++) {
-      captcha += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return captcha;
-  };
+  const [captchaInput, setCaptchaInput] = useState('');
 
 
-  const [captcha, setCaptcha] = useState(generateCaptcha());
-  const [userInput, setUserInput] = useState("");
+  useEffect(() => {
+    loadCaptchaEnginge(6); 
+  }, []);
 
-
-  const handleRefresh = () => {
-    setCaptcha(generateCaptcha());
-    setUserInput("");
+  // Reload CAPTCHA
+  const reloadCaptcha = () => {
+    loadCaptchaEnginge(6); 
+    setCaptchaInput(''); 
   };
 
 
 
-  // const handlePay = () => {
-  //   if (userInput === captcha) {
-  //     alert("Captcha Verified! Proceeding to Payment.");
-  //     // Add further payment logic here
-  //   } else {
-  //     alert("Invalid CAPTCHA. Please try again.");
-  //   }
-  // };
-
-
-
-
-  // const removeCart = (ID) => {
-  //   axios.delete(`${Api}/cart/delete/${ID}`,{headers: {
-  //     Authorization: `Bearer ${store?.access_token}`,
-  //   }})
-  //   fetchCartData();
-  // }
   return (
     <>
       <section className='mb-5 pb-4 ds_cart-main'>
@@ -289,14 +267,14 @@ const Payment = () => {
                       <div className="row justify-content-center align-items-center">
                         <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 mt-3 text-sm-center">
                           {/* <img src={require("../Img/dhruvin/captha.png")} alt="" className="ds_cod-cap" /> */}
-                          <h5 className='ds_cod-captha'>{captcha}</h5>
+                          <h5 className='ds_cod-captha mb-0'><LoadCanvasTemplate className="w-100 h-100" /></h5>
 
                         </div>
                         <div className="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12 mt-3">
-                          <input type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} className="ds_cod-input" placeholder="Enter the captcha" />
+                          <input type="text" value={captchaInput} onChange={(e) => setCaptchaInput(e.target.value)}  className="ds_cod-input" placeholder="Enter the captcha" />
                         </div>
                         <div className="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 mt-3">
-                          <MdRefresh className="ds_cod-refresh ds_cursor" onClick={handleRefresh} />
+                          <MdRefresh className="ds_cod-refresh ds_cursor" onClick={reloadCaptcha}  />
                         </div>
                       </div>
 

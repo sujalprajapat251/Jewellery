@@ -79,6 +79,7 @@ const MyProfile = () => {
 
 
     // ******** Saved Card ********
+    const [saveCardPopup, setSaveCardPopup] = useState(false)
     const [savePopup, setSavePopup] = useState(false)
 
 
@@ -216,7 +217,7 @@ useEffect(() => {
   //  ************ LogOut Modal *********
   const [logOut, setLogOut] = useState(false)
 
-const handleLogOut = () => {
+ const handleLogOut = () => {
     Swal.fire({
       position: "top-end",
       toast: true,
@@ -683,7 +684,7 @@ const handleLogOut = () => {
                                 <div>
                                   <div className='d-flex justify-content-between align-items-center'>
                                       <h3>Saved Cards</h3>
-                                      <button className='ds_add-btn' data-bs-toggle="modal" data-bs-target="#addNewCard"><i className="fa-solid fa-plus me-2"></i> Add New Card</button>
+                                      <button className='ds_add-btn' onClick={()=> setSaveCardPopup(true)} ><i className="fa-solid fa-plus me-2"></i> Add New Card</button>
                                   </div>
 
                                 {/* -------------- No Cards ------------ */}
@@ -753,16 +754,12 @@ const handleLogOut = () => {
                                 {/* -------------- Add New Card Popup ------------ */}
                                  <section>
                                     <div>
-                                        <div>
-                                           <div className="modal fade" id="addNewCard"  aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                             <div className="modal-dialog ds_add-new-popup modal-dialog-centered">
-                                               <div className="modal-content" style={{borderRadius:'0'}}>
-                                                 <div className="modal-header border-0 pb-0">
-                                                   <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                 </div>
-                                                 <div className="modal-body pt-0 px-4">
-                                                    <h4 className="modal-title text-center ds_color " >Add New Card</h4>
-                                                    <div>
+                                    <Modal show={saveCardPopup} onHide={()=> setSaveCardPopup(false)} aria-labelledby="contained-modal-title-vcenter" centered>
+                                        <Modal.Header className='pb-0 border-0' closeButton>
+                                        </Modal.Header>
+                                        <Modal.Body className='pt-0'>
+                                          <h4 className="modal-title text-center ds_color " >Add New Card</h4>
+                                                    <div className='px-sm-3 px-2'>
                                                       <div className="row">
                                                           <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                                                               <div>
@@ -786,9 +783,10 @@ const handleLogOut = () => {
                                                           </div>
                                   
                                                           <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
-                                                              <div>
+                                                              <div className='position-relative'>
                                                                 <label htmlFor="" className='ds_600 mb-1'>Expiry Date</label>
-                                                                <input type="text" className='ds_new-input' placeholder="mm-yy" />
+                                                                <input type="date" id='ds_dob' name='ds_dob' className='ds_new-input' />
+                                                                <i className="fa-solid fa-calendar-days ds_edit-calender ds_color"  onClick={() => { const dateInput = document.getElementById('ds_dob');if (dateInput) {dateInput.showPicker ? dateInput.showPicker() : dateInput.focus(); }}} ></i>
                                                               </div>
                                                           </div>
                                                       </div>
@@ -802,11 +800,8 @@ const handleLogOut = () => {
                                                         </div>
                                                       </div>
                                                     </div>
-                                                 </div>
-                                               </div>
-                                             </div>
-                                            </div>
-                                          </div>
+                                        </Modal.Body>
+                                    </Modal>
                                     </div>
                                  </section>
 

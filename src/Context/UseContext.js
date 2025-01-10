@@ -601,6 +601,7 @@ const UseContext = (props) => {
     var data = localStorage.getItem("default");
     if (!data) {
       setHello(myAddData[0]?.id);
+      localStorage.setItem("default" , JSON.stringify(myAddData[0]?.id))
     }
   }, [myAddData]);
 

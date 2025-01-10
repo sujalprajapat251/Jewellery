@@ -81,6 +81,9 @@
     .ds_contact-body {
         padding: 30px 19px;
     }
+    .ds_contact-inner {
+        padding-bottom: 55px;
+    }
 }
 
 @media (max-width:992px) {

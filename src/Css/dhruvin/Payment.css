@@ -86,12 +86,19 @@
     background-color: white;
 }
 .ds_cod-captha{
-    padding: 10px 15px;
-    background: gainsboro;
+    /* padding: 10px 15px; */
+    /* background: gainsboro; */
     letter-spacing: 5px;
     width: 130px;
 }
-
+.ds_cod-captha div canvas {
+    width: 100% !important;
+    height: 100% !important;
+    background: gainsboro !important;
+}
+.ds_cod-captha div  div{
+    display: none;
+}
 
 
 

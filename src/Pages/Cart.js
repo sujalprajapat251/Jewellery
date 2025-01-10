@@ -123,7 +123,7 @@ let jab = cartData.map((item)=>{
     sum += parseFloat(item?.product_offer?.price); 
     // newPrice -= parseFloat(item.product_offer.price);
     console.log('sum1',sum)
-  } else if (item.product_offer.type === "percentage") {
+  } else if (item?.product_offer?.type === "percentage") {
     sum += ((parseFloat(item?.product_price)*item?.quantity)*parseFloat(item?.product_offer?.discount)) /100;
     console.log('sum1',sum)
   }

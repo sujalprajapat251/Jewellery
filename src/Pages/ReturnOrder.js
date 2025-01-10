@@ -293,7 +293,7 @@ const handleDownloadInvoice = () => {
   localStorage.setItem("OrderDetails" , JSON.stringify(MyObject))
   const Id = element?.id
   localStorage.setItem("orderId", JSON.stringify(Id))
-//  console.log(element);
+ console.log(element);
  
  })
 }
