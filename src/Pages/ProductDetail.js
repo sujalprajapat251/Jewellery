@@ -1,6 +1,5 @@
 import '../Css/Sujal/ProductDetail.css'
 import { Accordion, Col, Modal, Nav, Row } from "react-bootstrap";
-import video from '../Img/Sujal/ringvideo.mp4'
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import { GoHeart, GoHeartFill } from 'react-icons/go';
@@ -22,7 +21,7 @@ function ProductDetail() {
     // backend connnectivity code ---------------------------------------------------------------
 
     // useContext
-    const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler, store, addToCardhandle ,pricehandling } = useContext(noteContext);
+    const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler, store, addToCardhandle } = useContext(noteContext);
 
     // get product detail using Api
     const [product, setProduct] = useState([]);
@@ -63,7 +62,7 @@ function ProductDetail() {
     const [youAlsoLike, setYouAlsoLike] = useState([]);
     const [offers, setOffers] = useState([]);
     const [peopleAlsoSearch, setPeopleAlsoSearch] = useState([]);
-    const [sizeOpen,setSizeOpen] = useState(false)
+    const [sizeOpen, setSizeOpen] = useState(false)
     useEffect(() => {
         // console.log("product", product);
         // get size data
@@ -256,9 +255,9 @@ function ProductDetail() {
     // console.log('making_charge', ((parseFloat(metal_total) + parseFloat(stone_total)) * (parseFloat(product?.making_charge) / 100)));
     const discount = (parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)) * parseFloat(product?.discount || 0) / 100;
     // console.log(discount);
-    const sub_total = ((parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge))).toFixed(2);
+    const sub_total = ((parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)) - discount).toFixed(2);
     const gst_total = (sub_total * 3 / 100).toFixed(2);
-    const great_total = ((parseFloat(sub_total) + parseFloat(gst_total) - discount).toFixed(2));
+    const great_total = ((parseFloat(sub_total) + parseFloat(gst_total)).toFixed(2));
     const isSelected = wishlistID.find((items) => items === product?.id);
     // console.log('price', product.making_charge);
 
@@ -446,13 +445,13 @@ function ProductDetail() {
                                             </div>
                                         ) : isImage ? (
                                             <div className='s_image'>
-                                            <img
-                                                key={`image-${index}`}
-                                                src={media}
-                                                alt={`product-media-${index}`}
-                                                
-                                                onClick={() => productImgHanddler(index)}
-                                            />
+                                                <img
+                                                    key={`image-${index}`}
+                                                    src={media}
+                                                    alt={`product-media-${index}`}
+
+                                                    onClick={() => productImgHanddler(index)}
+                                                />
                                             </div>
                                         ) : null
                                     ) : (
@@ -460,7 +459,7 @@ function ProductDetail() {
                                             <div
                                                 className="s_product-image"
                                             >
-                                                
+
                                             </div>
                                         </div>
                                     );
@@ -525,7 +524,7 @@ function ProductDetail() {
                                                             <video
                                                                 className=''
                                                                 muted>
-                                                                <source src={video} type="video/mp4" />
+                                                                <source src={item} type="video/mp4" />
                                                                 Your browser does not support the video tag.
                                                             </video>
                                                             <img
@@ -575,8 +574,8 @@ function ProductDetail() {
                                 }
                             </div>
                             <div className='d-flex align-items-center justify-content-center justify-content-lg-start'>
-                                <h2 className='s_price text-center text-lg-start'>₹ {parseFloat(great_total).toFixed(2)}</h2>
-                                {inStock === true ?  '' : <div className='s_stock_status'>out of stack</div>}
+                                <h2 className='s_price text-center text-lg-start'>₹ {parseFloat(product?.price_with_gst).toFixed(2)}</h2>
+                                {inStock === true ? '' : <div className='s_stock_status'>out of stack</div>}
                             </div>
                             <p className='s_description text-center text-lg-start'>{product?.description}</p>
 
@@ -607,15 +606,15 @@ function ProductDetail() {
                                         <h4>Size</h4>
                                         <div className='s_box d-flex justify-content-between align-items-center'>
                                             <p className='mb-0'>{size}</p>
-                                            {sizeOpen ? 
-                                            <FaAngleUp className='ms-auto' style={{cursor:'pointer'}} onClick={()=>{setSizeOpen(false)}}/>
-                                            :
-                                            <FaAngleDown className='ms-auto' style={{cursor:'pointer'}} onClick={()=>{setSizeOpen(true)}}/>
+                                            {sizeOpen ?
+                                                <FaAngleUp className='ms-auto' style={{ cursor: 'pointer' }} onClick={() => { setSizeOpen(false) }} />
+                                                :
+                                                <FaAngleDown className='ms-auto' style={{ cursor: 'pointer' }} onClick={() => { setSizeOpen(true) }} />
                                             }
                                             <div className='s_size_menu'>
-                                                { sizeOpen ? sizeArray.map((item) => {
+                                                {sizeOpen ? sizeArray.map((item) => {
                                                     return <div key={item} className={`s_size_box ${item === size ? 'active' : ''}`} onClick={() => { setSize(item) }}>{item}</div>
-                                                }):''}
+                                                }) : ''}
                                             </div>
                                         </div>
                                     </div>
@@ -911,7 +910,7 @@ function ProductDetail() {
                         <Row xxl={5} lg={4} md={3} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                             {
                                 youAlsoLike?.slice(0, itemsToShow).map((ele, id) => {
-                                    const price = pricehandling(ele); 
+                                    // const price = pricehandling(ele); 
                                     const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                                     let discountPrice = [];
                                     if (!isNaN(parseFloat(discounted))) {
@@ -929,7 +928,7 @@ function ProductDetail() {
                                                 <div className='s_card_text'>
                                                     <Link to={`/productdetail/${ele.id}`}>
                                                         <h5>{ele.product_name}</h5>
-                                                        <p className='mb-0'><span className='mx-2'>₹ {parseFloat(price).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
+                                                        <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                         <div className='s_rating'>
                                                             {
                                                                 [...Array(5)].map((_, index) => {
@@ -967,7 +966,7 @@ function ProductDetail() {
                         <Row xxl={5} lg={4} md={3} sm={3} className='s_seller_cards row-cols-1 gx-2 gx-sm-4'>
                             {
                                 peopleAlsoSearch?.slice(0, itemsToShow).map((ele, id) => {
-                                    const price = pricehandling(ele); 
+                                    // const price = pricehandling(ele); 
                                     const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                                     let discountPrice = [];
                                     if (!isNaN(parseFloat(discounted))) {
@@ -984,7 +983,7 @@ function ProductDetail() {
                                                 <div className='s_card_text'>
                                                     <Link to={`/productdetail/${ele.id}`}>
                                                         <h5>{ele.product_name}</h5>
-                                                        <p className='mb-0'><span className='mx-2'>₹ {parseFloat(price).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
+                                                        <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                         <div className='s_rating'>
                                                             {
                                                                 [...Array(5)].map((_, index) => {
@@ -1065,7 +1064,7 @@ function ProductDetail() {
 
                                         </div>
                                         <div className='s_review_icon d-flex '>
-                                            { store && item.like_or_dislike === 0 ? <>
+                                            {store && item.like_or_dislike === 0 ? <>
                                                 <div className="d-flex align-items-center me-4">
                                                     <AiOutlineLike onClick={() => { handleLike(item.id, 1) }} />
                                                     <span>Like</span>
@@ -1075,16 +1074,16 @@ function ProductDetail() {
                                                     <span>Dislike</span>
                                                 </div>
                                             </> : ''}
-                                            { store && item.like_or_dislike === 1 ? <>
-                                                    <div className="d-flex align-items-center me-4">
-                                                        <AiFillLike onClick={() => { handleLike(item.id, 1) }} />
-                                                        <span>Like</span>
-                                                    </div>
-                                                    <div className="d-flex align-items-center me-4">
-                                                        <AiOutlineDislike onClick={() => { handleLike(item.id, 2) }} />
-                                                        <span>Dislike</span>
-                                                    </div>
-                                                </> : ''}
+                                            {store && item.like_or_dislike === 1 ? <>
+                                                <div className="d-flex align-items-center me-4">
+                                                    <AiFillLike onClick={() => { handleLike(item.id, 1) }} />
+                                                    <span>Like</span>
+                                                </div>
+                                                <div className="d-flex align-items-center me-4">
+                                                    <AiOutlineDislike onClick={() => { handleLike(item.id, 2) }} />
+                                                    <span>Dislike</span>
+                                                </div>
+                                            </> : ''}
                                             {store && item.like_or_dislike === 2 ? <>
                                                 <div className="d-flex align-items-center me-4">
                                                     <AiOutlineLike onClick={() => { handleLike(item.id, 1) }} />

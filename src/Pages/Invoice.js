@@ -148,9 +148,9 @@ var totalAmount =0;
                             // console.log("Helllo" , element);
                             // final_price = parseFloat(parseFloat(element?.price) * parseFloat(element?.qty));
                             sub_total= (parseFloat(sub_total) + parseFloat(element?.total_price));
-                            gst = (parseFloat(sub_total) * 3 /100);
-                            discountedPrice = ((parseFloat(sub_total)+ parseFloat(gst))  - invoice?.discount);
-                            totalAmount = (parseFloat(discountedPrice));
+                            discountedPrice = ((parseFloat(sub_total))  - parseFloat(invoice?.discount));
+                            gst = (parseFloat(parseFloat(discountedPrice* 3)  /100));
+                            totalAmount = (parseFloat(discountedPrice) + gst);
                             return(
                                  <tr key={index}>
                                      <td>
@@ -195,9 +195,9 @@ var totalAmount =0;
                             <div className="ms-5">
                               <p className="ds_in-sub ds_600 text-dark">₹ {sub_total}</p>
                               <p className="ds_in-sub ds_600" style={{ color: "#0F993E" }}>- ₹ {parseFloat(invoice?.discount).toFixed(0)}</p>
-                              <p className="ds_in-sub ds_600 text-dark">₹ {parseFloat(gst / 2).toFixed(0)}</p>
-                              <p className="ds_in-sub ds_600 text-dark">₹ {parseFloat(gst / 2).toFixed(0)}</p>
-                              <h6 className="ds_in-total ds_600">₹{parseFloat(totalAmount).toFixed(0)}</h6>
+                              <p className="ds_in-sub ds_600 text-dark">₹ {parseFloat(gst / 2).toFixed(2)}</p>
+                              <p className="ds_in-sub ds_600 text-dark">₹ {parseFloat(gst / 2).toFixed(2)}</p>
+                              <h6 className="ds_in-total ds_600">₹{parseFloat(totalAmount).toFixed(2)}</h6>
                             </div>
                           </div>
                         </div>

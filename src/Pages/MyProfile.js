@@ -886,7 +886,7 @@ const handleLogOut = () => {
                                                     </p>
                                                   </div>
                                                   <h5 className='text-end me-4 mt-2'>
-                                                      <span className="ms-lg-0 ms-md-3 ms-0 ds_order-padding ds_color">₹{element?.total_amount }</span>
+                                                      <span className="ms-lg-0 ms-md-3 ms-0 ds_order-padding ds_color">₹{parseFloat(element?.total_amount).toFixed(2)}</span>
                                                   </h5>
                                                   {
                                                     element?.order_status === "pending" ? (

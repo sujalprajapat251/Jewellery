@@ -201,7 +201,7 @@ const OrderDetails = () => {
                   <div>
                     <div className="d-flex px-3 mt-3 justify-content-between">
                       <h6 className="ds_con-total">Sub Total</h6>
-                      <h6 className="ds_con-total-price text-dark ds_600">₹{mydata?.sub_total}</h6>
+                      <h6 className="ds_con-total-price text-dark ds_600">₹{parseFloat(mydata?.sub_total).toFixed(0)}</h6>
                     </div>
                     <div className="d-flex px-3 mt-3 justify-content-between">
                       <h6 className="ds_con-total">Delivery Charge</h6>
@@ -212,7 +212,7 @@ const OrderDetails = () => {
 
                   <div className="d-flex justify-content-between px-3 mt-3">
                     <h4 className="ds_con-amount">Total Amount</h4>
-                    <h4 className="ds_con-amount">₹{mydata?.total}</h4>
+                    <h4 className="ds_con-amount">₹{parseFloat(mydata?.total).toFixed(0)}</h4>
                   </div>
                 </div>
               </div>

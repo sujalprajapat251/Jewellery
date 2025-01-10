@@ -13,7 +13,7 @@ const Cart = () => {
 
   const { Api, store, myAddData, AddFormik, newAddModal, setNewAddModal, hello, addwishlistHandler,
 
-    cartData, price, removePopup, setRemovePopup, wishId, handleRemove, handleQuantityChange, handleFinalRemove,tax } = useContext(noteContext)
+    cartData, price, removePopup, setRemovePopup, wishId, handleRemove, handleQuantityChange, handleFinalRemove } = useContext(noteContext)
 
   const navigate = useNavigate()
 
@@ -130,12 +130,22 @@ let jab = cartData.map((item)=>{
 })
 console.log("job" , sum);
 
-
+let sum1 = parseFloat(price);
+if(cupanOffer){
+  sum1 -= cupanOffer;
+}
+else if(appyVal){
+  sum1 -= appyVal;
+}
+else{
+  sum1 = parseFloat(price);
+}
+let tax = parseFloat((sum1 * 3)/100);
+console.log("sum123",sum1);
   useEffect(() => {
     const discount = cupanOffer ? cupanOffer : appyVal ? appyVal : 0;
-   
-    const total = parseInt(price)  + parseInt(tax) - parseInt(discount)
-
+    tax = (sum1 * 3)/100;
+    const total = parseFloat(price)  + parseFloat(tax) - parseFloat(discount)
     setOrderData({
       sub_total: price,
       discount: discount ? discount : 0,
@@ -194,16 +204,7 @@ console.log("job" , sum);
     // eslint-disable-next-line
   }, []);
 
-  let sum1 = parseFloat(price);
-  if(cupanOffer){
-    sum1 -= cupanOffer;
-  }
-  else if(appyVal){
-    sum1 -= appyVal;
-  }
-  else {
-    sum1 = parseFloat(price);
-  }
+
   // const myOffer = (cupanOffer ? -parseFloat(cupanOffer) : -parseFloat(appyVal) ? -parseFloat(appyVal) : parseFloat(price))
 
   return (
@@ -384,7 +385,7 @@ console.log("job" , sum);
                     <div className="px-3 mt-3">
                       <div className="d-flex justify-content-between">
                         <p className="ds_tcolor">Sub Total</p>
-                        <p className="fw-600 ds_color ds_600">₹{price}</p>
+                        <p className="fw-600 ds_color ds_600">₹{parseFloat(price).toFixed(0)}</p>
                       </div>
                       <div className="d-flex justify-content-between">
                         <p className="ds_tcolor">Discount</p>
@@ -392,7 +393,7 @@ console.log("job" , sum);
                       </div>
                       <div className="d-flex justify-content-between">
                         <p className="ds_tcolor">Tax</p>
-                        <p className="fw-600 ds_color ds_600">₹{tax}</p>
+                        <p className="fw-600 ds_color ds_600">₹{parseFloat(tax).toFixed(2)}</p>
                       </div>
                       <div className="d-flex justify-content-between">
                         <p className="ds_tcolor">Delivery Charge</p>
@@ -403,7 +404,7 @@ console.log("job" , sum);
                     <div className="px-3 mt-3">
                       <div className="d-flex justify-content-between">
                         <h5 className="h5 mb-0 ds_color">Total Amount</h5>
-                        <h5 className="h5 mb-0 ds_color">₹ {sum1 + parseFloat(tax)}</h5>
+                        <h5 className="h5 mb-0 ds_color">₹ {parseFloat(sum1 + parseFloat(tax)).toFixed(0)}</h5>
                       </div>
                       <button onClick={handleProcessCheckout} className="ds_add-proccess mt-5" id="ds_proceed_btn">
                         Proceed to checkout

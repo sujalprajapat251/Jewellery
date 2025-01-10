@@ -101,6 +101,8 @@
     padding-top: 0px;
     margin-bottom: 20px;
     text-decoration: none;
+    display: flex;
+    align-items: center;
     /* padding-bottom: 20px; */
 }
 
@@ -235,6 +237,8 @@
     text-decoration: none;
     color: #000000;
     transition: .2s;
+    display: flex;
+    align-items: center;
 }
 .sp_header_offcanvas .s_submenu_list  a:hover {
     color: var(--brown);
