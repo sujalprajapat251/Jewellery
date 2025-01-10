@@ -715,7 +715,7 @@ function ProductDetail() {
                     <div className={`s_table_sec d-lg-flex  px-0 ${tab === 'tab-0' ? '' : 'd-none d-lg-none'}`}>
                         {product.category_name !== 'Watch' ? <>
                             {/* {console.log(product.category_name)} */}
-                            <div className='s_table s_w_30'>
+                            <div className='s_table s_w_30 mt-0'>
                                 <h4 className='s_table_head'>Metal Details</h4>
                                 <span className='d-flex justify-content-between'><p>Metal Type</p><b>{product?.metal || '-'}</b></span>
                                 <span className='d-flex justify-content-between'><p>Weight</p><b>{product?.weight && product?.gram
@@ -726,7 +726,7 @@ function ProductDetail() {
                             <div className='s_table s_w_40'>
                                 <h4 className='s_table_head'>Diamond Details</h4>
                                 <span className='d-flex justify-content-between'><p>Clarity</p><b>{product?.clarity || '-'}</b></span>
-                                <span className='d-flex justify-content-between'><p>Setting</p><b>{product?.diamond_setting || '-'}</b></span>
+                                <span className='d-flex justify-content-between'><p>Setting</p><b>{product?.diamond_setting ? product.diamond_setting.replace(/,/g, ', ') : '-'}</b></span>
                                 <span className='d-flex justify-content-between'><p>Color</p><b>{product?.diamond_color || '-'}</b></span>
                                 <span className='d-flex justify-content-between'><p>Shape</p><b>{product?.diamond_shape || '-'}</b></span>
                                 <span className='d-flex justify-content-between'><p>No. of Diamonds</p><b>{product?.no_of_diamonds || '-'}</b></span>
