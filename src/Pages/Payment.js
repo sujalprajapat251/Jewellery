@@ -10,7 +10,7 @@ import { loadCaptchaEnginge, LoadCanvasTemplate, validateCaptcha } from 'react-s
 
 const Payment = () => {
 
-  const { Api, store, setPayCount, cartID,removeCart ,tax } = useContext(noteContext)
+  const { Api, store, setPayCount } = useContext(noteContext)
   const data = JSON.parse(localStorage.getItem("OrderDetails")) || {}
   const login = JSON.parse(localStorage.getItem("Login")) || {}
   const deliverId = JSON.parse(localStorage.getItem("default") || "")

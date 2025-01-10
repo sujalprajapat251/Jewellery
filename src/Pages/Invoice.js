@@ -10,7 +10,7 @@ const Invoice = () => {
 
 const {Api , store} = useContext(noteContext)
 const Id = JSON.parse(localStorage.getItem("orderId"))
-const local = JSON.parse(localStorage.getItem("OrderDetails"))
+// const local = JSON.parse(localStorage.getItem("OrderDetails"))
 const [invoice, setInvoice] = useState({})
 const [invoiceData, setinvoiceData] = useState([]) 
 const invoiceRef = useRef(); 

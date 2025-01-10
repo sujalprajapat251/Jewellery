@@ -30,7 +30,7 @@
 
 .ds_bg-img{
     background-image: linear-gradient(93.83deg, #000000 -41.29%, rgba(255, 255, 255, 0) 105.75%), url(../../Img/dhruvin/nacklace.png);
-    /* background-position: center ; */
+    background-position: center ;
     background-repeat: no-repeat;
     background-size: cover;
     height: 500px;

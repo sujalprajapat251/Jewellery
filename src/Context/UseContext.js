@@ -635,7 +635,8 @@ const UseContext = (props) => {
       });
     }
     setSingleNewAdd(true);
-    setSingleId(id);
+    setAddType(selectedAddress?.type)
+    setSingleId(id);                                                            
   };
 
   //--------------- Delete Item Popup --------------

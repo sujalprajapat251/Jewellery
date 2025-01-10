@@ -46,7 +46,7 @@ const App = () => {
             <Route path="/privacy" element={<Privacy />}></Route>
             <Route path="/myprofile" element={<MyProfile />}></Route>
             <Route path="/trackorder" element={<TrackOrder />}></Route>
-            <Route path="/review" element={<SubmitReview />}></Route>
+            {/* <Route path="/review" element={<SubmitReview />}></Route> */}
             <Route path="/returnOrder" element={<ReturnOrder />}></Route>
             <Route path="/demo" element={<Demo />}></Route>
           </Route>
