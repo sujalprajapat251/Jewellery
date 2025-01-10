@@ -14,7 +14,7 @@ function ProductList() {
     // backend connection code ----------------------------------------------------------------
 
     // useContext 
-    const { Api, token, allProduct, allSubCategory,pricehandling } = useContext(noteContext);
+    const { Api, token, allProduct, allSubCategory } = useContext(noteContext);
 
     // useParams
     const { type, id } = useParams();
@@ -574,7 +574,7 @@ function ProductList() {
                             {
                                 productList_detail.map((ele, id) => {
                                     // console.log(ele);
-                                    const price = pricehandling(ele);
+                                    // const price = pricehandling(ele);
                                     const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                                     let discountPrice = [];
                                     if (!isNaN(parseFloat(discounted))) {
@@ -593,7 +593,7 @@ function ProductList() {
                                                     <div className='s_card_text'>
                                                         <Link to={`/productdetail/${ele.id}`}>
                                                             <h5>{ele.product_name}</h5>
-                                                            <p className='mb-0'><span className='mx-2'>₹ {parseFloat(price).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
+                                                            <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
                                                             <div className='s_rating'>
                                                                 {
                                                                     [...Array(5)].map((_, index) => {

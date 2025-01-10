@@ -84,7 +84,7 @@ const Payment = () => {
 
       const discount = parseFloat(data?.discount) + parseFloat(data?.productDiscount);
       console.log('discount',discount);
-      const finalamount = parseFloat(data?.total) - discount;
+      const finalamount = parseFloat(data?.total);
       // const finalprice = finalamount + tax;
       console.log('final amount', finalamount);
       const createOrder = async (retryCount = 0) => {
@@ -281,7 +281,7 @@ const Payment = () => {
                       <div className="row mt-sm-4 pt-2 mt-3">
                         <div className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12"></div>
                         <div className="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
-                          <button className=" ds_cod-pay" onClick={handlePay} >Pay ₹ {data?.total}</button>
+                          <button className=" ds_cod-pay" onClick={handlePay} >Pay ₹ {parseFloat(data?.total).toFixed(0)}</button>
                         </div>
                       </div>
 
@@ -323,15 +323,15 @@ const Payment = () => {
                   <div className="px-3 mt-3">
                     <div className="d-flex justify-content-between">
                       <p className="ds_tcolor">Sub Total</p>
-                      <p className="fw-600 ds_color ds_600">₹{data?.sub_total}</p>
+                      <p className="fw-600 ds_color ds_600">₹{parseFloat(data?.sub_total).toFixed(0)}</p>
                     </div>
                     <div className="d-flex justify-content-between">
                       <p className="ds_tcolor">Discount</p>
-                      <p className="fw-600 ds_add-color ds_600">-₹{data?.discount}</p>
+                      <p className="fw-600 ds_add-color ds_600">-₹{parseFloat(data?.discount).toFixed(0)}</p>
                     </div>
                     <div className="d-flex justify-content-between">
                       <p className="ds_tcolor">Tax</p>
-                      <p className="fw-600 ds_color ds_600">₹{data?.tax}</p>
+                      <p className="fw-600 ds_color ds_600">₹{parseFloat(data?.tax).toFixed(0)}</p>
                     </div>
                     <div className="d-flex justify-content-between">
                       <p className="ds_tcolor">Delivery Charge</p>
@@ -342,7 +342,7 @@ const Payment = () => {
                   <div className="px-3 mt-3">
                     <div className="d-flex justify-content-between">
                       <h5 className="h5 mb-0 ds_color">Total Amount</h5>
-                      <h5 className="h5 mb-0 ds_color">₹{data?.total}</h5>
+                      <h5 className="h5 mb-0 ds_color">₹{parseFloat(data?.total).toFixed(0)}</h5>
                     </div>
                   </div>
                 </div>

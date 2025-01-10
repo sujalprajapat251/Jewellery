@@ -8,47 +8,7 @@ const UseContext = (props) => {
   const calledOnce = React.useRef(false);
   let [store, setStore] = useState(JSON.parse(localStorage.getItem("Login")));
 
-  const pricehandling = (product) => {
-    const metal_total =
-      product?.price && product?.weight
-        ? `${(
-          (parseFloat(product.price) / parseFloat(product.weight)) *
-          parseFloat(product.weight)
-        ).toFixed(2)}`
-        : 0;
-    const stone_total =
-      product?.stone_price && product?.gram
-        ? `${(
-          parseFloat(product.stone_price) * parseFloat(product.gram)
-        ).toFixed(2)}`
-        : 0;
-    const making_charge = product?.making_charge
-      ? `${(
-        (parseFloat(metal_total) + parseFloat(stone_total)) *
-        (parseFloat(product?.making_charge) / 100)
-      ).toFixed(2)}`
-      : 0;
-    // console.log('making_charge', ((parseFloat(metal_total) + parseFloat(stone_total)) * (parseFloat(product?.making_charge) / 100)));
-    const discount =
-      ((parseFloat(metal_total) +
-        parseFloat(stone_total) +
-        parseFloat(making_charge)) *
-        parseFloat(product?.discount || 0)) /
-      100;
-    // console.log(discount);
-    const sub_total = (
-      parseFloat(metal_total) +
-      parseFloat(stone_total) +
-      parseFloat(making_charge)
-    ).toFixed(2);
-    const gst_total = ((sub_total * 3) / 100).toFixed(2);
-    const great_total = (
-      parseFloat(sub_total) +
-      parseFloat(gst_total) -
-      discount
-    ).toFixed(2);
-    return great_total
-  };
+
 
   const userHandling = (user) => {
     if (store?.id) {
@@ -267,9 +227,9 @@ const UseContext = (props) => {
 
 
   const [cartID, setCartID] = useState([])
-  const [tax, setTax] = useState(0)
+  const [tax, setTax] = useState(0);
   // funtion called item aaded or removed
-  const fetchCardData = async (retryCount = 0) => {
+  const fetchCardData = async () => {
     try {
       const response = await axios.get(`${Api}/cart/getall`, {
         headers: {
@@ -296,7 +256,7 @@ const UseContext = (props) => {
 
             let discountedPrice = parseFloat(item?.total_price || 0);
 
-            if (item?.product_offer?.type === "fixed") {
+            if (item?.product_offer?.type === "fixed"){
               // Apply fixed discount
               discountedPrice = discountedPrice - parseFloat(item?.product_offer?.price);
             } else if (item?.product_offer?.type === "percentage") {
@@ -331,16 +291,16 @@ const UseContext = (props) => {
         }
 
         const totalPrice = updatedCart
-          .map((element) => parseFloat((parseFloat(element?.product_price) * parseFloat(element?.quantity)) || 0))
+          .map((element) => parseFloat(((parseFloat(element?.total_price))) || 0))
           .reduce((sum, price) => sum + price, 0);
 
         console.log('total', totalPrice);
         // alert('')
-        setPrice(Math.floor(totalPrice));
-        // const total = updatedCart
-        // .map((element) => parseFloat((parseFloat(element?.total_price)|| 0)))
-        // .reduce((sum, price) => sum + price, 0);
-        setTax(parseFloat((totalPrice * 3) / 100).toFixed(0));
+        setPrice(parseFloat(totalPrice));
+        const total = updatedCart
+        .map((element) => parseFloat((parseFloat(element?.total_price)|| 0)))
+        .reduce((sum, price) => sum + price, 0);
+        setTax(parseFloat((total * 3) / 100).toFixed(0));
       }
     } catch (error) {
       console.error("Failed to fetch data:", error.message);
@@ -1025,7 +985,6 @@ const UseContext = (props) => {
         cartData,
         addToCardhandle,
         userHandling,
-        pricehandling,
         // ******* My Profile *******
         store,
         profileData,
@@ -1116,7 +1075,6 @@ const UseContext = (props) => {
         setPayCount, cartID, removeCart,
 
       }}>
-
       {props.children}
     </noteContext.Provider>
   );
