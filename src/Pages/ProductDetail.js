@@ -12,6 +12,10 @@ import Login from '../Component/Login';
 import fillstar from '../Img/Sujal/fillStar.png';
 import halfstar from '../Img/Sujal/halfstar.png';
 import nofillstar from '../Img/Sujal/nofillstar.png';
+
+
+
+
 function ProductDetail() {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -383,6 +387,10 @@ function ProductDetail() {
         const instagramProfileUrl = `https://www.instagram.com/direct/inbox/`;
         window.open(instagramProfileUrl, '_blank');
     }
+
+
+    // image zooming handling
+
     return (
         <>
             <section className="s_prodetail_page ds_container">
@@ -444,8 +452,9 @@ function ProductDetail() {
                                                 )}
                                             </div>
                                         ) : isImage ? (
-                                            <div className='s_image'>
+                                            <div className='s_image' >
                                                 <img
+                                                    
                                                     key={`image-${index}`}
                                                     src={media}
                                                     alt={`product-media-${index}`}
@@ -634,7 +643,8 @@ function ProductDetail() {
                                     <span>Check</span>
                                 </div>
                             </div>
-                            <div className='s_offers'>
+                            {console.log(offers)}
+                            {offers.length !==0 ? <div className='s_offers'>
                                 <Accordion flush>
                                     <Accordion.Item eventKey="0">
                                         <Accordion.Header>Trending Offers</Accordion.Header>
@@ -653,7 +663,8 @@ function ProductDetail() {
                                         </Accordion.Body>
                                     </Accordion.Item>
                                 </Accordion>
-                            </div>
+                            </div> : ''}
+
 
                             <div className='s_button_sec '>
                                 <div className='s_cart_btn'>

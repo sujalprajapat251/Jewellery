@@ -1,73 +1,92 @@
-import React, { useRef, useState } from 'react';
-import '../Css/Sujal/ProductDetail.css'; // Ensure to include the CSS for styling
+import React, { useRef } from "react";
+import "../Css/Sujal/ProductDetail.css"; // Add necessary styling here
 
-const ZoomableImage = () => {
-    const containerRef = useRef(null);
-    const imageRef = useRef(null);
-  
-    const [isDragging, setIsDragging] = useState(false);
-    const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-    const [currentOffset, setCurrentOffset] = useState({ x: 0, y: 0 });
-  
-    const handleMouseDown = (e) => {
-      setIsDragging(true);
-      const rect = containerRef.current.getBoundingClientRect();
-      setStartPos({
-        x: e.clientX - rect.left - currentOffset.x,
-        y: e.clientY - rect.top - currentOffset.y,
-      });
-    };
-  
-    const handleMouseMove = (e) => {
-      if (!isDragging) return;
-  
-      const rect = containerRef.current.getBoundingClientRect();
-      const newX = e.clientX - rect.left - startPos.x;
-      const newY = e.clientY - rect.top - startPos.y;
-  
-      setCurrentOffset({ x: newX, y: newY });
-  
-      if (imageRef.current) {
-        imageRef.current.style.transform = `translate(${newX}px, ${newY}px) scale(1.5)`;
-      }
-    };
-  
-    const handleMouseUpOrLeave = () => {
-      setIsDragging(false);
-    };
-  
-    const handleMouseEnter = () => {
-      if (imageRef.current) {
-        imageRef.current.style.transform = `scale(1.5)`; // Zoom in
-      }
-    };
-  
-    const handleMouseLeave = () => {
-      if (!isDragging && imageRef.current) {
-        setCurrentOffset({ x: 0, y: 0 });
-        imageRef.current.style.transform = `translate(0px, 0px) scale(1)`; // Reset zoom
-      }
-    };
-  
-    return (
+const useZoomHandlers = () => {
+  const containerRef = useRef(null);
+  const imgRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    const container = containerRef.current;
+    const img = imgRef.current;
+
+    if (container && img) {
+      const x = e.clientX - container.offsetLeft;
+      const y = e.clientY - container.offsetTop;
+
+      img.style.transformOrigin = `${x}px ${y}px`;
+      img.style.transform = "scale(3)";
+    }
+  };
+
+  const handleMouseLeave = () => {
+    const img = imgRef.current;
+
+    if (img) {
+      img.style.transformOrigin = "center";
+      img.style.transform = "scale(1)";
+    }
+  };
+
+  return { containerRef, imgRef, handleMouseMove, handleMouseLeave };
+};
+
+const ImageZoom = () => {
+  const firstZoomHandlers = useZoomHandlers();
+  const secondZoomHandlers = useZoomHandlers();
+
+  return (
+    <>
       <div
-        className="image-container"
-        ref={containerRef}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUpOrLeave}
-        onMouseLeave={handleMouseUpOrLeave}
-        onMouseEnter={handleMouseEnter}
+        ref={firstZoomHandlers.containerRef}
+        onMouseMove={firstZoomHandlers.handleMouseMove}
+        onMouseLeave={firstZoomHandlers.handleMouseLeave}
+        style={{
+          overflow: "hidden",
+          position: "relative",
+          width: "400px",
+          height: "300px",
+        }}
       >
         <img
-          ref={imageRef}
-          src="https://via.placeholder.com/600"
-          alt="Zoomable"
-          className="zoom-image"
+          ref={firstZoomHandlers.imgRef}
+          src={require("../Img/Sujal/Ring1.png")} // Replace with your image URL
+          alt="Zoomable 1"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            transition: "transform 0.2s ease",
+          }}
         />
       </div>
-    );
-  };
-  
-  export default ZoomableImage;
 
+      <div
+        ref={secondZoomHandlers.containerRef}
+        onMouseMove={secondZoomHandlers.handleMouseMove}
+        onMouseLeave={secondZoomHandlers.handleMouseLeave}
+        style={{
+          overflow: "hidden",
+          position: "relative",
+          width: "400px",
+          height: "300px",
+          marginTop: "20px", // Optional: Add spacing between images
+        }}
+      >
+        <img
+          ref={secondZoomHandlers.imgRef}
+          src={require("../Img/Sujal/Ring1.png")} // Replace with your image URL
+          alt="Zoomable 2"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            transition: "transform 0.2s ease",
+          }}
+        />
+      </div>
+    </>
+  );
+};
+
+
+export default ImageZoom;

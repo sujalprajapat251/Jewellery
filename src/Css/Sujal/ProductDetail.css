@@ -754,3 +754,18 @@
 
 
 
+
+
+#main-div {
+    overflow: hidden;
+    position: relative;
+    width: 400px;
+    height: 300px;
+  }
+  
+  #main-div img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.2s ease;
+  }

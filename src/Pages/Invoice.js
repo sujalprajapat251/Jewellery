@@ -193,7 +193,7 @@ var totalAmount =0;
                               <h6 className="ds_in-total">Total Amount</h6>
                             </div>
                             <div className="ms-5">
-                              <p className="ds_in-sub ds_600 text-dark">₹ {sub_total}</p>
+                              <p className="ds_in-sub ds_600 text-dark">₹ {parseFloat(sub_total).toFixed(2)}</p>
                               <p className="ds_in-sub ds_600" style={{ color: "#0F993E" }}>- ₹ {parseFloat(invoice?.discount).toFixed(0)}</p>
                               <p className="ds_in-sub ds_600 text-dark">₹ {parseFloat(gst / 2).toFixed(2)}</p>
                               <p className="ds_in-sub ds_600 text-dark">₹ {parseFloat(gst / 2).toFixed(2)}</p>
