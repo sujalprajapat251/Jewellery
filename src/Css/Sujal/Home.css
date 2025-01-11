@@ -791,7 +791,7 @@
     }
 }
 
-@media (max-width:1299px) {
+@media (max-width:1299px) { 
     .s_feature_sec .s_feature_bgtxt {
         font-size: 50px;
         /* Adjust font size */

@@ -245,6 +245,7 @@ function ProductList() {
             return { ...prev, [type]: updatedValues };
         });
         // console.info(selectedFilters)
+        setShow(false);
     };
 
     // min and max price showing dynamically when page loaded

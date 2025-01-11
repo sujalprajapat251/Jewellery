@@ -383,7 +383,7 @@ function Home() {
                 <div className='row d-flex justify-content-between gx-0'>
                     <div className='col-lg-8 s_feature_slider '>
                         <div className="s_feature_bgtxt ">FEATURED PRODUCTS</div>
-                        <div className='s_cat_slider w-100 pt-0' >
+                        <div className='s_cat_slider w-100 pt-0 mb-5' >
                             <OwlCarousel className='owl-theme' loop margin={20} items={4} nav={true} dots={false}
                                 responsive={
                                     feature_sliderres

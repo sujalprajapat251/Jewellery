@@ -271,10 +271,10 @@ function Header() {
                                 })}
                             </div>
                             <div className='s_submenu_list'>
-                                <h4 className='s_submenu_head ps-0'>Men</h4>
+                                <h4 className='s_submenu_head text-center '>Men</h4>
                                 {menGold.map((ele, id) => {
                                     return (
-                                        <Link to={`/productlist/gold/men/${ele.sub_category_name}`} key={ele.id}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link>
+                                        <Link to={`/productlist/gold/men/${ele.sub_category_name}`} key={ele.id}><img alt={ele.product_name} src={ele.images[0]} ></img>{ele.sub_category_name}</Link>
                                     )
                                 })}
                             </div>
@@ -306,7 +306,7 @@ function Header() {
                                 })}
                             </div>
                             <div className='s_submenu_list'>
-                                <h4 className='s_submenu_head ps-0'>Men</h4>
+                                <h4 className='s_submenu_head text-center'>Men</h4>
                                 {menSilver.map((ele, id) => {
                                     return (
                                         <Link to={`/productlist/silver/men/${ele.sub_category_name}`} key={ele.id}><img alt={ele.sub_category_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link>

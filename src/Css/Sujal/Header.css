@@ -288,7 +288,9 @@
     font-weight: 500;
     font-size: 20px;
 }
-
+.sp_header_offcanvas .accordion-body .accordion-button{
+    padding: 10px 20px;
+}
 .sp_header_offcanvas .accordion-body .accordion-button::before {
     content: "\f068";
     font-family: FontAwesome;
