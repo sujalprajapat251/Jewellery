@@ -294,7 +294,9 @@
     z-index: 1;
     text-transform: capitalize;
 }
-
+.s_heart_icon svg{
+    fill: #bbb7b7;
+}
 .s_heart_icon.active svg {
     fill: red;
 }
@@ -304,8 +306,8 @@
 }
 
 .s_seller_card .s_rating img {
-    height: 22px;
-    width: 22px;
+    height: 20px;
+    width: 20px;
     margin: 2px;
 }
 

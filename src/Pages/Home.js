@@ -51,6 +51,8 @@ function Home() {
     // heart and wishlist  handler
     const [loadingItems, setLoadingItems] = useState([]);
     const handleAddToWishlist = (itemId) => {
+        // console.log("HelloId " , itemId);
+        
         setLoadingItems([...loadingItems, itemId]);
         addwishlistHandler(itemId)
         setTimeout(() => {
@@ -58,6 +60,7 @@ function Home() {
         }, 2000);
     };
     const handleFindWishlistID = (itemId) => {
+        // console.log("HelloId " , itemId);
         setLoadingItems((prev) => [...prev, itemId]);
         findWishlistID(itemId)
         setTimeout(() => {
@@ -185,14 +188,16 @@ function Home() {
                                 }
                                 return (
                                     <Col key={id} className='py-4' >
-                                        <div className='s_seller_card'>
+                                        <div className='s_seller_card d-flex flex-column'>
+                                          <Link to={`/productdetail/${ele.id}`} className='text-decoration-none'>
+                                              <div className='s_card_img bg-white'>
+                                                  <img src={ele.images?.[0]} className="w-100 bg-white" alt={ele.title} key={ele.title} />
+                                              </div> 
+                                          </Link>
 
-                                            <div className='s_card_img bg-white'>
-                                                <img src={ele.images?.[0]} className="w-100 bg-white" alt={ele.title} key={ele.title} />
-                                            </div>
                                             {loadingItems.includes(ele.id) ? (
                                                 <div className="loading s_heart_icon">
-                                                    <svg height="24px" width="32px"> {/* Adjusted height and width */}
+                                                    <svg height="24px" width="32px" > {/* Adjusted height and width */}
                                                         <polyline
                                                             id="back"
                                                             points="0.157 11.977, 14 11.977, 21.843 24, 43 0, 50 12, 64 12"
@@ -220,14 +225,18 @@ function Home() {
                                                         handleAddToWishlist(ele.id) // Trigger the loader and toggle liked state
                                                     }}
                                                 >
-                                                    <GoHeart />
+                                                    <GoHeart  />
                                                 </div>
                                             )}
                                             <div className='s_card_text' >
                                                 <Link to={`/productdetail/${ele.id}`}>
                                                     <h5>{ele.product_name}</h5>
                                                     <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
-                                                    <div className='s_rating'>
+                                                    
+                                                    <div className='s_card_btn'><p className=''>Buy Now</p></div>
+                                                </Link>
+                                            </div>
+                                            <div className='s_rating mt-auto text-center pb-2'>
                                                         {
                                                             [...Array(5)].map((_, index) => {
                                                                 const rating = ele.total_rating;
@@ -242,9 +251,6 @@ function Home() {
                                                                 }
                                                             })
                                                         }
-                                                    </div>
-                                                    <div className='s_card_btn'><p className=''>Buy Now</p></div>
-                                                </Link>
                                             </div>
                                         </div>
                                     </Col>

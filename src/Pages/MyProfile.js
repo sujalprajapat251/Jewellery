@@ -865,7 +865,7 @@ useEffect(() => {
                                     <div className=' px-sm-4 pb-4 px-3'>
                                       <div className="row">
                                            { filteredOrders && filteredOrders?.map((element , index)=>{ 
-                                            // console.log("wefqwefwefwefwef " , element);
+                                            console.log("wefqwefwefwefwef " , element);
                                             
                                             
                                              return(

@@ -13,7 +13,7 @@ const Cart = () => {
 
   const { Api, store, myAddData, AddFormik, newAddModal, setNewAddModal, hello, addwishlistHandler,
 
-    cartData, price, removePopup, setRemovePopup, wishId, handleRemove, handleQuantityChange, handleFinalRemove } = useContext(noteContext)
+    cartData, price, removePopup, setRemovePopup, wishId, handleRemove, handleQuantityChange, handleFinalRemove  } = useContext(noteContext)
 
   const navigate = useNavigate()
 

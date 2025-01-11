@@ -9,12 +9,13 @@ import noteContext from '../Context/noteContext';
 import fillstar from '../Img/Sujal/fillStar.png';
 import halfstar from '../Img/Sujal/halfstar.png';
 import nofillstar from '../Img/Sujal/nofillstar.png';
+import { GoHeart, GoHeartFill } from 'react-icons/go';
 function ProductList() {
     const navigate = useNavigate();
     // backend connection code ----------------------------------------------------------------
 
     // useContext 
-    const { Api, token, allProduct, allSubCategory } = useContext(noteContext);
+    const { Api, token, allProduct, allSubCategory , addwishlistHandler , findWishlistID , wishlistID} = useContext(noteContext);
 
     // useParams
     const { type, id } = useParams();
@@ -326,6 +327,33 @@ function ProductList() {
 
     // sort by handdler
     const [sortOpen, setSortOpen] = useState(false);
+
+
+    
+
+//    ********* Heart Handel ******
+
+    const [loadingItems, setLoadingItems] = useState([]);
+    const handleAddToWishlist = (itemId) => {
+        console.log("gweufgeufuiwefhwehfuiewhf " , itemId);
+        
+        setLoadingItems([...loadingItems, itemId]);
+        addwishlistHandler(itemId)
+        setTimeout(() => {
+            setLoadingItems((prev) => prev.filter((loadingItem) => loadingItem !== itemId));
+        }, 2000);
+    };
+    const handleFindWishlistID = (itemId) => {
+        console.log("gweufgeufuiwefhwehfuiewhf " , itemId);
+        setLoadingItems((prev) => [...prev, itemId]);
+        findWishlistID(itemId)
+        setTimeout(() => {
+            setLoadingItems((prev) => prev.filter((loadingItem) => loadingItem !== itemId));
+        }, 2000);
+    };
+
+
+
     return (
         <>
             <section className="d-md-flex ds_container mb-5">
@@ -576,6 +604,7 @@ function ProductList() {
                                 productList_detail.map((ele, id) => {
                                     // console.log(ele);
                                     // const price = pricehandling(ele);
+                                    var isSelected = wishlistID.find((items) => items === ele.id);
                                     const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                                     let discountPrice = [];
                                     if (!isNaN(parseFloat(discounted))) {
@@ -584,18 +613,61 @@ function ProductList() {
                                         discountPrice = ele.price_with_gst;
                                     }
                                     return (
-                                        <Col key={id} className='py-4' onClick={() => { navigate(`/productdetail/${ele.id}`) }}>
-                                            <div className='s_seller_card '>
+                                        <Col key={id} className='py-4' >
+                                            <div className='s_seller_card d-flex flex-column'>
                                                 <div >
+                                                <Link to={`/productdetail/${ele.id}`} className='text-decoration-none'>
                                                     <div className='s_card_img'>
                                                         <img src={ele.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
                                                     </div>
+                                                </Link>
+
+
+                                                    {loadingItems.includes(ele.id) ? (
+                                                <div className="loading s_heart_icon">
+                                                    <svg height="24px" width="32px"> {/* Adjusted height and width */}
+                                                        <polyline
+                                                            id="back"
+                                                            points="0.157 11.977, 14 11.977, 21.843 24, 43 0, 50 12, 64 12"
+                                                        ></polyline>
+                                                        <polyline
+                                                            id="front"
+                                                            points="0.157 11.977, 14 11.977, 21.843 24, 43 0, 50 12, 64 12"
+                                                        ></polyline>
+                                                    </svg>
+                                                </div>
+                                            ) : isSelected ? (
+                                                <div className="s_heart_icon active"
+                                                    onClick={() => {
+                                                        handleFindWishlistID(ele.id)
+                                                        // Pass the item's ID to findWishlistID
+                                                    }}
+                                                >
+                                                    <GoHeartFill />
+                                                </div>
+                                            ) : (
+                                                <div
+                                                    className="s_heart_icon"
+                                                    onClick={() => {
+                                                        // Add to wishlist
+                                                        handleAddToWishlist(ele.id) // Trigger the loader and toggle liked state
+                                                    }}
+                                                >
+                                                    <GoHeart />
+                                                </div>
+                                            )}
 
                                                     <div className='s_card_text'>
                                                         <Link to={`/productdetail/${ele.id}`}>
                                                             <h5>{ele.product_name}</h5>
                                                             <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
-                                                            <div className='s_rating'>
+                                                            
+                                                            <div className='s_card_btn'><p className=''>Buy Now</p></div>
+                                                        </Link>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div className='s_rating text-center pb-2 mt-auto'>
                                                                 {
                                                                     [...Array(5)].map((_, index) => {
                                                                         const rating = ele.total_rating;
@@ -610,10 +682,6 @@ function ProductList() {
                                                                         }
                                                                     })
                                                                 }
-                                                            </div>
-                                                            <div className='s_card_btn'><p className=''>Buy Now</p></div>
-                                                        </Link>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </Col>

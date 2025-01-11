@@ -126,9 +126,10 @@ const UseContext = (props) => {
     }
   };
   const findWishlistID = (id) => {
-    var data = wishlistData.find((item) => {
-      return item.product_id === id;
+    var data = wishlistData?.find((item) => {
+      return item?.product_id === id;
     });
+    
     removeWishlistHandler(data.id);
   };
 
@@ -294,7 +295,7 @@ const UseContext = (props) => {
           .map((element) => parseFloat(((parseFloat(element?.total_price))) || 0))
           .reduce((sum, price) => sum + price, 0);
 
-        console.log('total', totalPrice);
+        // console.log('total', totalPrice);
         // alert('')
         setPrice(parseFloat(totalPrice));
         const total = updatedCart
@@ -462,7 +463,7 @@ const UseContext = (props) => {
   });
 
   const handleCancel = () => {
-    setEditToggle(false);
+    setEditToggle(false); 
   };
 
   // ********** My Address ********
@@ -472,8 +473,20 @@ const UseContext = (props) => {
   const [newAddModal, setNewAddModal] = useState(false);
   const [hello, setHello] = useState(() => {
     const savedDefault = localStorage.getItem("default");
-    return savedDefault ? JSON.parse(savedDefault) : "";
+    if(savedDefault){
+      return savedDefault ? JSON.parse(savedDefault) : "";
+    }
   });
+
+  useEffect(() => {
+    var data = localStorage.getItem("default");
+    if (!data) {
+      setHello(myAddData[0]?.id);
+      if(myAddData[0]?.id){
+        localStorage.setItem("default" , JSON.stringify(myAddData[0]?.id))
+      }
+    }
+  }, [myAddData]);
 
   const newAddVal = {
     address: "",
@@ -557,13 +570,7 @@ const UseContext = (props) => {
     addressMyData();
   }, [addMainNewAdd, singleNewAdd, deleteUseEffect, store]);
 
-  useEffect(() => {
-    var data = localStorage.getItem("default");
-    if (!data) {
-      setHello(myAddData[0]?.id);
-      localStorage.setItem("default" , JSON.stringify(myAddData[0]?.id))
-    }
-  }, [myAddData]);
+
 
   const handleMark = (id) => {
     setHello(id);

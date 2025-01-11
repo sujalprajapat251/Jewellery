@@ -55,7 +55,7 @@ function Wishlist() {
                                 }
                                 return (
                                     <Col key={id} className='py-4' >
-                                        <div className='s_seller_card'>
+                                        <div className='s_seller_card d-flex flex-column'>
                                             <div className='s_card_img'>
                                                 <img src={ele?.images[0] || ele?.product_image[0]} className="w-100" alt={ele.title} key={ele.title} />
                                             </div>
@@ -66,7 +66,11 @@ function Wishlist() {
                                                 <Link to={`/productdetail/${ele.product_id || ele.id}`}>
                                                     <h5>{ele.product_name}</h5>
                                                     <p className='mb-0'><span className='mx-2'>₹ {parseFloat(ele.price_with_gst).toFixed(0)}</span><strike className="mx-2">₹ {discountPrice}</strike></p>
-                                                    <div className='s_rating'>
+                                                    
+                                                    <div className='s_card_btn'><p className=''>Buy Now</p></div>
+                                                </Link>
+                                            </div>
+                                            <div className='s_rating text-center pb-2'>
                                                         {
                                                             [...Array(5)].map((_, index) => {
                                                                 const rating = ele.total_rating;
@@ -81,9 +85,6 @@ function Wishlist() {
                                                                 }
                                                             })
                                                         }
-                                                    </div>
-                                                    <div className='s_card_btn'><p className=''>Buy Now</p></div>
-                                                </Link>
                                             </div>
                                         </div>
                                     </Col>
