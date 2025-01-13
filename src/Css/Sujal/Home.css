@@ -797,7 +797,7 @@
     .s_feature_sec .s_feature_bgtxt {
         font-size: 50px;
         /* Adjust font size */
-        top: 20px;
+        top: 00px;
     }
 
     .s_feature_slider {
@@ -810,6 +810,10 @@
 }
 
 @media (max-width: 991px) {
+    .s_slider .s_slider_text p{
+        font-size: 48px;
+        line-height: 70px;
+    }
     .s_elegance_con .s_elegance_head {
         font-size: 44px;
     }
