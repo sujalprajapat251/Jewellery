@@ -1,6 +1,5 @@
 import "../Css/Sujal/ProductDetail.css";
 import { Accordion, Col, Modal, Nav, Row } from "react-bootstrap";
-<<<<<<< HEAD
 import React, { useContext, useEffect, useRef, useState } from "react";
 import OwlCarousel from "react-owl-carousel";
 import { GoHeart, GoHeartFill } from "react-icons/go";
@@ -13,24 +12,6 @@ import Login from "../Component/Login";
 import fillstar from "../Img/Sujal/fillStar.png";
 import halfstar from "../Img/Sujal/halfstar.png";
 import nofillstar from "../Img/Sujal/nofillstar.png";
-=======
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import OwlCarousel from 'react-owl-carousel';
-import { GoHeart, GoHeartFill } from 'react-icons/go';
-import { FaAngleDown, FaAngleUp, FaShareAlt, } from 'react-icons/fa';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
-import noteContext from '../Context/noteContext';
-import axios from 'axios';
-import Login from '../Component/Login';
-import fillstar from '../Img/Sujal/fillStar.png';
-import halfstar from '../Img/Sujal/halfstar.png';
-import nofillstar from '../Img/Sujal/nofillstar.png';
-
-
-
-
->>>>>>> origin/sujal11_1
 function ProductDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -279,7 +260,7 @@ function ProductDetail() {
   const sub_total = ( parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge) - discount).toFixed(2);
   const gst_total = ((sub_total * 3) / 100).toFixed(2);
   const great_total = (parseFloat(sub_total) + parseFloat(gst_total)).toFixed(2);
-  console.log(wishlistID);
+  // console.log(wishlistID);
   const isSelected = wishlistID.find((items) => items === product?.id);
   // console.log('price', product.making_charge);
 
@@ -326,7 +307,6 @@ function ProductDetail() {
     if (response) {
       fetchReviewData();
     }
-<<<<<<< HEAD
   };
   // offer handling code
   const [selectedOffers, setSelectedOffers] = useState([]);
@@ -420,7 +400,7 @@ function ProductDetail() {
 
   const [loadingItems, setLoadingItems] = useState([]);
   const handleAddToWishlist = (itemId) => {
-    console.log("itemID ", itemId);
+    // console.log("itemID ", itemId);
     setLoadingItems([...loadingItems, itemId]);
     addwishlistHandler(itemId);
     setTimeout(() => {
@@ -430,7 +410,7 @@ function ProductDetail() {
     }, 2000);
   };
   const handleFindWishlistID = (itemId) => {
-    console.log("itemID ", itemId);
+    // console.log("itemID ", itemId);
     setLoadingItems((prev) => [...prev, itemId]);
     findWishlistID(itemId);
     setTimeout(() => {
@@ -528,35 +508,11 @@ function ProductDetail() {
                           ) : (
                             <img src={item} alt={`product-media-${index}`} style={{ width: "100px", height: "100px" }}/>
                           )}
-=======
-
-
-    // image zooming handling
-
-    return (
-        <>
-            <section className="s_prodetail_page ds_container">
-                <div className='d-block d-lg-none s_productdetail_sec'>
-                    {store ?
-                        isSelected ?
-                            <div className='d-flex justify-content-end s_share_icon' >
-                                <GoHeartFill className='s_active' onClick={() => { findWishlistID(product.id) }} />
-                                <FaShareAlt onClick={() => { setShareModal(true) }} />
-                            </div> :
-                            <div className='d-flex justify-content-end s_share_icon' >
-                                <GoHeart onClick={() => { addwishlistHandler(product.id) }} />
-                                <FaShareAlt onClick={() => { setShareModal(true) }} />
-                            </div> :
-                        <div className='d-flex justify-content-end s_share_icon' >
-                            <GoHeart onClick={handleLoginShow} />
-                            <FaShareAlt onClick={() => { setShareModal(true) }} />
->>>>>>> origin/sujal11_1
                         </div>
                       </div>
                     );
                   })}
                 </div>
-<<<<<<< HEAD
               ) : (
                 <OwlCarousel className="owl-theme" margin={20} nav dots={false}
                   responsive={{
@@ -580,76 +536,11 @@ function ProductDetail() {
                                 Your browser does not support the video tag.
                               </video>
                               <img src={require("../Img/Sujal/play.png")} alt="play"/>
-=======
-                <Row lg={2} className='gx-0 gx-md-4 pt-lg-4 pb-4 row-cols-1'>
-                    <Col>
-                        {thumbnail !== null ?
-                            (() => {
-                                const isVideo = /\.(mp4|webm|ogg)$/i.test(thumbnail);
-                                return isVideo ? (
-                                    <video controls className="w-100">
-                                        <source src={thumbnail} type="video/mp4" className='h-100 object-fit-cover' />
-                                        Your browser does not support the video tag.
-                                    </video>
-                                ) : (
-                                    <img src={thumbnail} alt="thumbnail" className="w-100 object-fit-cover " style={{ aspectRatio: '1 / 1' }} />
-                                );
-                            })()
-                            :
-                            <div className="s_product_img d-flex flex-wrap">
-                                {[...Array(4)].map((_, index) => {
-                                    const media = product?.images?.[index];
-                                    const isVideo = media && /\.(mp4|webm|ogg)$/i.test(media);
-                                    const isImage = media && /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/i.test(media);
-
-                                    return media ? (
-                                        isVideo ? (
-                                            <div
-                                                className="s_product_video"
-                                                onMouseLeave={handleStopclick}
-                                                key={`video-${index}`}
-                                            >
-                                                <video ref={videoRef} controls={controlsVisible} muted>
-                                                    <source src={media} type="video/mp4" />
-                                                    Your browser does not support the video tag.
-                                                </video>
-                                                {!controlsVisible && (
-                                                    <img
-                                                        src={require("../Img/Sujal/play.png")}
-                                                        alt="play"
-                                                        onClick={handlePlayClick}
-                                                    />
-                                                )}
-                                            </div>
-                                        ) : isImage ? (
-                                            <div className='s_image' >
-                                                <img
-                                                    
-                                                    key={`image-${index}`}
-                                                    src={media}
-                                                    alt={`product-media-${index}`}
-
-                                                    onClick={() => productImgHanddler(index)}
-                                                />
-                                            </div>
-                                        ) : null
-                                    ) : (
-                                        <div className='s_blank_img'>
-                                            <div
-                                                className="s_product-image"
-                                            >
-
-                                            </div>
-                                        </div>
-                                    );
-                                })}
->>>>>>> origin/sujal11_1
                             </div>
                           ) : (
                             <img src={item} alt={`product-media-${index}`} className={"w-100"}/>
                           )}
                         </div>
-<<<<<<< HEAD
                       </div>
                     );
                   })}
@@ -669,181 +560,6 @@ function ProductDetail() {
                           setShareModal(true);
                         }}
                       />
-=======
-                    </Col>
-                    <Col>
-                        <div className='s_productdetail_sec '>
-                            <div className='d-none d-lg-block'>
-                                {store ?
-                                    isSelected ?
-                                        <div className='d-flex justify-content-end s_share_icon' >
-                                            <GoHeartFill className='s_active' onClick={() => { findWishlistID(product.id) }} />
-                                            <FaShareAlt onClick={() => { setShareModal(true) }} />
-                                        </div> :
-                                        <div className='d-flex justify-content-end s_share_icon' >
-                                            <GoHeart onClick={() => { addwishlistHandler(product.id) }} />
-                                            <FaShareAlt onClick={() => { setShareModal(true) }} />
-                                        </div> :
-                                    <div className='d-flex justify-content-end s_share_icon' >
-                                        <GoHeart onClick={handleLoginShow} />
-                                        <FaShareAlt onClick={() => { setShareModal(true) }} />
-                                    </div>
-                                }
-                            </div>
-                            <h3 className='s_title text-capitalize text-center text-lg-start '>{product?.product_name}</h3>
-                            <div className='s_rating d-flex justify-content-center justify-content-lg-start'>
-                                {
-                                    [...Array(5)].map((_, index) => {
-                                        if (index < product?.total_rating) {
-                                            return <img key={index} src={require('../Img/Sujal/fillStar.png')} alt='star' />;
-                                        } else {
-                                            return <img key={index} src={require('../Img/Sujal/nofillstar.png')} alt='star' />;
-                                            ;
-                                        }
-                                    })
-                                }
-                            </div>
-                            <div className='d-flex align-items-center justify-content-center justify-content-lg-start'>
-                                <h2 className='s_price text-center text-lg-start'>₹ {parseFloat(product?.price_with_gst).toFixed(2)}</h2>
-                                {inStock === true ? '' : <div className='s_stock_status'>out of stack</div>}
-                            </div>
-                            <p className='s_description text-center text-lg-start'>{product?.description}</p>
-
-                            {product.category_name !== 'Watch' ? <>
-                                <div className='s_metal_option d-flex justify-content-between text-capitalize'>
-                                    <div>
-                                        <h5>Metal Color</h5>
-                                        <div variant="pills" defaultActiveKey="link-0" className='nav'>
-                                            <Nav.Item>
-                                                <Nav.Link eventKey="link-0" className='active'>
-                                                    <div className='s_color' style={{ background: `${metalColor[0]?.code}` }}></div>
-                                                    {product?.metal_color}
-                                                </Nav.Link>
-                                            </Nav.Item>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h5>Metal</h5>
-                                        <Nav variant="pills" defaultActiveKey="link-0">
-                                            <Nav.Item>
-                                                <Nav.Link eventKey="link-0">{product?.metal}</Nav.Link>
-                                            </Nav.Item>
-                                        </Nav>
-                                    </div>
-                                </div>
-                                <div className='d-flex s_size'>
-                                    <div>
-                                        <h4>Size</h4>
-                                        <div className='s_box d-flex justify-content-between align-items-center'>
-                                            <p className='mb-0'>{size}</p>
-                                            {sizeOpen ?
-                                                <FaAngleUp className='ms-auto' style={{ cursor: 'pointer' }} onClick={() => { setSizeOpen(false) }} />
-                                                :
-                                                <FaAngleDown className='ms-auto' style={{ cursor: 'pointer' }} onClick={() => { setSizeOpen(true) }} />
-                                            }
-                                            <div className='s_size_menu'>
-                                                {sizeOpen ? sizeArray.map((item) => {
-                                                    return <div key={item} className={`s_size_box ${item === size ? 'active' : ''}`} onClick={() => { setSize(item) }}>{item}</div>
-                                                }) : ''}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h4>Diamond Quality</h4>
-                                        <div className='s_box d-flex  align-items-center'>
-                                            <span>{product?.diamond_quality || '--'}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </> :
-                                ''}
-                            <div className='s_pincode'>
-                                <h4>Pincode</h4>
-                                <div className='s_box'>
-                                    <input type='text' placeholder='Enter pincode'></input>
-                                    <span>Check</span>
-                                </div>
-                            </div>
-                            {console.log(offers)}
-                            {offers.length !==0 ? <div className='s_offers'>
-                                <Accordion flush>
-                                    <Accordion.Item eventKey="0">
-                                        <Accordion.Header>Trending Offers</Accordion.Header>
-                                        <Accordion.Body>
-                                            {offers.map((item, index) => {
-                                                return (
-                                                    <div key={index} className={`d-flex align-items-center s_parent px-2`} onClick={(e) => { handleOfferSelect(item, e) }}>
-                                                        <img src={item.image} alt='discount' />
-                                                        <div>
-                                                            <p className='mb-0'>{item?.name}</p>
-                                                            <span>{item?.description}</span>
-                                                        </div>
-                                                    </div>
-                                                )
-                                            })}
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                </Accordion>
-                            </div> : ''}
-
-
-                            <div className='s_button_sec '>
-                                <div className='s_cart_btn'>
-                                    {!addToCard ? (
-                                        <Link to='/cart'>View Cart</Link>
-                                    ) : (
-                                        <Link to='#' onClick={addCardHandle}>Add to Cart</Link>
-                                    )}
-                                </div>
-                                <div className='s_buy_btn'>
-                                    {store ? (
-                                        <Link to={'/payment'} onClick={() => { buyNowHandling() }}>Buy Now</Link>
-                                    ) : (
-                                        <Link to={'#'} onClick={handleLoginShow}>Buy Now</Link>
-                                    )}
-
-                                </div>
-                            </div>
-                            <div className='s_product_service justify-content-start'>
-                                <div className='s_box mx-2'>
-                                    <img src={require('../Img/Sujal/service1.png')} alt='service1'></img>
-                                    <span>Dispatch in 2 days</span>
-                                </div>
-                                <div className='s_box mx-2'>
-                                    <img src={require('../Img/Sujal/service3.png')} alt='service3'></img>
-                                    <span>Support 24*7</span>
-                                </div>
-                                <div className='s_box mx-2'>
-                                    <img src={require('../Img/Sujal/service4.png')} alt='service4'></img>
-                                    <span>Best Quality</span>
-                                </div>
-                            </div>
-                            <div className='s_other_info'>
-                                <h4>Return Policy</h4>
-                                <span>Return Reason</span>
-                                <p>Physical Damage, Defective, Wrong and missing item and any other reason</p>
-                                <span>Return Period</span>
-                                <p>10 days from delivery</p>
-                                <span>Return Policy</span>
-                                <p>Full refund and replacement</p>
-                            </div>
-                        </div>
-                    </Col>
-                </Row>
-                <div className='s_other_sec '>
-                    <div className='overflow-x-auto'>
-                        <Nav justify className='' variant="tabs" defaultActiveKey="tab-0" onSelect={(selectedKey) => { setTab(selectedKey) }}>
-                            <Nav.Item>
-                                <Nav.Link eventKey="tab-0">Product Details</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link eventKey="tab-1">Price Breakup</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link eventKey="tab-2">Rating & Reviews</Nav.Link>
-                            </Nav.Item>
-                        </Nav>
->>>>>>> origin/sujal11_1
                     </div>
                   ) : (
                     <div className="d-flex justify-content-end s_share_icon">
@@ -1430,7 +1146,7 @@ function ProductDetail() {
                 } else {
                   discountPrice = ele.price_with_gst;
                 }
-                console.log("zzzzzzzzzzzzz ", ele?.id);
+                // console.log("zzzzzzzzzzzzz ", ele?.id);
 
                 return (
                   <Col key={id} className="py-4">
