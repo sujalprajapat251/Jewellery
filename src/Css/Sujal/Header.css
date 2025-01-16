@@ -549,6 +549,13 @@
     .s_search_sec {
         top: 140px;
     }
+    .s_header_input {
+        width: 240px;
+    }
+    .s_header_sec {
+        /* padding-bottom: 0px;
+        border-bottom:2px solid rgba(77, 31, 8, .1); */
+    }
 }
 
 @media (min-width: 480px) and (max-width: 767px) {

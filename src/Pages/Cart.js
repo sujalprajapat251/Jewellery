@@ -253,7 +253,7 @@ console.log("sum123",sum1);
                       </div>
                       <div className='d-flex justify-content-between ds_cart-main-flex'>
                         <div>
-                          <div className='d-flex ds_cart-flex'>
+                          <div className='d-flex ds_cart-flex s_cart_manage'>
                             <div className='mx-auto'>
                               <img src={element?.product_image[0]} alt="" className='ds_cart-img' />
                             </div>
@@ -268,7 +268,7 @@ console.log("sum123",sum1);
                           </div>
                         </div>
 
-                        <div className='d-flex ds_cart-manage'>
+                        <div className='ds_cart-manage'>
                           <h5 className='ds_color mt-2'>₹{Math.round(totalPrice)}<span className='ds_cart-less-price ms-2'>₹{discountedPrice}</span></h5>
                           <div className='w-100 mt-auto d-flex justify-content-end'>
                             <div className='ds_cart-mul mt-auto '>

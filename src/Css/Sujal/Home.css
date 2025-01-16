@@ -810,6 +810,9 @@
 }
 
 @media (max-width: 991px) {
+    .s_slider .owl-carousel .item {
+        height: 800px;
+    }
     .s_slider .s_slider_text p{
         font-size: 48px;
         line-height: 70px;

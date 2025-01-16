@@ -181,14 +181,14 @@ function Header() {
             <div className="text-center s_header_top">
                 <p className='ds_container mb-0'>Welcome to our Store</p></div>
             <section className='ds_container s_header_sec d-flex justify-content-between flex-wrap flex-lg-nowrap'>
-                <div className='s_header_input d-flex justify-content-between align-items-center col-lg-4 col-12 order-lg-1 order-3'>
+                <div className='s_header_input d-flex justify-content-between align-items-center col-lg-4 col-12 order-md-1 order-3'>
                     <input type='text' id='searchData' placeholder='Search for Jewellery and more...' onChange={(e) => { searchHandle(); }}></input>
                     <IoSearch onClick={(e) => { searchHandle(null); }} />
                 </div>
-                <Link className='s_logo text-decoration-none col-lg-4 col-4 ms-lg-auto order-lg-2 order-1 align-self-center '>
-                    <h2 className='text-lg-center mb-0'>LOGO</h2>
+                <Link className='s_logo text-decoration-none col-lg-4 col-4 ms-lg-auto order-md-2 order-1 align-self-center '>
+                    <h2 className='text-md-center mb-0'>LOGO</h2>
                 </Link>
-                <div className='col-lg-4 col-4 d-flex justify-content-end align-items-center order-lg-3 order-2'>
+                <div className='col-lg-4 col-4 d-flex justify-content-end align-items-center order-md-3 order-2'>
                     {store ? <Link to={'/wishlist'} className={`s_header_icon s_heart_icons ${isFilled ? "filled" : "empty"}`}>
                         <div class="position-relative">
                             {isFilled ? <IoMdHeart /> : <IoMdHeartEmpty />}
@@ -274,7 +274,7 @@ function Header() {
                                 <h4 className='s_submenu_head ps-0'>Men</h4>
                                 {menGold.map((ele, id) => {
                                     return (
-                                        <Link to={`/productlist/gold/men/${ele.sub_category_name}`} key={ele.id}><img alt={ele.product_name} src={ele.images[0]}  className='ms-1'></img>{ele.sub_category_name}</Link>
+                                        <Link to={`/productlist/gold/men/${ele.sub_category_name}`} key={ele.id}><img alt={ele.product_name} src={ele.images[0]}  className='ms-0'></img>{ele.sub_category_name}</Link>
                                     )
                                 })}
                             </div>
@@ -462,7 +462,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {allSubCategory.slice(0, 9).map((ele, id) => {
                                                     return (
-                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} onClick={handleClose}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -472,9 +472,9 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Gender</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist/all/gender/Men">Men</Link></p>
-                                                <p><Link to="/productlist/all/gender/Women">Women</Link></p>
-                                                <p><Link to="/productlist/all/gender/Kids">Kids & Teens</Link></p>
+                                                <p><Link to="/productlist/all/gender/Men" onClick={handleClose}>Men</Link></p>
+                                                <p><Link to="/productlist/all/gender/Women" onClick={handleClose}>Women</Link></p>
+                                                <p><Link to="/productlist/all/gender/Kids" onClick={handleClose}>Kids & Teens</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -482,9 +482,9 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price Band</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist/all/price/<25">&lt;25K</Link></p>
-                                                <p> <Link to="/productlist/all/price/25-50">25K - 50K</Link></p>
-                                                <p> <Link to="/productlist/all/price/>100">1L & Above</Link></p>
+                                                <p><Link to="/productlist/all/price/<25" onClick={handleClose}>&lt;25K</Link></p>
+                                                <p> <Link to="/productlist/all/price/25-50" onClick={handleClose}>25K - 50K</Link></p>
+                                                <p> <Link to="/productlist/all/price/>100" onClick={handleClose}>1L & Above</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -501,7 +501,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {goldSubcate.map((ele, id) => {
                                                     return (
-                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} onClick={handleClose}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -513,7 +513,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {menGold.map((ele, id) => {
                                                     return (
-                                                        <p key={ele.id}><Link to={`/productlist/gold/men/${ele.sub_category_name}`} ><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/gold/men/${ele.sub_category_name}`} onClick={handleClose}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -524,16 +524,16 @@ function Header() {
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
                                                 <p><Link to={`/productlist/category/Gold Coin`}>Special Coin</Link></p>
-                                                <p><Link to="/productlist/gold coin/weight/1">1 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/weight/2">2 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/weight/4">4 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/weight/5">5 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/weight/8">8 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/weight/20">10 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/weight/25">25 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/weight/30">30 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/weight/50">50 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/weight/100">100 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/1" onClick={handleClose}>1 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/2" onClick={handleClose}>2 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/4" onClick={handleClose}>4 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/5" onClick={handleClose}>5 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/8" onClick={handleClose}>8 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/20" onClick={handleClose}>10 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/25" onClick={handleClose}>25 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/30" onClick={handleClose}>30 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/50" onClick={handleClose}>50 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/weight/100" onClick={handleClose}>100 Gm.</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -550,7 +550,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {silverSubcate.map((ele, id) => {
                                                     return (
-                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} onClick={handleClose}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -562,7 +562,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {menSilver.map((ele, id) => {
                                                     return (
-                                                        <p key={ele.id}><Link to={`/productlist/silver/men/${ele.sub_category_name}`} ><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/silver/men/${ele.sub_category_name}`} onClick={handleClose}><img alt={ele.product_name} src={ele.images[0]}></img>{ele.sub_category_name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -572,10 +572,10 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist/silver/price/<25">&lt;25K</Link></p>
-                                                <p><Link to="/productlist/silver/price/25-50">25K - 50K</Link></p>
-                                                <p><Link to="/productlist/silver/price/50-100">50K - 1L</Link></p>
-                                                <p><Link to="/productlist/silver/price/>100">1L & Above</Link></p>
+                                                <p><Link to="/productlist/silver/price/<25" onClick={handleClose}>&lt;25K</Link></p>
+                                                <p><Link to="/productlist/silver/price/25-50" onClick={handleClose}>25K - 50K</Link></p>
+                                                <p><Link to="/productlist/silver/price/50-100" onClick={handleClose}>50K - 1L</Link></p>
+                                                <p><Link to="/productlist/silver/price/>100" onClick={handleClose}>1L & Above</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -592,7 +592,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {diamondSubcate.map((ele, id) => {
                                                     return (
-                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} onClick={handleClose}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -604,7 +604,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {earingSubcate.map((ele, id) => {
                                                     return (
-                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} onClick={handleClose}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -616,7 +616,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {ringSubcate.map((ele, id) => {
                                                     return (
-                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} onClick={handleClose}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -628,7 +628,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {pendantsSubcate.map((ele, id) => {
                                                     return (
-                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} onClick={handleClose}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -638,10 +638,10 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist/Diamond/price/<25">&lt;25K</Link></p>
-                                                <p><Link to="/productlist/Diamond/price/25-50">25K - 50K</Link></p>
-                                                <p><Link to="/productlist/Diamond/price/50-100">50K - 1L</Link></p>
-                                                <p><Link to="/productlist/Diamond/price/>100">1L & Above</Link></p>
+                                                <p><Link to="/productlist/Diamond/price/<25" onClick={handleClose}>&lt;25K</Link></p>
+                                                <p><Link to="/productlist/Diamond/price/25-50" onClick={handleClose}>25K - 50K</Link></p>
+                                                <p><Link to="/productlist/Diamond/price/50-100" onClick={handleClose}>50K - 1L</Link></p>
+                                                <p><Link to="/productlist/Diamond/price/>100" onClick={handleClose}>1L & Above</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -658,7 +658,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {platiumSubcate.map((ele, id) => {
                                                     return (
-                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} ><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} onClick={handleClose}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -668,9 +668,9 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>Price</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist/platinum/price/<25">&lt;25K</Link></p>
-                                                <p><Link to="/productlist/platinum/price/25-50">25K - 50K</Link></p>
-                                                <p><Link to="/productlist/platinum/price/>100">1L & Above</Link></p>
+                                                <p><Link to="/productlist/platinum/price/<25" onClick={handleClose}>&lt;25K</Link></p>
+                                                <p><Link to="/productlist/platinum/price/25-50" onClick={handleClose}>25K - 50K</Link></p>
+                                                <p><Link to="/productlist/platinum/price/>100" onClick={handleClose}>1L & Above</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -685,14 +685,14 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>24 Kt (995)</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist/gold coin/24/0.5">0.5 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/24/1">1 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/24/2">2 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/24/4">4 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/24/5">5 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/24/10">10 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/24/20">20 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/24/50">50 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/0.5" onClick={handleClose}>0.5 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/1" onClick={handleClose}>1 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/2" onClick={handleClose}>2 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/4" onClick={handleClose}>4 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/5" onClick={handleClose}>5 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/10" onClick={handleClose}>10 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/20" onClick={handleClose}>20 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/24/50" onClick={handleClose}>50 Gm.</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -700,13 +700,13 @@ function Header() {
                                         <Accordion.Header><h4 className='s_submenu_head px-0'>22 Kt (916)</h4></Accordion.Header>
                                         <Accordion.Body>
                                             <div className='s_submenu_list'>
-                                                <p><Link to="/productlist/gold coin/22/1">1 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/22/2">2 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/22/4">4 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/22/5">5 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/22/10">10 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/22/20">20 Gm.</Link></p>
-                                                <p><Link to="/productlist/gold coin/22/50">50 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/1" onClick={handleClose}>1 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/2" onClick={handleClose}>2 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/4" onClick={handleClose}>4 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/5" onClick={handleClose}>5 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/10" onClick={handleClose}>10 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/20" onClick={handleClose}>20 Gm.</Link></p>
+                                                <p><Link to="/productlist/gold coin/22/50" onClick={handleClose}>50 Gm.</Link></p>
                                             </div>
                                         </Accordion.Body>
                                     </Accordion.Item>
@@ -714,7 +714,7 @@ function Header() {
                             </Accordion.Body>
                         </Accordion.Item>
                         <Accordion.Item className='sp_spacial_accitem'>
-                            <Link to="/productlist/occasion/bridal wear" className='s_spec_submenu_head'><h4>Wedding</h4></Link>
+                            <Link to="/productlist/occasion/bridal wear" className='s_spec_submenu_head' onClick={handleClose}><h4>Wedding</h4></Link>
                         </Accordion.Item>
                         <Accordion.Item eventKey="7">
                             <Accordion.Header><h4 className='s_submenu_head px-0'>Watches</h4></Accordion.Header>
@@ -726,7 +726,7 @@ function Header() {
                                             <div className='s_submenu_list'>
                                                 {watchSubcate.map((ele, id) => {
                                                     return (
-                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
+                                                        <p key={ele.id}><Link to={`/productlist/subcategory/${ele.id}`} onClick={handleClose}><img alt={ele.name} src={ele.image}></img>{ele.name}</Link></p>
                                                     )
                                                 })}
                                             </div>
@@ -739,9 +739,9 @@ function Header() {
                             <Accordion.Header><h4 className='s_submenu_head px-0'>Gifting</h4></Accordion.Header>
                             <Accordion.Body>
                                 <div className='s_submenu_list'>
-                                    <p><Link to="/productlist/all/gender/Women">Gifting for loved ones</Link></p>
-                                    <p><Link to={'/productlist/all/null'}>Gift Cards</Link></p>
-                                    <p><Link to="/productlist/all/gender/Men">Corporate Gifting</Link></p>
+                                    <p><Link to="/productlist/all/gender/Women" onClick={handleClose}>Gifting for loved ones</Link></p>
+                                    <p><Link to={'/productlist/all/null'} onClick={handleClose}>Gift Cards</Link></p>
+                                    <p><Link to="/productlist/all/gender/Men" onClick={handleClose}>Corporate Gifting</Link></p>
                                 </div>
                             </Accordion.Body>
                         </Accordion.Item>

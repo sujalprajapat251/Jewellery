@@ -5,7 +5,7 @@ import OwlCarousel from "react-owl-carousel";
 import { GoHeart, GoHeartFill } from "react-icons/go";
 import { FaAngleDown, FaAngleUp, FaShareAlt } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike,} from "react-icons/ai";
+import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike, } from "react-icons/ai";
 import noteContext from "../Context/noteContext";
 import axios from "axios";
 import Login from "../Component/Login";
@@ -21,7 +21,7 @@ function ProductDetail() {
   // backend connnectivity code ---------------------------------------------------------------
 
   // useContext
-  const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler, store, addToCardhandle} = useContext(noteContext);
+  const { Api, token, allProduct, wishlistID, findWishlistID, addwishlistHandler, store, addToCardhandle } = useContext(noteContext);
 
   // get product detail using Api
   const [product, setProduct] = useState([]);
@@ -66,7 +66,7 @@ function ProductDetail() {
   useEffect(() => {
     // console.log("product", product);
     // get size data
-    const array = product?.size_name ?.split(",") .map(Number) .filter((num) => !isNaN(num));
+    const array = product?.size_name?.split(",").map(Number).filter((num) => !isNaN(num));
     if (array?.length) {
       setSizeArray(array);
       setSize(array[0]);
@@ -238,9 +238,32 @@ function ProductDetail() {
     } else {
       setThumbnail(null);
     }
+    productImgHanddler()
   }, [product?.images]);
-  const productImgHanddler = (index) => {
-    setThumbnail(product.images[index]);
+
+  const productImgHanddler = (index,id) => {
+    console.log('fetch id =>',id,index);
+    if(index !==undefined && id !== undefined){
+      var imageclass = document.getElementsByClassName('s_product_img');
+      for(var i=0 ; i < imageclass.length ; i++){
+        imageclass[i].classList.remove('s_active_img');
+      }
+      var image = document.getElementById(id);
+      console.log(image);
+      image.classList.add('s_active_img');
+      setThumbnail(product.images[index]);
+    }
+    else {
+      var imageclass = document.getElementsByClassName('s_product_img');
+      for(var i=0 ; i < imageclass.length ; i++){
+        imageclass[i].classList.remove('s_active_img');
+      }
+      if(product?.images?.length <= 1 ){
+        var image = document.getElementById('id0');
+        console.log(image);
+        image.classList.add('s_active_img');
+      }
+    }
   };
 
   // other detail nav-tabe handller
@@ -249,15 +272,15 @@ function ProductDetail() {
   // braking price calculation ------
   const metal_total =
     product?.price && product?.weight ? `${((parseFloat(product.price) / parseFloat(product.weight)) *
-          parseFloat(product.weight)
-        ).toFixed(2)}`
+      parseFloat(product.weight)
+    ).toFixed(2)}`
       : 0;
-  const stone_total = product?.stone_price && product?.gram ? `${(parseFloat(product.stone_price) * parseFloat(product.gram)).toFixed(2)}`: 0;
-  const making_charge = product?.making_charge? `${((parseFloat(metal_total) + parseFloat(stone_total)) *(parseFloat(product?.making_charge) / 100)).toFixed(2)}`: 0;
+  const stone_total = product?.stone_price && product?.gram ? `${(parseFloat(product.stone_price) * parseFloat(product.gram)).toFixed(2)}` : 0;
+  const making_charge = product?.making_charge ? `${((parseFloat(metal_total) + parseFloat(stone_total)) * (parseFloat(product?.making_charge) / 100)).toFixed(2)}` : 0;
   // console.log('making_charge', ((parseFloat(metal_total) + parseFloat(stone_total)) * (parseFloat(product?.making_charge) / 100)));
-  const discount = ((parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)) * parseFloat(product?.discount || 0)) /100;
+  const discount = ((parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge)) * parseFloat(product?.discount || 0)) / 100;
   // console.log(discount);
-  const sub_total = ( parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge) - discount).toFixed(2);
+  const sub_total = (parseFloat(metal_total) + parseFloat(stone_total) + parseFloat(making_charge) - discount).toFixed(2);
   const gst_total = ((sub_total * 3) / 100).toFixed(2);
   const great_total = (parseFloat(sub_total) + parseFloat(gst_total)).toFixed(2);
   // console.log(wishlistID);
@@ -331,7 +354,7 @@ function ProductDetail() {
     let discount = 0;
     if (selectedOffers?.type === "percentage") {
       // console.log('selected',selectedOffers)
-      discount = parseFloat(( parseFloat(product.total_price) * (parseFloat(selectedOffers.discount) / 100)).toFixed(2));
+      discount = parseFloat((parseFloat(product.total_price) * (parseFloat(selectedOffers.discount) / 100)).toFixed(2));
       //   unit_price = (parseFloat(product.total_price) - parseFloat(discount)).toFixed(2);
       // console.log('discount', discount);
     }
@@ -425,20 +448,20 @@ function ProductDetail() {
       <section className="s_prodetail_page ds_container">
         <div className="d-block d-lg-none s_productdetail_sec">
           {store ? (isSelected ? (
-              <div className="d-flex justify-content-end s_share_icon">
-                <GoHeartFill className="s_active" onClick={() => {   findWishlistID(product.id); }}/>
-                <FaShareAlt onClick={() => {   setShareModal(true); }}/>
-              </div>
-            ) : (
-              <div className="d-flex justify-content-end s_share_icon">
-                <GoHeart onClick={() => {   addwishlistHandler(product.id); }}/>
-                <FaShareAlt onClick={() => {   setShareModal(true); }}/>
-              </div>
-            )
+            <div className="d-flex justify-content-end s_share_icon">
+              <GoHeartFill className="s_active" onClick={() => { findWishlistID(product.id); }} />
+              <FaShareAlt onClick={() => { setShareModal(true); }} />
+            </div>
+          ) : (
+            <div className="d-flex justify-content-end s_share_icon">
+              <GoHeart onClick={() => { addwishlistHandler(product.id); }} />
+              <FaShareAlt onClick={() => { setShareModal(true); }} />
+            </div>
+          )
           ) : (
             <div className="d-flex justify-content-end s_share_icon">
               <GoHeart onClick={handleLoginShow} />
-              <FaShareAlt onClick={() => {   setShareModal(true); }}/>
+              <FaShareAlt onClick={() => { setShareModal(true); }} />
             </div>
           )}
         </div>
@@ -449,11 +472,11 @@ function ProductDetail() {
                 const isVideo = /\.(mp4|webm|ogg)$/i.test(thumbnail);
                 return isVideo ? (
                   <video controls className="w-100">
-                    <source src={thumbnail} type="video/mp4" className="h-100 object-fit-cover"/>
+                    <source src={thumbnail} type="video/mp4" className="h-100 object-fit-cover" />
                     Your browser does not support the video tag.
                   </video>
                 ) : (
-                  <img src={thumbnail} alt="thumbnail" className="w-100 object-fit-cover " style={{ aspectRatio: "1 / 1" }}/>
+                  <img src={thumbnail} alt="thumbnail" className="w-100 object-fit-cover " style={{ aspectRatio: "1 / 1" }} />
                 );
               })()
             ) : (
@@ -472,12 +495,12 @@ function ProductDetail() {
                           Your browser does not support the video tag.
                         </video>
                         {!controlsVisible && (
-                          <img src={require("../Img/Sujal/play.png")} alt="play" onClick={handlePlayClick}/>
+                          <img src={require("../Img/Sujal/play.png")} alt="play" onClick={handlePlayClick} />
                         )}
                       </div>
                     ) : isImage ? (
                       <div className="s_image">
-                        <img key={`image-${index}`} src={media} alt={`product-media-${index}`} onClick={() => productImgHanddler(index)}/>
+                        <img key={`image-${index}`} src={media} alt={`product-media-${index}`} onClick={() => productImgHanddler(index)} />
                       </div>
                     ) : null
                   ) : (
@@ -491,22 +514,22 @@ function ProductDetail() {
 
             <div className="s_product_slider">
               {product?.images?.length <= 6 ? (
-                <div className="d-flex justify-content-sm-center overflow-auto">
+                <div className="d-flex justify-content-sm-center overflow-x-auto overflow-y-hidden">
                   {product.images?.map((item, index) => {
                     const isVideo = /\.(mp4|webm|ogg)$/i.test(item);
                     return (
                       <div className="" key={index}>
-                        <div className="s_product_img" onClick={() => productImgHanddler(index)} >
+                        <div className="s_product_img" id={`id`+index} onClick={() => productImgHanddler(index,`id`+index)} >
                           {isVideo ? (
                             <div className="s_product_video" onMouseLeave={handleStopclick} style={{ width: "100px", height: "100px" }}>
                               <video className="" muted>
                                 <source src={item} type="video/mp4" />
                                 Your browser does not support the video tag.
                               </video>
-                              <img src={require("../Img/Sujal/play.png")} alt="play"/>
+                              <img src={require("../Img/Sujal/play.png")} alt="play" />
                             </div>
                           ) : (
-                            <img src={item} alt={`product-media-${index}`} style={{ width: "100px", height: "100px" }}/>
+                            <img src={item} alt={`product-media-${index}`} style={{ width: "100px", height: "100px" }} />
                           )}
                         </div>
                       </div>
@@ -516,10 +539,20 @@ function ProductDetail() {
               ) : (
                 <OwlCarousel className="owl-theme" margin={20} nav dots={false}
                   responsive={{
-                    0: {
+                    0:{
+                      items: 3,
+                    },
+                    425: {
                       items: 4, // Show 4 items on very small screens
                     },
-                    576: {
+                    576:{
+                      items: 6,
+
+                    },
+                    769: {
+                      items: 4,
+                    },
+                    1025: {
                       items: 6,
                     },
                   }}
@@ -528,17 +561,17 @@ function ProductDetail() {
                     const isVideo = /\.(mp4|webm|ogg)$/i.test(item);
                     return (
                       <div className="item " key={index}>
-                        <div className="s_product_img" onClick={() => productImgHanddler(index)}>
+                        <div className="s_product_img" id={`id`+index} onClick={() => productImgHanddler(index,`id`+index)} >
                           {isVideo ? (
                             <div className="s_product_video w-100" onMouseLeave={handleStopclick}>
                               <video className="" muted>
                                 <source src={item} type="video/mp4" />
                                 Your browser does not support the video tag.
                               </video>
-                              <img src={require("../Img/Sujal/play.png")} alt="play"/>
+                              <img src={require("../Img/Sujal/play.png")} alt="play" />
                             </div>
                           ) : (
-                            <img src={item} alt={`product-media-${index}`} className={"w-100"}/>
+                            <img src={item} alt={`product-media-${index}`} className={"w-100"} />
                           )}
                         </div>
                       </div>
@@ -554,7 +587,7 @@ function ProductDetail() {
                 {store ? (
                   isSelected ? (
                     <div className="d-flex justify-content-end s_share_icon">
-                      <GoHeartFill className="s_active" onClick={() => {   findWishlistID(product.id); }}/>
+                      <GoHeartFill className="s_active" onClick={() => { findWishlistID(product.id); }} />
                       <FaShareAlt
                         onClick={() => {
                           setShareModal(true);
@@ -563,14 +596,14 @@ function ProductDetail() {
                     </div>
                   ) : (
                     <div className="d-flex justify-content-end s_share_icon">
-                      <GoHeart onClick={() => {   addwishlistHandler(product.id); }}/>
-                      <FaShareAlt onClick={() => {   setShareModal(true); }}/>
+                      <GoHeart onClick={() => { addwishlistHandler(product.id); }} />
+                      <FaShareAlt onClick={() => { setShareModal(true); }} />
                     </div>
                   )
                 ) : (
                   <div className="d-flex justify-content-end s_share_icon">
                     <GoHeart onClick={handleLoginShow} />
-                    <FaShareAlt onClick={() => {   setShareModal(true); }}/>
+                    <FaShareAlt onClick={() => { setShareModal(true); }} />
                   </div>
                 )}
               </div>
@@ -581,11 +614,11 @@ function ProductDetail() {
                 {[...Array(5)].map((_, index) => {
                   if (index < product?.total_rating) {
                     return (
-                      <img key={index} src={require("../Img/Sujal/fillStar.png")} alt="star"/>
+                      <img key={index} src={require("../Img/Sujal/fillStar.png")} alt="star" />
                     );
                   } else {
                     return (
-                      <img key={index} src={require("../Img/Sujal/nofillstar.png")} alt="star"/>
+                      <img key={index} src={require("../Img/Sujal/nofillstar.png")} alt="star" />
                     );
                   }
                 })}
@@ -635,19 +668,19 @@ function ProductDetail() {
                       <div className="s_box d-flex justify-content-between align-items-center">
                         <p className="mb-0">{size}</p>
                         {sizeOpen ? (
-                          <FaAngleUp className="ms-auto" style={{ cursor: "pointer" }} onClick={() => {   setSizeOpen(false); }}/>
+                          <FaAngleUp className="ms-auto" style={{ cursor: "pointer" }} onClick={() => { setSizeOpen(false); }} />
                         ) : (
-                          <FaAngleDown className="ms-auto" style={{ cursor: "pointer" }} onClick={() => {   setSizeOpen(true); }}/>
+                          <FaAngleDown className="ms-auto" style={{ cursor: "pointer" }} onClick={() => { setSizeOpen(true); }} />
                         )}
                         <div className="s_size_menu">
                           {sizeOpen
                             ? sizeArray.map((item) => {
-                                return (
-                                  <div key={item} className={`s_size_box ${   item === size ? "active" : "" }`} onClick={() => {   setSize(item); }}>
-                                    {item}
-                                  </div>
-                                );
-                              })
+                              return (
+                                <div key={item} className={`s_size_box ${item === size ? "active" : ""}`} onClick={() => { setSize(item); }}>
+                                  {item}
+                                </div>
+                              );
+                            })
                             : ""}
                         </div>
                       </div>
@@ -670,14 +703,14 @@ function ProductDetail() {
                   <span>Check</span>
                 </div>
               </div>
-              <div className="s_offers">
+              {offers.length === 0 ? ' ' : <div className="s_offers">
                 <Accordion flush>
                   <Accordion.Item eventKey="0">
                     <Accordion.Header>Trending Offers</Accordion.Header>
                     <Accordion.Body>
                       {offers.map((item, index) => {
                         return (
-                          <div key={index} className={`d-flex align-items-center s_parent px-2`} onClick={(e) => {   handleOfferSelect(item, e); }}>
+                          <div key={index} className={`d-flex align-items-center s_parent px-2`} onClick={(e) => { handleOfferSelect(item, e); }}>
                             <img src={item.image} alt="discount" />
                             <div>
                               <p className="mb-0">{item?.name}</p>
@@ -689,7 +722,8 @@ function ProductDetail() {
                     </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>
-              </div>
+              </div>}
+
 
               <div className="s_button_sec ">
                 <div className="s_cart_btn">
@@ -703,7 +737,7 @@ function ProductDetail() {
                 </div>
                 <div className="s_buy_btn">
                   {store ? (
-                    <Link to={"/payment"} onClick={() => {   buyNowHandling(); }}>
+                    <Link to={"/payment"} onClick={() => { buyNowHandling(); }}>
                       Buy Now
                     </Link>
                   ) : (
@@ -744,7 +778,7 @@ function ProductDetail() {
         </Row>
         <div className="s_other_sec ">
           <div className="overflow-x-auto">
-            <Nav justify className="" variant="tabs" defaultActiveKey="tab-0" onSelect={(selectedKey) => {   setTab(selectedKey); }}
+            <Nav justify className="" variant="tabs" defaultActiveKey="tab-0" onSelect={(selectedKey) => { setTab(selectedKey); }}
             >
               <Nav.Item>
                 <Nav.Link eventKey="tab-0">Product Details</Nav.Link>
@@ -771,7 +805,7 @@ function ProductDetail() {
                   <span className="d-flex justify-content-between">
                     <p>Weight</p>
                     <b>
-                      {product?.weight && product?.gram ? `${( parseFloat(product.weight) +     parseFloat(product.gram)   ).toFixed(2)}g`: `${product.weight}g`}{" "}
+                      {product?.weight && product?.gram ? `${(parseFloat(product.weight) + parseFloat(product.gram)).toFixed(2)}g` : `${product.weight}g`}{" "}
                     </b>
                   </span>
                   <span className="d-flex justify-content-between">
@@ -932,7 +966,7 @@ function ProductDetail() {
                   <td>Sub Total</td>
                   <td>-</td>
                   <td>
-                    {product?.weight && product?.gram ? `${(     parseFloat(product.weight) + parseFloat(product.gram)   ).toFixed(2)}g` : "-"}
+                    {product?.weight && product?.gram ? `${(parseFloat(product.weight) + parseFloat(product.gram)).toFixed(2)}g` : "-"}
                   </td>
                   <td>{product?.discount ? `${product?.discount}%` : "-"}</td>
                   <td>₹ {sub_total}</td>
@@ -993,11 +1027,11 @@ function ProductDetail() {
                         {store && item.like_or_dislike === 0 ? (
                           <>
                             <div className="d-flex align-items-center me-4">
-                              <AiOutlineLike  onClick={() => {    handleLike(item.id, 1);  }}/>
+                              <AiOutlineLike onClick={() => { handleLike(item.id, 1); }} />
                               <span>Like</span>
                             </div>
                             <div className="d-flex align-items-center me-4">
-                              <AiOutlineDislike onClick={() => {   handleLike(item.id, 2); }}/>
+                              <AiOutlineDislike onClick={() => { handleLike(item.id, 2); }} />
                               <span>Dislike</span>
                             </div>
                           </>
@@ -1007,11 +1041,11 @@ function ProductDetail() {
                         {store && item.like_or_dislike === 1 ? (
                           <>
                             <div className="d-flex align-items-center me-4">
-                              <AiFillLike onClick={() => {  handleLike(item.id, 1); }}/>
+                              <AiFillLike onClick={() => { handleLike(item.id, 1); }} />
                               <span>Like</span>
                             </div>
                             <div className="d-flex align-items-center me-4">
-                              <AiOutlineDislike onClick={() => {   handleLike(item.id, 2); }}/>
+                              <AiOutlineDislike onClick={() => { handleLike(item.id, 2); }} />
                               <span>Dislike</span>
                             </div>
                           </>
@@ -1021,11 +1055,11 @@ function ProductDetail() {
                         {store && item.like_or_dislike === 2 ? (
                           <>
                             <div className="d-flex align-items-center me-4">
-                              <AiOutlineLike onClick={() => {   handleLike(item.id, 1); }}/>
+                              <AiOutlineLike onClick={() => { handleLike(item.id, 1); }} />
                               <span>Like</span>
                             </div>
                             <div className="d-flex align-items-center me-4">
-                              <AiFillDislike onClick={() => {   handleLike(item.id, 2); }}/>
+                              <AiFillDislike onClick={() => { handleLike(item.id, 2); }} />
                               <span>Dislike</span>
                             </div>
                           </>
@@ -1058,18 +1092,18 @@ function ProductDetail() {
             <Row xxl={5} lg={4} md={3} sm={3} className="s_seller_cards row-cols-1 gx-2 gx-sm-4">
               {youAlsoLike?.slice(0, itemsToShow).map((ele, id) => {
                 // const price = pricehandling(ele);
-                const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) /100).toFixed(2);
+                const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                 let discountPrice = [];
                 if (!isNaN(parseFloat(discounted))) {
-                  discountPrice = ( parseFloat(ele.price_with_gst) + parseFloat(discounted)).toFixed(0);
+                  discountPrice = (parseFloat(ele.price_with_gst) + parseFloat(discounted)).toFixed(0);
                 } else {
                   discountPrice = ele.price_with_gst;
                 }
                 return (
-                  <Col key={id} className="py-4" onClick={() => {   navigate(`/productdetail/${ele.id}`); }}>
+                  <Col key={id} className="py-4" >
                     <div className="s_seller_card d-flex flex-column">
                       <div className="s_card_img">
-                        <img src={ele.images?.[0]} className="w-100" alt={ele.title} key={ele.title}/>
+                        <img src={ele.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
                       </div>
 
                       {
@@ -1083,7 +1117,7 @@ function ProductDetail() {
                             </svg>
                           </div>
                         ) : wishlistID.some((wish) => wish === ele.id) ? (
-                          <div className="s_heart_icon active" onClick={() => {   handleFindWishlistID(ele.id);   }}>
+                          <div className="s_heart_icon active" onClick={() => { handleFindWishlistID(ele.id); }}>
                             <GoHeartFill />
                           </div>
                         ) : (
@@ -1097,7 +1131,7 @@ function ProductDetail() {
                             <GoHeart />
                           </div>
                         )
-                    }
+                      }
 
                       <div className="s_card_text">
                         <Link to={`/productdetail/${ele.id}`}>
@@ -1139,7 +1173,7 @@ function ProductDetail() {
             <Row xxl={5} lg={4} md={3} sm={3} className="s_seller_cards row-cols-1 gx-2 gx-sm-4">
               {peopleAlsoSearch?.slice(0, itemsToShow).map((ele, id) => {
                 // const price = pricehandling(ele);
-                const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) /100).toFixed(2);
+                const discounted = ((parseFloat(ele.price_with_gst) * parseFloat(ele.discount)) / 100).toFixed(2);
                 let discountPrice = [];
                 if (!isNaN(parseFloat(discounted))) {
                   discountPrice = (parseFloat(ele.price_with_gst) + parseFloat(discounted)).toFixed(0);
@@ -1152,7 +1186,7 @@ function ProductDetail() {
                   <Col key={id} className="py-4">
                     <div className="s_seller_card d-flex flex-column">
                       <div className="s_card_img">
-                        <img src={ele?.images?.[0]} className="w-100" alt={ele.title} key={ele.title}/>
+                        <img src={ele?.images?.[0]} className="w-100" alt={ele.title} key={ele.title} />
                       </div>
                       {/* {console.log(  "load",  loadingItems,  isSelected,  ele.id == isSelected,  ele.id)} */}
 
@@ -1306,11 +1340,11 @@ function ProductDetail() {
                       {store && item.like_or_dislike === 0 ? (
                         <>
                           <div className="d-flex align-items-center me-4">
-                            <AiOutlineLike onClick={() => {   handleLike(item.id, 1); }}/>
+                            <AiOutlineLike onClick={() => { handleLike(item.id, 1); }} />
                             <span>Like</span>
                           </div>
                           <div className="d-flex align-items-center me-4">
-                            <AiOutlineDislike onClick={() => {   handleLike(item.id, 2); }}/>
+                            <AiOutlineDislike onClick={() => { handleLike(item.id, 2); }} />
                             <span>Dislike</span>
                           </div>
                         </>
@@ -1320,11 +1354,11 @@ function ProductDetail() {
                       {store && item.like_or_dislike === 1 ? (
                         <>
                           <div className="d-flex align-items-center me-4">
-                            <AiFillLike onClick={() => {   handleLike(item.id, 1); }}/>
+                            <AiFillLike onClick={() => { handleLike(item.id, 1); }} />
                             <span>Like</span>
                           </div>
                           <div className="d-flex align-items-center me-4">
-                            <AiOutlineDislike onClick={() => {   handleLike(item.id, 2); }}/>
+                            <AiOutlineDislike onClick={() => { handleLike(item.id, 2); }} />
                             <span>Dislike</span>
                           </div>
                         </>
@@ -1334,11 +1368,11 @@ function ProductDetail() {
                       {store && item.like_or_dislike === 2 ? (
                         <>
                           <div className="d-flex align-items-center me-4">
-                            <AiOutlineLike onClick={() => {   handleLike(item.id, 1); }}/>
+                            <AiOutlineLike onClick={() => { handleLike(item.id, 1); }} />
                             <span>Like</span>
                           </div>
                           <div className="d-flex align-items-center me-4">
-                            <AiFillDislike onClick={() => {   handleLike(item.id, 2); }} />
+                            <AiFillDislike onClick={() => { handleLike(item.id, 2); }} />
                             <span>Dislike</span>
                           </div>
                         </>
@@ -1372,26 +1406,26 @@ function ProductDetail() {
             <div className="s_link_url text-truncate">
               {window.location.href}
             </div>
-            <div className="s_link_btn" onClick={() => {   copyLinkHandle(); }}>
+            <div className="s_link_btn" onClick={() => { copyLinkHandle(); }}>
               Copy URL
             </div>
           </div>
           <div className="s_link_icon">
-            <Link to={""} onClick={() => {   shareOnFacebook(); }}>
+            <Link to={""} onClick={() => { shareOnFacebook(); }}>
               <div>
                 <img alt="facebook" src={require("../Img/Sujal/facebook.png")}></img>
                 <p>facebook</p>
               </div>
             </Link>
-            <Link to={""} onClick={() => {   shareOnWhatsApp(); }}>
+            <Link to={""} onClick={() => { shareOnWhatsApp(); }}>
               <img alt="facebook" src={require("../Img/Sujal/whatsapp.png")}></img>
               <p>Whatsapp</p>
             </Link>
-            <Link to={""} onClick={() => {   shareOnX(); }}>
+            <Link to={""} onClick={() => { shareOnX(); }}>
               <img alt="facebook" src={require("../Img/Sujal/twitter.png")}></img>
               <p>X</p>
             </Link>
-            <Link to={""} onClick={() => {   shareOnInstagram(); }}
+            <Link to={""} onClick={() => { shareOnInstagram(); }}
             >
               <img alt="facebook" src={require("../Img/Sujal/instagram.png")}></img>
               <p>Instagram</p>
